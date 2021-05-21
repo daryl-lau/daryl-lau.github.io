@@ -2,7 +2,6 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   const hostname = window.location.hostname;
-  console.log(hostname);
   function hideBeian() {
     document.querySelector('.beian').style = "display: none";
   }
