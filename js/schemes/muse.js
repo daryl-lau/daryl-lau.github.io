@@ -1,7 +1,15 @@
 /* global CONFIG */
 
 document.addEventListener('DOMContentLoaded', () => {
-  console.log(123123);
+  const hostname = window.location.hostname;
+  console.log(hostname);
+  function hideBeian() {
+    document.querySelector('.beian').style = "display: none";
+  }
+
+  if (hostname.startsWith('daryl-lau.github.io')) {
+    hideBeian();
+  }
 
   const isRight = CONFIG.sidebar.position === 'right';
   const mousePos = {};
