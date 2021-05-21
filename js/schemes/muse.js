@@ -1,6 +1,7 @@
 /* global CONFIG */
 
 document.addEventListener('DOMContentLoaded', () => {
+  console.log(123123);
 
   const isRight = CONFIG.sidebar.position === 'right';
   const mousePos = {};
@@ -52,7 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateFooterPosition() {
     const footer = document.querySelector('.footer');
     const containerHeight = document.querySelector('.header').offsetHeight + document.querySelector('.main').offsetHeight + footer.offsetHeight;
-    console.log(containerHeight, window.innerHeight);
     footer.classList.toggle('footer-fixed', containerHeight <= window.innerHeight);
   }
 
