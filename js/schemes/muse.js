@@ -10,6 +10,18 @@ document.addEventListener('DOMContentLoaded', () => {
     hideBeian();
   }
 
+  function replace_env() {
+    const protocol = window.location.protocol;
+    const host = window.location.host;
+    let copyrightLink = document.querySelector('.post-copyright-link')
+    if (copyrightLink) {
+      let a = copyrightLink.lastElementChild;
+      a.href = a.href.replace('http://example.com', `${protocol}//${host}`);
+    a.textContent = a.textContent.replace('http://example.com', `${protocol}//${host}`);
+    }
+  }
+  replace_env();
+
   const isRight = CONFIG.sidebar.position === 'right';
   const mousePos = {};
 
