@@ -22,25 +22,29 @@
   <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js" integrity="sha256-a5YRB27CcBwBFcT5EF/f3E4vzIqyHrSR878nseNYw64=" crossorigin="anonymous"></script>
 
 <script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;example.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Mist&quot;,&quot;version&quot;:&quot;8.4.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;left&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:true,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;manual&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:true,&quot;lazyload&quot;:true,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:true,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;},&quot;path&quot;:&quot;&#x2F;search.xml&quot;,&quot;localsearch&quot;:{&quot;enable&quot;:true,&quot;trigger&quot;:&quot;auto&quot;,&quot;top_n_per_article&quot;:1,&quot;unescape&quot;:false,&quot;preload&quot;:false}}</script>
-<meta name="description" content="走得很慢，但从未放弃。">
-<meta property="og:type" content="website">
-<meta property="og:title" content="小白">
-<meta property="og:url" content="http://example.com/index.html">
+<meta name="description" content="环境介绍     host ip    master 10.10.10.100   slave 10.10.10.101    master配置文件  123456789101112131415# master[mysqld]server-id&#x3D;1003306##binloglog-bin&#x3D;mysql-binsync-binlog&#x3D;1innodb_support_xa&#x3D;1binlog_forma">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mysql基于GTID的主从复制">
+<meta property="og:url" content="http://example.com/2018/04/17/Mysql%E5%9F%BA%E4%BA%8EGTID%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/index.html">
 <meta property="og:site_name" content="小白">
-<meta property="og:description" content="走得很慢，但从未放弃。">
+<meta property="og:description" content="环境介绍     host ip    master 10.10.10.100   slave 10.10.10.101    master配置文件  123456789101112131415# master[mysqld]server-id&#x3D;1003306##binloglog-bin&#x3D;mysql-binsync-binlog&#x3D;1innodb_support_xa&#x3D;1binlog_forma">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-04-16T16:00:00.000Z">
+<meta property="article:modified_time" content="2019-05-22T16:00:00.000Z">
 <meta property="article:author" content="小白">
+<meta property="article:tag" content="Mysql">
+<meta property="article:tag" content="GTID">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="http://example.com/">
+<link rel="canonical" href="http://example.com/2018/04/17/Mysql%E5%9F%BA%E4%BA%8EGTID%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:true,&quot;isPost&quot;:false,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:&quot;&quot;,&quot;permalink&quot;:&quot;&quot;,&quot;path&quot;:&quot;index.html&quot;,&quot;title&quot;:&quot;&quot;}</script>
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;2018&#x2F;04&#x2F;17&#x2F;Mysql%E5%9F%BA%E4%BA%8EGTID%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6&#x2F;&quot;,&quot;path&quot;:&quot;2018&#x2F;04&#x2F;17&#x2F;Mysql基于GTID的主从复制&#x2F;&quot;,&quot;title&quot;:&quot;Mysql基于GTID的主从复制&quot;}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
-<title>小白</title><script src="/js/config.js"></script>
+<title>Mysql基于GTID的主从复制 | 小白</title><script src="/js/config.js"></script>
   
 
 
@@ -234,16 +238,17 @@
 </noscript>
 
 
-      <div class="main-inner index posts-expand">
+      <div class="main-inner post posts-expand">
 
-    
+
+  
 
 
 <div class="post-block">
   
   
 
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2018/04/17/Mysql%E5%9F%BA%E4%BA%8EGTID%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -256,9 +261,9 @@
       <meta itemprop="name" content="小白">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/04/17/Mysql%E5%9F%BA%E4%BA%8EGTID%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" class="post-title-link" itemprop="url">Mysql基于GTID的主从复制</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          Mysql基于GTID的主从复制
+        </h1>
 
         <div class="post-meta-container">
           <div class="post-meta">
@@ -306,7 +311,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <blockquote>
+        <blockquote>
 <p>环境介绍</p>
 </blockquote>
 <table>
@@ -363,123 +368,52 @@
 </ul>
 <p>注入空事物的方法：</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">stop slave;</span><br><span class="line"><span class="keyword">set</span> gtid_next<span class="operator">=</span><span class="string">&#x27;xxxxxxx:N&#x27;</span>;   ##这里的xxxxx:N 也就是你的slave <span class="keyword">sql</span> thread报错的GTID，或者说是你想要跳过的GTID。</span><br><span class="line"><span class="keyword">begin</span>;</span><br><span class="line"><span class="keyword">commit</span>;</span><br><span class="line"><span class="keyword">set</span> gtid_next<span class="operator">=</span><span class="string">&#x27;AUTOMATIC&#x27;</span>;</span><br><span class="line"><span class="keyword">start</span> slave;</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> stop slave;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.02</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">set</span> gtid_next<span class="operator">=</span><span class="string">&#x27;91daaeb1-3eab-11e8-bbc1-000c29ffc6cd:15&#x27;</span>;   ##跳过的GTID号</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">begin</span>;<span class="keyword">commit</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.01</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">set</span> gtid_next<span class="operator">=</span><span class="string">&#x27;AUTOMATIC&#x27;</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">start</span> slave;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
-      
     </div>
 
     
     
     
+      
+
 
     <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>小白
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://example.com/2018/04/17/Mysql%E5%9F%BA%E4%BA%8EGTID%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" title="Mysql基于GTID的主从复制">http://example.com/2018/04/17/Mysql基于GTID的主从复制/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
 </div>
 
+          <div class="post-tags">
+              <a href="/tags/Mysql/" rel="tag"><i class="fa fa-tag"></i> Mysql</a>
+              <a href="/tags/GTID/" rel="tag"><i class="fa fa-tag"></i> GTID</a>
+          </div>
 
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2017/07/13/%E5%A6%82%E4%BD%95%E5%9C%A8vue%E4%B8%AD%E6%9B%BF%E6%8D%A2%E4%BD%BF%E7%94%A8%E9%BB%98%E8%AE%A4%E7%9A%84svg-loader/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="小白">
-      <meta itemprop="description" content="走得很慢，但从未放弃。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小白">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2017/07/13/%E5%A6%82%E4%BD%95%E5%9C%A8vue%E4%B8%AD%E6%9B%BF%E6%8D%A2%E4%BD%BF%E7%94%A8%E9%BB%98%E8%AE%A4%E7%9A%84svg-loader/" class="post-title-link" itemprop="url">如何在vue中替换使用默认的svg loader</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2017-07-13 00:00:00" itemprop="dateCreated datePublished" datetime="2017-07-13T00:00:00+08:00">2017-07-13</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-01-23 00:00:00" itemprop="dateModified" datetime="2020-01-23T00:00:00+08:00">2020-01-23</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Javascript/" itemprop="url" rel="index"><span itemprop="name">Javascript</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/vue/" itemprop="url" rel="index"><span itemprop="name">vue</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>582</span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h3 id="1、要知道如何修改，首先要知道如何查看"><a href="#1、要知道如何修改，首先要知道如何查看" class="headerlink" title="1、要知道如何修改，首先要知道如何查看"></a>1、要知道如何修改，首先要知道如何查看</h3><p><code>vue-cli3</code> 默认是不暴露webpack的配置在项目目录中的，在项目根目录使用<code>vue inspect</code>可以查看所有的webpack配置（如果实在是想看，可以使用<code>vue eject</code> 把所以配置暴露出来，但是该操作不可逆，拿出来了就藏不回去了，慎重使用）</p>
-<p>由于<code>vue inspect</code>命令的输出太太太长了，这里就不贴出来了，但是vue想到了这一点，我们可以指定命令选项来查看我们需要的信息</p>
-<p><code>vue inspect --rule svg </code></p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* config.module.rule(&#x27;svg&#x27;) */</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">test</span>: <span class="regexp">/\.(svg)(\?.*)?$/</span>,</span><br><span class="line">  use: [</span><br><span class="line">    <span class="comment">/* config.module.rule(&#x27;svg&#x27;).use(&#x27;file-loader&#x27;) */</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">loader</span>: <span class="string">&#x27;D:\\Microsoft VS Code\\Repositories\\myrepo\\z-knowledge\\Vue\\project\\study\\node_modules\\file-loader\\dist\\cjs.js&#x27;</span>,</span><br><span class="line">      <span class="attr">options</span>: &#123;</span><br><span class="line">        <span class="attr">name</span>: <span class="string">&#x27;img/[name].[hash:8].[ext]&#x27;</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>我们想要把默认的处理svg的file-loader修改成为<code>svg-sprite-loader</code></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2017/07/13/%E5%A6%82%E4%BD%95%E5%9C%A8vue%E4%B8%AD%E6%9B%BF%E6%8D%A2%E4%BD%BF%E7%94%A8%E9%BB%98%E8%AE%A4%E7%9A%84svg-loader/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
-    </div>
 
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2017/07/13/%E5%A6%82%E4%BD%95%E5%9C%A8vue%E4%B8%AD%E6%9B%BF%E6%8D%A2%E4%BD%BF%E7%94%A8%E9%BB%98%E8%AE%A4%E7%9A%84svg-loader/" rel="prev" title="如何在vue中替换使用默认的svg loader">
+                  <i class="fa fa-chevron-left"></i> 如何在vue中替换使用默认的svg loader
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
     </footer>
   </article>
 </div>
+
 
 
 
