@@ -2028,6 +2028,9 @@ pre code {
   top: 0;
   width: 100%;
 }
+.post-body a[rel='noopener'] {
+  color: #29d;
+}
 .post-gallery {
   display: flex;
   min-height: 200px;
@@ -2884,7 +2887,7 @@ hr {
   vertical-align: middle;
 }
 .links-of-author a::before {
-  background: #dae5ee;
+  background: #ba127e;
   display: inline-block;
   margin-right: 3px;
   transform: translateY(-2px);
