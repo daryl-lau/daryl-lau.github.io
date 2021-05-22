@@ -41,12 +41,11 @@
 <p><img data-src="/images/pasted-1.png" alt="upload successful"></p>
 ]]></content>
       <categories>
-        <category>Linux</category>
         <category>Javascript</category>
+        <category>vue</category>
       </categories>
       <tags>
-        <tag>123</tag>
-        <tag>456</tag>
+        <tag>vue</tag>
       </tags>
   </entry>
 </search>
