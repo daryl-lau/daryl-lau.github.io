@@ -7,6 +7,8 @@
 <p>mysql支持单向，双向，链式级联，异步复制,半同步制(mysql5.5版本之后)，复制过程中,一台服务器当主<code>master</code>，而一个或者多个服务器<code>slave</code>；</p>
 <p>复制可以是单向：<code>M --&gt; S</code>,也可以双向<code>M &lt;--&gt; M</code></p>
 <p>如设置了链式级联复制，那么从服务器本身除了充当<code>slave</code>之外，还是其下面从服务器的主服务器，结构如同<code>M --&gt; S1 --&gt; S2 --&gt; S3</code> 的复制形式</p>
+<span id="more"></span>
+
 <h4 id="单向主从复制"><a href="#单向主从复制" class="headerlink" title="单向主从复制"></a>单向主从复制</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">master  --&gt;  slave</span><br></pre></td></tr></table></figure>
 
 <h4 id="一主多从模式"><a href="#一主多从模式" class="headerlink" title="一主多从模式"></a>一主多从模式</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">        -------slave1</span><br><span class="line">        |</span><br><span class="line">master——|------slave2</span><br><span class="line">        |</span><br><span class="line">        -------slave3</span><br></pre></td></tr></table></figure>
