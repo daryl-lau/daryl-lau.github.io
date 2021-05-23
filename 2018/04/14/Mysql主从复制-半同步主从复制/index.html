@@ -339,7 +339,7 @@
 <li><p>slave</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># master</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">insert</span> <span class="keyword">into</span> t1 <span class="keyword">values</span>(<span class="number">17</span>);</span><br><span class="line">Query OK, <span class="number">1</span> <span class="type">row</span> affected (<span class="number">10.01</span> sec)           ##可以看到花了<span class="number">10</span>秒才插入成功，此时就切换到了异步复制</span><br></pre></td></tr></table></figure></li>
 </ul>
-<p>切换到异步复制后，系统不会自动切回半同步，需要手动切，切得方式很简单，就是stop slave；start slave；</p>
+<p>切换到异步复制后，系统不会自动切回半同步，需要手动切，切得方式很简单，就是<code>stop slave</code>；<code>start slave</code>；</p>
 
     </div>
 
@@ -353,10 +353,10 @@
       <div class="popular-posts-title"><a href="\2018\04\17\Mysql主从复制-基于GTID的主从复制\" rel="bookmark">Mysql主从复制-基于GTID的主从复制</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2018\04\14\Mysql主从复制-异步主从复制\" rel="bookmark">Mysql主从复制-异步主从复制</a></div>
+      <div class="popular-posts-title"><a href="\2018\04\13\Mysql主从复制概述\" rel="bookmark">Mysql主从复制概述</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2018\04\13\Mysql主从复制概述\" rel="bookmark">Mysql主从复制概述</a></div>
+      <div class="popular-posts-title"><a href="\2018\04\14\Mysql主从复制-异步主从复制\" rel="bookmark">Mysql主从复制-异步主从复制</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2018\04\19\Mysql-MHA高可用架构原理及应用\" rel="bookmark">Mysql MHA高可用架构原理及应用</a></div>
