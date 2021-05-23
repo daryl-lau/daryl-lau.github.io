@@ -25,14 +25,14 @@
 <meta name="description" content="MySQL主从复制概述复制是mysql数据库提供的一种高可用、高性能的解决方案，一般用来建立大型的应用； mysql支持单向，双向，链式级联，异步复制,半同步制(mysql5.5版本之后)，复制过程中,一台服务器当主master，而一个或者多个服务器slave； 复制可以是单向：M --&gt; S,也可以双向M &lt;--&gt; M 如设置了链式级联复制，那么从服务器本身除了充当slave之">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Mysql主从复制概述">
-<meta property="og:url" content="http://example.com/2018/04/13/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%A6%82%E8%BF%B0/index.html">
+<meta property="og:url" content="http://example.com/2017/04/13/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%A6%82%E8%BF%B0/index.html">
 <meta property="og:site_name" content="小白">
 <meta property="og:description" content="MySQL主从复制概述复制是mysql数据库提供的一种高可用、高性能的解决方案，一般用来建立大型的应用； mysql支持单向，双向，链式级联，异步复制,半同步制(mysql5.5版本之后)，复制过程中,一台服务器当主master，而一个或者多个服务器slave； 复制可以是单向：M --&gt; S,也可以双向M &lt;--&gt; M 如设置了链式级联复制，那么从服务器本身除了充当slave之">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/images/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6.png">
 <meta property="og:image" content="http://example.com/images/%E5%8D%8A%E5%90%8C%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6.png">
-<meta property="article:published_time" content="2018-04-12T16:00:00.000Z">
-<meta property="article:modified_time" content="2018-04-22T16:00:00.000Z">
+<meta property="article:published_time" content="2017-04-12T16:00:00.000Z">
+<meta property="article:modified_time" content="2017-04-22T16:00:00.000Z">
 <meta property="article:author" content="小白">
 <meta property="article:tag" content="Mysql">
 <meta property="article:tag" content="GTID">
@@ -40,11 +40,11 @@
 <meta name="twitter:image" content="http://example.com/images/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6.png">
 
 
-<link rel="canonical" href="http://example.com/2018/04/13/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%A6%82%E8%BF%B0/">
+<link rel="canonical" href="http://example.com/2017/04/13/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%A6%82%E8%BF%B0/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;2018&#x2F;04&#x2F;13&#x2F;Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%A6%82%E8%BF%B0&#x2F;&quot;,&quot;path&quot;:&quot;2018&#x2F;04&#x2F;13&#x2F;Mysql主从复制概述&#x2F;&quot;,&quot;title&quot;:&quot;Mysql主从复制概述&quot;}</script>
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;2017&#x2F;04&#x2F;13&#x2F;Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%A6%82%E8%BF%B0&#x2F;&quot;,&quot;path&quot;:&quot;2017&#x2F;04&#x2F;13&#x2F;Mysql主从复制概述&#x2F;&quot;,&quot;title&quot;:&quot;Mysql主从复制概述&quot;}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
 <title>Mysql主从复制概述 | 小白</title><script src="/js/config.js"></script>
@@ -215,12 +215,6 @@
     </div>
     <ul class="links-of-recent-posts-list">
         <li class="links-of-recent-posts-item">
-          <a href="/2018/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%BC%82%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" title="2018&#x2F;04&#x2F;14&#x2F;Mysql主从复制-异步主从复制&#x2F;">Mysql主从复制-异步主从复制</a>
-        </li>
-        <li class="links-of-recent-posts-item">
-          <a href="/2018/04/13/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%A6%82%E8%BF%B0/" title="2018&#x2F;04&#x2F;13&#x2F;Mysql主从复制概述&#x2F;">Mysql主从复制概述</a>
-        </li>
-        <li class="links-of-recent-posts-item">
           <a href="/2017/07/13/%E5%A6%82%E4%BD%95%E5%9C%A8vue%E4%B8%AD%E6%9B%BF%E6%8D%A2%E4%BD%BF%E7%94%A8%E9%BB%98%E8%AE%A4%E7%9A%84svg-loader/" title="2017&#x2F;07&#x2F;13&#x2F;如何在vue中替换使用默认的svg-loader&#x2F;">如何在vue中替换使用默认的svg loader</a>
         </li>
         <li class="links-of-recent-posts-item">
@@ -228,6 +222,12 @@
         </li>
         <li class="links-of-recent-posts-item">
           <a href="/2017/04/18/Mysql-MHA%E9%AB%98%E5%8F%AF%E7%94%A8%E6%9E%B6%E6%9E%84%E5%8E%9F%E7%90%86%E5%8F%8A%E5%BA%94%E7%94%A8/" title="2017&#x2F;04&#x2F;18&#x2F;Mysql-MHA高可用架构原理及应用&#x2F;">Mysql MHA高可用架构原理及应用</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2017/04/17/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%9F%BA%E4%BA%8EGTID%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" title="2017&#x2F;04&#x2F;17&#x2F;Mysql主从复制-基于GTID的主从复制&#x2F;">Mysql主从复制-基于GTID的主从复制</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%8D%8A%E5%90%8C%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" title="2017&#x2F;04&#x2F;14&#x2F;Mysql主从复制-半同步主从复制&#x2F;">Mysql主从复制-半同步主从复制</a>
         </li>
     </ul>
   </div>
@@ -262,7 +262,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/04/13/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%A6%82%E8%BF%B0/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2017/04/13/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%A6%82%E8%BF%B0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -286,14 +286,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2018-04-13 00:00:00" itemprop="dateCreated datePublished" datetime="2018-04-13T00:00:00+08:00">2018-04-13</time>
+      <time title="创建时间：2017-04-13 00:00:00" itemprop="dateCreated datePublished" datetime="2017-04-13T00:00:00+08:00">2017-04-13</time>
     </span>
       <span class="post-meta-item">
         <span class="post-meta-item-icon">
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2018-04-23 00:00:00" itemprop="dateModified" datetime="2018-04-23T00:00:00+08:00">2018-04-23</time>
+        <time title="修改时间：2017-04-23 00:00:00" itemprop="dateModified" datetime="2017-04-23T00:00:00+08:00">2017-04-23</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -422,7 +422,7 @@
       <div class="popular-posts-title"><a href="\2017\04\14\Mysql主从复制-半同步主从复制\" rel="bookmark">Mysql主从复制-半同步主从复制</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2018\04\14\Mysql主从复制-异步主从复制\" rel="bookmark">Mysql主从复制-异步主从复制</a></div>
+      <div class="popular-posts-title"><a href="\2017\04\14\Mysql主从复制-异步主从复制\" rel="bookmark">Mysql主从复制-异步主从复制</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2017\04\18\Mysql-MHA高可用架构原理及应用\" rel="bookmark">Mysql MHA高可用架构原理及应用</a></div>
@@ -440,7 +440,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="http://example.com/2018/04/13/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%A6%82%E8%BF%B0/" title="Mysql主从复制概述">http://example.com/2018/04/13/Mysql主从复制概述/</a>
+      <a href="http://example.com/2017/04/13/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%A6%82%E8%BF%B0/" title="Mysql主从复制概述">http://example.com/2017/04/13/Mysql主从复制概述/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -457,12 +457,9 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2017/07/13/%E5%A6%82%E4%BD%95%E5%9C%A8vue%E4%B8%AD%E6%9B%BF%E6%8D%A2%E4%BD%BF%E7%94%A8%E9%BB%98%E8%AE%A4%E7%9A%84svg-loader/" rel="prev" title="如何在vue中替换使用默认的svg loader">
-                  <i class="fa fa-chevron-left"></i> 如何在vue中替换使用默认的svg loader
-                </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2018/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%BC%82%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" rel="next" title="Mysql主从复制-异步主从复制">
+                <a href="/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%BC%82%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" rel="next" title="Mysql主从复制-异步主从复制">
                   Mysql主从复制-异步主从复制 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
