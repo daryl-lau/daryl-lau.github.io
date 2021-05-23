@@ -220,10 +220,10 @@
           <a href="/2018/04/17/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%9F%BA%E4%BA%8EGTID%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" title="2018&#x2F;04&#x2F;17&#x2F;Mysql主从复制-基于GTID的主从复制&#x2F;">Mysql主从复制-基于GTID的主从复制</a>
         </li>
         <li class="links-of-recent-posts-item">
-          <a href="/2018/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%BC%82%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" title="2018&#x2F;04&#x2F;14&#x2F;Mysql主从复制-异步主从复制&#x2F;">Mysql主从复制-异步主从复制</a>
+          <a href="/2018/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%8D%8A%E5%90%8C%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" title="2018&#x2F;04&#x2F;14&#x2F;Mysql主从复制-半同步主从复制&#x2F;">Mysql主从复制-半同步主从复制</a>
         </li>
         <li class="links-of-recent-posts-item">
-          <a href="/2018/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%8D%8A%E5%90%8C%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" title="2018&#x2F;04&#x2F;14&#x2F;Mysql主从复制-半同步主从复制&#x2F;">Mysql主从复制-半同步主从复制</a>
+          <a href="/2018/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%BC%82%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" title="2018&#x2F;04&#x2F;14&#x2F;Mysql主从复制-异步主从复制&#x2F;">Mysql主从复制-异步主从复制</a>
         </li>
     </ul>
   </div>
@@ -317,7 +317,7 @@
 <p>半同步复制可以直接在异步复制的基础上完成，参考<a target="_blank" rel="noopener" href="https://www.baihuzi.com/2018/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%BC%82%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">异步主从复制</a></p>
 </blockquote>
 <h3 id="开启半同步主从复制"><a href="#开启半同步主从复制" class="headerlink" title="开启半同步主从复制"></a>开启半同步主从复制</h3><h4 id="先检查是否支持动态安装插件"><a href="#先检查是否支持动态安装插件" class="headerlink" title="先检查是否支持动态安装插件"></a>先检查是否支持动态安装插件</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> @<span class="variable">@have</span>_dynamic_loading</span><br><span class="line">    <span class="operator">-</span><span class="operator">&gt;</span> ;</span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------+</span></span><br><span class="line"><span class="operator">|</span> @<span class="variable">@have</span>_dynamic_loading <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------+</span></span><br><span class="line"><span class="operator">|</span> YES                    <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
-
+<span id="more"></span>
 <h4 id="查看插件库的路径"><a href="#查看插件库的路径" class="headerlink" title="查看插件库的路径"></a>查看插件库的路径</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> variables <span class="keyword">like</span> <span class="string">&#x27;plugin_dir&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">---------------+------------------------------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name <span class="operator">|</span> <span class="keyword">Value</span>                        <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------+------------------------------+</span></span><br><span class="line"><span class="operator">|</span> plugin_dir    <span class="operator">|</span> <span class="operator">/</span>usr<span class="operator">/</span><span class="keyword">local</span><span class="operator">/</span>mysql<span class="operator">/</span>lib<span class="operator">/</span>plugin<span class="operator">/</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------+------------------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
 
 <h4 id="有这个两个表示支持在线安装插件，然后在master和slave上同时安装插件"><a href="#有这个两个表示支持在线安装插件，然后在master和slave上同时安装插件" class="headerlink" title="有这个两个表示支持在线安装插件，然后在master和slave上同时安装插件"></a>有这个两个表示支持在线安装插件，然后在master和slave上同时安装插件</h4><ul>
@@ -390,13 +390,13 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2018/04/13/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%A6%82%E8%BF%B0/" rel="prev" title="Mysql主从复制概述">
-                  <i class="fa fa-chevron-left"></i> Mysql主从复制概述
+                <a href="/2018/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%BC%82%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" rel="prev" title="Mysql主从复制-异步主从复制">
+                  <i class="fa fa-chevron-left"></i> Mysql主从复制-异步主从复制
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2018/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%BC%82%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" rel="next" title="Mysql主从复制-异步主从复制">
-                  Mysql主从复制-异步主从复制 <i class="fa fa-chevron-right"></i>
+                <a href="/2018/04/17/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%9F%BA%E4%BA%8EGTID%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" rel="next" title="Mysql主从复制-基于GTID的主从复制">
+                  Mysql主从复制-基于GTID的主从复制 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
