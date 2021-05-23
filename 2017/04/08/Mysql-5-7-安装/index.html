@@ -22,25 +22,30 @@
   <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js" integrity="sha256-a5YRB27CcBwBFcT5EF/f3E4vzIqyHrSR878nseNYw64=" crossorigin="anonymous"></script>
 
 <script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;example.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Mist&quot;,&quot;version&quot;:&quot;8.4.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;left&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:true,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;manual&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:true,&quot;lazyload&quot;:true,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:true,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;},&quot;path&quot;:&quot;&#x2F;search.xml&quot;,&quot;localsearch&quot;:{&quot;enable&quot;:true,&quot;trigger&quot;:&quot;auto&quot;,&quot;top_n_per_article&quot;:1,&quot;unescape&quot;:false,&quot;preload&quot;:false}}</script>
-<meta name="description" content="走得很慢，但从未放弃。">
-<meta property="og:type" content="website">
-<meta property="og:title" content="小白">
-<meta property="og:url" content="http://example.com/index.html">
+<meta name="description" content="安装前说明如果机器上已经有了mysql或者MariaDB，先卸载再安装； 1[root@lyucan ~]# rpm -e mariadb-libs-5.5.41-2.el7_0.x86_64 --nodeps  创建mysql用户1[root@lyucan ~]# useradd mysql  下载软件包并解压授权12345678[root@lyucan ~]# wget https:&#x2F;&#x2F;cdn">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mysql-5.7 安装">
+<meta property="og:url" content="http://example.com/2017/04/08/Mysql-5-7-%E5%AE%89%E8%A3%85/index.html">
 <meta property="og:site_name" content="小白">
-<meta property="og:description" content="走得很慢，但从未放弃。">
+<meta property="og:description" content="安装前说明如果机器上已经有了mysql或者MariaDB，先卸载再安装； 1[root@lyucan ~]# rpm -e mariadb-libs-5.5.41-2.el7_0.x86_64 --nodeps  创建mysql用户1[root@lyucan ~]# useradd mysql  下载软件包并解压授权12345678[root@lyucan ~]# wget https:&#x2F;&#x2F;cdn">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/mysql%E5%AE%89%E8%A3%85.png">
+<meta property="article:published_time" content="2017-04-07T16:00:00.000Z">
+<meta property="article:modified_time" content="2017-04-07T16:00:00.000Z">
 <meta property="article:author" content="小白">
+<meta property="article:tag" content="Mysql">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/mysql%E5%AE%89%E8%A3%85.png">
 
 
-<link rel="canonical" href="http://example.com/">
+<link rel="canonical" href="http://example.com/2017/04/08/Mysql-5-7-%E5%AE%89%E8%A3%85/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:true,&quot;isPost&quot;:false,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:&quot;&quot;,&quot;permalink&quot;:&quot;&quot;,&quot;path&quot;:&quot;index.html&quot;,&quot;title&quot;:&quot;&quot;}</script>
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;2017&#x2F;04&#x2F;08&#x2F;Mysql-5-7-%E5%AE%89%E8%A3%85&#x2F;&quot;,&quot;path&quot;:&quot;2017&#x2F;04&#x2F;08&#x2F;Mysql-5-7-安装&#x2F;&quot;,&quot;title&quot;:&quot;Mysql-5.7 安装&quot;}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
-<title>小白</title><script src="/js/config.js"></script>
+<title>Mysql-5.7 安装 | 小白</title><script src="/js/config.js"></script>
   
 
 
@@ -133,7 +138,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -146,6 +151,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E5%89%8D%E8%AF%B4%E6%98%8E"><span class="nav-text">安装前说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAmysql%E7%94%A8%E6%88%B7"><span class="nav-text">创建mysql用户</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BD%E8%BD%AF%E4%BB%B6%E5%8C%85%E5%B9%B6%E8%A7%A3%E5%8E%8B%E6%8E%88%E6%9D%83"><span class="nav-text">下载软件包并解压授权</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E7%9B%AE%E5%BD%95"><span class="nav-text">创建数据目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAmy-cnf%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">创建my.cnf配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E6%95%B0%E6%8D%AE"><span class="nav-text">初始化数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8mysql"><span class="nav-text">启动mysql</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5mysql"><span class="nav-text">连接mysql</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9root%E5%AF%86%E7%A0%81"><span class="nav-text">修改root密码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E5%90%8E%E6%93%8D%E4%BD%9C"><span class="nav-text">安装后操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5%E7%94%A8%E6%88%B7"><span class="nav-text">创建远程连接用户</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5%E6%A3%80%E6%B5%8B"><span class="nav-text">远程连接检测</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -243,708 +249,17 @@
 </noscript>
 
 
-      <div class="main-inner index posts-expand">
+      <div class="main-inner post posts-expand">
 
-    
+
+  
 
 
 <div class="post-block">
   
   
 
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2017/07/13/%E5%A6%82%E4%BD%95%E5%9C%A8vue%E4%B8%AD%E6%9B%BF%E6%8D%A2%E4%BD%BF%E7%94%A8%E9%BB%98%E8%AE%A4%E7%9A%84svg-loader/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="小白">
-      <meta itemprop="description" content="走得很慢，但从未放弃。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小白">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2017/07/13/%E5%A6%82%E4%BD%95%E5%9C%A8vue%E4%B8%AD%E6%9B%BF%E6%8D%A2%E4%BD%BF%E7%94%A8%E9%BB%98%E8%AE%A4%E7%9A%84svg-loader/" class="post-title-link" itemprop="url">如何在vue中替换使用默认的svg loader</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2017-07-13 00:00:00" itemprop="dateCreated datePublished" datetime="2017-07-13T00:00:00+08:00">2017-07-13</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-01-23 00:00:00" itemprop="dateModified" datetime="2020-01-23T00:00:00+08:00">2020-01-23</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Javascript/" itemprop="url" rel="index"><span itemprop="name">Javascript</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/vue/" itemprop="url" rel="index"><span itemprop="name">vue</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>582</span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h3 id="1、要知道如何修改，首先要知道如何查看"><a href="#1、要知道如何修改，首先要知道如何查看" class="headerlink" title="1、要知道如何修改，首先要知道如何查看"></a>1、要知道如何修改，首先要知道如何查看</h3><p><code>vue-cli3</code> 默认是不暴露webpack的配置在项目目录中的，在项目根目录使用<code>vue inspect</code>可以查看所有的webpack配置（如果实在是想看，可以使用<code>vue eject</code> 把所以配置暴露出来，但是该操作不可逆，拿出来了就藏不回去了，慎重使用）</p>
-<p>由于<code>vue inspect</code>命令的输出太太太长了，这里就不贴出来了，但是vue想到了这一点，我们可以指定命令选项来查看我们需要的信息</p>
-<p><code>vue inspect --rule svg </code></p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* config.module.rule(&#x27;svg&#x27;) */</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">test</span>: <span class="regexp">/\.(svg)(\?.*)?$/</span>,</span><br><span class="line">  use: [</span><br><span class="line">    <span class="comment">/* config.module.rule(&#x27;svg&#x27;).use(&#x27;file-loader&#x27;) */</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">loader</span>: <span class="string">&#x27;D:\\Microsoft VS Code\\Repositories\\myrepo\\z-knowledge\\Vue\\project\\study\\node_modules\\file-loader\\dist\\cjs.js&#x27;</span>,</span><br><span class="line">      <span class="attr">options</span>: &#123;</span><br><span class="line">        <span class="attr">name</span>: <span class="string">&#x27;img/[name].[hash:8].[ext]&#x27;</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>我们想要把默认的处理svg的file-loader修改成为<code>svg-sprite-loader</code></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2017/07/13/%E5%A6%82%E4%BD%95%E5%9C%A8vue%E4%B8%AD%E6%9B%BF%E6%8D%A2%E4%BD%BF%E7%94%A8%E9%BB%98%E8%AE%A4%E7%9A%84svg-loader/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2017/05/30/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%8B%E5%8A%A1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="小白">
-      <meta itemprop="description" content="走得很慢，但从未放弃。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小白">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2017/05/30/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%8B%E5%8A%A1/" class="post-title-link" itemprop="url">数据库事务</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2017-05-30 00:00:00" itemprop="dateCreated datePublished" datetime="2017-05-30T00:00:00+08:00">2017-05-30</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Mysql/" itemprop="url" rel="index"><span itemprop="name">Mysql</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>5.8k</span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h3 id="ACID特性"><a href="#ACID特性" class="headerlink" title="ACID特性"></a>ACID特性</h3><p>事务是数据库区别于文件系统的重要特性之一,事务会把数据库从一种一致状态转换为另一种一致状态.在数据库提交工作时，可以确保其要么所有修改都已经保存，要么所有修改都不保存。</p>
-<p>Innodb存储引擎中的事务完全符合ACID的特性：</p>
-<ol>
-<li>原子性（atomicity）：原子性是指整个数据库事务是不可分割的工作单位.只有使事务中所有的数据库操作执行都成功，才算整个事务成功.如果事务中任何一个sql语句执行失败，那么已经执行成功的sql语句也必须撤销,数据库状态应该退回到执行事务前的状态.</li>
-<li>一致性（consistency）：一致性是指事务将数据库从一种状态转变为下一种一致的状态，在事务开始之前和事务结束以后，数据库的完整性约束没有被破坏.</li>
-<li>隔离性（isolation）：一个事务的影响在该事务提交前对其他事务都不可见</li>
-<li>持久性（durability）：事务一旦提交，其结果就是永久性.
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2017/05/30/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%8B%E5%8A%A1/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2017/04/18/Mysql-MHA%E9%AB%98%E5%8F%AF%E7%94%A8%E6%9E%B6%E6%9E%84%E5%8E%9F%E7%90%86%E5%8F%8A%E5%BA%94%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="小白">
-      <meta itemprop="description" content="走得很慢，但从未放弃。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小白">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2017/04/18/Mysql-MHA%E9%AB%98%E5%8F%AF%E7%94%A8%E6%9E%B6%E6%9E%84%E5%8E%9F%E7%90%86%E5%8F%8A%E5%BA%94%E7%94%A8/" class="post-title-link" itemprop="url">Mysql MHA高可用架构原理及应用</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2017-04-18 00:00:00" itemprop="dateCreated datePublished" datetime="2017-04-18T00:00:00+08:00">2017-04-18</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Mysql/" itemprop="url" rel="index"><span itemprop="name">Mysql</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>3.6k</span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>MHA（Master High Availability）目前在MySQL高可用方面是一个相对成熟的解决方案，它由日本DeNA公司youshimaton（现就职于Facebook公司）开发，是一套优秀的作为MySQL高可用性环境下故障切换和主从提升的高可用软件。在MySQL故障切换过程中，MHA能做到在0~30秒之内自动完成数据库的故障切换操作，并且在进行故障切换的过程中，MHA能在最大程度上保证数据的一致性，以达到真正意义上的高可用。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2017/04/18/Mysql-MHA%E9%AB%98%E5%8F%AF%E7%94%A8%E6%9E%B6%E6%9E%84%E5%8E%9F%E7%90%86%E5%8F%8A%E5%BA%94%E7%94%A8/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2017/04/17/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%9F%BA%E4%BA%8EGTID%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="小白">
-      <meta itemprop="description" content="走得很慢，但从未放弃。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小白">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2017/04/17/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%9F%BA%E4%BA%8EGTID%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" class="post-title-link" itemprop="url">Mysql主从复制-基于GTID的主从复制</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2017-04-17 00:00:00" itemprop="dateCreated datePublished" datetime="2017-04-17T00:00:00+08:00">2017-04-17</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Mysql/" itemprop="url" rel="index"><span itemprop="name">Mysql</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>436</span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h3 id="环境介绍"><a href="#环境介绍" class="headerlink" title="环境介绍"></a>环境介绍</h3><table>
-<thead>
-<tr>
-<th>host</th>
-<th>ip</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>master</td>
-<td>10.10.10.100</td>
-</tr>
-<tr>
-<td>slave</td>
-<td>10.10.10.101</td>
-</tr>
-</tbody></table>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2017/04/17/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%9F%BA%E4%BA%8EGTID%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%8D%8A%E5%90%8C%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="小白">
-      <meta itemprop="description" content="走得很慢，但从未放弃。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小白">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%8D%8A%E5%90%8C%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" class="post-title-link" itemprop="url">Mysql主从复制-半同步主从复制</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2017-04-14 00:00:00" itemprop="dateCreated datePublished" datetime="2017-04-14T00:00:00+08:00">2017-04-14</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Mysql/" itemprop="url" rel="index"><span itemprop="name">Mysql</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>286</span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <blockquote>
-<p>半同步复制可以直接在异步复制的基础上完成，参考<a target="_blank" rel="noopener" href="https://www.baihuzi.com/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%BC%82%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">异步主从复制</a></p>
-</blockquote>
-<h3 id="开启半同步主从复制"><a href="#开启半同步主从复制" class="headerlink" title="开启半同步主从复制"></a>开启半同步主从复制</h3><h4 id="先检查是否支持动态安装插件"><a href="#先检查是否支持动态安装插件" class="headerlink" title="先检查是否支持动态安装插件"></a>先检查是否支持动态安装插件</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> @<span class="variable">@have</span>_dynamic_loading</span><br><span class="line">    <span class="operator">-</span><span class="operator">&gt;</span> ;</span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------+</span></span><br><span class="line"><span class="operator">|</span> @<span class="variable">@have</span>_dynamic_loading <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------+</span></span><br><span class="line"><span class="operator">|</span> YES                    <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%8D%8A%E5%90%8C%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%BC%82%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="小白">
-      <meta itemprop="description" content="走得很慢，但从未放弃。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小白">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%BC%82%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" class="post-title-link" itemprop="url">Mysql主从复制-异步主从复制</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2017-04-14 00:00:00" itemprop="dateCreated datePublished" datetime="2017-04-14T00:00:00+08:00">2017-04-14</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Mysql/" itemprop="url" rel="index"><span itemprop="name">Mysql</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>246</span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h3 id="环境介绍"><a href="#环境介绍" class="headerlink" title="环境介绍"></a>环境介绍</h3><table>
-<thead>
-<tr>
-<th>角色</th>
-<th>ip</th>
-<th></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>master</td>
-<td>10.10.10.100</td>
-<td>存在一个test库，里面有张t1表</td>
-</tr>
-<tr>
-<td>slave</td>
-<td>10.10.10.101</td>
-<td>空库</td>
-</tr>
-</tbody></table>
-<h3 id="修改配置文件"><a href="#修改配置文件" class="headerlink" title="修改配置文件"></a>修改配置文件</h3><ul>
-<li>master<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># master</span></span><br><span class="line">[mysqld]</span><br><span class="line">server-id=1003306                     <span class="comment">##server-id要唯一，最好以ip地址和端口号命名</span></span><br><span class="line">log-bin=mysql-bin                     <span class="comment">##开启二进制日志，必须要</span></span><br><span class="line">sync-binlog=1                         <span class="comment">##日志刷新模式，按需修改</span></span><br><span class="line">binlog_format=row                     <span class="comment">##日志格式最好用row，statement可能会有数据丢失</span></span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%BC%82%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2017/04/13/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%A6%82%E8%BF%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="小白">
-      <meta itemprop="description" content="走得很慢，但从未放弃。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小白">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2017/04/13/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%A6%82%E8%BF%B0/" class="post-title-link" itemprop="url">Mysql主从复制概述</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2017-04-13 00:00:00" itemprop="dateCreated datePublished" datetime="2017-04-13T00:00:00+08:00">2017-04-13</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2017-04-23 00:00:00" itemprop="dateModified" datetime="2017-04-23T00:00:00+08:00">2017-04-23</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Mysql/" itemprop="url" rel="index"><span itemprop="name">Mysql</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>2.3k</span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h3 id="MySQL主从复制概述"><a href="#MySQL主从复制概述" class="headerlink" title="MySQL主从复制概述"></a>MySQL主从复制概述</h3><p>复制是mysql数据库提供的一种高可用、高性能的解决方案，一般用来建立大型的应用；</p>
-<p>mysql支持单向，双向，链式级联，异步复制,半同步制(mysql5.5版本之后)，复制过程中,一台服务器当主<code>master</code>，而一个或者多个服务器<code>slave</code>；</p>
-<p>复制可以是单向：<code>M --&gt; S</code>,也可以双向<code>M &lt;--&gt; M</code></p>
-<p>如设置了链式级联复制，那么从服务器本身除了充当<code>slave</code>之外，还是其下面从服务器的主服务器，结构如同<code>M --&gt; S1 --&gt; S2 --&gt; S3</code> 的复制形式</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2017/04/13/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%A6%82%E8%BF%B0/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2017/04/08/Mysql-5-7-%E5%AE%89%E8%A3%85/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -957,9 +272,9 @@
       <meta itemprop="name" content="小白">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2017/04/08/Mysql-5-7-%E5%AE%89%E8%A3%85/" class="post-title-link" itemprop="url">Mysql-5.7 安装</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          Mysql-5.7 安装
+        </h1>
 
         <div class="post-meta-container">
           <div class="post-meta">
@@ -1000,7 +315,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h3 id="安装前说明"><a href="#安装前说明" class="headerlink" title="安装前说明"></a>安装前说明</h3><p>如果机器上已经有了mysql或者MariaDB，先卸载再安装；</p>
+        <h3 id="安装前说明"><a href="#安装前说明" class="headerlink" title="安装前说明"></a>安装前说明</h3><p>如果机器上已经有了mysql或者MariaDB，先卸载再安装；</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@lyucan ~]<span class="comment"># rpm -e mariadb-libs-5.5.41-2.el7_0.x86_64 --nodeps</span></span><br></pre></td></tr></table></figure>
 
 <h3 id="创建mysql用户"><a href="#创建mysql用户" class="headerlink" title="创建mysql用户"></a>创建mysql用户</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@lyucan ~]<span class="comment"># useradd mysql</span></span><br></pre></td></tr></table></figure>
@@ -1032,19 +347,69 @@
 
 <p><img data-src="/images/mysql%E5%AE%89%E8%A3%85.png" alt="mysql安装"></p>
 
-      
     </div>
 
     
     
     
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2017\04\14\Mysql主从复制-半同步主从复制\" rel="bookmark">Mysql主从复制-半同步主从复制</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2017\04\17\Mysql主从复制-基于GTID的主从复制\" rel="bookmark">Mysql主从复制-基于GTID的主从复制</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2017\04\14\Mysql主从复制-异步主从复制\" rel="bookmark">Mysql主从复制-异步主从复制</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2017\04\13\Mysql主从复制概述\" rel="bookmark">Mysql主从复制概述</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2017\04\18\Mysql-MHA高可用架构原理及应用\" rel="bookmark">Mysql MHA高可用架构原理及应用</a></div>
+    </li>
+  </ul>
+
 
     <footer class="post-footer">
-        <div class="post-eof"></div>
-      
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>小白
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://example.com/2017/04/08/Mysql-5-7-%E5%AE%89%E8%A3%85/" title="Mysql-5.7 安装">http://example.com/2017/04/08/Mysql-5-7-安装/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Mysql/" rel="tag"><i class="fa fa-tag"></i> Mysql</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+            </div>
+            <div class="post-nav-item">
+                <a href="/2017/04/13/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%A6%82%E8%BF%B0/" rel="next" title="Mysql主从复制概述">
+                  Mysql主从复制概述 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
     </footer>
   </article>
 </div>
+
 
 
 
