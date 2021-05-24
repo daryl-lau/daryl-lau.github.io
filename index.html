@@ -692,34 +692,14 @@
 <p>使用<code>select ...into outfile</code>备份数据</p>
 <p>语法格式如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select 语句 into outfile BACKFILE  [OPTIONS]</span><br></pre></td></tr></table></figure>
-
-<p>[OPTIONS]</p>
-<ul>
-<li>fields terminated by ‘字符串’ ： 字符串分割符，默认是制表符’\t’</li>
-<li>fileds escaped by ’字符‘ ： 转义字符，默认是’\‘</li>
-<li>fileds [optionally] enclose by 字符’‘： 字段引用符，负责向字段值两端加上字段引用符。如果使用optionally 选项，则表示字符串类型上添加字段分隔符。</li>
-<li>lines starting by ‘字符串’，每条记录前添加该字段。</li>
-<li>lines terminated by ’字符串‘，每条记录后添加该字符串，默认是换行符 ‘\n’</li>
-</ul>
-<p>例如：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test.t1 <span class="keyword">into</span> outfile <span class="string">&#x27;/data/mysql/t1_bak&#x27;</span>;</span><br><span class="line">Query OK, <span class="number">3</span> <span class="keyword">rows</span> affected (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure>
-
-<p>结果会生成在<code>/data/mysql/</code>目录下，对应的数据库目录下面。可以直接使用cat命令查看。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@lyucan ~]# cat /data/mysql/t1_bak</span><br><span class="line">1      张三   12     南京</span><br><span class="line">2      李四   21     北京</span><br><span class="line">3      王五   23     上海</span><br></pre></td></tr></table></figure>
-
-<p>恢复表数据：</p>
-<p>使用<code>load data infile...</code>快速地从一个指定格式的文本文件中读取数据到一个数据库表中。</p>
-<p>语法：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LOAD DATA INFILE &#x27;data.txt&#x27; INTO TABLE db2.my_table;</span><br></pre></td></tr></table></figure>
-
-<p>例如：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">delete</span> <span class="keyword">from</span> test.t1;</span><br><span class="line">Query OK, <span class="number">3</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> LOAD DATA INFILE <span class="string">&#x27;/data/mysql/t1_bak&#x27;</span> <span class="keyword">INTO</span> <span class="keyword">TABLE</span> test.t1;</span><br><span class="line">Query OK, <span class="number">3</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line">Records: <span class="number">3</span>  Deleted: <span class="number">0</span>  Skipped: <span class="number">0</span>  Warnings: <span class="number">0</span></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test.t1;</span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------+-----+--------+</span></span><br><span class="line"><span class="operator">|</span> id <span class="operator">|</span> name   <span class="operator">|</span> age <span class="operator">|</span> addr   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------+-----+--------+</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">1</span> <span class="operator">|</span> 张三   <span class="operator">|</span>  <span class="number">12</span> <span class="operator">|</span> 南京   <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">2</span> <span class="operator">|</span> 李四   <span class="operator">|</span>  <span class="number">21</span> <span class="operator">|</span> 北京   <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">3</span> <span class="operator">|</span> 王五   <span class="operator">|</span>  <span class="number">23</span> <span class="operator">|</span> 上海   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------+-----+--------+</span></span><br><span class="line"><span class="number">3</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>注意：如果导出数据的时候后面使用了分隔符，导入的时候不需要加，还是按照上面的方式导；</p>
-</blockquote>
-<p>更复杂的配置就不写了，没什么必要，还增加大脑的负担。等用到的时候，去网上查找具体的参数即可，我们并不擅长记忆这些并不常用的选项。 一句话概括这种逻辑备份的精要：怎么吃我的，怎么给我吐出来。怎么吐出来来，怎么给我装进去。选用了什么样的分割选项，导入数据的时候就需要使用对应的分割选项去导入数据。 结合我自己平时的工作内容与实践，基本上不使用这种方式导出。反而使用mysqldump 更多一点。</p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2017/04/18/MySQL%E5%A4%87%E4%BB%BD-LOAD-DATA/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 

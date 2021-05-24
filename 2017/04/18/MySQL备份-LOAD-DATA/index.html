@@ -22,12 +22,12 @@
   <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js" integrity="sha256-a5YRB27CcBwBFcT5EF/f3E4vzIqyHrSR878nseNYw64=" crossorigin="anonymous"></script>
 
 <script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;example.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Mist&quot;,&quot;version&quot;:&quot;8.4.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;left&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:true,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;manual&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:true,&quot;lazyload&quot;:true,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:true,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;},&quot;path&quot;:&quot;&#x2F;search.xml&quot;,&quot;localsearch&quot;:{&quot;enable&quot;:true,&quot;trigger&quot;:&quot;auto&quot;,&quot;top_n_per_article&quot;:1,&quot;unescape&quot;:false,&quot;preload&quot;:false}}</script>
-<meta name="description" content="注意，使用load data备份恢复方式，表结构必须存在； 使用select ...into outfile备份数据 语法格式如下： 1select 语句 into outfile BACKFILE  [OPTIONS]  [OPTIONS]  fields terminated by ‘字符串’ ： 字符串分割符，默认是制表符’\t’ fileds escaped by ’字符‘ ： 转义字符，">
+<meta name="description" content="注意，使用load data备份恢复方式，表结构必须存在； 使用select ...into outfile备份数据 语法格式如下： 1select 语句 into outfile BACKFILE  [OPTIONS]">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MySQL备份-LOAD DATA">
 <meta property="og:url" content="http://example.com/2017/04/18/MySQL%E5%A4%87%E4%BB%BD-LOAD-DATA/index.html">
 <meta property="og:site_name" content="小白">
-<meta property="og:description" content="注意，使用load data备份恢复方式，表结构必须存在； 使用select ...into outfile备份数据 语法格式如下： 1select 语句 into outfile BACKFILE  [OPTIONS]  [OPTIONS]  fields terminated by ‘字符串’ ： 字符串分割符，默认是制表符’\t’ fileds escaped by ’字符‘ ： 转义字符，">
+<meta property="og:description" content="注意，使用load data备份恢复方式，表结构必须存在； 使用select ...into outfile备份数据 语法格式如下： 1select 语句 into outfile BACKFILE  [OPTIONS]">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2017-04-17T16:00:00.000Z">
 <meta property="article:modified_time" content="2017-04-17T16:00:00.000Z">
@@ -316,7 +316,7 @@
 <p>使用<code>select ...into outfile</code>备份数据</p>
 <p>语法格式如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select 语句 into outfile BACKFILE  [OPTIONS]</span><br></pre></td></tr></table></figure>
-
+<span id="more"></span>
 <p>[OPTIONS]</p>
 <ul>
 <li>fields terminated by ‘字符串’ ： 字符串分割符，默认是制表符’\t’</li>
@@ -353,10 +353,10 @@
   <div class="popular-posts-header">相关文章</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2018\04\10\MySQL通过二进制日志恢复数据\" rel="bookmark">MySQL通过二进制日志恢复数据</a></div>
+      <div class="popular-posts-title"><a href="\2017\04\08\Mysql-5-7-安装\" rel="bookmark">Mysql-5.7 安装</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2017\04\08\Mysql-5-7-安装\" rel="bookmark">Mysql-5.7 安装</a></div>
+      <div class="popular-posts-title"><a href="\2018\04\10\MySQL通过二进制日志恢复数据\" rel="bookmark">MySQL通过二进制日志恢复数据</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2017\04\14\Mysql主从复制-半同步主从复制\" rel="bookmark">Mysql主从复制-半同步主从复制</a></div>
@@ -365,7 +365,7 @@
       <div class="popular-posts-title"><a href="\2017\04\17\Mysql主从复制-基于GTID的主从复制\" rel="bookmark">Mysql主从复制-基于GTID的主从复制</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2017\04\17\Mysql体系结构\" rel="bookmark">Mysql体系结构</a></div>
+      <div class="popular-posts-title"><a href="\2017\04\13\Mysql主从复制概述\" rel="bookmark">Mysql主从复制概述</a></div>
     </li>
   </ul>
 
