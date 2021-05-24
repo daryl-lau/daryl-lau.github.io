@@ -329,13 +329,10 @@
 <li>未提交读（Read uncommitted）</li>
 <li>提交读（Read committed）</li>
 <li>可重复读（Repeatable read）</li>
-<li>串行化（Serializable）<blockquote>
-<p>mysql默认为<code>repeatable read</code></p>
-</blockquote>
-</li>
+<li>串行化（Serializable）</li>
 </ol>
 <blockquote>
-<p>oracle默认为<code>read committed</code></p>
+<p>mysql默认为<code>repeatable read</code><br>oracle默认为<code>read committed</code></p>
 </blockquote>
 <h4 id="设置隔离级别"><a href="#设置隔离级别" class="headerlink" title="设置隔离级别"></a>设置隔离级别</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SET</span> [<span class="keyword">GLOBAL</span><span class="operator">|</span>SESSION] TRANSACTION ISOLATION LEVEL</span><br><span class="line">&#123;</span><br><span class="line">  READ UNCOMMITTED</span><br><span class="line">  <span class="operator">|</span> READ COMMITTED</span><br><span class="line">  <span class="operator">|</span> REPEATABLE READ</span><br><span class="line">  <span class="operator">|</span> SERIALIZABLE</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
