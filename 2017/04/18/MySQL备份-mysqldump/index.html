@@ -336,7 +336,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --single-transaction</span><br></pre></td></tr></table></figure>
 
 <h3 id="常用选项"><a href="#常用选项" class="headerlink" title="常用选项"></a>常用选项</h3><ul>
-<li>–default-character-set： 设置字符集</li>
+<li>--default-character-set： 设置字符集</li>
 <li>–single-transaction：将导出设置成事务</li>
 <li>–no-data：导出的SQL脚本中，将只包含创建表的create 语句。</li>
 <li>–add-drop-table：导出的脚本中，包含 drop table if exists</li>
@@ -389,12 +389,8 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --delayed-insert</span><br></pre></td></tr></table></figure></li>
 <li><p>–delete-master-logs<br>master备份后删除日志. 这个参数将自动激活–master-data。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --delete-master-logs</span><br></pre></td></tr></table></figure></li>
-<li><p>–disable-keys</p>
-</li>
-</ul>
-<p>对于每个表，用<code>ALTER TABLE tbl_name DISABLE KEYS;</code>和<code>ALTER TABLE tbl_name ENABLE KEYS;</code>语句引用INSERT语句。这样可以更快地导入dump出来的文件，因为它是在插入所有行后创建索引的。该选项只适合MyISAM表，默认为打开状态。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases</span><br></pre></td></tr></table></figure>
-<ul>
+<li><p>–disable-keys<br>对于每个表，用<code>ALTER TABLE tbl_name DISABLE KEYS;</code>和<code>ALTER TABLE tbl_name ENABLE KEYS;</code>语句引用INSERT语句。这样可以更快地导入dump出来的文件，因为它是在插入所有行后创建索引的。该选项只适合MyISAM表，默认为打开状态。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases</span><br></pre></td></tr></table></figure></li>
 <li><p>–dump-slave<br>该选项将导致主的binlog位置和文件名追加到导出数据的文件中。设置为1时，将会以CHANGE MASTER命令输出到数据文件；设置为2时，在命令前增加说明信息。该选项将会打开<code>--lock-all-tables</code>，除非<code>--single-transaction</code>被指定。该选项会自动关闭<code>--lock-tables</code>选项。默认值为0。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --dump-slave=1</span><br><span class="line">mysqldump  -uroot -p --all-databases --dump-slave=2</span><br></pre></td></tr></table></figure></li>
 <li><p>–events, -E<br>导出事件。</p>
