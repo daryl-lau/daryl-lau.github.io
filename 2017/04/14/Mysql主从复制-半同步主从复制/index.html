@@ -329,8 +329,8 @@
 
 <p>将配置写入my.cnf中，避免重启失效</p>
 <ul>
-<li>master<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">rpl_semi_sync_master_enabled=1</span><br><span class="line">rpl_semi_sync_master_timeout=10000        <span class="comment">##配置超时多少毫秒切换到异同步复制</span></span><br></pre></td></tr></table></figure></li>
-<li>slave<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]rpl_semi_sync_slave_enabled=1</span><br></pre></td></tr></table></figure></li>
+<li>master<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">rpl_semi_sync_master_enabled=1</span><br><span class="line">rpl_semi_sync_master_timeout=10000        ##配置超时多少毫秒切换到异同步复制</span><br></pre></td></tr></table></figure></li>
+<li>slave<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]rpl_semi_sync_slave_enabled=1</span><br></pre></td></tr></table></figure></li>
 </ul>
 <h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><p>将 slave 的io thread 停掉，那么将在10秒后切换到异步复制（上面配置文件配置的10秒），也就是插入操作将卡住10秒才插入成功</p>
 <ul>
@@ -356,10 +356,10 @@
       <div class="popular-posts-title"><a href="\2017\04\08\Mysql-5-7-安装\" rel="bookmark">Mysql-5.7 安装</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2017\04\13\Mysql主从复制概述\" rel="bookmark">Mysql主从复制概述</a></div>
+      <div class="popular-posts-title"><a href="\2017\04\17\Mysql主从复制-基于GTID的主从复制\" rel="bookmark">Mysql主从复制-基于GTID的主从复制</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2017\04\17\Mysql主从复制-基于GTID的主从复制\" rel="bookmark">Mysql主从复制-基于GTID的主从复制</a></div>
+      <div class="popular-posts-title"><a href="\2017\04\13\Mysql主从复制概述\" rel="bookmark">Mysql主从复制概述</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2017\04\14\Mysql主从复制-异步主从复制\" rel="bookmark">Mysql主从复制-异步主从复制</a></div>
