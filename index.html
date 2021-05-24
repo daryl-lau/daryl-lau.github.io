@@ -740,13 +740,8 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases  --character-sets-dir=/usr/local/mysql/share/mysql/charsets</span><br></pre></td></tr></table></figure></li>
 <li><p>–comments<br>附加注释信息。默认为打开，可以用–skip-comments取消</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases  (默认记录注释)</span><br><span class="line">mysqldump  -uroot -p --all-databases --skip-comments   (取消注释)</span><br></pre></td></tr></table></figure></li>
-<li><p>–compatible<br>导出的数据将和其它数据库或旧版本的MySQL 相兼容。值可以为ansi、mysql323、mysql40、postgresql、oracle、mssql、db2、maxdb、no_key_options、no_tables_options、no_field_options等，</p>
-</li>
-</ul>
-<p>要使用几个值，用逗号将它们隔开。它并不保证能完全兼容，而是尽量兼容。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --compatible=ansi</span><br></pre></td></tr></table></figure>
-
-<ul>
+<li><p>–compatible<br>导出的数据将和其它数据库或旧版本的MySQL 相兼容。值可以为ansi、mysql323、mysql40、postgresql、oracle、mssql、db2、maxdb、no_key_options、no_tables_options、no_field_options等，<br>要使用几个值，用逗号将它们隔开。它并不保证能完全兼容，而是尽量兼容。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --compatible=ansi</span><br></pre></td></tr></table></figure></li>
 <li><p>–compact<br>导出更少的输出信息(用于调试)。去掉注释和头尾等结构。可以使用选项：<code>--skip-add-drop-table</code>  <code>--skip-add-locks</code> <code>--skip-comments</code> <code>--skip-disable-keys</code></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --compact</span><br></pre></td></tr></table></figure></li>
 <li><p>–complete-insert,  -c<br>使用完整的insert语句(包含列名称)。这么做能提高插入效率，但是可能会受到<code>max_allowed_packet</code>参数的影响而导致插入失败。</p>
