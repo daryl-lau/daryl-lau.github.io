@@ -362,10 +362,8 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --allow-keywords</span><br></pre></td></tr></table></figure></li>
 <li><p>--apply-slave-statements<br>在’CHANGE MASTER’前添加’STOP SLAVE’，并且在导出的最后添加’START SLAVE’。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --apply-slave-statements</span><br></pre></td></tr></table></figure></li>
-</ul>
-<p>–character-sets-dir<br>字符集文件的目录</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases  --character-sets-dir=/usr/local/mysql/share/mysql/charsets</span><br></pre></td></tr></table></figure>
-<ul>
+<li><p>--character-sets-dir<br>字符集文件的目录</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases  --character-sets-dir=/usr/local/mysql/share/mysql/charsets</span><br></pre></td></tr></table></figure></li>
 <li><p>--comments<br>附加注释信息。默认为打开，可以用–skip-comments取消</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases  (默认记录注释)</span><br><span class="line">mysqldump  -uroot -p --all-databases --skip-comments   (取消注释)</span><br></pre></td></tr></table></figure></li>
 <li><p>--compatible<br>导出的数据将和其它数据库或旧版本的MySQL 相兼容。值可以为ansi、mysql323、mysql40、postgresql、oracle、mssql、db2、maxdb、no_key_options、no_tables_options、no_field_options等，<br>要使用几个值，用逗号将它们隔开。它并不保证能完全兼容，而是尽量兼容。</p>
