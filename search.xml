@@ -144,6 +144,49 @@
       </tags>
   </entry>
   <entry>
+    <title>Mysql-5.7 安装</title>
+    <url>/2017/04/08/Mysql-5-7-%E5%AE%89%E8%A3%85/</url>
+    <content><![CDATA[<h3 id="安装前说明"><a href="#安装前说明" class="headerlink" title="安装前说明"></a>安装前说明</h3><p>如果机器上已经有了mysql或者MariaDB，先卸载再安装；</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# rpm -e mariadb-libs-5.5.41-2.el7_0.x86_64 --nodeps</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+
+<h3 id="创建mysql用户"><a href="#创建mysql用户" class="headerlink" title="创建mysql用户"></a>创建mysql用户</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# useradd mysql</span><br></pre></td></tr></table></figure>
+
+<h3 id="下载软件包并解压授权"><a href="#下载软件包并解压授权" class="headerlink" title="下载软件包并解压授权"></a>下载软件包并解压授权</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# wget https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.21-linux-glibc2.12-x86_64.tar.gz</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# tar -xf mysql-5.7.21-linux-glibc2.12-x86_64.tar.gz -C /usr/local/</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# mv /usr/local/mysql-5.7.21-linux-glibc2.12-x86_64/ /usr/local/mysql</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# chown mysql:mysql /usr/local/mysql/</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建数据目录"><a href="#创建数据目录" class="headerlink" title="创建数据目录"></a>创建数据目录</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# mkdir /data/mysql -p</span><br><span class="line">[root@lyucan ~]# chown -R mysql:mysql /data/mysql/</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="创建my-cnf配置文件"><a href="#创建my-cnf配置文件" class="headerlink" title="创建my.cnf配置文件"></a>创建my.cnf配置文件</h3><p>mysql5.7没有默认的my_default.cnf文件，需要自己手动创建，下面这个是一个简单的模板；</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan mysql]# vim /etc/my.cnf</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[client]</span><br><span class="line">port = 3306</span><br><span class="line">socket = /tmp/mysql.sock</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[mysqld]</span><br><span class="line">character_set_server=utf8</span><br><span class="line">init_connect=&#x27;SET NAMES utf8&#x27;</span><br><span class="line">basedir=/usr/local/mysql</span><br><span class="line">datadir=/data/mysql/</span><br><span class="line">socket=/tmp/mysql.sock</span><br><span class="line">log-error=/usr/local/mysql/mysqld.err</span><br><span class="line">pid-file=/usr/local/mysql/mysqld.pid</span><br><span class="line">#不区分大小写</span><br><span class="line">lower_case_table_names = 1</span><br><span class="line">#</span><br><span class="line">sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION</span><br><span class="line">#</span><br><span class="line">max_connections=5000</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">##修改my.cnf权限</span><br><span class="line">[mysql@lyucan ~]$ chown mysql:mysql /etc/my.cnf</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="初始化数据"><a href="#初始化数据" class="headerlink" title="初始化数据"></a>初始化数据</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan bin]# /usr/local/mysql/bin/mysqld --initialize --user=mysql --basedir=/usr/local/mysql --datadir=/data/mysql</span><br><span class="line"></span><br><span class="line">#这条命令没有输出，但是会创建一个临时的root密码，在上面配置文件定义的/usr/local/mysql/mysqld.err文件中，如下所示，临时密码为 5SEAgHPPqK&lt;u</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# cat /usr/local/mysql/mysqld.err</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">2017-04-08T16:39:16.991943Z 0 [Warning] TIMESTAMP with implicit DEFAULT value is deprecated. Please use --explicit_defaults_for_timestamp server option (see documentation for more details).</span><br><span class="line">2017-04-08T16:39:17.284209Z 0 [Warning] InnoDB: New log files created, LSN=45790</span><br><span class="line">2017-04-08T16:39:17.337845Z 0 [Warning] InnoDB: Creating foreign key constraint system tables.</span><br><span class="line">2017-04-08T16:39:17.395477Z 0 [Warning] No existing UUID has been found, so we assume that this is the first time that this server has been started. Generating a new UUID: 61308035-3b4b-11e8-9bb4-da8255dea6c5.</span><br><span class="line">2017-04-08T16:39:17.396765Z 0 [Warning] Gtid table is not ready to be used. Table &#x27;mysql.gtid_executed&#x27; cannot be opened.</span><br><span class="line">2017-04-08T16:39:17.397767Z 1 [Note] A temporary password is generated for root@localhost: 5SEAgHPPqK&lt;u</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>上面的<code>root@localhost: 5SEAgHPPqK&lt;u</code>需要记住，后面需要用到</p>
+</blockquote>
+<h3 id="启动mysql"><a href="#启动mysql" class="headerlink" title="启动mysql"></a>启动mysql</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan support-files]# cd /usr/local/mysql/support-files/</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@lyucan support-files]# ./mysql.server start</span><br><span class="line">Starting MySQL. SUCCESS!</span><br></pre></td></tr></table></figure>
+
+<h3 id="连接mysql"><a href="#连接mysql" class="headerlink" title="连接mysql"></a>连接mysql</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan support-files]# cd /usr/local/mysql/bin/</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@lyucan bin]# ./mysql -uroot -p</span><br><span class="line">Enter password:                 ##这里的密码就是上面的临时root密码 5SEAgHPPqK&lt;u</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Welcome to the MySQL monitor.  Commands end with ; or \g.</span><br><span class="line">Your MySQL connection id is 3</span><br><span class="line">Server version: 5.7.21</span><br><span class="line"></span><br><span class="line">Copyright (c) 2000, 2017, Oracle and/or its affiliates. All rights reserved.</span><br><span class="line"></span><br><span class="line">Oracle is a registered trademark of Oracle Corporation and/or its</span><br><span class="line">affiliates. Other names may be trademarks of their respective</span><br><span class="line">owners.</span><br><span class="line"></span><br><span class="line">Type &#x27;help;&#x27; or &#x27;\h&#x27; for help. Type &#x27;\c&#x27; to clear the current input statement.</span><br><span class="line"></span><br><span class="line">mysql&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="修改root密码"><a href="#修改root密码" class="headerlink" title="修改root密码"></a>修改root密码</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">set</span> password<span class="operator">=</span>password(<span class="string">&#x27;root123&#x27;</span>);</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected, <span class="number">1</span> warning (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<h3 id="安装后操作"><a href="#安装后操作" class="headerlink" title="安装后操作"></a>安装后操作</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#设置开机自启动；</span><br><span class="line"></span><br><span class="line">[root@lyucan bin]# cp -a /usr/local/mysql/support-files/mysql.server /etc/init.d/mysqld</span><br><span class="line">[root@lyucan bin]# chkconfig --add mysqld</span><br><span class="line">[root@lyucan bin]# chkconfig mysqld on</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#当复制到/etc/init.d/mysqld后，可以使用service mysqld start|stop的方式启停；</span><br><span class="line"></span><br><span class="line">[root@lyucan bin]# service mysqld status</span><br><span class="line">SUCCESS! MySQL running (25732)</span><br><span class="line">[root@lyucan bin]# service mysqld stop</span><br><span class="line">Shutting down MySQL.. SUCCESS!</span><br><span class="line">[root@lyucan bin]# service mysqld start</span><br><span class="line">Starting MySQL. SUCCESS!</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#将mysql工具的命令添加到PATH环境变量里面去，使用的时候就不用使用绝对路径；</span><br><span class="line">[root@lyucan bin]# echo &quot;export PATH=$PATH:/usr/local/mysql/bin&quot; &gt;&gt; /etc/profile</span><br><span class="line">[root@lyucan bin]# source /etc/profile</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建远程连接用户"><a href="#创建远程连接用户" class="headerlink" title="创建远程连接用户"></a>创建远程连接用户</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">grant</span> <span class="keyword">all</span> privileges <span class="keyword">on</span> <span class="operator">*</span>.<span class="operator">*</span> <span class="keyword">to</span> <span class="string">&#x27;lyucan&#x27;</span>@<span class="string">&#x27;%&#x27;</span> identified <span class="keyword">by</span> <span class="string">&#x27;echo123.&#x27;</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected, <span class="number">1</span> warning (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> flush privileges;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<h3 id="远程连接检测"><a href="#远程连接检测" class="headerlink" title="远程连接检测"></a>远程连接检测</h3><p>注意放通或关掉防火墙</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# firewall-cmd --permanent --add-service=mysql</span><br><span class="line">success</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# firewall-cmd --reload</span><br><span class="line">success</span><br></pre></td></tr></table></figure>
+
+<p><img data-src="/images/mysql%E5%AE%89%E8%A3%85.png" alt="mysql安装"></p>
+]]></content>
+      <categories>
+        <category>Mysql</category>
+      </categories>
+      <tags>
+        <tag>Mysql</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>MySQL通过二进制日志恢复数据</title>
     <url>/2018/04/10/MySQL%E9%80%9A%E8%BF%87%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%97%A5%E5%BF%97%E6%81%A2%E5%A4%8D%E6%95%B0%E6%8D%AE/</url>
     <content><![CDATA[<h3 id="开启二进制日志"><a href="#开启二进制日志" class="headerlink" title="开启二进制日志"></a>开启二进制日志</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# vim /etc/my.cnf</span><br><span class="line"></span><br><span class="line">[mysqld]</span><br><span class="line">server-id=1</span><br><span class="line">log-bin=mysql-bin</span><br><span class="line">sync-binlog=1</span><br><span class="line">innodb_support_xa=1</span><br><span class="line">binlog_format=statement</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# service mysqld restart</span><br><span class="line">Shutting down MySQL.. SUCCESS!</span><br><span class="line">Starting MySQL.. SUCCESS!</span><br></pre></td></tr></table></figure>
@@ -270,6 +313,44 @@
       </tags>
   </entry>
   <entry>
+    <title>Mysql主从复制-半同步主从复制</title>
+    <url>/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%8D%8A%E5%90%8C%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/</url>
+    <content><![CDATA[<blockquote>
+<p>半同步复制可以直接在异步复制的基础上完成，参考<a href="https://www.baihuzi.com/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%BC%82%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">异步主从复制</a></p>
+</blockquote>
+<h3 id="开启半同步主从复制"><a href="#开启半同步主从复制" class="headerlink" title="开启半同步主从复制"></a>开启半同步主从复制</h3><h4 id="先检查是否支持动态安装插件"><a href="#先检查是否支持动态安装插件" class="headerlink" title="先检查是否支持动态安装插件"></a>先检查是否支持动态安装插件</h4><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> @<span class="variable">@have</span>_dynamic_loading</span><br><span class="line">    <span class="operator">-</span><span class="operator">&gt;</span> ;</span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------+</span></span><br><span class="line"><span class="operator">|</span> @<span class="variable">@have</span>_dynamic_loading <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------+</span></span><br><span class="line"><span class="operator">|</span> YES                    <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<h4 id="查看插件库的路径"><a href="#查看插件库的路径" class="headerlink" title="查看插件库的路径"></a>查看插件库的路径</h4><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> variables <span class="keyword">like</span> <span class="string">&#x27;plugin_dir&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">---------------+------------------------------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name <span class="operator">|</span> <span class="keyword">Value</span>                        <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------+------------------------------+</span></span><br><span class="line"><span class="operator">|</span> plugin_dir    <span class="operator">|</span> <span class="operator">/</span>usr<span class="operator">/</span><span class="keyword">local</span><span class="operator">/</span>mysql<span class="operator">/</span>lib<span class="operator">/</span>plugin<span class="operator">/</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------+------------------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<h4 id="有这个两个表示支持在线安装插件，然后在master和slave上同时安装插件"><a href="#有这个两个表示支持在线安装插件，然后在master和slave上同时安装插件" class="headerlink" title="有这个两个表示支持在线安装插件，然后在master和slave上同时安装插件"></a>有这个两个表示支持在线安装插件，然后在master和slave上同时安装插件</h4><ul>
+<li>master<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"># master</span><br><span class="line">mysql<span class="operator">&gt;</span> install plugin rpl_semi_sync_master SONAME <span class="string">&#x27;semisync_master.so&#x27;</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.10</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> mysql.plugin;</span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------+--------------------+</span></span><br><span class="line"><span class="operator">|</span> name                 <span class="operator">|</span> dl                 <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------+--------------------+</span></span><br><span class="line"><span class="operator">|</span> rpl_semi_sync_master <span class="operator">|</span> semisync_master.so <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------+--------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">set</span> <span class="keyword">global</span> rpl_semi_sync_master_enabled<span class="operator">=</span><span class="number">1</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> status <span class="keyword">like</span> <span class="string">&#x27;%semi_sync%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name                              <span class="operator">|</span> <span class="keyword">Value</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_clients               <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_net_avg_wait_time     <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_net_wait_time         <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_net_waits             <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_no_times              <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_no_tx                 <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_status                <span class="operator">|</span> <span class="keyword">ON</span>    <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_timefunc_failures     <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_tx_avg_wait_time      <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_tx_wait_time          <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_tx_waits              <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_wait_pos_backtraverse <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_wait_sessions         <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_yes_tx                <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------------------------------+-------+</span></span><br><span class="line"><span class="number">14</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>slave<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"># slave</span><br><span class="line">mysql<span class="operator">&gt;</span> install plugin rpl_semi_sync_slave SONAME <span class="string">&#x27;semisync_slave.so&#x27;</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.02</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> mysql.plugin;</span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------+-------------------+</span></span><br><span class="line"><span class="operator">|</span> name                <span class="operator">|</span> dl                <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------+-------------------+</span></span><br><span class="line"><span class="operator">|</span> rpl_semi_sync_slave <span class="operator">|</span> semisync_slave.so <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------+-------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">set</span> <span class="keyword">global</span> rpl_semi_sync_slave_enabled<span class="operator">=</span><span class="number">1</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> status <span class="keyword">like</span> <span class="string">&#x27;%semi_sync%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name              <span class="operator">|</span> <span class="keyword">Value</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_slave_status <span class="operator">|</span> OFF   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">## 开启了半同步，为什么还是off呢，是由于我们之前slave是在运行状态，将其重启下就可以了！</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> stop slave;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">start</span> slave;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.01</span> sec)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> status <span class="keyword">like</span> <span class="string">&#x27;%semi_sync%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name              <span class="operator">|</span> <span class="keyword">Value</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_slave_status <span class="operator">|</span> <span class="keyword">ON</span>    <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>查看master上的状态</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> status <span class="keyword">like</span> <span class="string">&#x27;%semi%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name                              <span class="operator">|</span> <span class="keyword">Value</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_clients               <span class="operator">|</span> <span class="number">1</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_net_avg_wait_time     <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> net_wait_time         <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_net_waits             <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_no_times              <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_no_tx                 <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_status                <span class="operator">|</span> <span class="keyword">ON</span>    <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_timefunc_failures     <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_tx_avg_wait_time      <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_tx_wait_time          <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_tx_waits              <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_wait_pos_backtraverse <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_wait_sessions         <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_yes_tx                <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------------------------------+-------+</span></span><br><span class="line"><span class="number">14</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">#Rpl_semi_sync_master_clients 表示有几台slave连接到了这台master上，有几台，数字就是几；</span><br></pre></td></tr></table></figure>
+
+<p>将配置写入my.cnf中，避免重启失效</p>
+<ul>
+<li>master<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">rpl_semi_sync_master_enabled=1</span><br><span class="line">rpl_semi_sync_master_timeout=10000        ##配置超时多少毫秒切换到异同步复制</span><br></pre></td></tr></table></figure></li>
+<li>slave<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[mysqld]rpl_semi_sync_slave_enabled=1</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><p>将 slave 的io thread 停掉，那么将在10秒后切换到异步复制（上面配置文件配置的10秒），也就是插入操作将卡住10秒才插入成功</p>
+<ul>
+<li><p>slave</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"># slavemysql<span class="operator">&gt;</span> stop slave io_thread;Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected, <span class="number">1</span> warning (<span class="number">0.00</span> sec)mysql<span class="operator">&gt;</span> <span class="keyword">show</span> warnings;<span class="operator">+</span><span class="comment">-------+------+-----------------------------------------------------------+| Level | Code | Message                                                   |+-------+------+-----------------------------------------------------------+| Note  | 3084 | Replication thread(s) for channel &#x27;&#x27; are already stopped. |+-------+------+-----------------------------------------------------------+1 row in set (0.00 sec)</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> status <span class="keyword">like</span> <span class="string">&#x27;%semi%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name              <span class="operator">|</span> <span class="keyword">Value</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_slave_status <span class="operator">|</span> OFF   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li><p>slave</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"># master</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">insert</span> <span class="keyword">into</span> t1 <span class="keyword">values</span>(<span class="number">17</span>);</span><br><span class="line">Query OK, <span class="number">1</span> <span class="type">row</span> affected (<span class="number">10.01</span> sec)           ##可以看到花了<span class="number">10</span>秒才插入成功，此时就切换到了异步复制</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>切换到异步复制后，系统不会自动切回半同步，需要手动切，切得方式很简单，就是<code>stop slave</code>；<code>start slave</code>；</p>
+]]></content>
+      <categories>
+        <category>Mysql</category>
+      </categories>
+      <tags>
+        <tag>Mysql</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Mysql主从复制-基于GTID的主从复制</title>
     <url>/2017/04/17/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%9F%BA%E4%BA%8EGTID%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/</url>
     <content><![CDATA[<h3 id="环境介绍"><a href="#环境介绍" class="headerlink" title="环境介绍"></a>环境介绍</h3><table>
@@ -337,49 +418,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Mysql-5.7 安装</title>
-    <url>/2017/04/08/Mysql-5-7-%E5%AE%89%E8%A3%85/</url>
-    <content><![CDATA[<h3 id="安装前说明"><a href="#安装前说明" class="headerlink" title="安装前说明"></a>安装前说明</h3><p>如果机器上已经有了mysql或者MariaDB，先卸载再安装；</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# rpm -e mariadb-libs-5.5.41-2.el7_0.x86_64 --nodeps</span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-
-<h3 id="创建mysql用户"><a href="#创建mysql用户" class="headerlink" title="创建mysql用户"></a>创建mysql用户</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# useradd mysql</span><br></pre></td></tr></table></figure>
-
-<h3 id="下载软件包并解压授权"><a href="#下载软件包并解压授权" class="headerlink" title="下载软件包并解压授权"></a>下载软件包并解压授权</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# wget https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.21-linux-glibc2.12-x86_64.tar.gz</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# tar -xf mysql-5.7.21-linux-glibc2.12-x86_64.tar.gz -C /usr/local/</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# mv /usr/local/mysql-5.7.21-linux-glibc2.12-x86_64/ /usr/local/mysql</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# chown mysql:mysql /usr/local/mysql/</span><br></pre></td></tr></table></figure>
-
-<h3 id="创建数据目录"><a href="#创建数据目录" class="headerlink" title="创建数据目录"></a>创建数据目录</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# mkdir /data/mysql -p</span><br><span class="line">[root@lyucan ~]# chown -R mysql:mysql /data/mysql/</span><br></pre></td></tr></table></figure>
-
-
-<h3 id="创建my-cnf配置文件"><a href="#创建my-cnf配置文件" class="headerlink" title="创建my.cnf配置文件"></a>创建my.cnf配置文件</h3><p>mysql5.7没有默认的my_default.cnf文件，需要自己手动创建，下面这个是一个简单的模板；</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan mysql]# vim /etc/my.cnf</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[client]</span><br><span class="line">port = 3306</span><br><span class="line">socket = /tmp/mysql.sock</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[mysqld]</span><br><span class="line">character_set_server=utf8</span><br><span class="line">init_connect=&#x27;SET NAMES utf8&#x27;</span><br><span class="line">basedir=/usr/local/mysql</span><br><span class="line">datadir=/data/mysql/</span><br><span class="line">socket=/tmp/mysql.sock</span><br><span class="line">log-error=/usr/local/mysql/mysqld.err</span><br><span class="line">pid-file=/usr/local/mysql/mysqld.pid</span><br><span class="line">#不区分大小写</span><br><span class="line">lower_case_table_names = 1</span><br><span class="line">#</span><br><span class="line">sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION</span><br><span class="line">#</span><br><span class="line">max_connections=5000</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">##修改my.cnf权限</span><br><span class="line">[mysql@lyucan ~]$ chown mysql:mysql /etc/my.cnf</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h3 id="初始化数据"><a href="#初始化数据" class="headerlink" title="初始化数据"></a>初始化数据</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan bin]# /usr/local/mysql/bin/mysqld --initialize --user=mysql --basedir=/usr/local/mysql --datadir=/data/mysql</span><br><span class="line"></span><br><span class="line">#这条命令没有输出，但是会创建一个临时的root密码，在上面配置文件定义的/usr/local/mysql/mysqld.err文件中，如下所示，临时密码为 5SEAgHPPqK&lt;u</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# cat /usr/local/mysql/mysqld.err</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">2017-04-08T16:39:16.991943Z 0 [Warning] TIMESTAMP with implicit DEFAULT value is deprecated. Please use --explicit_defaults_for_timestamp server option (see documentation for more details).</span><br><span class="line">2017-04-08T16:39:17.284209Z 0 [Warning] InnoDB: New log files created, LSN=45790</span><br><span class="line">2017-04-08T16:39:17.337845Z 0 [Warning] InnoDB: Creating foreign key constraint system tables.</span><br><span class="line">2017-04-08T16:39:17.395477Z 0 [Warning] No existing UUID has been found, so we assume that this is the first time that this server has been started. Generating a new UUID: 61308035-3b4b-11e8-9bb4-da8255dea6c5.</span><br><span class="line">2017-04-08T16:39:17.396765Z 0 [Warning] Gtid table is not ready to be used. Table &#x27;mysql.gtid_executed&#x27; cannot be opened.</span><br><span class="line">2017-04-08T16:39:17.397767Z 1 [Note] A temporary password is generated for root@localhost: 5SEAgHPPqK&lt;u</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>上面的<code>root@localhost: 5SEAgHPPqK&lt;u</code>需要记住，后面需要用到</p>
-</blockquote>
-<h3 id="启动mysql"><a href="#启动mysql" class="headerlink" title="启动mysql"></a>启动mysql</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan support-files]# cd /usr/local/mysql/support-files/</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@lyucan support-files]# ./mysql.server start</span><br><span class="line">Starting MySQL. SUCCESS!</span><br></pre></td></tr></table></figure>
-
-<h3 id="连接mysql"><a href="#连接mysql" class="headerlink" title="连接mysql"></a>连接mysql</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan support-files]# cd /usr/local/mysql/bin/</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@lyucan bin]# ./mysql -uroot -p</span><br><span class="line">Enter password:                 ##这里的密码就是上面的临时root密码 5SEAgHPPqK&lt;u</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Welcome to the MySQL monitor.  Commands end with ; or \g.</span><br><span class="line">Your MySQL connection id is 3</span><br><span class="line">Server version: 5.7.21</span><br><span class="line"></span><br><span class="line">Copyright (c) 2000, 2017, Oracle and/or its affiliates. All rights reserved.</span><br><span class="line"></span><br><span class="line">Oracle is a registered trademark of Oracle Corporation and/or its</span><br><span class="line">affiliates. Other names may be trademarks of their respective</span><br><span class="line">owners.</span><br><span class="line"></span><br><span class="line">Type &#x27;help;&#x27; or &#x27;\h&#x27; for help. Type &#x27;\c&#x27; to clear the current input statement.</span><br><span class="line"></span><br><span class="line">mysql&gt;</span><br></pre></td></tr></table></figure>
-
-<h3 id="修改root密码"><a href="#修改root密码" class="headerlink" title="修改root密码"></a>修改root密码</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">set</span> password<span class="operator">=</span>password(<span class="string">&#x27;root123&#x27;</span>);</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected, <span class="number">1</span> warning (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
-
-<h3 id="安装后操作"><a href="#安装后操作" class="headerlink" title="安装后操作"></a>安装后操作</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#设置开机自启动；</span><br><span class="line"></span><br><span class="line">[root@lyucan bin]# cp -a /usr/local/mysql/support-files/mysql.server /etc/init.d/mysqld</span><br><span class="line">[root@lyucan bin]# chkconfig --add mysqld</span><br><span class="line">[root@lyucan bin]# chkconfig mysqld on</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#当复制到/etc/init.d/mysqld后，可以使用service mysqld start|stop的方式启停；</span><br><span class="line"></span><br><span class="line">[root@lyucan bin]# service mysqld status</span><br><span class="line">SUCCESS! MySQL running (25732)</span><br><span class="line">[root@lyucan bin]# service mysqld stop</span><br><span class="line">Shutting down MySQL.. SUCCESS!</span><br><span class="line">[root@lyucan bin]# service mysqld start</span><br><span class="line">Starting MySQL. SUCCESS!</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#将mysql工具的命令添加到PATH环境变量里面去，使用的时候就不用使用绝对路径；</span><br><span class="line">[root@lyucan bin]# echo &quot;export PATH=$PATH:/usr/local/mysql/bin&quot; &gt;&gt; /etc/profile</span><br><span class="line">[root@lyucan bin]# source /etc/profile</span><br></pre></td></tr></table></figure>
-
-<h3 id="创建远程连接用户"><a href="#创建远程连接用户" class="headerlink" title="创建远程连接用户"></a>创建远程连接用户</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">grant</span> <span class="keyword">all</span> privileges <span class="keyword">on</span> <span class="operator">*</span>.<span class="operator">*</span> <span class="keyword">to</span> <span class="string">&#x27;lyucan&#x27;</span>@<span class="string">&#x27;%&#x27;</span> identified <span class="keyword">by</span> <span class="string">&#x27;echo123.&#x27;</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected, <span class="number">1</span> warning (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> flush privileges;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
-
-<h3 id="远程连接检测"><a href="#远程连接检测" class="headerlink" title="远程连接检测"></a>远程连接检测</h3><p>注意放通或关掉防火墙</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# firewall-cmd --permanent --add-service=mysql</span><br><span class="line">success</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# firewall-cmd --reload</span><br><span class="line">success</span><br></pre></td></tr></table></figure>
-
-<p><img data-src="/images/mysql%E5%AE%89%E8%A3%85.png" alt="mysql安装"></p>
-]]></content>
-      <categories>
-        <category>Mysql</category>
-      </categories>
-      <tags>
-        <tag>Mysql</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Mysql主从复制-异步主从复制</title>
     <url>/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%BC%82%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/</url>
     <content><![CDATA[<h3 id="环境介绍"><a href="#环境介绍" class="headerlink" title="环境介绍"></a>环境介绍</h3><table>
@@ -425,44 +463,6 @@
 <blockquote>
 <p>使用<code>reset slave all</code>可以清空主从配置；</p>
 </blockquote>
-]]></content>
-      <categories>
-        <category>Mysql</category>
-      </categories>
-      <tags>
-        <tag>Mysql</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Mysql主从复制-半同步主从复制</title>
-    <url>/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%8D%8A%E5%90%8C%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/</url>
-    <content><![CDATA[<blockquote>
-<p>半同步复制可以直接在异步复制的基础上完成，参考<a href="https://www.baihuzi.com/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%BC%82%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">异步主从复制</a></p>
-</blockquote>
-<h3 id="开启半同步主从复制"><a href="#开启半同步主从复制" class="headerlink" title="开启半同步主从复制"></a>开启半同步主从复制</h3><h4 id="先检查是否支持动态安装插件"><a href="#先检查是否支持动态安装插件" class="headerlink" title="先检查是否支持动态安装插件"></a>先检查是否支持动态安装插件</h4><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> @<span class="variable">@have</span>_dynamic_loading</span><br><span class="line">    <span class="operator">-</span><span class="operator">&gt;</span> ;</span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------+</span></span><br><span class="line"><span class="operator">|</span> @<span class="variable">@have</span>_dynamic_loading <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------+</span></span><br><span class="line"><span class="operator">|</span> YES                    <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-<h4 id="查看插件库的路径"><a href="#查看插件库的路径" class="headerlink" title="查看插件库的路径"></a>查看插件库的路径</h4><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> variables <span class="keyword">like</span> <span class="string">&#x27;plugin_dir&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">---------------+------------------------------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name <span class="operator">|</span> <span class="keyword">Value</span>                        <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------+------------------------------+</span></span><br><span class="line"><span class="operator">|</span> plugin_dir    <span class="operator">|</span> <span class="operator">/</span>usr<span class="operator">/</span><span class="keyword">local</span><span class="operator">/</span>mysql<span class="operator">/</span>lib<span class="operator">/</span>plugin<span class="operator">/</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------+------------------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
-
-<h4 id="有这个两个表示支持在线安装插件，然后在master和slave上同时安装插件"><a href="#有这个两个表示支持在线安装插件，然后在master和slave上同时安装插件" class="headerlink" title="有这个两个表示支持在线安装插件，然后在master和slave上同时安装插件"></a>有这个两个表示支持在线安装插件，然后在master和slave上同时安装插件</h4><ul>
-<li>master<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"># master</span><br><span class="line">mysql<span class="operator">&gt;</span> install plugin rpl_semi_sync_master SONAME <span class="string">&#x27;semisync_master.so&#x27;</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.10</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> mysql.plugin;</span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------+--------------------+</span></span><br><span class="line"><span class="operator">|</span> name                 <span class="operator">|</span> dl                 <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------+--------------------+</span></span><br><span class="line"><span class="operator">|</span> rpl_semi_sync_master <span class="operator">|</span> semisync_master.so <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------+--------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">set</span> <span class="keyword">global</span> rpl_semi_sync_master_enabled<span class="operator">=</span><span class="number">1</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> status <span class="keyword">like</span> <span class="string">&#x27;%semi_sync%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name                              <span class="operator">|</span> <span class="keyword">Value</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_clients               <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_net_avg_wait_time     <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_net_wait_time         <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_net_waits             <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_no_times              <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_no_tx                 <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_status                <span class="operator">|</span> <span class="keyword">ON</span>    <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_timefunc_failures     <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_tx_avg_wait_time      <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_tx_wait_time          <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_tx_waits              <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_wait_pos_backtraverse <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_wait_sessions         <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_yes_tx                <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------------------------------+-------+</span></span><br><span class="line"><span class="number">14</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure></li>
-<li>slave<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"># slave</span><br><span class="line">mysql<span class="operator">&gt;</span> install plugin rpl_semi_sync_slave SONAME <span class="string">&#x27;semisync_slave.so&#x27;</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.02</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> mysql.plugin;</span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------+-------------------+</span></span><br><span class="line"><span class="operator">|</span> name                <span class="operator">|</span> dl                <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------+-------------------+</span></span><br><span class="line"><span class="operator">|</span> rpl_semi_sync_slave <span class="operator">|</span> semisync_slave.so <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------+-------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">set</span> <span class="keyword">global</span> rpl_semi_sync_slave_enabled<span class="operator">=</span><span class="number">1</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> status <span class="keyword">like</span> <span class="string">&#x27;%semi_sync%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name              <span class="operator">|</span> <span class="keyword">Value</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_slave_status <span class="operator">|</span> OFF   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">## 开启了半同步，为什么还是off呢，是由于我们之前slave是在运行状态，将其重启下就可以了！</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> stop slave;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">start</span> slave;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.01</span> sec)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> status <span class="keyword">like</span> <span class="string">&#x27;%semi_sync%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name              <span class="operator">|</span> <span class="keyword">Value</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_slave_status <span class="operator">|</span> <span class="keyword">ON</span>    <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure></li>
-</ul>
-<p>查看master上的状态</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> status <span class="keyword">like</span> <span class="string">&#x27;%semi%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name                              <span class="operator">|</span> <span class="keyword">Value</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_clients               <span class="operator">|</span> <span class="number">1</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_net_avg_wait_time     <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> net_wait_time         <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_net_waits             <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_no_times              <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_no_tx                 <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_status                <span class="operator">|</span> <span class="keyword">ON</span>    <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_timefunc_failures     <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_tx_avg_wait_time      <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_tx_wait_time          <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_tx_waits              <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_wait_pos_backtraverse <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_wait_sessions         <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_yes_tx                <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------------------------------+-------+</span></span><br><span class="line"><span class="number">14</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">#Rpl_semi_sync_master_clients 表示有几台slave连接到了这台master上，有几台，数字就是几；</span><br></pre></td></tr></table></figure>
-
-<p>将配置写入my.cnf中，避免重启失效</p>
-<ul>
-<li>master<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">rpl_semi_sync_master_enabled=1</span><br><span class="line">rpl_semi_sync_master_timeout=10000        ##配置超时多少毫秒切换到异同步复制</span><br></pre></td></tr></table></figure></li>
-<li>slave<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[mysqld]rpl_semi_sync_slave_enabled=1</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><p>将 slave 的io thread 停掉，那么将在10秒后切换到异步复制（上面配置文件配置的10秒），也就是插入操作将卡住10秒才插入成功</p>
-<ul>
-<li><p>slave</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"># slavemysql<span class="operator">&gt;</span> stop slave io_thread;Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected, <span class="number">1</span> warning (<span class="number">0.00</span> sec)mysql<span class="operator">&gt;</span> <span class="keyword">show</span> warnings;<span class="operator">+</span><span class="comment">-------+------+-----------------------------------------------------------+| Level | Code | Message                                                   |+-------+------+-----------------------------------------------------------+| Note  | 3084 | Replication thread(s) for channel &#x27;&#x27; are already stopped. |+-------+------+-----------------------------------------------------------+1 row in set (0.00 sec)</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> status <span class="keyword">like</span> <span class="string">&#x27;%semi%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name              <span class="operator">|</span> <span class="keyword">Value</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_slave_status <span class="operator">|</span> OFF   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
-<li><p>slave</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"># master</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">insert</span> <span class="keyword">into</span> t1 <span class="keyword">values</span>(<span class="number">17</span>);</span><br><span class="line">Query OK, <span class="number">1</span> <span class="type">row</span> affected (<span class="number">10.01</span> sec)           ##可以看到花了<span class="number">10</span>秒才插入成功，此时就切换到了异步复制</span><br></pre></td></tr></table></figure></li>
-</ul>
-<p>切换到异步复制后，系统不会自动切回半同步，需要手动切，切得方式很简单，就是<code>stop slave</code>；<code>start slave</code>；</p>
 ]]></content>
       <categories>
         <category>Mysql</category>
@@ -611,6 +611,38 @@
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#停掉当前库</span><br><span class="line">[root@lyucan xtrabackup]# service mysqld stop</span><br><span class="line">Shutting down MySQL.... SUCCESS!</span><br><span class="line"></span><br><span class="line">#将当前库重命名</span><br><span class="line">[root@lyucan data]# mv /data/mysql/  /data/mysql_bak_20180410</span><br><span class="line"></span><br><span class="line">#将备份库重命名为mysql</span><br><span class="line">[root@lyucan data]# mv /data/xtrabackup/all-20180410-bak/  /data/mysql</span><br><span class="line"></span><br><span class="line">#修改权限</span><br><span class="line">[root@lyucan data]# chown mysql:mysql -R /data/mysql/</span><br><span class="line"></span><br><span class="line">#启动数据库</span><br><span class="line">[root@lyucan data]# service mysqld start</span><br><span class="line">Starting MySQL.. SUCCESS!</span><br></pre></td></tr></table></figure>
 <p><strong>还是那句话，如果要进行完全数据恢复，还需要结合二进制日志进行数据恢复；</strong></p>
 <p><strong>很简单，根据备份里面记录的xtrabackup_binlog_info，进行原库二进制日志的恢复；</strong></p>
+]]></content>
+      <categories>
+        <category>Mysql</category>
+      </categories>
+      <tags>
+        <tag>xtrabackup</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>xtrabackup备份原理</title>
+    <url>/2017/04/12/xtrabackup%E5%A4%87%E4%BB%BD%E5%8E%9F%E7%90%86/</url>
+    <content><![CDATA[<h3 id="xtrabackup备份原理"><a href="#xtrabackup备份原理" class="headerlink" title="xtrabackup备份原理"></a>xtrabackup备份原理</h3><p>流程图</p>
+<p><img data-src="/images/PXB-backup-procedure.png" alt="PXB-backup-procedure.png"></p>
+<span id="more"></span>
+<p><code>xtrabackup</code>是用来备份<code>InnoDB</code>表的，不能备份非<code>InnoDB</code>表，和<code>mysqld server</code>没有交互；</p>
+<p><code>innobackupex</code>脚本用来备份非 <code>InnoDB</code>表，同时会调用<code>xtrabackup</code>命令来备份<code>InnoDB</code>表，还会和<code>mysqld server</code>发送命令进行交互，如加读锁（FTWRL）、获取位点（SHOW SLAVE STATUS）等。</p>
+<p>简单来说，<code>innobackupex</code>在<code>xtrabackup</code>之上做了一层封装。一般情况下，我们是希望能备份<code>MyISAM</code>表的，虽然我们可能自己不用<code>MyISAM</code>表，但是<code>mysql</code>库下的系统表是 MyISAM 的，因此备份基本都通过innobackupex命令进行；另外一个原因是我们可能需要保存位点信息。</p>
+<h4 id="备份过程"><a href="#备份过程" class="headerlink" title="备份过程"></a>备份过程</h4><ol>
+<li>innobackupex 在启动后，会先 fork 一个进程，启动 xtrabackup进程，然后就等待 xtrabackup 备份完 ibd 数据文件；</li>
+<li>xtrabackup 在备份 InnoDB 相关数据时，是有2种线程的，1种是 redo 拷贝线程，负责拷贝 redo 文件，1种是 ibd 拷贝线程，负责拷贝 ibd 文件；redo 拷贝线程只有一个，在 ibd 拷贝线程之前启动，在 ibd 线程结束后结束（并不是马上结束，而是等到非innodb存储引擎表备份完再结束，这里强调的是先后顺序）。</li>
+<li>xtrabackup 进程开始执行后，先启动 redo 拷贝线程，从最新的 checkpoint 点开始顺序拷贝 redo 日志；然后再启动 ibd 数据拷贝线程，在 xtrabackup 拷贝 ibd 过程中，innobackupex 进程一直处于等待状态（等待文件被创建）。</li>
+<li>xtrabackup 拷贝完成idb后，通知 innobackupex（通过创建文件），同时自己进入等待（redo 线程仍然继续拷贝）;</li>
+<li>innobackupex 收到 xtrabackup 通知后，执行FLUSH TABLES WITH READ LOCK (FTWRL)，取得一致性位点，然后开始备份非 InnoDB 文件（包括 frm、MYD、MYI、CSV、opt、par等）。拷贝非 InnoDB 文件过程中，因为数据库处于全局只读状态，如果在业务的主库备份的话，要特别小心，非 InnoDB 表（主要是MyISAM）比较多的话整库只读时间就会比较长，这个影响一定要评估到。</li>
+<li>当 innobackupex 拷贝完所有非 InnoDB 表文件后，通知 xtrabackup（通过删文件） ，同时自己进入等待（等待另一个文件被创建）；xtrabackup 收到 innobackupex 备份完非 InnoDB 通知后，就停止 redo 拷贝线程，然后通知 innobackupex redo log 拷贝完成（通过创建文件）；</li>
+<li>innobackupex 收到 redo 备份完成通知后，就开始解锁，执行 UNLOCK TABLES；</li>
+<li>最后 innobackupex 和 xtrabackup 进程各自完成收尾工作，如资源的释放、写备份元数据信息等，innobackupex 等待 xtrabackup 子进程结束后退出。</li>
+</ol>
+<h4 id="恢复过程"><a href="#恢复过程" class="headerlink" title="恢复过程"></a>恢复过程</h4><p>如果看恢复备份集的日志，会发现和 mysqld 启动时非常相似，其实备份集的恢复就是类似 mysqld crash后，做一次 crash recover。</p>
+<p>恢复的目的是把备份集中的数据恢复到一个一致性位点，所谓一致就是指原数据库某一时间点各引擎数据的状态，比如 MyISAM 中的数据对应的是 15:00 时间点的，InnoDB 中的数据对应的是 15:20 的，这种状态的数据就是不一致的。PXB 备份集对应的一致点，就是备份时FTWRL的时间点，恢复出来的数据，就对应原数据库FTWRL时的状态。</p>
+<p>因为备份时 FTWRL 后，数据库是处于只读的，非 InnoDB 数据是在持有全局读锁情况下拷贝的，所以非 InnoDB 数据本身就对应 FTWRL 时间点；InnoDB 的 ibd 文件拷贝是在 FTWRL 前做的，拷贝出来的不同 ibd 文件最后更新时间点是不一样的，这种状态的 ibd 文件是不能直接用的，但是 redo log 是从备份开始一直持续拷贝的，最后的 redo 日志点是在持有 FTWRL 后取得的，所以最终通过 redo 应用后的 ibd 数据时间点也是和 FTWRL 一致的。</p>
+<p>所以恢复过程只涉及 InnoDB 文件的恢复，非 InnoDB 数据是不动的。备份恢复完成后，就可以把数据文件拷贝到对应的目录，然后通过mysqld来启动了。</p>
+<p>备份过程中产生的事务会被备份出来，提交了的前滚，未提交的回滚，保持数据的一致性；</p>
 ]]></content>
       <categories>
         <category>Mysql</category>
@@ -1051,38 +1083,6 @@
       </tags>
   </entry>
   <entry>
-    <title>xtrabackup备份原理</title>
-    <url>/2017/04/12/xtrabackup%E5%A4%87%E4%BB%BD%E5%8E%9F%E7%90%86/</url>
-    <content><![CDATA[<h3 id="xtrabackup备份原理"><a href="#xtrabackup备份原理" class="headerlink" title="xtrabackup备份原理"></a>xtrabackup备份原理</h3><p>流程图</p>
-<p><img data-src="/images/PXB-backup-procedure.png" alt="PXB-backup-procedure.png"></p>
-<span id="more"></span>
-<p><code>xtrabackup</code>是用来备份<code>InnoDB</code>表的，不能备份非<code>InnoDB</code>表，和<code>mysqld server</code>没有交互；</p>
-<p><code>innobackupex</code>脚本用来备份非 <code>InnoDB</code>表，同时会调用<code>xtrabackup</code>命令来备份<code>InnoDB</code>表，还会和<code>mysqld server</code>发送命令进行交互，如加读锁（FTWRL）、获取位点（SHOW SLAVE STATUS）等。</p>
-<p>简单来说，<code>innobackupex</code>在<code>xtrabackup</code>之上做了一层封装。一般情况下，我们是希望能备份<code>MyISAM</code>表的，虽然我们可能自己不用<code>MyISAM</code>表，但是<code>mysql</code>库下的系统表是 MyISAM 的，因此备份基本都通过innobackupex命令进行；另外一个原因是我们可能需要保存位点信息。</p>
-<h4 id="备份过程"><a href="#备份过程" class="headerlink" title="备份过程"></a>备份过程</h4><ol>
-<li>innobackupex 在启动后，会先 fork 一个进程，启动 xtrabackup进程，然后就等待 xtrabackup 备份完 ibd 数据文件；</li>
-<li>xtrabackup 在备份 InnoDB 相关数据时，是有2种线程的，1种是 redo 拷贝线程，负责拷贝 redo 文件，1种是 ibd 拷贝线程，负责拷贝 ibd 文件；redo 拷贝线程只有一个，在 ibd 拷贝线程之前启动，在 ibd 线程结束后结束（并不是马上结束，而是等到非innodb存储引擎表备份完再结束，这里强调的是先后顺序）。</li>
-<li>xtrabackup 进程开始执行后，先启动 redo 拷贝线程，从最新的 checkpoint 点开始顺序拷贝 redo 日志；然后再启动 ibd 数据拷贝线程，在 xtrabackup 拷贝 ibd 过程中，innobackupex 进程一直处于等待状态（等待文件被创建）。</li>
-<li>xtrabackup 拷贝完成idb后，通知 innobackupex（通过创建文件），同时自己进入等待（redo 线程仍然继续拷贝）;</li>
-<li>innobackupex 收到 xtrabackup 通知后，执行FLUSH TABLES WITH READ LOCK (FTWRL)，取得一致性位点，然后开始备份非 InnoDB 文件（包括 frm、MYD、MYI、CSV、opt、par等）。拷贝非 InnoDB 文件过程中，因为数据库处于全局只读状态，如果在业务的主库备份的话，要特别小心，非 InnoDB 表（主要是MyISAM）比较多的话整库只读时间就会比较长，这个影响一定要评估到。</li>
-<li>当 innobackupex 拷贝完所有非 InnoDB 表文件后，通知 xtrabackup（通过删文件） ，同时自己进入等待（等待另一个文件被创建）；xtrabackup 收到 innobackupex 备份完非 InnoDB 通知后，就停止 redo 拷贝线程，然后通知 innobackupex redo log 拷贝完成（通过创建文件）；</li>
-<li>innobackupex 收到 redo 备份完成通知后，就开始解锁，执行 UNLOCK TABLES；</li>
-<li>最后 innobackupex 和 xtrabackup 进程各自完成收尾工作，如资源的释放、写备份元数据信息等，innobackupex 等待 xtrabackup 子进程结束后退出。</li>
-</ol>
-<h4 id="恢复过程"><a href="#恢复过程" class="headerlink" title="恢复过程"></a>恢复过程</h4><p>如果看恢复备份集的日志，会发现和 mysqld 启动时非常相似，其实备份集的恢复就是类似 mysqld crash后，做一次 crash recover。</p>
-<p>恢复的目的是把备份集中的数据恢复到一个一致性位点，所谓一致就是指原数据库某一时间点各引擎数据的状态，比如 MyISAM 中的数据对应的是 15:00 时间点的，InnoDB 中的数据对应的是 15:20 的，这种状态的数据就是不一致的。PXB 备份集对应的一致点，就是备份时FTWRL的时间点，恢复出来的数据，就对应原数据库FTWRL时的状态。</p>
-<p>因为备份时 FTWRL 后，数据库是处于只读的，非 InnoDB 数据是在持有全局读锁情况下拷贝的，所以非 InnoDB 数据本身就对应 FTWRL 时间点；InnoDB 的 ibd 文件拷贝是在 FTWRL 前做的，拷贝出来的不同 ibd 文件最后更新时间点是不一样的，这种状态的 ibd 文件是不能直接用的，但是 redo log 是从备份开始一直持续拷贝的，最后的 redo 日志点是在持有 FTWRL 后取得的，所以最终通过 redo 应用后的 ibd 数据时间点也是和 FTWRL 一致的。</p>
-<p>所以恢复过程只涉及 InnoDB 文件的恢复，非 InnoDB 数据是不动的。备份恢复完成后，就可以把数据文件拷贝到对应的目录，然后通过mysqld来启动了。</p>
-<p>备份过程中产生的事务会被备份出来，提交了的前滚，未提交的回滚，保持数据的一致性；</p>
-]]></content>
-      <categories>
-        <category>Mysql</category>
-      </categories>
-      <tags>
-        <tag>xtrabackup</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Mysql备份-mysqldump</title>
     <url>/2017/04/18/MySQL%E5%A4%87%E4%BB%BD-mysqldump/</url>
     <content><![CDATA[<p>使用mysqldump对MySQL进行备份，备份少量数据可以使用这种方法，大量数据备份和恢复否会消耗大量的时间；</p>
@@ -1117,254 +1117,170 @@
 <li>–triggers：导出触发器</li>
 </ul>
 <h3 id="备份选项-OPTIONS-说明："><a href="#备份选项-OPTIONS-说明：" class="headerlink" title="备份选项[OPTIONS]说明："></a>备份选项[OPTIONS]说明：</h3><ul>
-<li>–all-databases  , -A</li>
+<li><p>–all-databases  , -A<br>导出全部数据库。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases</span><br></pre></td></tr></table></figure></li>
+<li><p>–all-tablespaces  , -Y<br>导出全部表空间。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --all-tablespaces</span><br></pre></td></tr></table></figure></li>
+<li><p>–no-tablespaces  , -y<br>不导出任何表空间信息。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --no-tablespaces</span><br></pre></td></tr></table></figure></li>
+<li><p>–add-drop-database<br>每个数据库创建之前添加drop数据库语句。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --add-drop-database</span><br></pre></td></tr></table></figure></li>
+<li><p>–add-drop-table<br>每个数据表创建之前添加drop数据表语句。(默认为打开状态，使用<code>--skip-add-drop-table</code>取消选项)</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases  (默认添加drop语句)</span><br><span class="line">mysqldump  -uroot -p --all-databases –skip-add-drop-table  (取消drop语句)</span><br></pre></td></tr></table></figure></li>
+<li><p>–add-locks<br>在每个表导出之前增加LOCK TABLES并且之后UNLOCK  TABLE。(默认为打开状态，使用–skip-add-locks取消选项)</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases  (默认添加LOCK语句)</span><br><span class="line">mysqldump  -uroot -p --all-databases –skip-add-locks   (取消LOCK语句)</span><br></pre></td></tr></table></figure></li>
+<li><p>–allow-keywords<br>允许创建是关键词的列名字。这由表名前缀于每个列名做到。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --allow-keywords</span><br></pre></td></tr></table></figure></li>
+<li><p>–apply-slave-statements<br>在’CHANGE MASTER’前添加’STOP SLAVE’，并且在导出的最后添加’START SLAVE’。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --apply-slave-statements</span><br></pre></td></tr></table></figure></li>
+<li><p>-character-sets-dir<br>字符集文件的目录</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases  --character-sets-dir=/usr/local/mysql/share/mysql/charsets</span><br></pre></td></tr></table></figure></li>
+<li><p>–comments<br>附加注释信息。默认为打开，可以用–skip-comments取消</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases  (默认记录注释)</span><br><span class="line">mysqldump  -uroot -p --all-databases --skip-comments   (取消注释)</span><br></pre></td></tr></table></figure></li>
+<li><p>–compatible<br>导出的数据将和其它数据库或旧版本的MySQL 相兼容。值可以为ansi、mysql323、mysql40、postgresql、oracle、mssql、db2、maxdb、no_key_options、no_tables_options、no_field_options等，</p>
+</li>
 </ul>
-<p>导出全部数据库。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>–all-tablespaces  , -Y</li>
-</ul>
-<p>导出全部表空间。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --all-tablespaces</span><br></pre></td></tr></table></figure>
-<ul>
-<li>–no-tablespaces  , -y<br>不导出任何表空间信息。<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --no-tablespaces</span><br></pre></td></tr></table></figure></li>
-<li>–add-drop-database<br>每个数据库创建之前添加drop数据库语句。<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --add-drop-database</span><br></pre></td></tr></table></figure></li>
-<li>–add-drop-table</li>
-</ul>
-<p>每个数据表创建之前添加drop数据表语句。(默认为打开状态，使用<code>--skip-add-drop-table</code>取消选项)</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases  (默认添加drop语句)</span><br><span class="line">mysqldump  -uroot -p --all-databases –skip-add-drop-table  (取消drop语句)</span><br></pre></td></tr></table></figure>
-<ul>
-<li>–add-locks</li>
-</ul>
-<p>在每个表导出之前增加LOCK TABLES并且之后UNLOCK  TABLE。(默认为打开状态，使用–skip-add-locks取消选项)</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases  (默认添加LOCK语句)</span><br><span class="line">mysqldump  -uroot -p --all-databases –skip-add-locks   (取消LOCK语句)</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>–allow-keywords</li>
-</ul>
-<p>允许创建是关键词的列名字。这由表名前缀于每个列名做到。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --allow-keywords</span><br></pre></td></tr></table></figure>
-<ul>
-<li>–apply-slave-statements</li>
-</ul>
-<p>在’CHANGE MASTER’前添加’STOP SLAVE’，并且在导出的最后添加’START SLAVE’。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --apply-slave-statements</span><br></pre></td></tr></table></figure>
-<p>–character-sets-dir</p>
-<p>字符集文件的目录</p>
-<p>mysqldump  -uroot -p –all-databases  –character-sets-dir=/usr/local/mysql/share/mysql/charsets</p>
-<p>–comments</p>
-<p>附加注释信息。默认为打开，可以用–skip-comments取消</p>
-<p>mysqldump  -uroot -p –all-databases  (默认记录注释)</p>
-<p>mysqldump  -uroot -p –all-databases –skip-comments   (取消注释)</p>
-<p>–compatible</p>
-<p>导出的数据将和其它数据库或旧版本的MySQL 相兼容。值可以为ansi、mysql323、mysql40、postgresql、oracle、mssql、db2、maxdb、no_key_options、no_tables_options、no_field_options等，</p>
 <p>要使用几个值，用逗号将它们隔开。它并不保证能完全兼容，而是尽量兼容。</p>
-<p>mysqldump  -uroot -p –all-databases –compatible=ansi</p>
-<p>–compact</p>
-<p>导出更少的输出信息(用于调试)。去掉注释和头尾等结构。可以使用选项：–skip-add-drop-table  –skip-add-locks –skip-comments –skip-disable-keys</p>
-<p>mysqldump  -uroot -p –all-databases –compact</p>
-<p>–complete-insert,  -c</p>
-<p>使用完整的insert语句(包含列名称)。这么做能提高插入效率，但是可能会受到max_allowed_packet参数的影响而导致插入失败。</p>
-<p>mysqldump  -uroot -p –all-databases –complete-insert</p>
-<p>–compress, -C</p>
-<p>在客户端和服务器之间启用压缩传递所有信息</p>
-<p>mysqldump  -uroot -p –all-databases –compress</p>
-<p>–create-options,  -a</p>
-<p>在CREATE TABLE语句中包括所有MySQL特性选项。(默认为打开状态)</p>
-<p>mysqldump  -uroot -p –all-databases</p>
-<p>–databases,  -B</p>
-<p>导出几个数据库。参数后面所有名字参量都被看作数据库名。</p>
-<p>mysqldump  -uroot -p –databases test mysql</p>
-<p>–debug</p>
-<p>输出debug信息，用于调试。默认值为：d:t:o,/tmp/mysqldump.trace</p>
-<p>mysqldump  -uroot -p –all-databases –debug</p>
-<p>mysqldump  -uroot -p –all-databases –debug=” d:t:o,/tmp/debug.trace”</p>
-<p>–debug-check</p>
-<p>检查内存和打开文件使用说明并退出。</p>
-<p>mysqldump  -uroot -p –all-databases –debug-check</p>
-<p>–debug-info</p>
-<p>输出调试信息并退出</p>
-<p>mysqldump  -uroot -p –all-databases –debug-info</p>
-<p>–default-character-set</p>
-<p>设置默认字符集，默认值为utf8</p>
-<p>mysqldump  -uroot -p –all-databases –default-character-set=latin1</p>
-<p>–delayed-insert</p>
-<p>采用延时插入方式（INSERT DELAYED）导出数据</p>
-<p>mysqldump  -uroot -p –all-databases –delayed-insert</p>
-<p>–delete-master-logs</p>
-<p>master备份后删除日志. 这个参数将自动激活–master-data。</p>
-<p>mysqldump  -uroot -p –all-databases –delete-master-logs</p>
-<p>–disable-keys</p>
-<p>对于每个表，用/*!40000 ALTER TABLE tbl_name DISABLE KEYS <em>/;和/</em>!40000 ALTER TABLE tbl_name ENABLE KEYS */;语句引用INSERT语句。这样可以更快地导入dump出来的文件，因为它是在插入所有行后创建索引的。该选项只适合MyISAM表，默认为打开状态。</p>
-<p>mysqldump  -uroot -p –all-databases</p>
-<p>–dump-slave</p>
-<p>该选项将导致主的binlog位置和文件名追加到导出数据的文件中。设置为1时，将会以CHANGE MASTER命令输出到数据文件；设置为2时，在命令前增加说明信息。该选项将会打开–lock-all-tables，除非–single-transaction被指定。该选项会自动关闭–lock-tables选项。默认值为0。</p>
-<p>mysqldump  -uroot -p –all-databases –dump-slave=1</p>
-<p>mysqldump  -uroot -p –all-databases –dump-slave=2</p>
-<p>–events, -E</p>
-<p>导出事件。</p>
-<p>mysqldump  -uroot -p –all-databases –events</p>
-<p>–extended-insert,  -e</p>
-<p>使用具有多个VALUES列的INSERT语法。这样使导出文件更小，并加速导入时的速度。默认为打开状态，使用–skip-extended-insert取消选项。</p>
-<p>mysqldump  -uroot -p –all-databases</p>
-<p>mysqldump  -uroot -p –all-databases–skip-extended-insert   (取消选项)</p>
-<p>–fields-terminated-by</p>
-<p>导出文件中忽略给定字段。与–tab选项一起使用，不能用于–databases和–all-databases选项</p>
-<p>mysqldump  -uroot -p test test –tab=”/home/mysql” –fields-terminated-by=”#”</p>
-<p>–fields-enclosed-by</p>
-<p>输出文件中的各个字段用给定字符包裹。与–tab选项一起使用，不能用于–databases和–all-databases选项</p>
-<p>mysqldump  -uroot -p test test –tab=”/home/mysql” –fields-enclosed-by=”#”</p>
-<p>–fields-optionally-enclosed-by</p>
-<p>输出文件中的各个字段用给定字符选择性包裹。与–tab选项一起使用，不能用于–databases和–all-databases选项</p>
-<p>mysqldump  -uroot -p test test –tab=”/home/mysql”  –fields-enclosed-by=”#” –fields-optionally-enclosed-by  =”#”</p>
-<p>–fields-escaped-by</p>
-<p>输出文件中的各个字段忽略给定字符。与–tab选项一起使用，不能用于–databases和–all-databases选项</p>
-<p>mysqldump  -uroot -p mysql user –tab=”/home/mysql” –fields-escaped-by=”#”</p>
-<p>–flush-logs -F</p>
-<p>开始导出之前刷新日志。</p>
-<p>请注意：假如一次导出多个数据库(使用选项–databases或者–all-databases)，将会逐个数据库刷新日志。除使用–lock-all-tables或者–master-data外。在这种情况下，日志将会被刷新一次，相应的所以表同时被锁定。因此，如果打算同时导出和刷新日志应该使用–lock-all-tables 或者–master-data 和–flush-logs。</p>
-<p>mysqldump  -uroot -p –all-databases –flush-logs</p>
-<p>–flush-privileges</p>
-<p>在导出mysql数据库之后，发出一条FLUSH  PRIVILEGES 语句。为了正确恢复，该选项应该用于导出mysql数据库和依赖mysql数据库数据的任何时候。</p>
-<p>mysqldump  -uroot -p –all-databases –flush-privileges</p>
-<p>–force</p>
-<p>在导出过程中忽略出现的SQL错误。</p>
-<p>mysqldump  -uroot -p –all-databases –force</p>
-<p>–help</p>
-<p>显示帮助信息并退出。</p>
-<p>mysqldump  –help</p>
-<p>–hex-blob</p>
-<p>使用十六进制格式导出二进制字符串字段。如果有二进制数据就必须使用该选项。影响到的字段类型有BINARY、VARBINARY、BLOB。</p>
-<p>mysqldump  -uroot -p –all-databases –hex-blob</p>
-<p>–host, -h</p>
-<p>需要导出的主机信息</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases</p>
-<p>–ignore-table</p>
-<p>不导出指定表。指定忽略多个表时，需要重复多次，每次一个表。每个表必须同时指定数据库和表名。例如：–ignore-table=database.table1 –ignore-table=database.table2 ……</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –ignore-table=mysql.user</p>
-<p>–include-master-host-port</p>
-<p>在–dump-slave产生的’CHANGE  MASTER TO..’语句中增加’MASTER_HOST=<host>，MASTER_PORT=<port>‘</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –include-master-host-port</p>
-<p>–insert-ignore</p>
-<p>在插入行时使用INSERT IGNORE语句.</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –insert-ignore</p>
-<p>–lines-terminated-by</p>
-<p>输出文件的每行用给定字符串划分。与–tab选项一起使用，不能用于–databases和–all-databases选项。</p>
-<p>mysqldump  -uroot -p –host=localhost test test –tab=”/tmp/mysql”  –lines-terminated-by=”##”</p>
-<p>–lock-all-tables,  -x</p>
-<p>提交请求锁定所有数据库中的所有表，以保证数据的一致性。这是一个全局读锁，并且自动关闭–single-transaction 和–lock-tables 选项。</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –lock-all-tables</p>
-<p>–lock-tables,  -l</p>
-<p>开始导出前，锁定所有表。用READ  LOCAL锁定表以允许MyISAM表并行插入。对于支持事务的表例如InnoDB和BDB，–single-transaction是一个更好的选择，因为它根本不需要锁定表。</p>
-<p>请注意当导出多个数据库时，–lock-tables分别为每个数据库锁定表。因此，该选项不能保证导出文件中的表在数据库之间的逻辑一致性。不同数据库表的导出状态可以完全不同。</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –lock-tables</p>
-<p>–log-error</p>
-<p>附加警告和错误信息到给定文件</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases  –log-error=/tmp/mysqldump_error_log.err</p>
-<p>–master-data</p>
-<p>该选项将binlog的位置和文件名追加到输出文件中。如果为1，将会输出CHANGE MASTER 命令；如果为2，输出的CHANGE  MASTER命令前添加注释信息。该选项将打开–lock-all-tables 选项，除非–single-transaction也被指定（在这种情况下，全局读锁在开始导出时获得很短的时间；其他内容参考下面的–single-transaction选项）。该选项自动关闭–lock-tables选项。</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –master-data=1;</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –master-data=2;</p>
-<p>–max_allowed_packet</p>
-<p>服务器发送和接受的最大包长度。</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –max_allowed_packet=10240</p>
-<p>–net_buffer_length</p>
-<p>TCP/IP和socket连接的缓存大小。</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –net_buffer_length=1024</p>
-<p>–no-autocommit</p>
-<p>使用autocommit/commit 语句包裹表。</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –no-autocommit</p>
-<p>–no-create-db,  -n</p>
-<p>只导出数据，而不添加CREATE DATABASE 语句。</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –no-create-db</p>
-<p>–no-create-info,  -t</p>
-<p>只导出数据，而不添加CREATE TABLE 语句。</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –no-create-info</p>
-<p>–no-data, -d</p>
-<p>不导出任何数据，只导出数据库表结构。</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –no-data</p>
-<p>–no-set-names,  -N</p>
-<p>等同于–skip-set-charset</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –no-set-names</p>
-<p>–opt</p>
-<p>等同于–add-drop-table,  –add-locks, –create-options, –quick, –extended-insert, –lock-tables,  –set-charset, –disable-keys 该选项默认开启,  可以用–skip-opt禁用.</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –opt</p>
-<p>–order-by-primary</p>
-<p>如果存在主键，或者第一个唯一键，对每个表的记录进行排序。在导出MyISAM表到InnoDB表时有效，但会使得导出工作花费很长时间。</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –order-by-primary</p>
-<p>–password, -p</p>
-<p>连接数据库密码，使用命名管道连接mysql</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –pipe</p>
-<p>–port, -P</p>
-<p>连接数据库端口号</p>
-<p>–protocol</p>
-<p>使用的连接协议，包括：tcp, socket, pipe, memory.</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –protocol=tcp</p>
-<p>–quick, -q</p>
-<p>不缓冲查询，直接导出到标准输出。默认为打开状态，使用–skip-quick取消该选项。</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –skip-quick</p>
-<p>–quote-names,-Q</p>
-<p>使用（`）引起表和列名。默认为打开状态，使用–skip-quote-names取消该选项。</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –skip-quote-names</p>
-<p>–replace</p>
-<p>使用REPLACE INTO 取代INSERT INTO.</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –replace</p>
-<p>–result-file,  -r</p>
-<p>直接输出到指定文件中。该选项应该用在使用回车换行对（\r\n）换行的系统上（例如：DOS，Windows）。该选项确保只有一行被使用。</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –result-file=/tmp/mysqldump_result_file.txt</p>
-<p>–routines, -R</p>
-<p>导出存储过程以及自定义函数。</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –routines</p>
-<p>–set-charset</p>
-<p>添加’SET NAMES  default_character_set’到输出文件。默认为打开状态，使用–skip-set-charset关闭选项。</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –skip-set-charset</p>
-<p>–single-transaction（强烈建议加上）</p>
-<p>该选项在导出数据之前提交一个BEGIN SQL语句，BEGIN 不会阻塞任何应用程序且能保证导出时数据库的一致性状态。它只适用于InnoDB存储引擎。本选项和–lock-tables 选项是互斥的，因为LOCK  TABLES 会使任何挂起的事务隐含提交。要想导出大表的话，应结合使用–quick 选项。</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –single-transaction</p>
-<p>–dump-date</p>
-<p>将导出时间添加到输出文件中。默认为打开状态，使用–skip-dump-date关闭选项。</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –skip-dump-date</p>
-<p>–skip-opt</p>
-<p>禁用–opt选项.</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –skip-opt</p>
-<p>–socket,-S</p>
-<p>指定连接mysql的socket文件位置，默认路径/tmp/mysql.sock</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –socket=/tmp/mysqld.sock</p>
-<p>–tab,-T</p>
-<p>为每个表在给定路径创建tab分割的文本文件。注意：仅仅用于mysqldump和mysqld服务器运行在相同机器上。</p>
-<p>mysqldump  -uroot -p –host=localhost test test –tab=”/home/mysql”</p>
-<p>–tables</p>
-<p>覆盖–databases (-B)参数，指定需要导出的表名。</p>
-<p>mysqldump  -uroot -p –host=localhost –databases test –tables test</p>
-<p>–triggers</p>
-<p>导出触发器。该选项默认启用，用–skip-triggers禁用它。</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –triggers</p>
-<p>–tz-utc</p>
-<p>在导出顶部设置时区TIME_ZONE=’+00:00’ ，以保证在不同时区导出的TIMESTAMP 数据或者数据被移动其他时区时的正确性。</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –tz-utc</p>
-<p>–user, -u</p>
-<p>指定连接的用户名。</p>
-<p>–verbose, –v</p>
-<p>输出多种平台信息。</p>
-<p>–version, -V</p>
-<p>输出mysqldump版本信息并退出</p>
-<p>–where, -w</p>
-<p>只转储给定的WHERE条件选择的记录。请注意如果条件包含命令解释符专用空格或字符，一定要将条件引用起来。</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –where=”user=’root’”</p>
-<p>–xml, -X</p>
-<p>导出XML格式.</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –xml</p>
-<p>–plugin_dir</p>
-<p>客户端插件的目录，用于兼容不同的插件版本。</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –plugin_dir=”/usr/local/lib/plugin”</p>
-<p>–default_auth</p>
-<p>客户端插件默认使用权限。</p>
-<p>mysqldump  -uroot -p –host=localhost –all-databases –default-auth=”/usr/local/lib/plugin/<PLUGIN>”</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --compatible=ansi</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>–compact<br>导出更少的输出信息(用于调试)。去掉注释和头尾等结构。可以使用选项：<code>--skip-add-drop-table</code>  <code>--skip-add-locks</code> <code>--skip-comments</code> <code>--skip-disable-keys</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --compact</span><br></pre></td></tr></table></figure></li>
+<li><p>–complete-insert,  -c<br>使用完整的insert语句(包含列名称)。这么做能提高插入效率，但是可能会受到<code>max_allowed_packet</code>参数的影响而导致插入失败。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --complete-insert</span><br></pre></td></tr></table></figure></li>
+<li><p>–compress, -C<br>在客户端和服务器之间启用压缩传递所有信息</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --compress</span><br></pre></td></tr></table></figure></li>
+<li><p>–create-options,  -a<br>在CREATE TABLE语句中包括所有MySQL特性选项。(默认为打开状态)</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases</span><br></pre></td></tr></table></figure></li>
+<li><p>–databases,  -B<br>导出几个数据库。参数后面所有名字参量都被看作数据库名。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --databases test mysql</span><br></pre></td></tr></table></figure></li>
+<li><p>–debug<br>输出debug信息，用于调试。默认值为：d:t:o,/tmp/mysqldump.trace</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --debug</span><br><span class="line">mysqldump  -uroot -p --all-databases --debug=” d:t:o,/tmp/debug.trace”</span><br></pre></td></tr></table></figure></li>
+<li><p>–debug-check<br>检查内存和打开文件使用说明并退出。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --debug-check</span><br></pre></td></tr></table></figure></li>
+<li><p>–debug-info<br>输出调试信息并退出</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --debug-info</span><br></pre></td></tr></table></figure></li>
+<li><p>–default-character-set<br>设置默认字符集，默认值为utf8</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --default-character-set=latin1</span><br></pre></td></tr></table></figure></li>
+<li><p>–delayed-insert<br>采用延时插入方式（INSERT DELAYED）导出数据</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --delayed-insert</span><br></pre></td></tr></table></figure></li>
+<li><p>–delete-master-logs<br>master备份后删除日志. 这个参数将自动激活–master-data。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --delete-master-logs</span><br></pre></td></tr></table></figure></li>
+<li><p>–disable-keys</p>
+</li>
+</ul>
+<p>对于每个表，用<code>ALTER TABLE tbl_name DISABLE KEYS;</code>和<code>ALTER TABLE tbl_name ENABLE KEYS;</code>语句引用INSERT语句。这样可以更快地导入dump出来的文件，因为它是在插入所有行后创建索引的。该选项只适合MyISAM表，默认为打开状态。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>–dump-slave<br>该选项将导致主的binlog位置和文件名追加到导出数据的文件中。设置为1时，将会以CHANGE MASTER命令输出到数据文件；设置为2时，在命令前增加说明信息。该选项将会打开<code>--lock-all-tables</code>，除非<code>--single-transaction</code>被指定。该选项会自动关闭<code>--lock-tables</code>选项。默认值为0。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --dump-slave=1</span><br><span class="line">mysqldump  -uroot -p --all-databases --dump-slave=2</span><br></pre></td></tr></table></figure></li>
+<li><p>–events, -E<br>导出事件。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --events</span><br></pre></td></tr></table></figure></li>
+<li><p>–extended-insert,  -e<br>使用具有多个VALUES列的INSERT语法。这样使导出文件更小，并加速导入时的速度。默认为打开状态，使用–skip-extended-insert取消选项。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases</span><br><span class="line">mysqldump  -uroot -p --all-databases--skip-extended-insert   (取消选项)</span><br></pre></td></tr></table></figure></li>
+<li><p>–fields-terminated-by<br>导出文件中忽略给定字段。与–tab选项一起使用，不能用于<code>--databases</code>和<code>--all-databases</code>选项</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p test test --tab=”/home/mysql” --fields-terminated-by=”#”</span><br></pre></td></tr></table></figure></li>
+<li><p>–fields-enclosed-by<br>输出文件中的各个字段用给定字符包裹。与<code>--tab</code>选项一起使用，不能用于<code>--databases</code>和<code>--all-databases</code>选项</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p test test --tab=”/home/mysql” --fields-enclosed-by=”#”</span><br></pre></td></tr></table></figure></li>
+<li><p>–fields-optionally-enclosed-by<br>输出文件中的各个字段用给定字符选择性包裹。与<code>--tab</code>选项一起使用，不能用于<code>--databases</code>和<code>--all-databases</code>选项</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p test test --tab=”/home/mysql”  --fields-enclosed-by=”#” --fields-optionally-enclosed-by  =”#”</span><br></pre></td></tr></table></figure></li>
+<li><p>–fields-escaped-by<br>输出文件中的各个字段忽略给定字符。与<code>--tab</code>选项一起使用，不能用于<code>--databases</code>和<code>--all-databases</code>选项</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p mysql user --tab=”/home/mysql” --fields-escaped-by=”#”</span><br></pre></td></tr></table></figure></li>
+<li><p>–flush-logs -F<br>开始导出之前刷新日志。<br>请注意：假如一次导出多个数据库(使用选项–databases或者–all-databases)，将会逐个数据库刷新日志。除使用–lock-all-tables或者–master-data外。在这种情况下，日志将会被刷新一次，相应的所以表同时被锁定。因此，如果打算同时导出和刷新日志应该使用–lock-all-tables 或者–master-data 和–flush-logs。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --flush-logs</span><br></pre></td></tr></table></figure></li>
+<li><p>–flush-privileges<br>在导出mysql数据库之后，发出一条FLUSH  PRIVILEGES 语句。为了正确恢复，该选项应该用于导出mysql数据库和依赖mysql数据库数据的任何时候。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --flush-privileges</span><br></pre></td></tr></table></figure></li>
+<li><p>–force<br>在导出过程中忽略出现的SQL错误。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --force</span><br></pre></td></tr></table></figure></li>
+<li><p>–help<br>显示帮助信息并退出。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  --help</span><br></pre></td></tr></table></figure></li>
+<li><p>–hex-blob<br>使用十六进制格式导出二进制字符串字段。如果有二进制数据就必须使用该选项。影响到的字段类型有BINARY、VARBINARY、BLOB。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --hex-blob</span><br></pre></td></tr></table></figure></li>
+<li><p>–host, -h<br>需要导出的主机信息</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases</span><br></pre></td></tr></table></figure></li>
+<li><p>–ignore-table<br>不导出指定表。指定忽略多个表时，需要重复多次，每次一个表。每个表必须同时指定数据库和表名。例如：<code>--ignore-table=database.table1</code> <code>--ignore-table=database.table2</code> ……</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --ignore-table=mysql.user</span><br></pre></td></tr></table></figure></li>
+<li><p>–include-master-host-port<br>在<code>--dump-slave</code>产生的<code>CHANGE  MASTER TO..</code>语句中增加<code>MASTER_HOST=&lt;host&gt;，MASTER_PORT=&lt;port&gt;</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --include-master-host-port</span><br></pre></td></tr></table></figure></li>
+<li><p>–insert-ignore<br>在插入行时使用INSERT IGNORE语句.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --insert-ignore</span><br></pre></td></tr></table></figure></li>
+<li><p>–lines-terminated-by<br>输出文件的每行用给定字符串划分。与–tab选项一起使用，不能用于<code>--databases</code>和<code>--all-databases</code>选项。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost test test --tab=”/tmp/mysql”  --lines-terminated-by=”##”</span><br></pre></td></tr></table></figure></li>
+<li><p>–lock-all-tables,  -x<br>提交请求锁定所有数据库中的所有表，以保证数据的一致性。这是一个全局读锁，并且自动关闭<code>--single-transaction</code> 和<code>--lock-tables</code> 选项。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --lock-all-tables</span><br></pre></td></tr></table></figure></li>
+<li><p>–lock-tables,  -l<br>开始导出前，锁定所有表。用READ  LOCAL锁定表以允许MyISAM表并行插入。对于支持事务的表例如InnoDB和BDB，<code>--single-transaction</code>是一个更好的选择，因为它根本不需要锁定表。<br>请注意当导出多个数据库时，–lock-tables分别为每个数据库锁定表。因此，该选项不能保证导出文件中的表在数据库之间的逻辑一致性。不同数据库表的导出状态可以完全不同。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --lock-tables</span><br></pre></td></tr></table></figure></li>
+<li><p>–log-error<br>附加警告和错误信息到给定文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases  --log-error=/tmp/mysqldump_error_log.err</span><br></pre></td></tr></table></figure></li>
+<li><p>–master-data<br>该选项将binlog的位置和文件名追加到输出文件中。如果为1，将会输出CHANGE MASTER 命令；如果为2，输出的CHANGE  MASTER命令前添加注释信息。该选项将打开<code>--lock-all-tables</code> 选项，除非<code>--single-transaction</code>也被指定（在这种情况下，全局读锁在开始导出时获得很短的时间；其他内容参考下面的<code>--single-transaction</code>选项）。该选项自动关闭<code>--lock-tables</code>选项。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --master-data=1;</span><br><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --master-data=2;</span><br></pre></td></tr></table></figure></li>
+<li><p>–max_allowed_packet<br>服务器发送和接受的最大包长度。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --max_allowed_packet=10240</span><br></pre></td></tr></table></figure></li>
+<li><p>–net_buffer_length<br>TCP/IP和socket连接的缓存大小。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --net_buffer_length=1024</span><br></pre></td></tr></table></figure></li>
+<li><p>–no-autocommit<br>使用autocommit/commit 语句包裹表。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --no-autocommit</span><br></pre></td></tr></table></figure></li>
+<li><p>–no-create-db,  -n<br>只导出数据，而不添加CREATE DATABASE 语句。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --no-create-db</span><br></pre></td></tr></table></figure></li>
+<li><p>–no-create-info,  -t<br>只导出数据，而不添加CREATE TABLE 语句。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --no-create-info</span><br></pre></td></tr></table></figure></li>
+<li><p>–no-data, -d<br>不导出任何数据，只导出数据库表结构。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --no-data</span><br></pre></td></tr></table></figure></li>
+<li><p>–no-set-names,  -N<br>等同于<code>--skip-set-charset</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --no-set-names</span><br></pre></td></tr></table></figure></li>
+<li><p>–opt<br>等同于<code>--add-drop-table</code>,  <code>--add-locks</code>, <code>--create-options</code>, <code>--quick</code>, <code>--extended-insert</code>, <code>--lock-tables</code>,  <code>--set-charset</code>, <code>--disable-keys</code> 该选项默认开启,  可以用<code>--skip-opt</code>禁用.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --opt</span><br></pre></td></tr></table></figure></li>
+<li><p>–order-by-primary<br>如果存在主键，或者第一个唯一键，对每个表的记录进行排序。在导出MyISAM表到InnoDB表时有效，但会使得导出工作花费很长时间。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --order-by-primary</span><br></pre></td></tr></table></figure></li>
+<li><p>–password, -p<br>连接数据库密码，使用命名管道连接mysql</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --pipe</span><br></pre></td></tr></table></figure></li>
+<li><p>–port, -P<br>连接数据库端口号</p>
+</li>
+<li><p>–protocol<br>使用的连接协议，包括：tcp, socket, pipe, memory.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --protocol=tcp</span><br></pre></td></tr></table></figure></li>
+<li><p>–quick, -q<br>不缓冲查询，直接导出到标准输出。默认为打开状态，使用<code>--skip-quick</code>取消该选项。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases</span><br><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --skip-quick</span><br></pre></td></tr></table></figure></li>
+<li><p>–quote-names,-Q<br>使用（`）引起表和列名。默认为打开状态，使用–skip-quote-names取消该选项。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases</span><br><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --skip-quote-names</span><br></pre></td></tr></table></figure></li>
+<li><p>–replace<br>使用REPLACE INTO 取代INSERT INTO.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --replace</span><br></pre></td></tr></table></figure></li>
+<li><p>–result-file,  -r<br>直接输出到指定文件中。该选项应该用在使用回车换行对（\r\n）换行的系统上（例如：DOS，Windows）。该选项确保只有一行被使用。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --result-file=/tmp/mysqldump_result_file.txt</span><br></pre></td></tr></table></figure></li>
+<li><p>–routines, -R<br>导出存储过程以及自定义函数。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --routines</span><br></pre></td></tr></table></figure></li>
+<li><p>–set-charset<br>添加<code>SET NAMES  default_character_set</code>到输出文件。默认为打开状态，使用<code>--skip-set-charset</code>关闭选项。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases</span><br><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --skip-set-charset</span><br></pre></td></tr></table></figure></li>
+<li><p>–single-transaction（强烈建议加上）<br>该选项在导出数据之前提交一个BEGIN SQL语句，BEGIN 不会阻塞任何应用程序且能保证导出时数据库的一致性状态。它只适用于InnoDB存储引擎。本选项和<code>--lock-tables</code> 选项是互斥的，因为LOCK  TABLES 会使任何挂起的事务隐含提交。要想导出大表的话，应结合使用<code>--quick</code> 选项。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --single-transaction</span><br></pre></td></tr></table></figure></li>
+<li><p>–dump-date<br>将导出时间添加到输出文件中。默认为打开状态，使用–skip-dump-date关闭选项。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases</span><br><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --skip-dump-date</span><br></pre></td></tr></table></figure></li>
+<li><p>–skip-opt<br>禁用–opt选项.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --skip-opt</span><br></pre></td></tr></table></figure></li>
+<li><p>–socket,-S<br>指定连接mysql的socket文件位置，默认路径<code>/tmp/mysql.sock</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --socket=/tmp/mysqld.sock</span><br></pre></td></tr></table></figure></li>
+<li><p>–tab,-T<br>为每个表在给定路径创建tab分割的文本文件。注意：仅仅用于mysqldump和mysqld服务器运行在相同机器上。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost test test --tab=&quot;/home/mysql&quot;</span><br></pre></td></tr></table></figure></li>
+<li><p>–tables<br>覆盖<code>--databases (-B)</code>参数，指定需要导出的表名。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --databases test --tables test</span><br></pre></td></tr></table></figure></li>
+<li><p>–triggers<br>导出触发器。该选项默认启用，用–skip-triggers禁用它。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --triggers</span><br></pre></td></tr></table></figure></li>
+<li><p>–tz-utc<br>在导出顶部设置时区<code>TIME_ZONE=&#39;+00:00&#39;</code> ，以保证在不同时区导出的TIMESTAMP 数据或者数据被移动其他时区时的正确性。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --tz-utc</span><br></pre></td></tr></table></figure></li>
+<li><p>–user, -u<br>指定连接的用户名。</p>
+</li>
+<li><p>–verbose, –v<br>输出多种平台信息。</p>
+</li>
+<li><p>–version, -V<br>输出mysqldump版本信息并退出</p>
+</li>
+<li><p>–where, -w<br>只转储给定的WHERE条件选择的记录。请注意如果条件包含命令解释符专用空格或字符，一定要将条件引用起来。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --where=&quot;user=&#x27;root&#x27;&quot;</span><br></pre></td></tr></table></figure></li>
+<li><p>–xml, -X<br>导出XML格式.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --xml</span><br></pre></td></tr></table></figure></li>
+<li><p>–plugin_dir<br>客户端插件的目录，用于兼容不同的插件版本。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --plugin_dir=”/usr/local/lib/plugin”</span><br></pre></td></tr></table></figure></li>
+<li><p>–default_auth<br>客户端插件默认使用权限。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --default-auth=”/usr/local/lib/plugin/&lt;PLUGIN&gt;”</span><br></pre></td></tr></table></figure></li>
+</ul>
 ]]></content>
       <categories>
         <category>Mysql</category>
