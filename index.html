@@ -161,7 +161,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-count">15</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -174,7 +174,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-count">9</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -219,7 +219,7 @@
           <a href="/2017/05/10/Mysql-Innodb%E7%89%B9%E6%80%A7/" title="2017&#x2F;05&#x2F;10&#x2F;Mysql-Innodb特性&#x2F;">Mysql Innodb特性</a>
         </li>
         <li class="links-of-recent-posts-item">
-          <a href="/2017/04/18/Mysql-MHA%E9%AB%98%E5%8F%AF%E7%94%A8%E6%9E%B6%E6%9E%84%E5%8E%9F%E7%90%86%E5%8F%8A%E5%BA%94%E7%94%A8/" title="2017&#x2F;04&#x2F;18&#x2F;Mysql-MHA高可用架构原理及应用&#x2F;">Mysql MHA高可用架构原理及应用</a>
+          <a href="/2017/04/18/MySQL%E5%A4%87%E4%BB%BD-mysqldump/" title="2017&#x2F;04&#x2F;18&#x2F;MySQL备份-mysqldump&#x2F;">Mysql备份-mysqldump</a>
         </li>
     </ul>
   </div>
@@ -633,6 +633,367 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2017/04/18/MySQL%E5%A4%87%E4%BB%BD-mysqldump/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="小白">
+      <meta itemprop="description" content="走得很慢，但从未放弃。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小白">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2017/04/18/MySQL%E5%A4%87%E4%BB%BD-mysqldump/" class="post-title-link" itemprop="url">Mysql备份-mysqldump</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2017-04-18 00:00:00" itemprop="dateCreated datePublished" datetime="2017-04-18T00:00:00+08:00">2017-04-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Mysql/" itemprop="url" rel="index"><span itemprop="name">Mysql</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>9.6k</span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>使用mysqldump对MySQL进行备份，备份少量数据可以使用这种方法，大量数据备份和恢复否会消耗大量的时间；</p>
+<p>mysqldump可以导出存储过程，触发器，事件，数据，但是不能导出视图，如果数据库中有视图，备份完成后还需要导出视图的定义，或者备份视图定义的frm文件，并在恢复时导入；</p>
+<h3 id="备份基本语法"><a href="#备份基本语法" class="headerlink" title="备份基本语法"></a>备份基本语法</h3><ul>
+<li><p>备份单个数据或单个数据中的指定表：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump [OPTIONS] database [tb1] [tb2]… &gt; TB_BACKFILE</span><br></pre></td></tr></table></figure></li>
+<li><p>备份多个数据库：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump [OPTIONS] --databases [OPTIONS] DB1 [DB2 DB3...] &gt; DB_BACKFILE</span><br></pre></td></tr></table></figure></li>
+<li><p>备份所有数据库：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump [OPTIONS] --all-databases [OPTIONS] &gt; ALL_DB_BACKFILE</span><br></pre></td></tr></table></figure></li>
+<li><p>例如一个标准的备份语句：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump --single-transaction -uroot -p -B -F -R database1 t1 &gt; t1_20180407.sql</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="恢复基本语法"><a href="#恢复基本语法" class="headerlink" title="恢复基本语法"></a>恢复基本语法</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -uxxx -pxxx &lt; BACKFILE       ##注意是mysql 而不是mysqldump</span><br></pre></td></tr></table></figure>
+
+<p>或者连到mysql数据库里面，source BACKFILE</p>
+<p>恢复表时，需要指定表所在的数据库；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -uxxx -pxxx DATABASE &lt; TABLE_BACKFILE</span><br></pre></td></tr></table></figure>
+
+<p><code>--single-transaction</code>（强烈建议加上）</p>
+<p>该选项在导出数据之前提交一个BEGIN SQL语句，BEGIN 不会阻塞任何应用程序且能保证导出时数据库的一致性状态。它只适用于InnoDB存储引擎。本选项和<code>--lock-tables</code> 选项是互斥的，因为LOCK  TABLES 会使任何挂起的事务隐含提交。要想导出大表的话，应结合使用<code>--quick</code> 选项。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --single-transaction</span><br></pre></td></tr></table></figure>
+
+<h3 id="常用选项"><a href="#常用选项" class="headerlink" title="常用选项"></a>常用选项</h3><ul>
+<li>–default-character-set： 设置字符集</li>
+<li>–single-transaction：将导出设置成事务</li>
+<li>–no-data：导出的SQL脚本中，将只包含创建表的create 语句。</li>
+<li>–add-drop-table：导出的脚本中，包含 drop table if exists</li>
+<li>–routines：导出存储过程及函数</li>
+<li>–events：导出事件</li>
+<li>–triggers：导出触发器</li>
+</ul>
+<h3 id="备份选项-OPTIONS-说明："><a href="#备份选项-OPTIONS-说明：" class="headerlink" title="备份选项[OPTIONS]说明："></a>备份选项[OPTIONS]说明：</h3><ul>
+<li>–all-databases  , -A</li>
+</ul>
+<p>导出全部数据库。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>–all-tablespaces  , -Y</li>
+</ul>
+<p>导出全部表空间。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --all-tablespaces</span><br></pre></td></tr></table></figure>
+<ul>
+<li>–no-tablespaces  , -y<br>不导出任何表空间信息。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --no-tablespaces</span><br></pre></td></tr></table></figure></li>
+<li>–add-drop-database<br>每个数据库创建之前添加drop数据库语句。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --add-drop-database</span><br></pre></td></tr></table></figure></li>
+<li>–add-drop-table</li>
+</ul>
+<p>每个数据表创建之前添加drop数据表语句。(默认为打开状态，使用<code>--skip-add-drop-table</code>取消选项)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases  (默认添加drop语句)</span><br><span class="line">mysqldump  -uroot -p --all-databases –skip-add-drop-table  (取消drop语句)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>–add-locks</li>
+</ul>
+<p>在每个表导出之前增加LOCK TABLES并且之后UNLOCK  TABLE。(默认为打开状态，使用–skip-add-locks取消选项)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases  (默认添加LOCK语句)</span><br><span class="line">mysqldump  -uroot -p --all-databases –skip-add-locks   (取消LOCK语句)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>–allow-keywords</li>
+</ul>
+<p>允许创建是关键词的列名字。这由表名前缀于每个列名做到。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --allow-keywords</span><br></pre></td></tr></table></figure>
+<ul>
+<li>–apply-slave-statements</li>
+</ul>
+<p>在’CHANGE MASTER’前添加’STOP SLAVE’，并且在导出的最后添加’START SLAVE’。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases --apply-slave-statements</span><br></pre></td></tr></table></figure>
+<p>–character-sets-dir</p>
+<p>字符集文件的目录</p>
+<p>mysqldump  -uroot -p –all-databases  –character-sets-dir=/usr/local/mysql/share/mysql/charsets</p>
+<p>–comments</p>
+<p>附加注释信息。默认为打开，可以用–skip-comments取消</p>
+<p>mysqldump  -uroot -p –all-databases  (默认记录注释)</p>
+<p>mysqldump  -uroot -p –all-databases –skip-comments   (取消注释)</p>
+<p>–compatible</p>
+<p>导出的数据将和其它数据库或旧版本的MySQL 相兼容。值可以为ansi、mysql323、mysql40、postgresql、oracle、mssql、db2、maxdb、no_key_options、no_tables_options、no_field_options等，</p>
+<p>要使用几个值，用逗号将它们隔开。它并不保证能完全兼容，而是尽量兼容。</p>
+<p>mysqldump  -uroot -p –all-databases –compatible=ansi</p>
+<p>–compact</p>
+<p>导出更少的输出信息(用于调试)。去掉注释和头尾等结构。可以使用选项：–skip-add-drop-table  –skip-add-locks –skip-comments –skip-disable-keys</p>
+<p>mysqldump  -uroot -p –all-databases –compact</p>
+<p>–complete-insert,  -c</p>
+<p>使用完整的insert语句(包含列名称)。这么做能提高插入效率，但是可能会受到max_allowed_packet参数的影响而导致插入失败。</p>
+<p>mysqldump  -uroot -p –all-databases –complete-insert</p>
+<p>–compress, -C</p>
+<p>在客户端和服务器之间启用压缩传递所有信息</p>
+<p>mysqldump  -uroot -p –all-databases –compress</p>
+<p>–create-options,  -a</p>
+<p>在CREATE TABLE语句中包括所有MySQL特性选项。(默认为打开状态)</p>
+<p>mysqldump  -uroot -p –all-databases</p>
+<p>–databases,  -B</p>
+<p>导出几个数据库。参数后面所有名字参量都被看作数据库名。</p>
+<p>mysqldump  -uroot -p –databases test mysql</p>
+<p>–debug</p>
+<p>输出debug信息，用于调试。默认值为：d:t:o,/tmp/mysqldump.trace</p>
+<p>mysqldump  -uroot -p –all-databases –debug</p>
+<p>mysqldump  -uroot -p –all-databases –debug=” d:t:o,/tmp/debug.trace”</p>
+<p>–debug-check</p>
+<p>检查内存和打开文件使用说明并退出。</p>
+<p>mysqldump  -uroot -p –all-databases –debug-check</p>
+<p>–debug-info</p>
+<p>输出调试信息并退出</p>
+<p>mysqldump  -uroot -p –all-databases –debug-info</p>
+<p>–default-character-set</p>
+<p>设置默认字符集，默认值为utf8</p>
+<p>mysqldump  -uroot -p –all-databases –default-character-set=latin1</p>
+<p>–delayed-insert</p>
+<p>采用延时插入方式（INSERT DELAYED）导出数据</p>
+<p>mysqldump  -uroot -p –all-databases –delayed-insert</p>
+<p>–delete-master-logs</p>
+<p>master备份后删除日志. 这个参数将自动激活–master-data。</p>
+<p>mysqldump  -uroot -p –all-databases –delete-master-logs</p>
+<p>–disable-keys</p>
+<p>对于每个表，用/*!40000 ALTER TABLE tbl_name DISABLE KEYS <em>/;和/</em>!40000 ALTER TABLE tbl_name ENABLE KEYS */;语句引用INSERT语句。这样可以更快地导入dump出来的文件，因为它是在插入所有行后创建索引的。该选项只适合MyISAM表，默认为打开状态。</p>
+<p>mysqldump  -uroot -p –all-databases</p>
+<p>–dump-slave</p>
+<p>该选项将导致主的binlog位置和文件名追加到导出数据的文件中。设置为1时，将会以CHANGE MASTER命令输出到数据文件；设置为2时，在命令前增加说明信息。该选项将会打开–lock-all-tables，除非–single-transaction被指定。该选项会自动关闭–lock-tables选项。默认值为0。</p>
+<p>mysqldump  -uroot -p –all-databases –dump-slave=1</p>
+<p>mysqldump  -uroot -p –all-databases –dump-slave=2</p>
+<p>–events, -E</p>
+<p>导出事件。</p>
+<p>mysqldump  -uroot -p –all-databases –events</p>
+<p>–extended-insert,  -e</p>
+<p>使用具有多个VALUES列的INSERT语法。这样使导出文件更小，并加速导入时的速度。默认为打开状态，使用–skip-extended-insert取消选项。</p>
+<p>mysqldump  -uroot -p –all-databases</p>
+<p>mysqldump  -uroot -p –all-databases–skip-extended-insert   (取消选项)</p>
+<p>–fields-terminated-by</p>
+<p>导出文件中忽略给定字段。与–tab选项一起使用，不能用于–databases和–all-databases选项</p>
+<p>mysqldump  -uroot -p test test –tab=”/home/mysql” –fields-terminated-by=”#”</p>
+<p>–fields-enclosed-by</p>
+<p>输出文件中的各个字段用给定字符包裹。与–tab选项一起使用，不能用于–databases和–all-databases选项</p>
+<p>mysqldump  -uroot -p test test –tab=”/home/mysql” –fields-enclosed-by=”#”</p>
+<p>–fields-optionally-enclosed-by</p>
+<p>输出文件中的各个字段用给定字符选择性包裹。与–tab选项一起使用，不能用于–databases和–all-databases选项</p>
+<p>mysqldump  -uroot -p test test –tab=”/home/mysql”  –fields-enclosed-by=”#” –fields-optionally-enclosed-by  =”#”</p>
+<p>–fields-escaped-by</p>
+<p>输出文件中的各个字段忽略给定字符。与–tab选项一起使用，不能用于–databases和–all-databases选项</p>
+<p>mysqldump  -uroot -p mysql user –tab=”/home/mysql” –fields-escaped-by=”#”</p>
+<p>–flush-logs -F</p>
+<p>开始导出之前刷新日志。</p>
+<p>请注意：假如一次导出多个数据库(使用选项–databases或者–all-databases)，将会逐个数据库刷新日志。除使用–lock-all-tables或者–master-data外。在这种情况下，日志将会被刷新一次，相应的所以表同时被锁定。因此，如果打算同时导出和刷新日志应该使用–lock-all-tables 或者–master-data 和–flush-logs。</p>
+<p>mysqldump  -uroot -p –all-databases –flush-logs</p>
+<p>–flush-privileges</p>
+<p>在导出mysql数据库之后，发出一条FLUSH  PRIVILEGES 语句。为了正确恢复，该选项应该用于导出mysql数据库和依赖mysql数据库数据的任何时候。</p>
+<p>mysqldump  -uroot -p –all-databases –flush-privileges</p>
+<p>–force</p>
+<p>在导出过程中忽略出现的SQL错误。</p>
+<p>mysqldump  -uroot -p –all-databases –force</p>
+<p>–help</p>
+<p>显示帮助信息并退出。</p>
+<p>mysqldump  –help</p>
+<p>–hex-blob</p>
+<p>使用十六进制格式导出二进制字符串字段。如果有二进制数据就必须使用该选项。影响到的字段类型有BINARY、VARBINARY、BLOB。</p>
+<p>mysqldump  -uroot -p –all-databases –hex-blob</p>
+<p>–host, -h</p>
+<p>需要导出的主机信息</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases</p>
+<p>–ignore-table</p>
+<p>不导出指定表。指定忽略多个表时，需要重复多次，每次一个表。每个表必须同时指定数据库和表名。例如：–ignore-table=database.table1 –ignore-table=database.table2 ……</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –ignore-table=mysql.user</p>
+<p>–include-master-host-port</p>
+<p>在–dump-slave产生的’CHANGE  MASTER TO..’语句中增加’MASTER_HOST=<host>，MASTER_PORT=<port>‘</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –include-master-host-port</p>
+<p>–insert-ignore</p>
+<p>在插入行时使用INSERT IGNORE语句.</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –insert-ignore</p>
+<p>–lines-terminated-by</p>
+<p>输出文件的每行用给定字符串划分。与–tab选项一起使用，不能用于–databases和–all-databases选项。</p>
+<p>mysqldump  -uroot -p –host=localhost test test –tab=”/tmp/mysql”  –lines-terminated-by=”##”</p>
+<p>–lock-all-tables,  -x</p>
+<p>提交请求锁定所有数据库中的所有表，以保证数据的一致性。这是一个全局读锁，并且自动关闭–single-transaction 和–lock-tables 选项。</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –lock-all-tables</p>
+<p>–lock-tables,  -l</p>
+<p>开始导出前，锁定所有表。用READ  LOCAL锁定表以允许MyISAM表并行插入。对于支持事务的表例如InnoDB和BDB，–single-transaction是一个更好的选择，因为它根本不需要锁定表。</p>
+<p>请注意当导出多个数据库时，–lock-tables分别为每个数据库锁定表。因此，该选项不能保证导出文件中的表在数据库之间的逻辑一致性。不同数据库表的导出状态可以完全不同。</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –lock-tables</p>
+<p>–log-error</p>
+<p>附加警告和错误信息到给定文件</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases  –log-error=/tmp/mysqldump_error_log.err</p>
+<p>–master-data</p>
+<p>该选项将binlog的位置和文件名追加到输出文件中。如果为1，将会输出CHANGE MASTER 命令；如果为2，输出的CHANGE  MASTER命令前添加注释信息。该选项将打开–lock-all-tables 选项，除非–single-transaction也被指定（在这种情况下，全局读锁在开始导出时获得很短的时间；其他内容参考下面的–single-transaction选项）。该选项自动关闭–lock-tables选项。</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –master-data=1;</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –master-data=2;</p>
+<p>–max_allowed_packet</p>
+<p>服务器发送和接受的最大包长度。</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –max_allowed_packet=10240</p>
+<p>–net_buffer_length</p>
+<p>TCP/IP和socket连接的缓存大小。</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –net_buffer_length=1024</p>
+<p>–no-autocommit</p>
+<p>使用autocommit/commit 语句包裹表。</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –no-autocommit</p>
+<p>–no-create-db,  -n</p>
+<p>只导出数据，而不添加CREATE DATABASE 语句。</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –no-create-db</p>
+<p>–no-create-info,  -t</p>
+<p>只导出数据，而不添加CREATE TABLE 语句。</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –no-create-info</p>
+<p>–no-data, -d</p>
+<p>不导出任何数据，只导出数据库表结构。</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –no-data</p>
+<p>–no-set-names,  -N</p>
+<p>等同于–skip-set-charset</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –no-set-names</p>
+<p>–opt</p>
+<p>等同于–add-drop-table,  –add-locks, –create-options, –quick, –extended-insert, –lock-tables,  –set-charset, –disable-keys 该选项默认开启,  可以用–skip-opt禁用.</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –opt</p>
+<p>–order-by-primary</p>
+<p>如果存在主键，或者第一个唯一键，对每个表的记录进行排序。在导出MyISAM表到InnoDB表时有效，但会使得导出工作花费很长时间。</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –order-by-primary</p>
+<p>–password, -p</p>
+<p>连接数据库密码，使用命名管道连接mysql</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –pipe</p>
+<p>–port, -P</p>
+<p>连接数据库端口号</p>
+<p>–protocol</p>
+<p>使用的连接协议，包括：tcp, socket, pipe, memory.</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –protocol=tcp</p>
+<p>–quick, -q</p>
+<p>不缓冲查询，直接导出到标准输出。默认为打开状态，使用–skip-quick取消该选项。</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –skip-quick</p>
+<p>–quote-names,-Q</p>
+<p>使用（`）引起表和列名。默认为打开状态，使用–skip-quote-names取消该选项。</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –skip-quote-names</p>
+<p>–replace</p>
+<p>使用REPLACE INTO 取代INSERT INTO.</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –replace</p>
+<p>–result-file,  -r</p>
+<p>直接输出到指定文件中。该选项应该用在使用回车换行对（\r\n）换行的系统上（例如：DOS，Windows）。该选项确保只有一行被使用。</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –result-file=/tmp/mysqldump_result_file.txt</p>
+<p>–routines, -R</p>
+<p>导出存储过程以及自定义函数。</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –routines</p>
+<p>–set-charset</p>
+<p>添加’SET NAMES  default_character_set’到输出文件。默认为打开状态，使用–skip-set-charset关闭选项。</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –skip-set-charset</p>
+<p>–single-transaction（强烈建议加上）</p>
+<p>该选项在导出数据之前提交一个BEGIN SQL语句，BEGIN 不会阻塞任何应用程序且能保证导出时数据库的一致性状态。它只适用于InnoDB存储引擎。本选项和–lock-tables 选项是互斥的，因为LOCK  TABLES 会使任何挂起的事务隐含提交。要想导出大表的话，应结合使用–quick 选项。</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –single-transaction</p>
+<p>–dump-date</p>
+<p>将导出时间添加到输出文件中。默认为打开状态，使用–skip-dump-date关闭选项。</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –skip-dump-date</p>
+<p>–skip-opt</p>
+<p>禁用–opt选项.</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –skip-opt</p>
+<p>–socket,-S</p>
+<p>指定连接mysql的socket文件位置，默认路径/tmp/mysql.sock</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –socket=/tmp/mysqld.sock</p>
+<p>–tab,-T</p>
+<p>为每个表在给定路径创建tab分割的文本文件。注意：仅仅用于mysqldump和mysqld服务器运行在相同机器上。</p>
+<p>mysqldump  -uroot -p –host=localhost test test –tab=”/home/mysql”</p>
+<p>–tables</p>
+<p>覆盖–databases (-B)参数，指定需要导出的表名。</p>
+<p>mysqldump  -uroot -p –host=localhost –databases test –tables test</p>
+<p>–triggers</p>
+<p>导出触发器。该选项默认启用，用–skip-triggers禁用它。</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –triggers</p>
+<p>–tz-utc</p>
+<p>在导出顶部设置时区TIME_ZONE=’+00:00’ ，以保证在不同时区导出的TIMESTAMP 数据或者数据被移动其他时区时的正确性。</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –tz-utc</p>
+<p>–user, -u</p>
+<p>指定连接的用户名。</p>
+<p>–verbose, –v</p>
+<p>输出多种平台信息。</p>
+<p>–version, -V</p>
+<p>输出mysqldump版本信息并退出</p>
+<p>–where, -w</p>
+<p>只转储给定的WHERE条件选择的记录。请注意如果条件包含命令解释符专用空格或字符，一定要将条件引用起来。</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –where=”user=’root’”</p>
+<p>–xml, -X</p>
+<p>导出XML格式.</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –xml</p>
+<p>–plugin_dir</p>
+<p>客户端插件的目录，用于兼容不同的插件版本。</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –plugin_dir=”/usr/local/lib/plugin”</p>
+<p>–default_auth</p>
+<p>客户端插件默认使用权限。</p>
+<p>mysqldump  -uroot -p –host=localhost –all-databases –default-auth=”/usr/local/lib/plugin/<PLUGIN>”</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="http://example.com/2017/04/18/Mysql-MHA%E9%AB%98%E5%8F%AF%E7%94%A8%E6%9E%B6%E6%9E%84%E5%8E%9F%E7%90%86%E5%8F%8A%E5%BA%94%E7%94%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -980,98 +1341,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2017/04/16/InnoDB-Redo-Flush%E5%8F%8A%E8%84%8F%E9%A1%B5%E5%88%B7%E6%96%B0%E6%9C%BA%E5%88%B6%E6%B7%B1%E5%85%A5%E5%88%86%E6%9E%90/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%8D%8A%E5%90%8C%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="小白">
-      <meta itemprop="description" content="走得很慢，但从未放弃。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小白">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%8D%8A%E5%90%8C%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" class="post-title-link" itemprop="url">Mysql主从复制-半同步主从复制</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2017-04-14 00:00:00" itemprop="dateCreated datePublished" datetime="2017-04-14T00:00:00+08:00">2017-04-14</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Mysql/" itemprop="url" rel="index"><span itemprop="name">Mysql</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>286</span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <blockquote>
-<p>半同步复制可以直接在异步复制的基础上完成，参考<a target="_blank" rel="noopener" href="https://www.baihuzi.com/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%BC%82%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">异步主从复制</a></p>
-</blockquote>
-<h3 id="开启半同步主从复制"><a href="#开启半同步主从复制" class="headerlink" title="开启半同步主从复制"></a>开启半同步主从复制</h3><h4 id="先检查是否支持动态安装插件"><a href="#先检查是否支持动态安装插件" class="headerlink" title="先检查是否支持动态安装插件"></a>先检查是否支持动态安装插件</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> @<span class="variable">@have</span>_dynamic_loading</span><br><span class="line">    <span class="operator">-</span><span class="operator">&gt;</span> ;</span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------+</span></span><br><span class="line"><span class="operator">|</span> @<span class="variable">@have</span>_dynamic_loading <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------+</span></span><br><span class="line"><span class="operator">|</span> YES                    <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%8D%8A%E5%90%8C%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
