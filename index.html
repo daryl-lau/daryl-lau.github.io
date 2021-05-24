@@ -881,7 +881,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h3 id="InnoDB-Redo-Flush及脏页刷新机制深入分析"><a href="#InnoDB-Redo-Flush及脏页刷新机制深入分析" class="headerlink" title="InnoDB Redo Flush及脏页刷新机制深入分析"></a>InnoDB Redo Flush及脏页刷新机制深入分析</h3><h4 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h4><p>我们知道InnoDB采用<code>Write Ahead Log</code>策略来防止宕机数据丢失，即事务提交时，先写重做日志，再修改内存数据页，这样就产生了脏页。既然有重做日志保证数据持久性，查询时也可以直接从缓冲池页中取数据，那为什么还要刷新脏页到磁盘呢？如果重做日志可以无限增大，同时缓冲池足够大，能够缓存所有数据，那么是不需要将缓冲池中的脏页刷新到磁盘。但是，通常会有以下几个问题：</p>
+          <h4 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h4><p>我们知道InnoDB采用<code>Write Ahead Log</code>策略来防止宕机数据丢失，即事务提交时，先写重做日志，再修改内存数据页，这样就产生了脏页。既然有重做日志保证数据持久性，查询时也可以直接从缓冲池页中取数据，那为什么还要刷新脏页到磁盘呢？如果重做日志可以无限增大，同时缓冲池足够大，能够缓存所有数据，那么是不需要将缓冲池中的脏页刷新到磁盘。但是，通常会有以下几个问题：</p>
 <ul>
 <li><p>服务器内存有限，缓冲池不够用，无法缓存全部数据</p>
 </li>
