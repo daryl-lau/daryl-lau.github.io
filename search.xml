@@ -1,6 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>MySQL备份-LOAD DATA</title>
+    <url>/2017/04/18/MySQL%E5%A4%87%E4%BB%BD-LOAD-DATA/</url>
+    <content><![CDATA[<p>注意，使用load data备份恢复方式，表结构必须存在；</p>
+<p>使用<code>select ...into outfile</code>备份数据</p>
+<p>语法格式如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select 语句 into outfile BACKFILE  [OPTIONS]</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<p>[OPTIONS]</p>
+<ul>
+<li>fields terminated by ‘字符串’ ： 字符串分割符，默认是制表符’\t’</li>
+<li>fileds escaped by ’字符‘ ： 转义字符，默认是’\‘</li>
+<li>fileds [optionally] enclose by 字符’‘： 字段引用符，负责向字段值两端加上字段引用符。如果使用optionally 选项，则表示字符串类型上添加字段分隔符。</li>
+<li>lines starting by ‘字符串’，每条记录前添加该字段。</li>
+<li>lines terminated by ’字符串‘，每条记录后添加该字符串，默认是换行符 ‘\n’</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test.t1 <span class="keyword">into</span> outfile <span class="string">&#x27;/data/mysql/t1_bak&#x27;</span>;</span><br><span class="line">Query OK, <span class="number">3</span> <span class="keyword">rows</span> affected (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure>
+
+<p>结果会生成在<code>/data/mysql/</code>目录下，对应的数据库目录下面。可以直接使用cat命令查看。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# cat /data/mysql/t1_bak</span><br><span class="line">1      张三   12     南京</span><br><span class="line">2      李四   21     北京</span><br><span class="line">3      王五   23     上海</span><br></pre></td></tr></table></figure>
+
+<p>恢复表数据：</p>
+<p>使用<code>load data infile...</code>快速地从一个指定格式的文本文件中读取数据到一个数据库表中。</p>
+<p>语法：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">LOAD DATA INFILE &#x27;data.txt&#x27; INTO TABLE db2.my_table;</span><br></pre></td></tr></table></figure>
+
+<p>例如：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">delete</span> <span class="keyword">from</span> test.t1;</span><br><span class="line">Query OK, <span class="number">3</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> LOAD DATA INFILE <span class="string">&#x27;/data/mysql/t1_bak&#x27;</span> <span class="keyword">INTO</span> <span class="keyword">TABLE</span> test.t1;</span><br><span class="line">Query OK, <span class="number">3</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line">Records: <span class="number">3</span>  Deleted: <span class="number">0</span>  Skipped: <span class="number">0</span>  Warnings: <span class="number">0</span></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test.t1;</span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------+-----+--------+</span></span><br><span class="line"><span class="operator">|</span> id <span class="operator">|</span> name   <span class="operator">|</span> age <span class="operator">|</span> addr   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------+-----+--------+</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">1</span> <span class="operator">|</span> 张三   <span class="operator">|</span>  <span class="number">12</span> <span class="operator">|</span> 南京   <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">2</span> <span class="operator">|</span> 李四   <span class="operator">|</span>  <span class="number">21</span> <span class="operator">|</span> 北京   <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">3</span> <span class="operator">|</span> 王五   <span class="operator">|</span>  <span class="number">23</span> <span class="operator">|</span> 上海   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------+-----+--------+</span></span><br><span class="line"><span class="number">3</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意：如果导出数据的时候后面使用了分隔符，导入的时候不需要加，还是按照上面的方式导；</p>
+</blockquote>
+<p>更复杂的配置就不写了，没什么必要，还增加大脑的负担。等用到的时候，去网上查找具体的参数即可，我们并不擅长记忆这些并不常用的选项。 一句话概括这种逻辑备份的精要：怎么吃我的，怎么给我吐出来。怎么吐出来来，怎么给我装进去。选用了什么样的分割选项，导入数据的时候就需要使用对应的分割选项去导入数据。 结合我自己平时的工作内容与实践，基本上不使用这种方式导出。反而使用mysqldump 更多一点。</p>
+]]></content>
+      <categories>
+        <category>Mysql</category>
+      </categories>
+      <tags>
+        <tag>Mysql</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>InnoDB Redo Flush及脏页刷新机制深入分析</title>
     <url>/2017/04/16/InnoDB-Redo-Flush%E5%8F%8A%E8%84%8F%E9%A1%B5%E5%88%B7%E6%96%B0%E6%9C%BA%E5%88%B6%E6%B7%B1%E5%85%A5%E5%88%86%E6%9E%90/</url>
     <content><![CDATA[<h4 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h4><p>我们知道InnoDB采用<code>Write Ahead Log</code>策略来防止宕机数据丢失，即事务提交时，先写重做日志，再修改内存数据页，这样就产生了脏页。既然有重做日志保证数据持久性，查询时也可以直接从缓冲池页中取数据，那为什么还要刷新脏页到磁盘呢？如果重做日志可以无限增大，同时缓冲池足够大，能够缓存所有数据，那么是不需要将缓冲池中的脏页刷新到磁盘。但是，通常会有以下几个问题：</p>
@@ -141,48 +183,6 @@
       </categories>
       <tags>
         <tag>InnoDB</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>MySQL备份-LOAD DATA</title>
-    <url>/2017/04/18/MySQL%E5%A4%87%E4%BB%BD-LOAD-DATA/</url>
-    <content><![CDATA[<p>注意，使用load data备份恢复方式，表结构必须存在；</p>
-<p>使用<code>select ...into outfile</code>备份数据</p>
-<p>语法格式如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select 语句 into outfile BACKFILE  [OPTIONS]</span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-<p>[OPTIONS]</p>
-<ul>
-<li>fields terminated by ‘字符串’ ： 字符串分割符，默认是制表符’\t’</li>
-<li>fileds escaped by ’字符‘ ： 转义字符，默认是’\‘</li>
-<li>fileds [optionally] enclose by 字符’‘： 字段引用符，负责向字段值两端加上字段引用符。如果使用optionally 选项，则表示字符串类型上添加字段分隔符。</li>
-<li>lines starting by ‘字符串’，每条记录前添加该字段。</li>
-<li>lines terminated by ’字符串‘，每条记录后添加该字符串，默认是换行符 ‘\n’</li>
-</ul>
-<p>例如：</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test.t1 <span class="keyword">into</span> outfile <span class="string">&#x27;/data/mysql/t1_bak&#x27;</span>;</span><br><span class="line">Query OK, <span class="number">3</span> <span class="keyword">rows</span> affected (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure>
-
-<p>结果会生成在<code>/data/mysql/</code>目录下，对应的数据库目录下面。可以直接使用cat命令查看。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# cat /data/mysql/t1_bak</span><br><span class="line">1      张三   12     南京</span><br><span class="line">2      李四   21     北京</span><br><span class="line">3      王五   23     上海</span><br></pre></td></tr></table></figure>
-
-<p>恢复表数据：</p>
-<p>使用<code>load data infile...</code>快速地从一个指定格式的文本文件中读取数据到一个数据库表中。</p>
-<p>语法：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">LOAD DATA INFILE &#x27;data.txt&#x27; INTO TABLE db2.my_table;</span><br></pre></td></tr></table></figure>
-
-<p>例如：</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">delete</span> <span class="keyword">from</span> test.t1;</span><br><span class="line">Query OK, <span class="number">3</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> LOAD DATA INFILE <span class="string">&#x27;/data/mysql/t1_bak&#x27;</span> <span class="keyword">INTO</span> <span class="keyword">TABLE</span> test.t1;</span><br><span class="line">Query OK, <span class="number">3</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line">Records: <span class="number">3</span>  Deleted: <span class="number">0</span>  Skipped: <span class="number">0</span>  Warnings: <span class="number">0</span></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test.t1;</span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------+-----+--------+</span></span><br><span class="line"><span class="operator">|</span> id <span class="operator">|</span> name   <span class="operator">|</span> age <span class="operator">|</span> addr   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------+-----+--------+</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">1</span> <span class="operator">|</span> 张三   <span class="operator">|</span>  <span class="number">12</span> <span class="operator">|</span> 南京   <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">2</span> <span class="operator">|</span> 李四   <span class="operator">|</span>  <span class="number">21</span> <span class="operator">|</span> 北京   <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">3</span> <span class="operator">|</span> 王五   <span class="operator">|</span>  <span class="number">23</span> <span class="operator">|</span> 上海   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------+-----+--------+</span></span><br><span class="line"><span class="number">3</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>注意：如果导出数据的时候后面使用了分隔符，导入的时候不需要加，还是按照上面的方式导；</p>
-</blockquote>
-<p>更复杂的配置就不写了，没什么必要，还增加大脑的负担。等用到的时候，去网上查找具体的参数即可，我们并不擅长记忆这些并不常用的选项。 一句话概括这种逻辑备份的精要：怎么吃我的，怎么给我吐出来。怎么吐出来来，怎么给我装进去。选用了什么样的分割选项，导入数据的时候就需要使用对应的分割选项去导入数据。 结合我自己平时的工作内容与实践，基本上不使用这种方式导出。反而使用mysqldump 更多一点。</p>
-]]></content>
-      <categories>
-        <category>Mysql</category>
-      </categories>
-      <tags>
-        <tag>Mysql</tag>
       </tags>
   </entry>
   <entry>
@@ -514,6 +514,100 @@
       </tags>
   </entry>
   <entry>
+    <title>Mysql主从复制概述</title>
+    <url>/2017/04/13/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%A6%82%E8%BF%B0/</url>
+    <content><![CDATA[<h3 id="MySQL主从复制概述"><a href="#MySQL主从复制概述" class="headerlink" title="MySQL主从复制概述"></a>MySQL主从复制概述</h3><p>复制是mysql数据库提供的一种高可用、高性能的解决方案，一般用来建立大型的应用；</p>
+<p>mysql支持单向，双向，链式级联，异步复制,半同步制(mysql5.5版本之后)，复制过程中,一台服务器当主<code>master</code>，而一个或者多个服务器<code>slave</code>；</p>
+<p>复制可以是单向：<code>M --&gt; S</code>,也可以双向<code>M &lt;--&gt; M</code></p>
+<p>如设置了链式级联复制，那么从服务器本身除了充当<code>slave</code>之外，还是其下面从服务器的主服务器，结构如同<code>M --&gt; S1 --&gt; S2 --&gt; S3</code> 的复制形式</p>
+<span id="more"></span>
+
+<h4 id="单向主从复制"><a href="#单向主从复制" class="headerlink" title="单向主从复制"></a>单向主从复制</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">master  --&gt;  slave</span><br></pre></td></tr></table></figure>
+
+<h4 id="一主多从模式"><a href="#一主多从模式" class="headerlink" title="一主多从模式"></a>一主多从模式</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">        -------slave1</span><br><span class="line">        |</span><br><span class="line">master——|------slave2</span><br><span class="line">        |</span><br><span class="line">        -------slave3</span><br></pre></td></tr></table></figure>
+
+<h4 id="线性级联模式"><a href="#线性级联模式" class="headerlink" title="线性级联模式"></a>线性级联模式</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">master --&gt; slave1 --&gt; salve2 --&gt; slave3</span><br></pre></td></tr></table></figure>
+
+<h4 id="双主模式，互为主从"><a href="#双主模式，互为主从" class="headerlink" title="双主模式，互为主从"></a>双主模式，互为主从</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">master &lt;--&gt; master</span><br></pre></td></tr></table></figure>
+
+<h4 id="混用"><a href="#混用" class="headerlink" title="混用"></a>混用</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">master &lt;--&gt; master</span><br><span class="line">   |</span><br><span class="line"> slave</span><br></pre></td></tr></table></figure>
+
+<h3 id="mysql主从复制原理"><a href="#mysql主从复制原理" class="headerlink" title="mysql主从复制原理"></a>mysql主从复制原理</h3><p><img data-src="/images/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6.png" alt="mysql主从复制"></p>
+<h3 id="复制三个步骤"><a href="#复制三个步骤" class="headerlink" title="复制三个步骤"></a>复制三个步骤</h3><ol>
+<li>主服务器将数据更新记录到二进制日志中；</li>
+<li>从服务器把主服务器的二进制日志拷贝到自己的中继日志中；</li>
+<li>从服务器重做中继日志中的时间，把更新应用到自己的数据库上；</li>
+</ol>
+<h4 id="主服务器中的线程"><a href="#主服务器中的线程" class="headerlink" title="主服务器中的线程"></a>主服务器中的线程</h4><ul>
+<li><p>I/O线程</p>
+<p>接收到从库发来的请求后，负责给从库发送二进制日志；</p>
+</li>
+</ul>
+<h4 id="从库中的线程"><a href="#从库中的线程" class="headerlink" title="从库中的线程"></a>从库中的线程</h4><ul>
+<li>I/O线程接收主库发来的二进制日志，并将其保存在自己的中继日志中</li>
+<li>sql线程来复制中继日志中的日志</li>
+</ul>
+<h4 id="主动复制分为异步复制、半同步复制和基于GTID的复制；"><a href="#主动复制分为异步复制、半同步复制和基于GTID的复制；" class="headerlink" title="主动复制分为异步复制、半同步复制和基于GTID的复制；"></a>主动复制分为异步复制、半同步复制和基于GTID的复制；</h4><ul>
+<li>异步复制：MySQL复制默认是异步复制，<code>Master</code>将事件写入<code>binlog</code>，但并不知道<code>Slave</code>是否或何时已经接收且已处理。在异步复制的机制的情况下，如果<code>Master</code>宕机，事务在<code>Master</code>上已提交，但很可能这些事务没有传到任何的<code>Slave</code>上。假设有<code>Master-&gt;Salve</code>故障转移的机制，此时<code>Slave</code>也可能会丢失事务。`</li>
+<li>半同步复制：当<code>Slave</code>主机连接到<code>Master</code>时，能够查看其是否处于半同步复制的机制，当<code>Master</code>上开启半同步复制的功能时，至少应该有一个<code>Slave</code>开启其功能。此时，一个线程在<code>Master</code>上提交事务将受到阻塞，直到得知一个已开启半同步复制功能的<code>Slave</code>已收到此事务的所有事件，或等待超时。当一个事务的事件都已写入其<code>relay-log</code>中且已刷新到磁盘上，<code>Slave</code>才会告知已收到，如果等待超时，也就是Master没被告知已收到，此时<code>Master</code>会自动转换为异步复制的机制。当至少一个半同步的<code>Slave</code>赶上了，<code>Master</code>与其<code>Slave</code>自动转换为半同步复制的机制。半同步复制的功能要在<code>Master</code>，<code>Slave</code>都开启，半同步复制才会起作用；否则，只开启一边，它依然为异步复制</li>
+</ul>
+<p><img data-src="/images/%E5%8D%8A%E5%90%8C%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6.png" alt="半同步主从复制"></p>
+<h3 id="主从复制应用场景"><a href="#主从复制应用场景" class="headerlink" title="主从复制应用场景"></a>主从复制应用场景</h3><ul>
+<li>主从复制有利于数据库架构的健壮性，提升访问速度，易于管理；</li>
+<li>主从服务器互为备份</li>
+<li>M-S服务器架构的设置，可以大大的加强数据库架构的健壮性，当主库出现问题，可以切换到从库，从而不影响正常生产业务的进行；</li>
+<li>主从复制读写分离分担网站压力</li>
+<li>主从服务器架构通过程序(php,java）对客户端的请求实现读写分离，在从服务器上仅仅处理用户的select查询请求，降低用户查询响应时间，以及读写操作同时在主服务器带来的压力；</li>
+</ul>
+<h3 id="GTID主从复制"><a href="#GTID主从复制" class="headerlink" title="GTID主从复制"></a>GTID主从复制</h3><h4 id="GTID的概述："><a href="#GTID的概述：" class="headerlink" title="GTID的概述："></a>GTID的概述：</h4><ol>
+<li>全局事物标识：global transaction identifieds。</li>
+<li>GTID事物是全局唯一性的，且一个事务对应一个GTID。</li>
+<li>一个GTID在一个服务器上只执行一次，避免重复执行导致数据混乱或者主从不一致。</li>
+<li>GTID用来代替classic的复制方法，不在使用binlog+pos开启复制。而是使用master_auto_postion=1的方式自动匹配GTID断点进行复制。</li>
+<li>MySQL-5.6.5开始支持的，MySQL-5.6.10后开始完善。</li>
+<li>在传统的slave端，binlog是不用开启的，但是在GTID中，slave端的binlog是必须开启的，目的是记录执行过的GTID（强制）</li>
+</ol>
+<h4 id="GTID的组成部分："><a href="#GTID的组成部分：" class="headerlink" title="GTID的组成部分："></a>GTID的组成部分：</h4><ol>
+<li>前面是server_uuid：后面是一个序列号</li>
+<li>例如：server_uuid：sequence number</li>
+<li>7800a22c-95ae-11e4-983d-080027de205a:10</li>
+<li>UUID：每个mysql实例的唯一ID，由于会传递到slave，所以也可以理解为源ID。</li>
+<li>Sequence number：在每台MySQL服务器上都是从1开始自增长的序列，一个数值对应一个事务。</li>
+</ol>
+<h4 id="GTID比传统复制的优势："><a href="#GTID比传统复制的优势：" class="headerlink" title="GTID比传统复制的优势："></a>GTID比传统复制的优势：</h4><ol>
+<li>更简单的实现failover，不用以前那样在需要找log_file和log_Pos。</li>
+<li>更简单的搭建主从复制。</li>
+<li>比传统复制更加安全。</li>
+<li>GTID是连续没有空洞的，因此主从库出现数据冲突时，可以用添加空事物的方式进行跳过。</li>
+</ol>
+<h4 id="GTID的工作原理："><a href="#GTID的工作原理：" class="headerlink" title="GTID的工作原理："></a>GTID的工作原理：</h4><ol>
+<li>master更新数据时，会在事务前产生GTID，一同记录到binlog日志中。</li>
+<li>slave端的i/o 线程将变更的binlog，写入到本地的relay log中。</li>
+<li>sql线程从relay log中获取GTID，然后对比slave端的binlog是否有记录。</li>
+<li>如果有记录，说明该GTID的事务已经执行，slave会忽略。</li>
+<li>如果没有记录，slave就会从relay log中执行该GTID的事务，并记录到binlog。</li>
+<li>在解析过程中会判断是否有主键，如果没有就用二级索引，如果没有就用全部扫描。</li>
+</ol>
+<h4 id="GTID的限制："><a href="#GTID的限制：" class="headerlink" title="GTID的限制："></a>GTID的限制：</h4><ol>
+<li>不支持非事务引擎（从库报错，stopslave; start slave; 忽略）</li>
+<li>不支持create table … select 语句复制（主库直接报错）</li>
+<li>不允许在一个SQL同时更新一个事务引擎和非事务引擎的表</li>
+<li>在一个复制组中，必须要求统一开启CTID或是关闭GTID</li>
+<li>开启DTID需要重启（5.7中可能不需要）</li>
+<li>开启DTID后，就不在使用原来的传统的复制方式</li>
+<li>对于createtemporary table 和drop temporary table语句不支持</li>
+<li>不支持sql_slave_skip_counter</li>
+</ol>
+]]></content>
+      <categories>
+        <category>Mysql</category>
+      </categories>
+      <tags>
+        <tag>Mysql</tag>
+        <tag>GTID</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Mysql体系结构</title>
     <url>/2017/04/17/Mysql%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/</url>
     <content><![CDATA[<p><img data-src="/images/mysql%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84.png"></p>
@@ -640,132 +734,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Mysql主从复制概述</title>
-    <url>/2017/04/13/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%A6%82%E8%BF%B0/</url>
-    <content><![CDATA[<h3 id="MySQL主从复制概述"><a href="#MySQL主从复制概述" class="headerlink" title="MySQL主从复制概述"></a>MySQL主从复制概述</h3><p>复制是mysql数据库提供的一种高可用、高性能的解决方案，一般用来建立大型的应用；</p>
-<p>mysql支持单向，双向，链式级联，异步复制,半同步制(mysql5.5版本之后)，复制过程中,一台服务器当主<code>master</code>，而一个或者多个服务器<code>slave</code>；</p>
-<p>复制可以是单向：<code>M --&gt; S</code>,也可以双向<code>M &lt;--&gt; M</code></p>
-<p>如设置了链式级联复制，那么从服务器本身除了充当<code>slave</code>之外，还是其下面从服务器的主服务器，结构如同<code>M --&gt; S1 --&gt; S2 --&gt; S3</code> 的复制形式</p>
-<span id="more"></span>
-
-<h4 id="单向主从复制"><a href="#单向主从复制" class="headerlink" title="单向主从复制"></a>单向主从复制</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">master  --&gt;  slave</span><br></pre></td></tr></table></figure>
-
-<h4 id="一主多从模式"><a href="#一主多从模式" class="headerlink" title="一主多从模式"></a>一主多从模式</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">        -------slave1</span><br><span class="line">        |</span><br><span class="line">master——|------slave2</span><br><span class="line">        |</span><br><span class="line">        -------slave3</span><br></pre></td></tr></table></figure>
-
-<h4 id="线性级联模式"><a href="#线性级联模式" class="headerlink" title="线性级联模式"></a>线性级联模式</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">master --&gt; slave1 --&gt; salve2 --&gt; slave3</span><br></pre></td></tr></table></figure>
-
-<h4 id="双主模式，互为主从"><a href="#双主模式，互为主从" class="headerlink" title="双主模式，互为主从"></a>双主模式，互为主从</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">master &lt;--&gt; master</span><br></pre></td></tr></table></figure>
-
-<h4 id="混用"><a href="#混用" class="headerlink" title="混用"></a>混用</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">master &lt;--&gt; master</span><br><span class="line">   |</span><br><span class="line"> slave</span><br></pre></td></tr></table></figure>
-
-<h3 id="mysql主从复制原理"><a href="#mysql主从复制原理" class="headerlink" title="mysql主从复制原理"></a>mysql主从复制原理</h3><p><img data-src="/images/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6.png" alt="mysql主从复制"></p>
-<h3 id="复制三个步骤"><a href="#复制三个步骤" class="headerlink" title="复制三个步骤"></a>复制三个步骤</h3><ol>
-<li>主服务器将数据更新记录到二进制日志中；</li>
-<li>从服务器把主服务器的二进制日志拷贝到自己的中继日志中；</li>
-<li>从服务器重做中继日志中的时间，把更新应用到自己的数据库上；</li>
-</ol>
-<h4 id="主服务器中的线程"><a href="#主服务器中的线程" class="headerlink" title="主服务器中的线程"></a>主服务器中的线程</h4><ul>
-<li><p>I/O线程</p>
-<p>接收到从库发来的请求后，负责给从库发送二进制日志；</p>
-</li>
-</ul>
-<h4 id="从库中的线程"><a href="#从库中的线程" class="headerlink" title="从库中的线程"></a>从库中的线程</h4><ul>
-<li>I/O线程接收主库发来的二进制日志，并将其保存在自己的中继日志中</li>
-<li>sql线程来复制中继日志中的日志</li>
-</ul>
-<h4 id="主动复制分为异步复制、半同步复制和基于GTID的复制；"><a href="#主动复制分为异步复制、半同步复制和基于GTID的复制；" class="headerlink" title="主动复制分为异步复制、半同步复制和基于GTID的复制；"></a>主动复制分为异步复制、半同步复制和基于GTID的复制；</h4><ul>
-<li>异步复制：MySQL复制默认是异步复制，<code>Master</code>将事件写入<code>binlog</code>，但并不知道<code>Slave</code>是否或何时已经接收且已处理。在异步复制的机制的情况下，如果<code>Master</code>宕机，事务在<code>Master</code>上已提交，但很可能这些事务没有传到任何的<code>Slave</code>上。假设有<code>Master-&gt;Salve</code>故障转移的机制，此时<code>Slave</code>也可能会丢失事务。`</li>
-<li>半同步复制：当<code>Slave</code>主机连接到<code>Master</code>时，能够查看其是否处于半同步复制的机制，当<code>Master</code>上开启半同步复制的功能时，至少应该有一个<code>Slave</code>开启其功能。此时，一个线程在<code>Master</code>上提交事务将受到阻塞，直到得知一个已开启半同步复制功能的<code>Slave</code>已收到此事务的所有事件，或等待超时。当一个事务的事件都已写入其<code>relay-log</code>中且已刷新到磁盘上，<code>Slave</code>才会告知已收到，如果等待超时，也就是Master没被告知已收到，此时<code>Master</code>会自动转换为异步复制的机制。当至少一个半同步的<code>Slave</code>赶上了，<code>Master</code>与其<code>Slave</code>自动转换为半同步复制的机制。半同步复制的功能要在<code>Master</code>，<code>Slave</code>都开启，半同步复制才会起作用；否则，只开启一边，它依然为异步复制</li>
-</ul>
-<p><img data-src="/images/%E5%8D%8A%E5%90%8C%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6.png" alt="半同步主从复制"></p>
-<h3 id="主从复制应用场景"><a href="#主从复制应用场景" class="headerlink" title="主从复制应用场景"></a>主从复制应用场景</h3><ul>
-<li>主从复制有利于数据库架构的健壮性，提升访问速度，易于管理；</li>
-<li>主从服务器互为备份</li>
-<li>M-S服务器架构的设置，可以大大的加强数据库架构的健壮性，当主库出现问题，可以切换到从库，从而不影响正常生产业务的进行；</li>
-<li>主从复制读写分离分担网站压力</li>
-<li>主从服务器架构通过程序(php,java）对客户端的请求实现读写分离，在从服务器上仅仅处理用户的select查询请求，降低用户查询响应时间，以及读写操作同时在主服务器带来的压力；</li>
-</ul>
-<h3 id="GTID主从复制"><a href="#GTID主从复制" class="headerlink" title="GTID主从复制"></a>GTID主从复制</h3><h4 id="GTID的概述："><a href="#GTID的概述：" class="headerlink" title="GTID的概述："></a>GTID的概述：</h4><ol>
-<li>全局事物标识：global transaction identifieds。</li>
-<li>GTID事物是全局唯一性的，且一个事务对应一个GTID。</li>
-<li>一个GTID在一个服务器上只执行一次，避免重复执行导致数据混乱或者主从不一致。</li>
-<li>GTID用来代替classic的复制方法，不在使用binlog+pos开启复制。而是使用master_auto_postion=1的方式自动匹配GTID断点进行复制。</li>
-<li>MySQL-5.6.5开始支持的，MySQL-5.6.10后开始完善。</li>
-<li>在传统的slave端，binlog是不用开启的，但是在GTID中，slave端的binlog是必须开启的，目的是记录执行过的GTID（强制）</li>
-</ol>
-<h4 id="GTID的组成部分："><a href="#GTID的组成部分：" class="headerlink" title="GTID的组成部分："></a>GTID的组成部分：</h4><ol>
-<li>前面是server_uuid：后面是一个序列号</li>
-<li>例如：server_uuid：sequence number</li>
-<li>7800a22c-95ae-11e4-983d-080027de205a:10</li>
-<li>UUID：每个mysql实例的唯一ID，由于会传递到slave，所以也可以理解为源ID。</li>
-<li>Sequence number：在每台MySQL服务器上都是从1开始自增长的序列，一个数值对应一个事务。</li>
-</ol>
-<h4 id="GTID比传统复制的优势："><a href="#GTID比传统复制的优势：" class="headerlink" title="GTID比传统复制的优势："></a>GTID比传统复制的优势：</h4><ol>
-<li>更简单的实现failover，不用以前那样在需要找log_file和log_Pos。</li>
-<li>更简单的搭建主从复制。</li>
-<li>比传统复制更加安全。</li>
-<li>GTID是连续没有空洞的，因此主从库出现数据冲突时，可以用添加空事物的方式进行跳过。</li>
-</ol>
-<h4 id="GTID的工作原理："><a href="#GTID的工作原理：" class="headerlink" title="GTID的工作原理："></a>GTID的工作原理：</h4><ol>
-<li>master更新数据时，会在事务前产生GTID，一同记录到binlog日志中。</li>
-<li>slave端的i/o 线程将变更的binlog，写入到本地的relay log中。</li>
-<li>sql线程从relay log中获取GTID，然后对比slave端的binlog是否有记录。</li>
-<li>如果有记录，说明该GTID的事务已经执行，slave会忽略。</li>
-<li>如果没有记录，slave就会从relay log中执行该GTID的事务，并记录到binlog。</li>
-<li>在解析过程中会判断是否有主键，如果没有就用二级索引，如果没有就用全部扫描。</li>
-</ol>
-<h4 id="GTID的限制："><a href="#GTID的限制：" class="headerlink" title="GTID的限制："></a>GTID的限制：</h4><ol>
-<li>不支持非事务引擎（从库报错，stopslave; start slave; 忽略）</li>
-<li>不支持create table … select 语句复制（主库直接报错）</li>
-<li>不允许在一个SQL同时更新一个事务引擎和非事务引擎的表</li>
-<li>在一个复制组中，必须要求统一开启CTID或是关闭GTID</li>
-<li>开启DTID需要重启（5.7中可能不需要）</li>
-<li>开启DTID后，就不在使用原来的传统的复制方式</li>
-<li>对于createtemporary table 和drop temporary table语句不支持</li>
-<li>不支持sql_slave_skip_counter</li>
-</ol>
-]]></content>
-      <categories>
-        <category>Mysql</category>
-      </categories>
-      <tags>
-        <tag>Mysql</tag>
-        <tag>GTID</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>xtrabackup备份原理</title>
-    <url>/2017/04/12/xtrabackup%E5%A4%87%E4%BB%BD%E5%8E%9F%E7%90%86/</url>
-    <content><![CDATA[<h3 id="xtrabackup备份原理"><a href="#xtrabackup备份原理" class="headerlink" title="xtrabackup备份原理"></a>xtrabackup备份原理</h3><p>流程图</p>
-<p><img data-src="/images/PXB-backup-procedure.png" alt="PXB-backup-procedure.png"></p>
-<span id="more"></span>
-<p><code>xtrabackup</code>是用来备份<code>InnoDB</code>表的，不能备份非<code>InnoDB</code>表，和<code>mysqld server</code>没有交互；</p>
-<p><code>innobackupex</code>脚本用来备份非 <code>InnoDB</code>表，同时会调用<code>xtrabackup</code>命令来备份<code>InnoDB</code>表，还会和<code>mysqld server</code>发送命令进行交互，如加读锁（FTWRL）、获取位点（SHOW SLAVE STATUS）等。</p>
-<p>简单来说，<code>innobackupex</code>在<code>xtrabackup</code>之上做了一层封装。一般情况下，我们是希望能备份<code>MyISAM</code>表的，虽然我们可能自己不用<code>MyISAM</code>表，但是<code>mysql</code>库下的系统表是 MyISAM 的，因此备份基本都通过innobackupex命令进行；另外一个原因是我们可能需要保存位点信息。</p>
-<h4 id="备份过程"><a href="#备份过程" class="headerlink" title="备份过程"></a>备份过程</h4><ol>
-<li>innobackupex 在启动后，会先 fork 一个进程，启动 xtrabackup进程，然后就等待 xtrabackup 备份完 ibd 数据文件；</li>
-<li>xtrabackup 在备份 InnoDB 相关数据时，是有2种线程的，1种是 redo 拷贝线程，负责拷贝 redo 文件，1种是 ibd 拷贝线程，负责拷贝 ibd 文件；redo 拷贝线程只有一个，在 ibd 拷贝线程之前启动，在 ibd 线程结束后结束（并不是马上结束，而是等到非innodb存储引擎表备份完再结束，这里强调的是先后顺序）。</li>
-<li>xtrabackup 进程开始执行后，先启动 redo 拷贝线程，从最新的 checkpoint 点开始顺序拷贝 redo 日志；然后再启动 ibd 数据拷贝线程，在 xtrabackup 拷贝 ibd 过程中，innobackupex 进程一直处于等待状态（等待文件被创建）。</li>
-<li>xtrabackup 拷贝完成idb后，通知 innobackupex（通过创建文件），同时自己进入等待（redo 线程仍然继续拷贝）;</li>
-<li>innobackupex 收到 xtrabackup 通知后，执行FLUSH TABLES WITH READ LOCK (FTWRL)，取得一致性位点，然后开始备份非 InnoDB 文件（包括 frm、MYD、MYI、CSV、opt、par等）。拷贝非 InnoDB 文件过程中，因为数据库处于全局只读状态，如果在业务的主库备份的话，要特别小心，非 InnoDB 表（主要是MyISAM）比较多的话整库只读时间就会比较长，这个影响一定要评估到。</li>
-<li>当 innobackupex 拷贝完所有非 InnoDB 表文件后，通知 xtrabackup（通过删文件） ，同时自己进入等待（等待另一个文件被创建）；xtrabackup 收到 innobackupex 备份完非 InnoDB 通知后，就停止 redo 拷贝线程，然后通知 innobackupex redo log 拷贝完成（通过创建文件）；</li>
-<li>innobackupex 收到 redo 备份完成通知后，就开始解锁，执行 UNLOCK TABLES；</li>
-<li>最后 innobackupex 和 xtrabackup 进程各自完成收尾工作，如资源的释放、写备份元数据信息等，innobackupex 等待 xtrabackup 子进程结束后退出。</li>
-</ol>
-<h4 id="恢复过程"><a href="#恢复过程" class="headerlink" title="恢复过程"></a>恢复过程</h4><p>如果看恢复备份集的日志，会发现和 mysqld 启动时非常相似，其实备份集的恢复就是类似 mysqld crash后，做一次 crash recover。</p>
-<p>恢复的目的是把备份集中的数据恢复到一个一致性位点，所谓一致就是指原数据库某一时间点各引擎数据的状态，比如 MyISAM 中的数据对应的是 15:00 时间点的，InnoDB 中的数据对应的是 15:20 的，这种状态的数据就是不一致的。PXB 备份集对应的一致点，就是备份时FTWRL的时间点，恢复出来的数据，就对应原数据库FTWRL时的状态。</p>
-<p>因为备份时 FTWRL 后，数据库是处于只读的，非 InnoDB 数据是在持有全局读锁情况下拷贝的，所以非 InnoDB 数据本身就对应 FTWRL 时间点；InnoDB 的 ibd 文件拷贝是在 FTWRL 前做的，拷贝出来的不同 ibd 文件最后更新时间点是不一样的，这种状态的 ibd 文件是不能直接用的，但是 redo log 是从备份开始一直持续拷贝的，最后的 redo 日志点是在持有 FTWRL 后取得的，所以最终通过 redo 应用后的 ibd 数据时间点也是和 FTWRL 一致的。</p>
-<p>所以恢复过程只涉及 InnoDB 文件的恢复，非 InnoDB 数据是不动的。备份恢复完成后，就可以把数据文件拷贝到对应的目录，然后通过mysqld来启动了。</p>
-<p>备份过程中产生的事务会被备份出来，提交了的前滚，未提交的回滚，保持数据的一致性；</p>
-]]></content>
-      <categories>
-        <category>Mysql</category>
-      </categories>
-      <tags>
-        <tag>xtrabackup</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Mysql存储引擎类型</title>
     <url>/2017/04/17/Mysql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%B1%BB%E5%9E%8B/</url>
     <content><![CDATA[<h3 id="innodb"><a href="#innodb" class="headerlink" title="innodb"></a>innodb</h3><ol>
@@ -809,6 +777,43 @@
       </categories>
       <tags>
         <tag>Mysql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>js 伪数组</title>
+    <url>/2021/05/25/js-%E4%BC%AA%E6%95%B0%E7%BB%84/</url>
+    <content><![CDATA[<p>在js中，通过document的查询元素api查出来NodeList对象或者<code>arguments</code>等都会以伪数组的方式输出，例如下面的html中，通过<code>document.getElementsByTagName(&#39;li&#39;);</code>查出来的就是伪数组，伪数组和数组都具有length属性，但是伪数组不预备数组的<code>pop</code>、<code>push</code>、<code>slice</code>等方法</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ul</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span>1<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span>2<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span>3<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%84.png"></p>
+<p>我们使用查出来的结果进行数组的操作，会报错，例如：</p>
+<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%841.png"></p>
+<p>如果我们想要正常操作该数组，则需要将伪数组转为数组，再进行操作。</p>
+<p>伪数组转数组的方式有很多种，下面介绍几种常用的</p>
+<ul>
+<li><code>Array.prototype.slice.call()</code>或者<code>[].slice.call()</code></li>
+</ul>
+<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%842.png"></p>
+<blockquote>
+<p><code>Array.prototype.slice.call()</code>和<code>[].slice.call()</code>其实是一个东西，都是调用数组原型上的slice方法</p>
+</blockquote>
+<ul>
+<li><code>Array.from()</code></li>
+</ul>
+<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%843.png"></p>
+<ul>
+<li>es6 解构赋值</li>
+</ul>
+<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%844.png"></p>
+<ul>
+<li>其他方法<br>例如使用循环，将伪数组一个个push到一个空数组里，也可以进行转化，这种比较繁琐，一般不常用</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Javascript</category>
+      </categories>
+      <tags>
+        <tag>Javascript</tag>
       </tags>
   </entry>
   <entry>
@@ -866,6 +871,38 @@
       </tags>
   </entry>
   <entry>
+    <title>xtrabackup备份原理</title>
+    <url>/2017/04/12/xtrabackup%E5%A4%87%E4%BB%BD%E5%8E%9F%E7%90%86/</url>
+    <content><![CDATA[<h3 id="xtrabackup备份原理"><a href="#xtrabackup备份原理" class="headerlink" title="xtrabackup备份原理"></a>xtrabackup备份原理</h3><p>流程图</p>
+<p><img data-src="/images/PXB-backup-procedure.png" alt="PXB-backup-procedure.png"></p>
+<span id="more"></span>
+<p><code>xtrabackup</code>是用来备份<code>InnoDB</code>表的，不能备份非<code>InnoDB</code>表，和<code>mysqld server</code>没有交互；</p>
+<p><code>innobackupex</code>脚本用来备份非 <code>InnoDB</code>表，同时会调用<code>xtrabackup</code>命令来备份<code>InnoDB</code>表，还会和<code>mysqld server</code>发送命令进行交互，如加读锁（FTWRL）、获取位点（SHOW SLAVE STATUS）等。</p>
+<p>简单来说，<code>innobackupex</code>在<code>xtrabackup</code>之上做了一层封装。一般情况下，我们是希望能备份<code>MyISAM</code>表的，虽然我们可能自己不用<code>MyISAM</code>表，但是<code>mysql</code>库下的系统表是 MyISAM 的，因此备份基本都通过innobackupex命令进行；另外一个原因是我们可能需要保存位点信息。</p>
+<h4 id="备份过程"><a href="#备份过程" class="headerlink" title="备份过程"></a>备份过程</h4><ol>
+<li>innobackupex 在启动后，会先 fork 一个进程，启动 xtrabackup进程，然后就等待 xtrabackup 备份完 ibd 数据文件；</li>
+<li>xtrabackup 在备份 InnoDB 相关数据时，是有2种线程的，1种是 redo 拷贝线程，负责拷贝 redo 文件，1种是 ibd 拷贝线程，负责拷贝 ibd 文件；redo 拷贝线程只有一个，在 ibd 拷贝线程之前启动，在 ibd 线程结束后结束（并不是马上结束，而是等到非innodb存储引擎表备份完再结束，这里强调的是先后顺序）。</li>
+<li>xtrabackup 进程开始执行后，先启动 redo 拷贝线程，从最新的 checkpoint 点开始顺序拷贝 redo 日志；然后再启动 ibd 数据拷贝线程，在 xtrabackup 拷贝 ibd 过程中，innobackupex 进程一直处于等待状态（等待文件被创建）。</li>
+<li>xtrabackup 拷贝完成idb后，通知 innobackupex（通过创建文件），同时自己进入等待（redo 线程仍然继续拷贝）;</li>
+<li>innobackupex 收到 xtrabackup 通知后，执行FLUSH TABLES WITH READ LOCK (FTWRL)，取得一致性位点，然后开始备份非 InnoDB 文件（包括 frm、MYD、MYI、CSV、opt、par等）。拷贝非 InnoDB 文件过程中，因为数据库处于全局只读状态，如果在业务的主库备份的话，要特别小心，非 InnoDB 表（主要是MyISAM）比较多的话整库只读时间就会比较长，这个影响一定要评估到。</li>
+<li>当 innobackupex 拷贝完所有非 InnoDB 表文件后，通知 xtrabackup（通过删文件） ，同时自己进入等待（等待另一个文件被创建）；xtrabackup 收到 innobackupex 备份完非 InnoDB 通知后，就停止 redo 拷贝线程，然后通知 innobackupex redo log 拷贝完成（通过创建文件）；</li>
+<li>innobackupex 收到 redo 备份完成通知后，就开始解锁，执行 UNLOCK TABLES；</li>
+<li>最后 innobackupex 和 xtrabackup 进程各自完成收尾工作，如资源的释放、写备份元数据信息等，innobackupex 等待 xtrabackup 子进程结束后退出。</li>
+</ol>
+<h4 id="恢复过程"><a href="#恢复过程" class="headerlink" title="恢复过程"></a>恢复过程</h4><p>如果看恢复备份集的日志，会发现和 mysqld 启动时非常相似，其实备份集的恢复就是类似 mysqld crash后，做一次 crash recover。</p>
+<p>恢复的目的是把备份集中的数据恢复到一个一致性位点，所谓一致就是指原数据库某一时间点各引擎数据的状态，比如 MyISAM 中的数据对应的是 15:00 时间点的，InnoDB 中的数据对应的是 15:20 的，这种状态的数据就是不一致的。PXB 备份集对应的一致点，就是备份时FTWRL的时间点，恢复出来的数据，就对应原数据库FTWRL时的状态。</p>
+<p>因为备份时 FTWRL 后，数据库是处于只读的，非 InnoDB 数据是在持有全局读锁情况下拷贝的，所以非 InnoDB 数据本身就对应 FTWRL 时间点；InnoDB 的 ibd 文件拷贝是在 FTWRL 前做的，拷贝出来的不同 ibd 文件最后更新时间点是不一样的，这种状态的 ibd 文件是不能直接用的，但是 redo log 是从备份开始一直持续拷贝的，最后的 redo 日志点是在持有 FTWRL 后取得的，所以最终通过 redo 应用后的 ibd 数据时间点也是和 FTWRL 一致的。</p>
+<p>所以恢复过程只涉及 InnoDB 文件的恢复，非 InnoDB 数据是不动的。备份恢复完成后，就可以把数据文件拷贝到对应的目录，然后通过mysqld来启动了。</p>
+<p>备份过程中产生的事务会被备份出来，提交了的前滚，未提交的回滚，保持数据的一致性；</p>
+]]></content>
+      <categories>
+        <category>Mysql</category>
+      </categories>
+      <tags>
+        <tag>xtrabackup</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>前端几种常见的布局方式</title>
     <url>/2017/07/04/%E5%89%8D%E7%AB%AF%E5%87%A0%E7%A7%8D%E5%B8%B8%E8%A7%81%E7%9A%84%E5%B8%83%E5%B1%80%E6%96%B9%E5%BC%8F/</url>
     <content><![CDATA[<h3 id="自适应两栏布局"><a href="#自适应两栏布局" class="headerlink" title="自适应两栏布局"></a>自适应两栏布局</h3><p>两栏布局是前端常见的几种布局方式之一，一般是左侧固定宽度，右侧自适应，或者右侧固定宽度，左侧自适应，利用定位进行布局</p>
@@ -900,6 +937,48 @@
       </categories>
       <tags>
         <tag>HTML</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>如何在vue中替换使用默认的svg loader</title>
+    <url>/2017/07/13/%E5%A6%82%E4%BD%95%E5%9C%A8vue%E4%B8%AD%E6%9B%BF%E6%8D%A2%E4%BD%BF%E7%94%A8%E9%BB%98%E8%AE%A4%E7%9A%84svg-loader/</url>
+    <content><![CDATA[<h3 id="1、要知道如何修改，首先要知道如何查看"><a href="#1、要知道如何修改，首先要知道如何查看" class="headerlink" title="1、要知道如何修改，首先要知道如何查看"></a>1、要知道如何修改，首先要知道如何查看</h3><p><code>vue-cli3</code> 默认是不暴露webpack的配置在项目目录中的，在项目根目录使用<code>vue inspect</code>可以查看所有的webpack配置（如果实在是想看，可以使用<code>vue eject</code> 把所以配置暴露出来，但是该操作不可逆，拿出来了就藏不回去了，慎重使用）</p>
+<p>由于<code>vue inspect</code>命令的输出太太太长了，这里就不贴出来了，但是vue想到了这一点，我们可以指定命令选项来查看我们需要的信息</p>
+<p><code>vue inspect --rule svg </code></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* config.module.rule(&#x27;svg&#x27;) */</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">test</span>: <span class="regexp">/\.(svg)(\?.*)?$/</span>,</span><br><span class="line">  use: [</span><br><span class="line">    <span class="comment">/* config.module.rule(&#x27;svg&#x27;).use(&#x27;file-loader&#x27;) */</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">loader</span>: <span class="string">&#x27;D:\\Microsoft VS Code\\Repositories\\myrepo\\z-knowledge\\Vue\\project\\study\\node_modules\\file-loader\\dist\\cjs.js&#x27;</span>,</span><br><span class="line">      <span class="attr">options</span>: &#123;</span><br><span class="line">        <span class="attr">name</span>: <span class="string">&#x27;img/[name].[hash:8].[ext]&#x27;</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们想要把默认的处理svg的file-loader修改成为<code>svg-sprite-loader</code></p>
+<span id="more"></span>
+
+<h3 id="2、安装-svg-sprite-loader"><a href="#2、安装-svg-sprite-loader" class="headerlink" title="2、安装 svg-sprite-loader"></a>2、安装 svg-sprite-loader</h3><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">npm i svg-sprite-loader -D </span><br></pre></td></tr></table></figure>
+
+<h3 id="3、修改vue-config-js"><a href="#3、修改vue-config-js" class="headerlink" title="3、修改vue.config.js"></a>3、修改vue.config.js</h3><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">&#x27;path&#x27;</span>) <span class="comment">// 下面的处理目录只能使用绝对路径，因此使用nodejs的path方法</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">    <span class="attr">chainWebpack</span>: <span class="function"><span class="params">config</span> =&gt;</span> &#123;</span><br><span class="line">        config.module.rule(<span class="string">&#x27;svg&#x27;</span>)</span><br><span class="line">            .exclude.add(path.resolve(__dirname, <span class="string">&#x27;./src/icons/svgs&#x27;</span>)); <span class="comment">// svg规则不再处理&#x27;./src/icons/svgs&#x27;目录下的文件</span></span><br><span class="line"></span><br><span class="line">        config.module.rule(<span class="string">&#x27;icons&#x27;</span>) <span class="comment">// 新增一个icons规则，处理.svg后缀的文件</span></span><br><span class="line">            .test(<span class="regexp">/\.svg$/</span>)</span><br><span class="line">            .include.add(path.resolve(__dirname, <span class="string">&#x27;./src/icons/svgs&#x27;</span>))</span><br><span class="line">                .end()</span><br><span class="line">            .use(<span class="string">&#x27;svg-sprite-loader&#x27;</span>)</span><br><span class="line">                .loader(<span class="string">&#x27;svg-sprite-loader&#x27;</span>)</span><br><span class="line">                .options(&#123; <span class="attr">symbolId</span>: <span class="string">&#x27;icon-[name]&#x27;</span> &#125;) <span class="comment">// 定义使用svg的方式</span></span><br><span class="line">                .end()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>修改后会新增一个规则<code>icons</code>,该配置如下</p>
+<p><code>vue inspect --rule icons</code></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* config.module.rule(&#x27;icons&#x27;) */</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">test</span>: <span class="regexp">/\.svg$/</span>,</span><br><span class="line">  include: [</span><br><span class="line">    <span class="string">&#x27;./src/icons/svgs&#x27;</span></span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">use</span>: [</span><br><span class="line">    <span class="comment">/* config.module.rule(&#x27;icons&#x27;).use(&#x27;svg-sprite-loader&#x27;) */</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">loader</span>: <span class="string">&#x27;svg-sprite-loader&#x27;</span>,</span><br><span class="line">      <span class="attr">options</span>: &#123;</span><br><span class="line">        <span class="attr">symbolId</span>: <span class="string">&#x27;icon-[name]&#x27;</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4、使用svg图标"><a href="#4、使用svg图标" class="headerlink" title="4、使用svg图标"></a>4、使用svg图标</h3><h4 id="4-1-在阿里图标库下载svg格式的图标，保存在src-icons目录下"><a href="#4-1-在阿里图标库下载svg格式的图标，保存在src-icons目录下" class="headerlink" title="4.1 在阿里图标库下载svg格式的图标，保存在src/icons目录下"></a>4.1 在阿里图标库下载svg格式的图标，保存在<code>src/icons</code>目录下</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">|--icons</span><br><span class="line">   |--svgs</span><br><span class="line">      wx.svg</span><br><span class="line">      qq.xvg</span><br></pre></td></tr></table></figure>
+<h4 id="4-2-然后在组件-页面中进行导入"><a href="#4-2-然后在组件-页面中进行导入" class="headerlink" title="4.2 然后在组件/页面中进行导入"></a>4.2 然后在组件/页面中进行导入</h4><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&#x27;@/icons/svgs/wx.svg&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;@/icons/svgs/qq.svg&#x27;</span></span><br></pre></td></tr></table></figure>
+<h4 id="4-3-在标签中进行使用"><a href="#4-3-在标签中进行使用" class="headerlink" title="4.3 在标签中进行使用"></a>4.3 在标签中进行使用</h4><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">svg</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">use</span> <span class="attr">xlink:href</span>=<span class="string">&quot;#icon-wx&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">use</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">svg</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">use</span> <span class="attr">xlink:href</span>=<span class="string">&quot;#icon-qq&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">use</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="5、每次都按需导入十分麻烦，可以一次性导入所有svg图标"><a href="#5、每次都按需导入十分麻烦，可以一次性导入所有svg图标" class="headerlink" title="5、每次都按需导入十分麻烦，可以一次性导入所有svg图标"></a>5、每次都按需导入十分麻烦，可以一次性导入所有svg图标</h3><p>新建文件<code>src/icons/index.js</code>，添加以下代码</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> requireAll = <span class="function"><span class="params">requireContext</span> =&gt;</span> requireContext.keys().map(requireContext);</span><br><span class="line"><span class="keyword">const</span> req = <span class="built_in">require</span>.context(<span class="string">&quot;./svgs&quot;</span>, <span class="literal">false</span>, <span class="regexp">/.svg$/</span>);</span><br><span class="line">requireAll(req);</span><br></pre></td></tr></table></figure>
+
+<p>在<code>main.js</code>中引入该<code>index.js</code>文件</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&#x27;@/icons/index&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>此时就不用了每次使用都单独导入了，因此上面4.2步骤中的导入可以不写了</p>
+<h3 id="6、封装svg组件"><a href="#6、封装svg组件" class="headerlink" title="6、封装svg组件"></a>6、封装svg组件</h3><blockquote>
+<p><code>&#39;@/components/icons/SvgIcon&#39;</code></p>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">  <span class="xml"><span class="tag">&lt;<span class="name">svg</span> <span class="attr">:class</span>=<span class="string">&quot;svgClass&quot;</span> <span class="attr">aria-hidden</span>=<span class="string">&quot;true&quot;</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">use</span> <span class="attr">:xlink:href</span>=<span class="string">&quot;iconName&quot;</span> /&gt;</span></span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span></span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span></span><br><span class="line"><span class="javascript"><span class="xml"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">    <span class="attr">name</span>: <span class="string">&#x27;svg-icon&#x27;</span>,</span></span></span><br><span class="line"><span class="javascript"><span class="xml">    <span class="attr">props</span>: &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">        <span class="attr">iconClass</span>: &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">            <span class="attr">type</span>: <span class="built_in">String</span>,</span></span></span><br><span class="line"><span class="javascript"><span class="xml">            <span class="attr">required</span>: <span class="literal">true</span></span></span></span><br><span class="line"><span class="javascript"><span class="xml">        &#125;,</span></span></span><br><span class="line"><span class="javascript"><span class="xml">        <span class="attr">className</span>: &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">            <span class="attr">type</span>: <span class="built_in">String</span>,</span></span></span><br><span class="line"><span class="javascript"><span class="xml">            <span class="attr">default</span>: <span class="string">&#x27;&#x27;</span></span></span></span><br><span class="line"><span class="javascript"><span class="xml">        &#125;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">    &#125;,</span></span></span><br><span class="line"><span class="javascript"><span class="xml">    <span class="attr">computed</span>: &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">        <span class="function"><span class="title">iconName</span>(<span class="params"></span>)</span> &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">            <span class="keyword">return</span> <span class="string">`#icon-<span class="subst">$&#123;<span class="built_in">this</span>.iconClass&#125;</span>`</span></span></span></span><br><span class="line"><span class="javascript"><span class="xml">        &#125;,</span></span></span><br><span class="line"><span class="javascript"><span class="xml">        <span class="function"><span class="title">svgClass</span>(<span class="params"></span>)</span> &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">            <span class="keyword">if</span> (<span class="built_in">this</span>.className) &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">                <span class="keyword">return</span> <span class="string">&#x27;svg-icon&#x27;</span> + <span class="built_in">this</span>.className</span></span></span><br><span class="line"><span class="javascript"><span class="xml">            &#125; <span class="keyword">else</span> &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">                <span class="keyword">return</span> <span class="string">&#x27;svg-icon&#x27;</span></span></span></span><br><span class="line"><span class="javascript"><span class="xml">            &#125;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">        &#125;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">    &#125;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">&#125;</span></span></span><br><span class="line"><span class="javascript"><span class="xml"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">style</span> <span class="attr">scoped</span>&gt;</span><span class="css"></span></span></span><br><span class="line"><span class="css"><span class="xml"><span class="selector-class">.svg-icon</span> &#123;</span></span></span><br><span class="line"><span class="css"><span class="xml">    <span class="attribute">width</span>: <span class="number">1em</span>;</span></span></span><br><span class="line"><span class="css"><span class="xml">    <span class="attribute">height</span>: <span class="number">1em</span>;</span></span></span><br><span class="line"><span class="css"><span class="xml">    <span class="attribute">vertical-align</span>: -<span class="number">0.15em</span>;</span></span></span><br><span class="line"><span class="css"><span class="xml">    fill: currentColor;</span></span></span><br><span class="line"><span class="css"><span class="xml">    <span class="attribute">overflow</span>: hidden;</span></span></span><br><span class="line"><span class="css"><span class="xml">&#125;</span></span></span><br><span class="line"><span class="css"><span class="xml"></span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
+<p>使用</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">SvgIcon</span> <span class="attr">icon-class</span>=<span class="string">&quot;wx&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">SvgIcon</span>&gt;</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Javascript</category>
+        <category>vue</category>
+      </categories>
+      <tags>
+        <tag>vue</tag>
       </tags>
   </entry>
   <entry>
@@ -1201,48 +1280,6 @@
       <tags>
         <tag>Innodb</tag>
         <tag>ACID</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>如何在vue中替换使用默认的svg loader</title>
-    <url>/2017/07/13/%E5%A6%82%E4%BD%95%E5%9C%A8vue%E4%B8%AD%E6%9B%BF%E6%8D%A2%E4%BD%BF%E7%94%A8%E9%BB%98%E8%AE%A4%E7%9A%84svg-loader/</url>
-    <content><![CDATA[<h3 id="1、要知道如何修改，首先要知道如何查看"><a href="#1、要知道如何修改，首先要知道如何查看" class="headerlink" title="1、要知道如何修改，首先要知道如何查看"></a>1、要知道如何修改，首先要知道如何查看</h3><p><code>vue-cli3</code> 默认是不暴露webpack的配置在项目目录中的，在项目根目录使用<code>vue inspect</code>可以查看所有的webpack配置（如果实在是想看，可以使用<code>vue eject</code> 把所以配置暴露出来，但是该操作不可逆，拿出来了就藏不回去了，慎重使用）</p>
-<p>由于<code>vue inspect</code>命令的输出太太太长了，这里就不贴出来了，但是vue想到了这一点，我们可以指定命令选项来查看我们需要的信息</p>
-<p><code>vue inspect --rule svg </code></p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* config.module.rule(&#x27;svg&#x27;) */</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">test</span>: <span class="regexp">/\.(svg)(\?.*)?$/</span>,</span><br><span class="line">  use: [</span><br><span class="line">    <span class="comment">/* config.module.rule(&#x27;svg&#x27;).use(&#x27;file-loader&#x27;) */</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">loader</span>: <span class="string">&#x27;D:\\Microsoft VS Code\\Repositories\\myrepo\\z-knowledge\\Vue\\project\\study\\node_modules\\file-loader\\dist\\cjs.js&#x27;</span>,</span><br><span class="line">      <span class="attr">options</span>: &#123;</span><br><span class="line">        <span class="attr">name</span>: <span class="string">&#x27;img/[name].[hash:8].[ext]&#x27;</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>我们想要把默认的处理svg的file-loader修改成为<code>svg-sprite-loader</code></p>
-<span id="more"></span>
-
-<h3 id="2、安装-svg-sprite-loader"><a href="#2、安装-svg-sprite-loader" class="headerlink" title="2、安装 svg-sprite-loader"></a>2、安装 svg-sprite-loader</h3><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">npm i svg-sprite-loader -D </span><br></pre></td></tr></table></figure>
-
-<h3 id="3、修改vue-config-js"><a href="#3、修改vue-config-js" class="headerlink" title="3、修改vue.config.js"></a>3、修改vue.config.js</h3><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">&#x27;path&#x27;</span>) <span class="comment">// 下面的处理目录只能使用绝对路径，因此使用nodejs的path方法</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">    <span class="attr">chainWebpack</span>: <span class="function"><span class="params">config</span> =&gt;</span> &#123;</span><br><span class="line">        config.module.rule(<span class="string">&#x27;svg&#x27;</span>)</span><br><span class="line">            .exclude.add(path.resolve(__dirname, <span class="string">&#x27;./src/icons/svgs&#x27;</span>)); <span class="comment">// svg规则不再处理&#x27;./src/icons/svgs&#x27;目录下的文件</span></span><br><span class="line"></span><br><span class="line">        config.module.rule(<span class="string">&#x27;icons&#x27;</span>) <span class="comment">// 新增一个icons规则，处理.svg后缀的文件</span></span><br><span class="line">            .test(<span class="regexp">/\.svg$/</span>)</span><br><span class="line">            .include.add(path.resolve(__dirname, <span class="string">&#x27;./src/icons/svgs&#x27;</span>))</span><br><span class="line">                .end()</span><br><span class="line">            .use(<span class="string">&#x27;svg-sprite-loader&#x27;</span>)</span><br><span class="line">                .loader(<span class="string">&#x27;svg-sprite-loader&#x27;</span>)</span><br><span class="line">                .options(&#123; <span class="attr">symbolId</span>: <span class="string">&#x27;icon-[name]&#x27;</span> &#125;) <span class="comment">// 定义使用svg的方式</span></span><br><span class="line">                .end()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>修改后会新增一个规则<code>icons</code>,该配置如下</p>
-<p><code>vue inspect --rule icons</code></p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* config.module.rule(&#x27;icons&#x27;) */</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">test</span>: <span class="regexp">/\.svg$/</span>,</span><br><span class="line">  include: [</span><br><span class="line">    <span class="string">&#x27;./src/icons/svgs&#x27;</span></span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">use</span>: [</span><br><span class="line">    <span class="comment">/* config.module.rule(&#x27;icons&#x27;).use(&#x27;svg-sprite-loader&#x27;) */</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">loader</span>: <span class="string">&#x27;svg-sprite-loader&#x27;</span>,</span><br><span class="line">      <span class="attr">options</span>: &#123;</span><br><span class="line">        <span class="attr">symbolId</span>: <span class="string">&#x27;icon-[name]&#x27;</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="4、使用svg图标"><a href="#4、使用svg图标" class="headerlink" title="4、使用svg图标"></a>4、使用svg图标</h3><h4 id="4-1-在阿里图标库下载svg格式的图标，保存在src-icons目录下"><a href="#4-1-在阿里图标库下载svg格式的图标，保存在src-icons目录下" class="headerlink" title="4.1 在阿里图标库下载svg格式的图标，保存在src/icons目录下"></a>4.1 在阿里图标库下载svg格式的图标，保存在<code>src/icons</code>目录下</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">|--icons</span><br><span class="line">   |--svgs</span><br><span class="line">      wx.svg</span><br><span class="line">      qq.xvg</span><br></pre></td></tr></table></figure>
-<h4 id="4-2-然后在组件-页面中进行导入"><a href="#4-2-然后在组件-页面中进行导入" class="headerlink" title="4.2 然后在组件/页面中进行导入"></a>4.2 然后在组件/页面中进行导入</h4><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&#x27;@/icons/svgs/wx.svg&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;@/icons/svgs/qq.svg&#x27;</span></span><br></pre></td></tr></table></figure>
-<h4 id="4-3-在标签中进行使用"><a href="#4-3-在标签中进行使用" class="headerlink" title="4.3 在标签中进行使用"></a>4.3 在标签中进行使用</h4><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">svg</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">use</span> <span class="attr">xlink:href</span>=<span class="string">&quot;#icon-wx&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">use</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">svg</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">use</span> <span class="attr">xlink:href</span>=<span class="string">&quot;#icon-qq&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">use</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="5、每次都按需导入十分麻烦，可以一次性导入所有svg图标"><a href="#5、每次都按需导入十分麻烦，可以一次性导入所有svg图标" class="headerlink" title="5、每次都按需导入十分麻烦，可以一次性导入所有svg图标"></a>5、每次都按需导入十分麻烦，可以一次性导入所有svg图标</h3><p>新建文件<code>src/icons/index.js</code>，添加以下代码</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> requireAll = <span class="function"><span class="params">requireContext</span> =&gt;</span> requireContext.keys().map(requireContext);</span><br><span class="line"><span class="keyword">const</span> req = <span class="built_in">require</span>.context(<span class="string">&quot;./svgs&quot;</span>, <span class="literal">false</span>, <span class="regexp">/.svg$/</span>);</span><br><span class="line">requireAll(req);</span><br></pre></td></tr></table></figure>
-
-<p>在<code>main.js</code>中引入该<code>index.js</code>文件</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&#x27;@/icons/index&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>此时就不用了每次使用都单独导入了，因此上面4.2步骤中的导入可以不写了</p>
-<h3 id="6、封装svg组件"><a href="#6、封装svg组件" class="headerlink" title="6、封装svg组件"></a>6、封装svg组件</h3><blockquote>
-<p><code>&#39;@/components/icons/SvgIcon&#39;</code></p>
-</blockquote>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">  <span class="xml"><span class="tag">&lt;<span class="name">svg</span> <span class="attr">:class</span>=<span class="string">&quot;svgClass&quot;</span> <span class="attr">aria-hidden</span>=<span class="string">&quot;true&quot;</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">use</span> <span class="attr">:xlink:href</span>=<span class="string">&quot;iconName&quot;</span> /&gt;</span></span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span></span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span></span><br><span class="line"><span class="javascript"><span class="xml"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">    <span class="attr">name</span>: <span class="string">&#x27;svg-icon&#x27;</span>,</span></span></span><br><span class="line"><span class="javascript"><span class="xml">    <span class="attr">props</span>: &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">        <span class="attr">iconClass</span>: &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">            <span class="attr">type</span>: <span class="built_in">String</span>,</span></span></span><br><span class="line"><span class="javascript"><span class="xml">            <span class="attr">required</span>: <span class="literal">true</span></span></span></span><br><span class="line"><span class="javascript"><span class="xml">        &#125;,</span></span></span><br><span class="line"><span class="javascript"><span class="xml">        <span class="attr">className</span>: &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">            <span class="attr">type</span>: <span class="built_in">String</span>,</span></span></span><br><span class="line"><span class="javascript"><span class="xml">            <span class="attr">default</span>: <span class="string">&#x27;&#x27;</span></span></span></span><br><span class="line"><span class="javascript"><span class="xml">        &#125;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">    &#125;,</span></span></span><br><span class="line"><span class="javascript"><span class="xml">    <span class="attr">computed</span>: &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">        <span class="function"><span class="title">iconName</span>(<span class="params"></span>)</span> &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">            <span class="keyword">return</span> <span class="string">`#icon-<span class="subst">$&#123;<span class="built_in">this</span>.iconClass&#125;</span>`</span></span></span></span><br><span class="line"><span class="javascript"><span class="xml">        &#125;,</span></span></span><br><span class="line"><span class="javascript"><span class="xml">        <span class="function"><span class="title">svgClass</span>(<span class="params"></span>)</span> &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">            <span class="keyword">if</span> (<span class="built_in">this</span>.className) &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">                <span class="keyword">return</span> <span class="string">&#x27;svg-icon&#x27;</span> + <span class="built_in">this</span>.className</span></span></span><br><span class="line"><span class="javascript"><span class="xml">            &#125; <span class="keyword">else</span> &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">                <span class="keyword">return</span> <span class="string">&#x27;svg-icon&#x27;</span></span></span></span><br><span class="line"><span class="javascript"><span class="xml">            &#125;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">        &#125;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">    &#125;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">&#125;</span></span></span><br><span class="line"><span class="javascript"><span class="xml"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">style</span> <span class="attr">scoped</span>&gt;</span><span class="css"></span></span></span><br><span class="line"><span class="css"><span class="xml"><span class="selector-class">.svg-icon</span> &#123;</span></span></span><br><span class="line"><span class="css"><span class="xml">    <span class="attribute">width</span>: <span class="number">1em</span>;</span></span></span><br><span class="line"><span class="css"><span class="xml">    <span class="attribute">height</span>: <span class="number">1em</span>;</span></span></span><br><span class="line"><span class="css"><span class="xml">    <span class="attribute">vertical-align</span>: -<span class="number">0.15em</span>;</span></span></span><br><span class="line"><span class="css"><span class="xml">    fill: currentColor;</span></span></span><br><span class="line"><span class="css"><span class="xml">    <span class="attribute">overflow</span>: hidden;</span></span></span><br><span class="line"><span class="css"><span class="xml">&#125;</span></span></span><br><span class="line"><span class="css"><span class="xml"></span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
-<p>使用</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">SvgIcon</span> <span class="attr">icon-class</span>=<span class="string">&quot;wx&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">SvgIcon</span>&gt;</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Javascript</category>
-        <category>vue</category>
-      </categories>
-      <tags>
-        <tag>vue</tag>
       </tags>
   </entry>
   <entry>
