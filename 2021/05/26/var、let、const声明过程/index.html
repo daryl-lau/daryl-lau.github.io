@@ -149,7 +149,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#var"><span class="nav-text">var</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#let"><span class="nav-text">let</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#let-1"><span class="nav-text">let</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#const"><span class="nav-text">const</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#var"><span class="nav-text">var</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#let"><span class="nav-text">let</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#const"><span class="nav-text">const</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -300,7 +300,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>422</span>
+      <span>419</span>
     </span>
 
   
@@ -332,8 +332,7 @@
 <h3 id="let"><a href="#let" class="headerlink" title="let"></a>let</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">  <span class="keyword">let</span> x = <span class="number">1</span>;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>输出结果：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Uncaught ReferenceError: Cannot access &#x27;x&#x27; before initialization</span><br></pre></td></tr></table></figure>
-
-<h3 id="let-1"><a href="#let-1" class="headerlink" title="let"></a>let</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">  <span class="keyword">let</span> x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">  <span class="keyword">let</span> x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>输出结果：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Uncaught ReferenceError: Cannot access &#x27;x&#x27; before initialization</span><br></pre></td></tr></table></figure>
 <p>从结果可以看出，<code>let</code>和<code>var</code>结果不一样，正是因为<code>let</code>仅仅提升了变量的声明，并不会提升初始化，所以这里在<code>let</code>之前访问<code>x</code>会报错，在初始化之前无法访问<code>x</code>,这里有一个官方叫法，叫暂存死区（<code>temporal dead zone</code>）</p>
@@ -355,10 +354,10 @@
   <div class="popular-posts-header">相关文章</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\05\25\js-伪数组\" rel="bookmark">js 伪数组</a></div>
+      <div class="popular-posts-title"><a href="\2021\05\26\js-作用域链\" rel="bookmark">js 作用域链</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\05\26\js-作用域链\" rel="bookmark">js 作用域链</a></div>
+      <div class="popular-posts-title"><a href="\2021\05\25\js-伪数组\" rel="bookmark">js 伪数组</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2021\05\26\js-引用数据类型和值数据类型\" rel="bookmark">js 引用数据类型和值数据类型</a></div>
