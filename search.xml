@@ -1,6 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>MySQL备份-LOAD DATA</title>
+    <url>/2017/04/18/MySQL%E5%A4%87%E4%BB%BD-LOAD-DATA/</url>
+    <content><![CDATA[<p>注意，使用load data备份恢复方式，表结构必须存在；</p>
+<p>使用<code>select ...into outfile</code>备份数据</p>
+<p>语法格式如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select 语句 into outfile BACKFILE  [OPTIONS]</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<p>[OPTIONS]</p>
+<ul>
+<li>fields terminated by ‘字符串’ ： 字符串分割符，默认是制表符’\t’</li>
+<li>fileds escaped by ’字符‘ ： 转义字符，默认是’\‘</li>
+<li>fileds [optionally] enclose by 字符’‘： 字段引用符，负责向字段值两端加上字段引用符。如果使用optionally 选项，则表示字符串类型上添加字段分隔符。</li>
+<li>lines starting by ‘字符串’，每条记录前添加该字段。</li>
+<li>lines terminated by ’字符串‘，每条记录后添加该字符串，默认是换行符 ‘\n’</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test.t1 <span class="keyword">into</span> outfile <span class="string">&#x27;/data/mysql/t1_bak&#x27;</span>;</span><br><span class="line">Query OK, <span class="number">3</span> <span class="keyword">rows</span> affected (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure>
+
+<p>结果会生成在<code>/data/mysql/</code>目录下，对应的数据库目录下面。可以直接使用cat命令查看。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# cat /data/mysql/t1_bak</span><br><span class="line">1      张三   12     南京</span><br><span class="line">2      李四   21     北京</span><br><span class="line">3      王五   23     上海</span><br></pre></td></tr></table></figure>
+
+<p>恢复表数据：</p>
+<p>使用<code>load data infile...</code>快速地从一个指定格式的文本文件中读取数据到一个数据库表中。</p>
+<p>语法：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">LOAD DATA INFILE &#x27;data.txt&#x27; INTO TABLE db2.my_table;</span><br></pre></td></tr></table></figure>
+
+<p>例如：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">delete</span> <span class="keyword">from</span> test.t1;</span><br><span class="line">Query OK, <span class="number">3</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> LOAD DATA INFILE <span class="string">&#x27;/data/mysql/t1_bak&#x27;</span> <span class="keyword">INTO</span> <span class="keyword">TABLE</span> test.t1;</span><br><span class="line">Query OK, <span class="number">3</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line">Records: <span class="number">3</span>  Deleted: <span class="number">0</span>  Skipped: <span class="number">0</span>  Warnings: <span class="number">0</span></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test.t1;</span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------+-----+--------+</span></span><br><span class="line"><span class="operator">|</span> id <span class="operator">|</span> name   <span class="operator">|</span> age <span class="operator">|</span> addr   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------+-----+--------+</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">1</span> <span class="operator">|</span> 张三   <span class="operator">|</span>  <span class="number">12</span> <span class="operator">|</span> 南京   <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">2</span> <span class="operator">|</span> 李四   <span class="operator">|</span>  <span class="number">21</span> <span class="operator">|</span> 北京   <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">3</span> <span class="operator">|</span> 王五   <span class="operator">|</span>  <span class="number">23</span> <span class="operator">|</span> 上海   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------+-----+--------+</span></span><br><span class="line"><span class="number">3</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意：如果导出数据的时候后面使用了分隔符，导入的时候不需要加，还是按照上面的方式导；</p>
+</blockquote>
+<p>更复杂的配置就不写了，没什么必要，还增加大脑的负担。等用到的时候，去网上查找具体的参数即可，我们并不擅长记忆这些并不常用的选项。 一句话概括这种逻辑备份的精要：怎么吃我的，怎么给我吐出来。怎么吐出来来，怎么给我装进去。选用了什么样的分割选项，导入数据的时候就需要使用对应的分割选项去导入数据。 结合我自己平时的工作内容与实践，基本上不使用这种方式导出。反而使用mysqldump 更多一点。</p>
+]]></content>
+      <categories>
+        <category>Mysql</category>
+      </categories>
+      <tags>
+        <tag>Mysql</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>InnoDB Redo Flush及脏页刷新机制深入分析</title>
     <url>/2017/04/16/InnoDB-Redo-Flush%E5%8F%8A%E8%84%8F%E9%A1%B5%E5%88%B7%E6%96%B0%E6%9C%BA%E5%88%B6%E6%B7%B1%E5%85%A5%E5%88%86%E6%9E%90/</url>
     <content><![CDATA[<h4 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h4><p>我们知道InnoDB采用<code>Write Ahead Log</code>策略来防止宕机数据丢失，即事务提交时，先写重做日志，再修改内存数据页，这样就产生了脏页。既然有重做日志保证数据持久性，查询时也可以直接从缓冲池页中取数据，那为什么还要刷新脏页到磁盘呢？如果重做日志可以无限增大，同时缓冲池足够大，能够缓存所有数据，那么是不需要将缓冲池中的脏页刷新到磁盘。但是，通常会有以下几个问题：</p>
@@ -144,48 +186,6 @@
       </tags>
   </entry>
   <entry>
-    <title>MySQL备份-LOAD DATA</title>
-    <url>/2017/04/18/MySQL%E5%A4%87%E4%BB%BD-LOAD-DATA/</url>
-    <content><![CDATA[<p>注意，使用load data备份恢复方式，表结构必须存在；</p>
-<p>使用<code>select ...into outfile</code>备份数据</p>
-<p>语法格式如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select 语句 into outfile BACKFILE  [OPTIONS]</span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-<p>[OPTIONS]</p>
-<ul>
-<li>fields terminated by ‘字符串’ ： 字符串分割符，默认是制表符’\t’</li>
-<li>fileds escaped by ’字符‘ ： 转义字符，默认是’\‘</li>
-<li>fileds [optionally] enclose by 字符’‘： 字段引用符，负责向字段值两端加上字段引用符。如果使用optionally 选项，则表示字符串类型上添加字段分隔符。</li>
-<li>lines starting by ‘字符串’，每条记录前添加该字段。</li>
-<li>lines terminated by ’字符串‘，每条记录后添加该字符串，默认是换行符 ‘\n’</li>
-</ul>
-<p>例如：</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test.t1 <span class="keyword">into</span> outfile <span class="string">&#x27;/data/mysql/t1_bak&#x27;</span>;</span><br><span class="line">Query OK, <span class="number">3</span> <span class="keyword">rows</span> affected (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure>
-
-<p>结果会生成在<code>/data/mysql/</code>目录下，对应的数据库目录下面。可以直接使用cat命令查看。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# cat /data/mysql/t1_bak</span><br><span class="line">1      张三   12     南京</span><br><span class="line">2      李四   21     北京</span><br><span class="line">3      王五   23     上海</span><br></pre></td></tr></table></figure>
-
-<p>恢复表数据：</p>
-<p>使用<code>load data infile...</code>快速地从一个指定格式的文本文件中读取数据到一个数据库表中。</p>
-<p>语法：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">LOAD DATA INFILE &#x27;data.txt&#x27; INTO TABLE db2.my_table;</span><br></pre></td></tr></table></figure>
-
-<p>例如：</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">delete</span> <span class="keyword">from</span> test.t1;</span><br><span class="line">Query OK, <span class="number">3</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> LOAD DATA INFILE <span class="string">&#x27;/data/mysql/t1_bak&#x27;</span> <span class="keyword">INTO</span> <span class="keyword">TABLE</span> test.t1;</span><br><span class="line">Query OK, <span class="number">3</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line">Records: <span class="number">3</span>  Deleted: <span class="number">0</span>  Skipped: <span class="number">0</span>  Warnings: <span class="number">0</span></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test.t1;</span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------+-----+--------+</span></span><br><span class="line"><span class="operator">|</span> id <span class="operator">|</span> name   <span class="operator">|</span> age <span class="operator">|</span> addr   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------+-----+--------+</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">1</span> <span class="operator">|</span> 张三   <span class="operator">|</span>  <span class="number">12</span> <span class="operator">|</span> 南京   <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">2</span> <span class="operator">|</span> 李四   <span class="operator">|</span>  <span class="number">21</span> <span class="operator">|</span> 北京   <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">3</span> <span class="operator">|</span> 王五   <span class="operator">|</span>  <span class="number">23</span> <span class="operator">|</span> 上海   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------+-----+--------+</span></span><br><span class="line"><span class="number">3</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>注意：如果导出数据的时候后面使用了分隔符，导入的时候不需要加，还是按照上面的方式导；</p>
-</blockquote>
-<p>更复杂的配置就不写了，没什么必要，还增加大脑的负担。等用到的时候，去网上查找具体的参数即可，我们并不擅长记忆这些并不常用的选项。 一句话概括这种逻辑备份的精要：怎么吃我的，怎么给我吐出来。怎么吐出来来，怎么给我装进去。选用了什么样的分割选项，导入数据的时候就需要使用对应的分割选项去导入数据。 结合我自己平时的工作内容与实践，基本上不使用这种方式导出。反而使用mysqldump 更多一点。</p>
-]]></content>
-      <categories>
-        <category>Mysql</category>
-      </categories>
-      <tags>
-        <tag>Mysql</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>MySQL通过二进制日志恢复数据</title>
     <url>/2018/04/10/MySQL%E9%80%9A%E8%BF%87%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%97%A5%E5%BF%97%E6%81%A2%E5%A4%8D%E6%95%B0%E6%8D%AE/</url>
     <content><![CDATA[<h3 id="开启二进制日志"><a href="#开启二进制日志" class="headerlink" title="开启二进制日志"></a>开启二进制日志</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# vim /etc/my.cnf</span><br><span class="line"></span><br><span class="line">[mysqld]</span><br><span class="line">server-id=1</span><br><span class="line">log-bin=mysql-bin</span><br><span class="line">sync-binlog=1</span><br><span class="line">innodb_support_xa=1</span><br><span class="line">binlog_format=statement</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# service mysqld restart</span><br><span class="line">Shutting down MySQL.. SUCCESS!</span><br><span class="line">Starting MySQL.. SUCCESS!</span><br></pre></td></tr></table></figure>
@@ -261,49 +261,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Mysql-5.7 安装</title>
-    <url>/2017/04/08/Mysql-5-7-%E5%AE%89%E8%A3%85/</url>
-    <content><![CDATA[<h3 id="安装前说明"><a href="#安装前说明" class="headerlink" title="安装前说明"></a>安装前说明</h3><p>如果机器上已经有了mysql或者MariaDB，先卸载再安装；</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# rpm -e mariadb-libs-5.5.41-2.el7_0.x86_64 --nodeps</span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-
-<h3 id="创建mysql用户"><a href="#创建mysql用户" class="headerlink" title="创建mysql用户"></a>创建mysql用户</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# useradd mysql</span><br></pre></td></tr></table></figure>
-
-<h3 id="下载软件包并解压授权"><a href="#下载软件包并解压授权" class="headerlink" title="下载软件包并解压授权"></a>下载软件包并解压授权</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# wget https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.21-linux-glibc2.12-x86_64.tar.gz</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# tar -xf mysql-5.7.21-linux-glibc2.12-x86_64.tar.gz -C /usr/local/</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# mv /usr/local/mysql-5.7.21-linux-glibc2.12-x86_64/ /usr/local/mysql</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# chown mysql:mysql /usr/local/mysql/</span><br></pre></td></tr></table></figure>
-
-<h3 id="创建数据目录"><a href="#创建数据目录" class="headerlink" title="创建数据目录"></a>创建数据目录</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# mkdir /data/mysql -p</span><br><span class="line">[root@lyucan ~]# chown -R mysql:mysql /data/mysql/</span><br></pre></td></tr></table></figure>
-
-
-<h3 id="创建my-cnf配置文件"><a href="#创建my-cnf配置文件" class="headerlink" title="创建my.cnf配置文件"></a>创建my.cnf配置文件</h3><p>mysql5.7没有默认的my_default.cnf文件，需要自己手动创建，下面这个是一个简单的模板；</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan mysql]# vim /etc/my.cnf</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[client]</span><br><span class="line">port = 3306</span><br><span class="line">socket = /tmp/mysql.sock</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[mysqld]</span><br><span class="line">character_set_server=utf8</span><br><span class="line">init_connect=&#x27;SET NAMES utf8&#x27;</span><br><span class="line">basedir=/usr/local/mysql</span><br><span class="line">datadir=/data/mysql/</span><br><span class="line">socket=/tmp/mysql.sock</span><br><span class="line">log-error=/usr/local/mysql/mysqld.err</span><br><span class="line">pid-file=/usr/local/mysql/mysqld.pid</span><br><span class="line">#不区分大小写</span><br><span class="line">lower_case_table_names = 1</span><br><span class="line">#</span><br><span class="line">sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION</span><br><span class="line">#</span><br><span class="line">max_connections=5000</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">##修改my.cnf权限</span><br><span class="line">[mysql@lyucan ~]$ chown mysql:mysql /etc/my.cnf</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h3 id="初始化数据"><a href="#初始化数据" class="headerlink" title="初始化数据"></a>初始化数据</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan bin]# /usr/local/mysql/bin/mysqld --initialize --user=mysql --basedir=/usr/local/mysql --datadir=/data/mysql</span><br><span class="line"></span><br><span class="line">#这条命令没有输出，但是会创建一个临时的root密码，在上面配置文件定义的/usr/local/mysql/mysqld.err文件中，如下所示，临时密码为 5SEAgHPPqK&lt;u</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# cat /usr/local/mysql/mysqld.err</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">2017-04-08T16:39:16.991943Z 0 [Warning] TIMESTAMP with implicit DEFAULT value is deprecated. Please use --explicit_defaults_for_timestamp server option (see documentation for more details).</span><br><span class="line">2017-04-08T16:39:17.284209Z 0 [Warning] InnoDB: New log files created, LSN=45790</span><br><span class="line">2017-04-08T16:39:17.337845Z 0 [Warning] InnoDB: Creating foreign key constraint system tables.</span><br><span class="line">2017-04-08T16:39:17.395477Z 0 [Warning] No existing UUID has been found, so we assume that this is the first time that this server has been started. Generating a new UUID: 61308035-3b4b-11e8-9bb4-da8255dea6c5.</span><br><span class="line">2017-04-08T16:39:17.396765Z 0 [Warning] Gtid table is not ready to be used. Table &#x27;mysql.gtid_executed&#x27; cannot be opened.</span><br><span class="line">2017-04-08T16:39:17.397767Z 1 [Note] A temporary password is generated for root@localhost: 5SEAgHPPqK&lt;u</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>上面的<code>root@localhost: 5SEAgHPPqK&lt;u</code>需要记住，后面需要用到</p>
-</blockquote>
-<h3 id="启动mysql"><a href="#启动mysql" class="headerlink" title="启动mysql"></a>启动mysql</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan support-files]# cd /usr/local/mysql/support-files/</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@lyucan support-files]# ./mysql.server start</span><br><span class="line">Starting MySQL. SUCCESS!</span><br></pre></td></tr></table></figure>
-
-<h3 id="连接mysql"><a href="#连接mysql" class="headerlink" title="连接mysql"></a>连接mysql</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan support-files]# cd /usr/local/mysql/bin/</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@lyucan bin]# ./mysql -uroot -p</span><br><span class="line">Enter password:                 ##这里的密码就是上面的临时root密码 5SEAgHPPqK&lt;u</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Welcome to the MySQL monitor.  Commands end with ; or \g.</span><br><span class="line">Your MySQL connection id is 3</span><br><span class="line">Server version: 5.7.21</span><br><span class="line"></span><br><span class="line">Copyright (c) 2000, 2017, Oracle and/or its affiliates. All rights reserved.</span><br><span class="line"></span><br><span class="line">Oracle is a registered trademark of Oracle Corporation and/or its</span><br><span class="line">affiliates. Other names may be trademarks of their respective</span><br><span class="line">owners.</span><br><span class="line"></span><br><span class="line">Type &#x27;help;&#x27; or &#x27;\h&#x27; for help. Type &#x27;\c&#x27; to clear the current input statement.</span><br><span class="line"></span><br><span class="line">mysql&gt;</span><br></pre></td></tr></table></figure>
-
-<h3 id="修改root密码"><a href="#修改root密码" class="headerlink" title="修改root密码"></a>修改root密码</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">set</span> password<span class="operator">=</span>password(<span class="string">&#x27;root123&#x27;</span>);</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected, <span class="number">1</span> warning (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
-
-<h3 id="安装后操作"><a href="#安装后操作" class="headerlink" title="安装后操作"></a>安装后操作</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#设置开机自启动；</span><br><span class="line"></span><br><span class="line">[root@lyucan bin]# cp -a /usr/local/mysql/support-files/mysql.server /etc/init.d/mysqld</span><br><span class="line">[root@lyucan bin]# chkconfig --add mysqld</span><br><span class="line">[root@lyucan bin]# chkconfig mysqld on</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#当复制到/etc/init.d/mysqld后，可以使用service mysqld start|stop的方式启停；</span><br><span class="line"></span><br><span class="line">[root@lyucan bin]# service mysqld status</span><br><span class="line">SUCCESS! MySQL running (25732)</span><br><span class="line">[root@lyucan bin]# service mysqld stop</span><br><span class="line">Shutting down MySQL.. SUCCESS!</span><br><span class="line">[root@lyucan bin]# service mysqld start</span><br><span class="line">Starting MySQL. SUCCESS!</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#将mysql工具的命令添加到PATH环境变量里面去，使用的时候就不用使用绝对路径；</span><br><span class="line">[root@lyucan bin]# echo &quot;export PATH=$PATH:/usr/local/mysql/bin&quot; &gt;&gt; /etc/profile</span><br><span class="line">[root@lyucan bin]# source /etc/profile</span><br></pre></td></tr></table></figure>
-
-<h3 id="创建远程连接用户"><a href="#创建远程连接用户" class="headerlink" title="创建远程连接用户"></a>创建远程连接用户</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">grant</span> <span class="keyword">all</span> privileges <span class="keyword">on</span> <span class="operator">*</span>.<span class="operator">*</span> <span class="keyword">to</span> <span class="string">&#x27;lyucan&#x27;</span>@<span class="string">&#x27;%&#x27;</span> identified <span class="keyword">by</span> <span class="string">&#x27;echo123.&#x27;</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected, <span class="number">1</span> warning (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> flush privileges;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
-
-<h3 id="远程连接检测"><a href="#远程连接检测" class="headerlink" title="远程连接检测"></a>远程连接检测</h3><p>注意放通或关掉防火墙</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# firewall-cmd --permanent --add-service=mysql</span><br><span class="line">success</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# firewall-cmd --reload</span><br><span class="line">success</span><br></pre></td></tr></table></figure>
-
-<p><img data-src="/images/mysql%E5%AE%89%E8%A3%85.png" alt="mysql安装"></p>
-]]></content>
-      <categories>
-        <category>Mysql</category>
-      </categories>
-      <tags>
-        <tag>Mysql</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Mysql Innodb特性</title>
     <url>/2017/05/10/Mysql-Innodb%E7%89%B9%E6%80%A7/</url>
     <content><![CDATA[<h3 id="Innodb特性"><a href="#Innodb特性" class="headerlink" title="Innodb特性"></a>Innodb特性</h3><h4 id="插入缓存（insert-buffer）"><a href="#插入缓存（insert-buffer）" class="headerlink" title="插入缓存（insert buffer）"></a>插入缓存（insert buffer）</h4><p>对非聚集索引的插入或者<code>update</code>，<code>purge</code>等操作，并非每一次直接插入索引页，而是把若干对于同一页面的更新缓存起来合并为一次操作，随机IO –&gt; 顺序IO，避免随机IO带的性能消耗，提高写性能。</p>
@@ -352,6 +309,87 @@
       </categories>
       <tags>
         <tag>Innodb</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Mysql-5.7 安装</title>
+    <url>/2017/04/08/Mysql-5-7-%E5%AE%89%E8%A3%85/</url>
+    <content><![CDATA[<h3 id="安装前说明"><a href="#安装前说明" class="headerlink" title="安装前说明"></a>安装前说明</h3><p>如果机器上已经有了mysql或者MariaDB，先卸载再安装；</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# rpm -e mariadb-libs-5.5.41-2.el7_0.x86_64 --nodeps</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+
+<h3 id="创建mysql用户"><a href="#创建mysql用户" class="headerlink" title="创建mysql用户"></a>创建mysql用户</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# useradd mysql</span><br></pre></td></tr></table></figure>
+
+<h3 id="下载软件包并解压授权"><a href="#下载软件包并解压授权" class="headerlink" title="下载软件包并解压授权"></a>下载软件包并解压授权</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# wget https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.21-linux-glibc2.12-x86_64.tar.gz</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# tar -xf mysql-5.7.21-linux-glibc2.12-x86_64.tar.gz -C /usr/local/</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# mv /usr/local/mysql-5.7.21-linux-glibc2.12-x86_64/ /usr/local/mysql</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# chown mysql:mysql /usr/local/mysql/</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建数据目录"><a href="#创建数据目录" class="headerlink" title="创建数据目录"></a>创建数据目录</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# mkdir /data/mysql -p</span><br><span class="line">[root@lyucan ~]# chown -R mysql:mysql /data/mysql/</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="创建my-cnf配置文件"><a href="#创建my-cnf配置文件" class="headerlink" title="创建my.cnf配置文件"></a>创建my.cnf配置文件</h3><p>mysql5.7没有默认的my_default.cnf文件，需要自己手动创建，下面这个是一个简单的模板；</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan mysql]# vim /etc/my.cnf</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[client]</span><br><span class="line">port = 3306</span><br><span class="line">socket = /tmp/mysql.sock</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[mysqld]</span><br><span class="line">character_set_server=utf8</span><br><span class="line">init_connect=&#x27;SET NAMES utf8&#x27;</span><br><span class="line">basedir=/usr/local/mysql</span><br><span class="line">datadir=/data/mysql/</span><br><span class="line">socket=/tmp/mysql.sock</span><br><span class="line">log-error=/usr/local/mysql/mysqld.err</span><br><span class="line">pid-file=/usr/local/mysql/mysqld.pid</span><br><span class="line">#不区分大小写</span><br><span class="line">lower_case_table_names = 1</span><br><span class="line">#</span><br><span class="line">sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION</span><br><span class="line">#</span><br><span class="line">max_connections=5000</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">##修改my.cnf权限</span><br><span class="line">[mysql@lyucan ~]$ chown mysql:mysql /etc/my.cnf</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="初始化数据"><a href="#初始化数据" class="headerlink" title="初始化数据"></a>初始化数据</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan bin]# /usr/local/mysql/bin/mysqld --initialize --user=mysql --basedir=/usr/local/mysql --datadir=/data/mysql</span><br><span class="line"></span><br><span class="line">#这条命令没有输出，但是会创建一个临时的root密码，在上面配置文件定义的/usr/local/mysql/mysqld.err文件中，如下所示，临时密码为 5SEAgHPPqK&lt;u</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# cat /usr/local/mysql/mysqld.err</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">2017-04-08T16:39:16.991943Z 0 [Warning] TIMESTAMP with implicit DEFAULT value is deprecated. Please use --explicit_defaults_for_timestamp server option (see documentation for more details).</span><br><span class="line">2017-04-08T16:39:17.284209Z 0 [Warning] InnoDB: New log files created, LSN=45790</span><br><span class="line">2017-04-08T16:39:17.337845Z 0 [Warning] InnoDB: Creating foreign key constraint system tables.</span><br><span class="line">2017-04-08T16:39:17.395477Z 0 [Warning] No existing UUID has been found, so we assume that this is the first time that this server has been started. Generating a new UUID: 61308035-3b4b-11e8-9bb4-da8255dea6c5.</span><br><span class="line">2017-04-08T16:39:17.396765Z 0 [Warning] Gtid table is not ready to be used. Table &#x27;mysql.gtid_executed&#x27; cannot be opened.</span><br><span class="line">2017-04-08T16:39:17.397767Z 1 [Note] A temporary password is generated for root@localhost: 5SEAgHPPqK&lt;u</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>上面的<code>root@localhost: 5SEAgHPPqK&lt;u</code>需要记住，后面需要用到</p>
+</blockquote>
+<h3 id="启动mysql"><a href="#启动mysql" class="headerlink" title="启动mysql"></a>启动mysql</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan support-files]# cd /usr/local/mysql/support-files/</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@lyucan support-files]# ./mysql.server start</span><br><span class="line">Starting MySQL. SUCCESS!</span><br></pre></td></tr></table></figure>
+
+<h3 id="连接mysql"><a href="#连接mysql" class="headerlink" title="连接mysql"></a>连接mysql</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan support-files]# cd /usr/local/mysql/bin/</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@lyucan bin]# ./mysql -uroot -p</span><br><span class="line">Enter password:                 ##这里的密码就是上面的临时root密码 5SEAgHPPqK&lt;u</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Welcome to the MySQL monitor.  Commands end with ; or \g.</span><br><span class="line">Your MySQL connection id is 3</span><br><span class="line">Server version: 5.7.21</span><br><span class="line"></span><br><span class="line">Copyright (c) 2000, 2017, Oracle and/or its affiliates. All rights reserved.</span><br><span class="line"></span><br><span class="line">Oracle is a registered trademark of Oracle Corporation and/or its</span><br><span class="line">affiliates. Other names may be trademarks of their respective</span><br><span class="line">owners.</span><br><span class="line"></span><br><span class="line">Type &#x27;help;&#x27; or &#x27;\h&#x27; for help. Type &#x27;\c&#x27; to clear the current input statement.</span><br><span class="line"></span><br><span class="line">mysql&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="修改root密码"><a href="#修改root密码" class="headerlink" title="修改root密码"></a>修改root密码</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">set</span> password<span class="operator">=</span>password(<span class="string">&#x27;root123&#x27;</span>);</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected, <span class="number">1</span> warning (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<h3 id="安装后操作"><a href="#安装后操作" class="headerlink" title="安装后操作"></a>安装后操作</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#设置开机自启动；</span><br><span class="line"></span><br><span class="line">[root@lyucan bin]# cp -a /usr/local/mysql/support-files/mysql.server /etc/init.d/mysqld</span><br><span class="line">[root@lyucan bin]# chkconfig --add mysqld</span><br><span class="line">[root@lyucan bin]# chkconfig mysqld on</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#当复制到/etc/init.d/mysqld后，可以使用service mysqld start|stop的方式启停；</span><br><span class="line"></span><br><span class="line">[root@lyucan bin]# service mysqld status</span><br><span class="line">SUCCESS! MySQL running (25732)</span><br><span class="line">[root@lyucan bin]# service mysqld stop</span><br><span class="line">Shutting down MySQL.. SUCCESS!</span><br><span class="line">[root@lyucan bin]# service mysqld start</span><br><span class="line">Starting MySQL. SUCCESS!</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#将mysql工具的命令添加到PATH环境变量里面去，使用的时候就不用使用绝对路径；</span><br><span class="line">[root@lyucan bin]# echo &quot;export PATH=$PATH:/usr/local/mysql/bin&quot; &gt;&gt; /etc/profile</span><br><span class="line">[root@lyucan bin]# source /etc/profile</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建远程连接用户"><a href="#创建远程连接用户" class="headerlink" title="创建远程连接用户"></a>创建远程连接用户</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">grant</span> <span class="keyword">all</span> privileges <span class="keyword">on</span> <span class="operator">*</span>.<span class="operator">*</span> <span class="keyword">to</span> <span class="string">&#x27;lyucan&#x27;</span>@<span class="string">&#x27;%&#x27;</span> identified <span class="keyword">by</span> <span class="string">&#x27;echo123.&#x27;</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected, <span class="number">1</span> warning (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> flush privileges;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<h3 id="远程连接检测"><a href="#远程连接检测" class="headerlink" title="远程连接检测"></a>远程连接检测</h3><p>注意放通或关掉防火墙</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# firewall-cmd --permanent --add-service=mysql</span><br><span class="line">success</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# firewall-cmd --reload</span><br><span class="line">success</span><br></pre></td></tr></table></figure>
+
+<p><img data-src="/images/mysql%E5%AE%89%E8%A3%85.png" alt="mysql安装"></p>
+]]></content>
+      <categories>
+        <category>Mysql</category>
+      </categories>
+      <tags>
+        <tag>Mysql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Mysql主从复制-半同步主从复制</title>
+    <url>/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%8D%8A%E5%90%8C%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/</url>
+    <content><![CDATA[<blockquote>
+<p>半同步复制可以直接在异步复制的基础上完成，参考<a href="https://www.baihuzi.com/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%BC%82%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">异步主从复制</a></p>
+</blockquote>
+<h3 id="开启半同步主从复制"><a href="#开启半同步主从复制" class="headerlink" title="开启半同步主从复制"></a>开启半同步主从复制</h3><h4 id="先检查是否支持动态安装插件"><a href="#先检查是否支持动态安装插件" class="headerlink" title="先检查是否支持动态安装插件"></a>先检查是否支持动态安装插件</h4><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> @<span class="variable">@have</span>_dynamic_loading</span><br><span class="line">    <span class="operator">-</span><span class="operator">&gt;</span> ;</span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------+</span></span><br><span class="line"><span class="operator">|</span> @<span class="variable">@have</span>_dynamic_loading <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------+</span></span><br><span class="line"><span class="operator">|</span> YES                    <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<h4 id="查看插件库的路径"><a href="#查看插件库的路径" class="headerlink" title="查看插件库的路径"></a>查看插件库的路径</h4><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> variables <span class="keyword">like</span> <span class="string">&#x27;plugin_dir&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">---------------+------------------------------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name <span class="operator">|</span> <span class="keyword">Value</span>                        <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------+------------------------------+</span></span><br><span class="line"><span class="operator">|</span> plugin_dir    <span class="operator">|</span> <span class="operator">/</span>usr<span class="operator">/</span><span class="keyword">local</span><span class="operator">/</span>mysql<span class="operator">/</span>lib<span class="operator">/</span>plugin<span class="operator">/</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------+------------------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<h4 id="有这个两个表示支持在线安装插件，然后在master和slave上同时安装插件"><a href="#有这个两个表示支持在线安装插件，然后在master和slave上同时安装插件" class="headerlink" title="有这个两个表示支持在线安装插件，然后在master和slave上同时安装插件"></a>有这个两个表示支持在线安装插件，然后在master和slave上同时安装插件</h4><ul>
+<li>master<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"># master</span><br><span class="line">mysql<span class="operator">&gt;</span> install plugin rpl_semi_sync_master SONAME <span class="string">&#x27;semisync_master.so&#x27;</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.10</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> mysql.plugin;</span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------+--------------------+</span></span><br><span class="line"><span class="operator">|</span> name                 <span class="operator">|</span> dl                 <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------+--------------------+</span></span><br><span class="line"><span class="operator">|</span> rpl_semi_sync_master <span class="operator">|</span> semisync_master.so <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------+--------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">set</span> <span class="keyword">global</span> rpl_semi_sync_master_enabled<span class="operator">=</span><span class="number">1</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> status <span class="keyword">like</span> <span class="string">&#x27;%semi_sync%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name                              <span class="operator">|</span> <span class="keyword">Value</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_clients               <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_net_avg_wait_time     <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_net_wait_time         <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_net_waits             <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_no_times              <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_no_tx                 <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_status                <span class="operator">|</span> <span class="keyword">ON</span>    <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_timefunc_failures     <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_tx_avg_wait_time      <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_tx_wait_time          <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_tx_waits              <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_wait_pos_backtraverse <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_wait_sessions         <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_yes_tx                <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------------------------------+-------+</span></span><br><span class="line"><span class="number">14</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li>slave<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"># slave</span><br><span class="line">mysql<span class="operator">&gt;</span> install plugin rpl_semi_sync_slave SONAME <span class="string">&#x27;semisync_slave.so&#x27;</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.02</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> mysql.plugin;</span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------+-------------------+</span></span><br><span class="line"><span class="operator">|</span> name                <span class="operator">|</span> dl                <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------+-------------------+</span></span><br><span class="line"><span class="operator">|</span> rpl_semi_sync_slave <span class="operator">|</span> semisync_slave.so <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------+-------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">set</span> <span class="keyword">global</span> rpl_semi_sync_slave_enabled<span class="operator">=</span><span class="number">1</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> status <span class="keyword">like</span> <span class="string">&#x27;%semi_sync%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name              <span class="operator">|</span> <span class="keyword">Value</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_slave_status <span class="operator">|</span> OFF   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">## 开启了半同步，为什么还是off呢，是由于我们之前slave是在运行状态，将其重启下就可以了！</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> stop slave;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">start</span> slave;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.01</span> sec)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> status <span class="keyword">like</span> <span class="string">&#x27;%semi_sync%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name              <span class="operator">|</span> <span class="keyword">Value</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_slave_status <span class="operator">|</span> <span class="keyword">ON</span>    <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>查看master上的状态</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> status <span class="keyword">like</span> <span class="string">&#x27;%semi%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name                              <span class="operator">|</span> <span class="keyword">Value</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_clients               <span class="operator">|</span> <span class="number">1</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_net_avg_wait_time     <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> net_wait_time         <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_net_waits             <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_no_times              <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_no_tx                 <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_status                <span class="operator">|</span> <span class="keyword">ON</span>    <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_timefunc_failures     <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_tx_avg_wait_time      <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_tx_wait_time          <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_tx_waits              <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_wait_pos_backtraverse <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_wait_sessions         <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_yes_tx                <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------------------------------+-------+</span></span><br><span class="line"><span class="number">14</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">#Rpl_semi_sync_master_clients 表示有几台slave连接到了这台master上，有几台，数字就是几；</span><br></pre></td></tr></table></figure>
+
+<p>将配置写入my.cnf中，避免重启失效</p>
+<ul>
+<li>master<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">rpl_semi_sync_master_enabled=1</span><br><span class="line">rpl_semi_sync_master_timeout=10000        ##配置超时多少毫秒切换到异同步复制</span><br></pre></td></tr></table></figure></li>
+<li>slave<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[mysqld]rpl_semi_sync_slave_enabled=1</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><p>将 slave 的io thread 停掉，那么将在10秒后切换到异步复制（上面配置文件配置的10秒），也就是插入操作将卡住10秒才插入成功</p>
+<ul>
+<li><p>slave</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"># slavemysql<span class="operator">&gt;</span> stop slave io_thread;Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected, <span class="number">1</span> warning (<span class="number">0.00</span> sec)mysql<span class="operator">&gt;</span> <span class="keyword">show</span> warnings;<span class="operator">+</span><span class="comment">-------+------+-----------------------------------------------------------+| Level | Code | Message                                                   |+-------+------+-----------------------------------------------------------+| Note  | 3084 | Replication thread(s) for channel &#x27;&#x27; are already stopped. |+-------+------+-----------------------------------------------------------+1 row in set (0.00 sec)</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> status <span class="keyword">like</span> <span class="string">&#x27;%semi%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name              <span class="operator">|</span> <span class="keyword">Value</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_slave_status <span class="operator">|</span> OFF   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
+<li><p>slave</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"># master</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">insert</span> <span class="keyword">into</span> t1 <span class="keyword">values</span>(<span class="number">17</span>);</span><br><span class="line">Query OK, <span class="number">1</span> <span class="type">row</span> affected (<span class="number">10.01</span> sec)           ##可以看到花了<span class="number">10</span>秒才插入成功，此时就切换到了异步复制</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>切换到异步复制后，系统不会自动切回半同步，需要手动切，切得方式很简单，就是<code>stop slave</code>；<code>start slave</code>；</p>
+]]></content>
+      <categories>
+        <category>Mysql</category>
+      </categories>
+      <tags>
+        <tag>Mysql</tag>
       </tags>
   </entry>
   <entry>
@@ -422,129 +460,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Mysql主从复制-半同步主从复制</title>
-    <url>/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%8D%8A%E5%90%8C%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/</url>
-    <content><![CDATA[<blockquote>
-<p>半同步复制可以直接在异步复制的基础上完成，参考<a href="https://www.baihuzi.com/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%BC%82%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">异步主从复制</a></p>
-</blockquote>
-<h3 id="开启半同步主从复制"><a href="#开启半同步主从复制" class="headerlink" title="开启半同步主从复制"></a>开启半同步主从复制</h3><h4 id="先检查是否支持动态安装插件"><a href="#先检查是否支持动态安装插件" class="headerlink" title="先检查是否支持动态安装插件"></a>先检查是否支持动态安装插件</h4><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> @<span class="variable">@have</span>_dynamic_loading</span><br><span class="line">    <span class="operator">-</span><span class="operator">&gt;</span> ;</span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------+</span></span><br><span class="line"><span class="operator">|</span> @<span class="variable">@have</span>_dynamic_loading <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------+</span></span><br><span class="line"><span class="operator">|</span> YES                    <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-<h4 id="查看插件库的路径"><a href="#查看插件库的路径" class="headerlink" title="查看插件库的路径"></a>查看插件库的路径</h4><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> variables <span class="keyword">like</span> <span class="string">&#x27;plugin_dir&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">---------------+------------------------------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name <span class="operator">|</span> <span class="keyword">Value</span>                        <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------+------------------------------+</span></span><br><span class="line"><span class="operator">|</span> plugin_dir    <span class="operator">|</span> <span class="operator">/</span>usr<span class="operator">/</span><span class="keyword">local</span><span class="operator">/</span>mysql<span class="operator">/</span>lib<span class="operator">/</span>plugin<span class="operator">/</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------+------------------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
-
-<h4 id="有这个两个表示支持在线安装插件，然后在master和slave上同时安装插件"><a href="#有这个两个表示支持在线安装插件，然后在master和slave上同时安装插件" class="headerlink" title="有这个两个表示支持在线安装插件，然后在master和slave上同时安装插件"></a>有这个两个表示支持在线安装插件，然后在master和slave上同时安装插件</h4><ul>
-<li>master<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"># master</span><br><span class="line">mysql<span class="operator">&gt;</span> install plugin rpl_semi_sync_master SONAME <span class="string">&#x27;semisync_master.so&#x27;</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.10</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> mysql.plugin;</span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------+--------------------+</span></span><br><span class="line"><span class="operator">|</span> name                 <span class="operator">|</span> dl                 <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------+--------------------+</span></span><br><span class="line"><span class="operator">|</span> rpl_semi_sync_master <span class="operator">|</span> semisync_master.so <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------+--------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">set</span> <span class="keyword">global</span> rpl_semi_sync_master_enabled<span class="operator">=</span><span class="number">1</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> status <span class="keyword">like</span> <span class="string">&#x27;%semi_sync%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name                              <span class="operator">|</span> <span class="keyword">Value</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_clients               <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_net_avg_wait_time     <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_net_wait_time         <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_net_waits             <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_no_times              <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_no_tx                 <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_status                <span class="operator">|</span> <span class="keyword">ON</span>    <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_timefunc_failures     <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_tx_avg_wait_time      <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_tx_wait_time          <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_tx_waits              <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_wait_pos_backtraverse <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_wait_sessions         <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_yes_tx                <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------------------------------+-------+</span></span><br><span class="line"><span class="number">14</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure></li>
-<li>slave<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"># slave</span><br><span class="line">mysql<span class="operator">&gt;</span> install plugin rpl_semi_sync_slave SONAME <span class="string">&#x27;semisync_slave.so&#x27;</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.02</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> mysql.plugin;</span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------+-------------------+</span></span><br><span class="line"><span class="operator">|</span> name                <span class="operator">|</span> dl                <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------+-------------------+</span></span><br><span class="line"><span class="operator">|</span> rpl_semi_sync_slave <span class="operator">|</span> semisync_slave.so <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">---------------------+-------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">set</span> <span class="keyword">global</span> rpl_semi_sync_slave_enabled<span class="operator">=</span><span class="number">1</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> status <span class="keyword">like</span> <span class="string">&#x27;%semi_sync%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name              <span class="operator">|</span> <span class="keyword">Value</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_slave_status <span class="operator">|</span> OFF   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">## 开启了半同步，为什么还是off呢，是由于我们之前slave是在运行状态，将其重启下就可以了！</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> stop slave;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">start</span> slave;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.01</span> sec)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> status <span class="keyword">like</span> <span class="string">&#x27;%semi_sync%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name              <span class="operator">|</span> <span class="keyword">Value</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_slave_status <span class="operator">|</span> <span class="keyword">ON</span>    <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure></li>
-</ul>
-<p>查看master上的状态</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> status <span class="keyword">like</span> <span class="string">&#x27;%semi%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name                              <span class="operator">|</span> <span class="keyword">Value</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_clients               <span class="operator">|</span> <span class="number">1</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_net_avg_wait_time     <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> net_wait_time         <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_net_waits             <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_no_times              <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_no_tx                 <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_status                <span class="operator">|</span> <span class="keyword">ON</span>    <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_timefunc_failures     <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_tx_avg_wait_time      <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_tx_wait_time          <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_tx_waits              <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_wait_pos_backtraverse <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_wait_sessions         <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_master_yes_tx                <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------------------------------+-------+</span></span><br><span class="line"><span class="number">14</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">#Rpl_semi_sync_master_clients 表示有几台slave连接到了这台master上，有几台，数字就是几；</span><br></pre></td></tr></table></figure>
-
-<p>将配置写入my.cnf中，避免重启失效</p>
-<ul>
-<li>master<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">rpl_semi_sync_master_enabled=1</span><br><span class="line">rpl_semi_sync_master_timeout=10000        ##配置超时多少毫秒切换到异同步复制</span><br></pre></td></tr></table></figure></li>
-<li>slave<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[mysqld]rpl_semi_sync_slave_enabled=1</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><p>将 slave 的io thread 停掉，那么将在10秒后切换到异步复制（上面配置文件配置的10秒），也就是插入操作将卡住10秒才插入成功</p>
-<ul>
-<li><p>slave</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"># slavemysql<span class="operator">&gt;</span> stop slave io_thread;Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected, <span class="number">1</span> warning (<span class="number">0.00</span> sec)mysql<span class="operator">&gt;</span> <span class="keyword">show</span> warnings;<span class="operator">+</span><span class="comment">-------+------+-----------------------------------------------------------+| Level | Code | Message                                                   |+-------+------+-----------------------------------------------------------+| Note  | 3084 | Replication thread(s) for channel &#x27;&#x27; are already stopped. |+-------+------+-----------------------------------------------------------+1 row in set (0.00 sec)</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> status <span class="keyword">like</span> <span class="string">&#x27;%semi%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name              <span class="operator">|</span> <span class="keyword">Value</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Rpl_semi_sync_slave_status <span class="operator">|</span> OFF   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------------------------+-------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></li>
-<li><p>slave</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"># master</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">insert</span> <span class="keyword">into</span> t1 <span class="keyword">values</span>(<span class="number">17</span>);</span><br><span class="line">Query OK, <span class="number">1</span> <span class="type">row</span> affected (<span class="number">10.01</span> sec)           ##可以看到花了<span class="number">10</span>秒才插入成功，此时就切换到了异步复制</span><br></pre></td></tr></table></figure></li>
-</ul>
-<p>切换到异步复制后，系统不会自动切回半同步，需要手动切，切得方式很简单，就是<code>stop slave</code>；<code>start slave</code>；</p>
-]]></content>
-      <categories>
-        <category>Mysql</category>
-      </categories>
-      <tags>
-        <tag>Mysql</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Mysql体系结构</title>
-    <url>/2017/04/17/Mysql%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/</url>
-    <content><![CDATA[<p><img data-src="/images/mysql%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84.png"></p>
-<span id="more"></span>
-<h3 id="server层"><a href="#server层" class="headerlink" title="server层"></a>server层</h3><ol>
-<li>连接池组件</li>
-<li>管理服务和工具组件</li>
-<li>SQL借口组件</li>
-<li>查询分析器组件 解析sql语句，解析成树状结构</li>
-<li>优化器组件</li>
-<li>缓冲组件</li>
-</ol>
-<h3 id="存储引擎层"><a href="#存储引擎层" class="headerlink" title="存储引擎层"></a>存储引擎层</h3><ol start="7">
-<li>插件式存储引擎</li>
-<li>物理文件</li>
-</ol>
-<h3 id="sql语句执行过程"><a href="#sql语句执行过程" class="headerlink" title="sql语句执行过程"></a>sql语句执行过程</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sql语句 --&gt; query cache --&gt; 解析器 --&gt; 处理器 --&gt; 优化器 --&gt; 执行计划 --&gt; 存储引擎 --&gt; 获取数据</span><br></pre></td></tr></table></figure>
-<p><img data-src="/images/sql%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F.png"></p>
-<h3 id="innodb存储引擎架构"><a href="#innodb存储引擎架构" class="headerlink" title="innodb存储引擎架构"></a>innodb存储引擎架构</h3><p><img data-src="/images/innodb%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E6%9E%B6%E6%9E%84.png"></p>
-<h3 id="物理存储"><a href="#物理存储" class="headerlink" title="物理存储"></a>物理存储</h3><p><img data-src="/images/%E7%89%A9%E7%90%86%E5%AD%98%E5%82%A8.png"></p>
-<h4 id="逻辑存储单元"><a href="#逻辑存储单元" class="headerlink" title="逻辑存储单元"></a>逻辑存储单元</h4><ul>
-<li>页 16k （oracle中为8k）</li>
-<li>页头：存储事务信息，锁信息，指针，checksum值</li>
-<li>页身：存储实际的行数据，一个页身最多存储7992行数据</li>
-<li>页尾：checksum值，页尾和页身的值必须一致</li>
-<li>区 64个连续的页组成 64*16k=1M</li>
-<li>段 一个大数据段由4个区组成 4M</li>
-<li>表空间</li>
-</ul>
-<p>innodb IO的最小单位是页，读取一行数据的时候，将该行数据的整个页读取到内存中国，以提高内存的命中率（内存读 /（内存读+磁盘读））</p>
-<h3 id="innodb内存池组成"><a href="#innodb内存池组成" class="headerlink" title="innodb内存池组成"></a>innodb内存池组成</h3><p><img data-src="/images/innodb%E5%86%85%E5%AD%98%E6%B1%A0.png"></p>
-<h4 id="缓冲池"><a href="#缓冲池" class="headerlink" title="缓冲池"></a>缓冲池</h4><ul>
-<li>数据页</li>
-<li>索引页</li>
-<li>插入缓冲</li>
-<li>自适应哈希索引</li>
-<li>锁信息</li>
-<li>数据字典</li>
-</ul>
-<p><code>innodb_buffer_pool_size</code> 定义缓冲池大小</p>
-<p><code>innodb_buffer_pool_instances</code> 定义缓冲池个数</p>
-<p><code>show engine innodb status;</code> 查看大小和个数</p>
-<h4 id="LRU"><a href="#LRU" class="headerlink" title="LRU"></a>LRU</h4><p>一般的数据库缓冲池通过LRU（latest recently used，最近最少使用）算法来进行管理，即最频繁使用的页在LRU列表的前端，最少使用的在LRU的尾端；</p>
-<p>innodb的缓冲池稍有不同，其在LRU中加入了<code>midpoint</code>位置，新读取的页，放在LRU列表的<code>minpoint</code>位置，<code>minpoint</code>之前的列表称为new列表，之后的称为old列表，可以理解new列表里面的页都是最为活跃的热点数据；</p>
-<p><code>innodb_old_blocks_pct</code>来控制<code>midpoint</code>的位置，值是百分比</p>
-<p><code>nnodb_old_blocks_time</code>用于表示页读到<code>midpoint</code>后，需要等待多久才会被加入到LRU列表的热端，这样做的好处是如果一读到<code>minpoint</code>就放到热端，可能会被其他查询给挤出LRU列表，这种查询一般是作为索引或数据的扫描工作，并不是热点数据，所以需要有个时间来进行控制。</p>
-<h4 id="重做日志缓冲区"><a href="#重做日志缓冲区" class="headerlink" title="重做日志缓冲区"></a>重做日志缓冲区</h4><p>innodb存储引擎先将重做日志放在这个缓冲区，然后按照一定频率将其刷新到重做日志文件，重做日主缓冲区一般不需要设置得非常大，因为一般每一秒都会有重做日志缓存刷新到日志文件，只需要保证每秒产生的事务量在这个缓冲区大小内即可。</p>
-<p><code>innodb_log_buffer_size</code>控制重做日志缓冲区大小，默认为8M；</p>
-<h4 id="额外缓存池"><a href="#额外缓存池" class="headerlink" title="额外缓存池"></a>额外缓存池</h4><p>在对一些数据结构本身进行内存的分配时，需要从额外的内存池中申请内存，当该区域不够的时候，会从缓冲区中进行申请。一般申请了很大的innodb缓冲池时，也应该考虑相应的增加这个值。</p>
-<h3 id="innodb后台线程"><a href="#innodb后台线程" class="headerlink" title="innodb后台线程"></a>innodb后台线程</h3><h4 id="Master-Thread"><a href="#Master-Thread" class="headerlink" title="Master Thread"></a>Master Thread</h4><p>核心线程，主要负责将缓冲池中的数据异步刷新到磁盘，保证数据的一致性，包括脏页的刷新、合并插入缓存、undo页的回收等；</p>
-<p>loop 主循环（繁忙）和 background loop 后台循环（空闲）切换操作</p>
-<h4 id="IO-Thread"><a href="#IO-Thread" class="headerlink" title="IO Thread"></a>IO Thread</h4><p>IO Thread用AIO（异步IO）来处理IO请求，这样极大的提高了数据库的性能。innodb中分别有4个IO Thread，分别是write thread（4个）、read thread（4个）、insert buffer thread（1个）、log thread（1个）；</p>
-<p><code>innodb_read_io_threads</code>、<code>innodb_write_io_threads</code>参数进行设置</p>
-<p><code>show variables like &#39;innodb_%_io_threads&#39;;</code></p>
-<h4 id="Purge-Thread"><a href="#Purge-Thread" class="headerlink" title="Purge Thread"></a>Purge Thread</h4><p>事务提交后，undo log可能不再需要，因此需要purge thread来回收已经分配使用并分配的undo页</p>
-<p><code>innod_purge_threads</code>来控制purge thread的个数；</p>
-<h4 id="Page-cleaner-Thread"><a href="#Page-cleaner-Thread" class="headerlink" title="Page cleaner Thread"></a>Page cleaner Thread</h4><p>将脏页的刷新操作放到单独的线程中来完成（innodb1.2x之前的版本，脏页刷新是由master thread来完成的），目的是减小原master thread的工作及对于用户查询线程的阻塞，进一步提高innodb的性能；</p>
-<h3 id="innodb内存刷新机制"><a href="#innodb内存刷新机制" class="headerlink" title="innodb内存刷新机制"></a>innodb内存刷新机制</h3><p>日志先行策略，先写日志，再写文件。</p>
-<h4 id="redo-log"><a href="#redo-log" class="headerlink" title="redo log"></a>redo log</h4><p>每个InnoDB存储引擎至少有1个redo log文件组，每个文件组下至少有2个redo log文件。为了得到更高的可靠性，可以设置多个mirrored log group，将不同的文件组放在不同的磁盘上。日志组中每个redo log文件的大小一致，并以循环方式使用。InnoDB存储引擎先写redo log文件1，当达到文件的最后是，会切换至文件2，当文件2也被写满时，会再切换到文件1中。</p>
-<p><code>innodb_log_file_size</code> 参数指定了redo log文件的大小；</p>
-<p><code>innodb_log_files_in_group</code> 参数指定了redo log文件组中redo log文件的数量，默认为2；</p>
-<p><code>innodb_mirrored_log_groups</code> 参数指定了日志镜像文件组的数量，默认为1，代表只有一个文件组，没有镜像；</p>
-<p><code>innodb_log_group_home_dir</code> 参数指定了日志文件组所在路径，默认在数据库路径下。</p>
-<p><code>innodb_flush_log_at_trx_commit</code> 参数决定redo log的刷新机制</p>
-<ul>
-<li>0：每隔1秒刷新一次</li>
-<li>1：实时刷新（默认）</li>
-<li>2：交由操作系统管理</li>
-</ul>
-<p>试想，当文件2写满了，切换到1的时候，覆盖1里面的内容，那之前的redo log不是没有了吗，这时候引入<code>checkpoint</code>概念，当发生日志文件切换的时候，产生checkpoint，将缓冲区里的脏数据刷回磁盘。这是其中一个脏页刷回磁盘的条件。还有一个是通过<code>innodb_max_dirty_pages_pct</code>参数（脏页占缓冲区的比率，默认75%，建议设置成20%-50%）来控制脏页的刷新。</p>
-<h4 id="bin-log"><a href="#bin-log" class="headerlink" title="bin log"></a>bin log</h4><p><code>sync_binlog</code>参数决定bin log刷新机制</p>
-<ul>
-<li>1：实时刷新（默认）</li>
-<li>0：交由操作系统管理</li>
-<li>(2，3，4……n)：n个事务刷新一次</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Mysql</category>
-      </categories>
-      <tags>
-        <tag>Mysql</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Mysql主从复制-异步主从复制</title>
     <url>/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%BC%82%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/</url>
     <content><![CDATA[<h3 id="环境介绍"><a href="#环境介绍" class="headerlink" title="环境介绍"></a>环境介绍</h3><table>
@@ -596,47 +511,6 @@
       </categories>
       <tags>
         <tag>Mysql</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Mysql备份</title>
-    <url>/2017/04/18/Mysql%E5%A4%87%E4%BB%BD/</url>
-    <content><![CDATA[<p>备份的方法可以分为：</p>
-<h3 id="Hot-backup-热备"><a href="#Hot-backup-热备" class="headerlink" title="Hot backup(热备)"></a>Hot backup(热备)</h3><p>Hot backup是指在数据库运行中直接备份，对正在运行的数据库没有任何影响</p>
-<h3 id="Cold-backup（冷备）"><a href="#Cold-backup（冷备）" class="headerlink" title="Cold backup（冷备）"></a>Cold backup（冷备）</h3><p>Cold backup是指在数据库停止的情况下进行备份，只需要拷贝相关的数据库物理文件</p>
-<h4 id="优点："><a href="#优点：" class="headerlink" title="优点："></a>优点：</h4><ul>
-<li>备份简单，只要拷贝相关文件即可</li>
-<li>备份文件易于在不用操作系统，不同mysql版本上进行恢复</li>
-<li>恢复简单，速度快，不需要执行sql语句和重建索引</li>
-</ul>
-<h4 id="缺点："><a href="#缺点：" class="headerlink" title="缺点："></a>缺点：</h4><ul>
-<li>冷备的文件通常比逻辑文件大很<span id="more"></span>
-<h3 id="Warm-backup（温备）"><a href="#Warm-backup（温备）" class="headerlink" title="Warm backup（温备）"></a>Warm backup（温备）</h3>Warm backup备份同样是在数据库运行时进行，但是会对当前数据库操作有所影响</li>
-</ul>
-<h3 id="按照备份后文件的内容来分："><a href="#按照备份后文件的内容来分：" class="headerlink" title="按照备份后文件的内容来分："></a>按照备份后文件的内容来分：</h3><ol>
-<li><p>逻辑备份<br>在mysql数据库中，逻辑备份是指备份后的文件内容是可读的，通常是文本文件，内容一般是sql语句，或者是表内的实际数据，如mysqldump和select * into outfile的方法，这类方法的好处是可以看到导出文件的内容，一般适用于数据库的升级，迁移等工作，但是恢复所需要的时间往往较长。</p>
-</li>
-<li><p>裸文件备份<br>裸文件备份是指拷贝数据库的物理文件（xtrabackup），数据库既可以处于运行状态，也可以处于停止状态，这类备份的恢复时间往往比逻辑备份短很多。</p>
-</li>
-</ol>
-<h3 id="按照备份数据库的内容来分："><a href="#按照备份数据库的内容来分：" class="headerlink" title="按照备份数据库的内容来分："></a>按照备份数据库的内容来分：</h3><ol>
-<li><p>完全备份<br>完全备份是指对数据库进行一个完整的备份；</p>
-</li>
-<li><p>增量备份<br>增量备份是指在上次的完全备份基础上，对更新的数据进行备份；</p>
-</li>
-<li><p>日志备份<br>日志备份主要是指对mysql数据库二进制日志的备份，通过对一个完全备份进行二进制日志的重做来完成数据库的point-in-time恢复工作，Mysql数据库复制的原理就是异步实时进行二进制日志重做；</p>
-</li>
-</ol>
-<blockquote>
-<p>mysqldump和load data的备份方式都是逻辑备份<br>xtarbackup是物理备份</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>Mysql</category>
-      </categories>
-      <tags>
-        <tag>mysqldump</tag>
-        <tag>xtarbackup</tag>
       </tags>
   </entry>
   <entry>
@@ -734,6 +608,132 @@
       </tags>
   </entry>
   <entry>
+    <title>Mysql体系结构</title>
+    <url>/2017/04/17/Mysql%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/</url>
+    <content><![CDATA[<p><img data-src="/images/mysql%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84.png"></p>
+<span id="more"></span>
+<h3 id="server层"><a href="#server层" class="headerlink" title="server层"></a>server层</h3><ol>
+<li>连接池组件</li>
+<li>管理服务和工具组件</li>
+<li>SQL借口组件</li>
+<li>查询分析器组件 解析sql语句，解析成树状结构</li>
+<li>优化器组件</li>
+<li>缓冲组件</li>
+</ol>
+<h3 id="存储引擎层"><a href="#存储引擎层" class="headerlink" title="存储引擎层"></a>存储引擎层</h3><ol start="7">
+<li>插件式存储引擎</li>
+<li>物理文件</li>
+</ol>
+<h3 id="sql语句执行过程"><a href="#sql语句执行过程" class="headerlink" title="sql语句执行过程"></a>sql语句执行过程</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sql语句 --&gt; query cache --&gt; 解析器 --&gt; 处理器 --&gt; 优化器 --&gt; 执行计划 --&gt; 存储引擎 --&gt; 获取数据</span><br></pre></td></tr></table></figure>
+<p><img data-src="/images/sql%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F.png"></p>
+<h3 id="innodb存储引擎架构"><a href="#innodb存储引擎架构" class="headerlink" title="innodb存储引擎架构"></a>innodb存储引擎架构</h3><p><img data-src="/images/innodb%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E6%9E%B6%E6%9E%84.png"></p>
+<h3 id="物理存储"><a href="#物理存储" class="headerlink" title="物理存储"></a>物理存储</h3><p><img data-src="/images/%E7%89%A9%E7%90%86%E5%AD%98%E5%82%A8.png"></p>
+<h4 id="逻辑存储单元"><a href="#逻辑存储单元" class="headerlink" title="逻辑存储单元"></a>逻辑存储单元</h4><ul>
+<li>页 16k （oracle中为8k）</li>
+<li>页头：存储事务信息，锁信息，指针，checksum值</li>
+<li>页身：存储实际的行数据，一个页身最多存储7992行数据</li>
+<li>页尾：checksum值，页尾和页身的值必须一致</li>
+<li>区 64个连续的页组成 64*16k=1M</li>
+<li>段 一个大数据段由4个区组成 4M</li>
+<li>表空间</li>
+</ul>
+<p>innodb IO的最小单位是页，读取一行数据的时候，将该行数据的整个页读取到内存中国，以提高内存的命中率（内存读 /（内存读+磁盘读））</p>
+<h3 id="innodb内存池组成"><a href="#innodb内存池组成" class="headerlink" title="innodb内存池组成"></a>innodb内存池组成</h3><p><img data-src="/images/innodb%E5%86%85%E5%AD%98%E6%B1%A0.png"></p>
+<h4 id="缓冲池"><a href="#缓冲池" class="headerlink" title="缓冲池"></a>缓冲池</h4><ul>
+<li>数据页</li>
+<li>索引页</li>
+<li>插入缓冲</li>
+<li>自适应哈希索引</li>
+<li>锁信息</li>
+<li>数据字典</li>
+</ul>
+<p><code>innodb_buffer_pool_size</code> 定义缓冲池大小</p>
+<p><code>innodb_buffer_pool_instances</code> 定义缓冲池个数</p>
+<p><code>show engine innodb status;</code> 查看大小和个数</p>
+<h4 id="LRU"><a href="#LRU" class="headerlink" title="LRU"></a>LRU</h4><p>一般的数据库缓冲池通过LRU（latest recently used，最近最少使用）算法来进行管理，即最频繁使用的页在LRU列表的前端，最少使用的在LRU的尾端；</p>
+<p>innodb的缓冲池稍有不同，其在LRU中加入了<code>midpoint</code>位置，新读取的页，放在LRU列表的<code>minpoint</code>位置，<code>minpoint</code>之前的列表称为new列表，之后的称为old列表，可以理解new列表里面的页都是最为活跃的热点数据；</p>
+<p><code>innodb_old_blocks_pct</code>来控制<code>midpoint</code>的位置，值是百分比</p>
+<p><code>nnodb_old_blocks_time</code>用于表示页读到<code>midpoint</code>后，需要等待多久才会被加入到LRU列表的热端，这样做的好处是如果一读到<code>minpoint</code>就放到热端，可能会被其他查询给挤出LRU列表，这种查询一般是作为索引或数据的扫描工作，并不是热点数据，所以需要有个时间来进行控制。</p>
+<h4 id="重做日志缓冲区"><a href="#重做日志缓冲区" class="headerlink" title="重做日志缓冲区"></a>重做日志缓冲区</h4><p>innodb存储引擎先将重做日志放在这个缓冲区，然后按照一定频率将其刷新到重做日志文件，重做日主缓冲区一般不需要设置得非常大，因为一般每一秒都会有重做日志缓存刷新到日志文件，只需要保证每秒产生的事务量在这个缓冲区大小内即可。</p>
+<p><code>innodb_log_buffer_size</code>控制重做日志缓冲区大小，默认为8M；</p>
+<h4 id="额外缓存池"><a href="#额外缓存池" class="headerlink" title="额外缓存池"></a>额外缓存池</h4><p>在对一些数据结构本身进行内存的分配时，需要从额外的内存池中申请内存，当该区域不够的时候，会从缓冲区中进行申请。一般申请了很大的innodb缓冲池时，也应该考虑相应的增加这个值。</p>
+<h3 id="innodb后台线程"><a href="#innodb后台线程" class="headerlink" title="innodb后台线程"></a>innodb后台线程</h3><h4 id="Master-Thread"><a href="#Master-Thread" class="headerlink" title="Master Thread"></a>Master Thread</h4><p>核心线程，主要负责将缓冲池中的数据异步刷新到磁盘，保证数据的一致性，包括脏页的刷新、合并插入缓存、undo页的回收等；</p>
+<p>loop 主循环（繁忙）和 background loop 后台循环（空闲）切换操作</p>
+<h4 id="IO-Thread"><a href="#IO-Thread" class="headerlink" title="IO Thread"></a>IO Thread</h4><p>IO Thread用AIO（异步IO）来处理IO请求，这样极大的提高了数据库的性能。innodb中分别有4个IO Thread，分别是write thread（4个）、read thread（4个）、insert buffer thread（1个）、log thread（1个）；</p>
+<p><code>innodb_read_io_threads</code>、<code>innodb_write_io_threads</code>参数进行设置</p>
+<p><code>show variables like &#39;innodb_%_io_threads&#39;;</code></p>
+<h4 id="Purge-Thread"><a href="#Purge-Thread" class="headerlink" title="Purge Thread"></a>Purge Thread</h4><p>事务提交后，undo log可能不再需要，因此需要purge thread来回收已经分配使用并分配的undo页</p>
+<p><code>innod_purge_threads</code>来控制purge thread的个数；</p>
+<h4 id="Page-cleaner-Thread"><a href="#Page-cleaner-Thread" class="headerlink" title="Page cleaner Thread"></a>Page cleaner Thread</h4><p>将脏页的刷新操作放到单独的线程中来完成（innodb1.2x之前的版本，脏页刷新是由master thread来完成的），目的是减小原master thread的工作及对于用户查询线程的阻塞，进一步提高innodb的性能；</p>
+<h3 id="innodb内存刷新机制"><a href="#innodb内存刷新机制" class="headerlink" title="innodb内存刷新机制"></a>innodb内存刷新机制</h3><p>日志先行策略，先写日志，再写文件。</p>
+<h4 id="redo-log"><a href="#redo-log" class="headerlink" title="redo log"></a>redo log</h4><p>每个InnoDB存储引擎至少有1个redo log文件组，每个文件组下至少有2个redo log文件。为了得到更高的可靠性，可以设置多个mirrored log group，将不同的文件组放在不同的磁盘上。日志组中每个redo log文件的大小一致，并以循环方式使用。InnoDB存储引擎先写redo log文件1，当达到文件的最后是，会切换至文件2，当文件2也被写满时，会再切换到文件1中。</p>
+<p><code>innodb_log_file_size</code> 参数指定了redo log文件的大小；</p>
+<p><code>innodb_log_files_in_group</code> 参数指定了redo log文件组中redo log文件的数量，默认为2；</p>
+<p><code>innodb_mirrored_log_groups</code> 参数指定了日志镜像文件组的数量，默认为1，代表只有一个文件组，没有镜像；</p>
+<p><code>innodb_log_group_home_dir</code> 参数指定了日志文件组所在路径，默认在数据库路径下。</p>
+<p><code>innodb_flush_log_at_trx_commit</code> 参数决定redo log的刷新机制</p>
+<ul>
+<li>0：每隔1秒刷新一次</li>
+<li>1：实时刷新（默认）</li>
+<li>2：交由操作系统管理</li>
+</ul>
+<p>试想，当文件2写满了，切换到1的时候，覆盖1里面的内容，那之前的redo log不是没有了吗，这时候引入<code>checkpoint</code>概念，当发生日志文件切换的时候，产生checkpoint，将缓冲区里的脏数据刷回磁盘。这是其中一个脏页刷回磁盘的条件。还有一个是通过<code>innodb_max_dirty_pages_pct</code>参数（脏页占缓冲区的比率，默认75%，建议设置成20%-50%）来控制脏页的刷新。</p>
+<h4 id="bin-log"><a href="#bin-log" class="headerlink" title="bin log"></a>bin log</h4><p><code>sync_binlog</code>参数决定bin log刷新机制</p>
+<ul>
+<li>1：实时刷新（默认）</li>
+<li>0：交由操作系统管理</li>
+<li>(2，3，4……n)：n个事务刷新一次</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Mysql</category>
+      </categories>
+      <tags>
+        <tag>Mysql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Mysql备份</title>
+    <url>/2017/04/18/Mysql%E5%A4%87%E4%BB%BD/</url>
+    <content><![CDATA[<p>备份的方法可以分为：</p>
+<h3 id="Hot-backup-热备"><a href="#Hot-backup-热备" class="headerlink" title="Hot backup(热备)"></a>Hot backup(热备)</h3><p>Hot backup是指在数据库运行中直接备份，对正在运行的数据库没有任何影响</p>
+<h3 id="Cold-backup（冷备）"><a href="#Cold-backup（冷备）" class="headerlink" title="Cold backup（冷备）"></a>Cold backup（冷备）</h3><p>Cold backup是指在数据库停止的情况下进行备份，只需要拷贝相关的数据库物理文件</p>
+<h4 id="优点："><a href="#优点：" class="headerlink" title="优点："></a>优点：</h4><ul>
+<li>备份简单，只要拷贝相关文件即可</li>
+<li>备份文件易于在不用操作系统，不同mysql版本上进行恢复</li>
+<li>恢复简单，速度快，不需要执行sql语句和重建索引</li>
+</ul>
+<h4 id="缺点："><a href="#缺点：" class="headerlink" title="缺点："></a>缺点：</h4><ul>
+<li>冷备的文件通常比逻辑文件大很<span id="more"></span>
+<h3 id="Warm-backup（温备）"><a href="#Warm-backup（温备）" class="headerlink" title="Warm backup（温备）"></a>Warm backup（温备）</h3>Warm backup备份同样是在数据库运行时进行，但是会对当前数据库操作有所影响</li>
+</ul>
+<h3 id="按照备份后文件的内容来分："><a href="#按照备份后文件的内容来分：" class="headerlink" title="按照备份后文件的内容来分："></a>按照备份后文件的内容来分：</h3><ol>
+<li><p>逻辑备份<br>在mysql数据库中，逻辑备份是指备份后的文件内容是可读的，通常是文本文件，内容一般是sql语句，或者是表内的实际数据，如mysqldump和select * into outfile的方法，这类方法的好处是可以看到导出文件的内容，一般适用于数据库的升级，迁移等工作，但是恢复所需要的时间往往较长。</p>
+</li>
+<li><p>裸文件备份<br>裸文件备份是指拷贝数据库的物理文件（xtrabackup），数据库既可以处于运行状态，也可以处于停止状态，这类备份的恢复时间往往比逻辑备份短很多。</p>
+</li>
+</ol>
+<h3 id="按照备份数据库的内容来分："><a href="#按照备份数据库的内容来分：" class="headerlink" title="按照备份数据库的内容来分："></a>按照备份数据库的内容来分：</h3><ol>
+<li><p>完全备份<br>完全备份是指对数据库进行一个完整的备份；</p>
+</li>
+<li><p>增量备份<br>增量备份是指在上次的完全备份基础上，对更新的数据进行备份；</p>
+</li>
+<li><p>日志备份<br>日志备份主要是指对mysql数据库二进制日志的备份，通过对一个完全备份进行二进制日志的重做来完成数据库的point-in-time恢复工作，Mysql数据库复制的原理就是异步实时进行二进制日志重做；</p>
+</li>
+</ol>
+<blockquote>
+<p>mysqldump和load data的备份方式都是逻辑备份<br>xtarbackup是物理备份</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>Mysql</category>
+      </categories>
+      <tags>
+        <tag>mysqldump</tag>
+        <tag>xtarbackup</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Mysql存储引擎类型</title>
     <url>/2017/04/17/Mysql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%B1%BB%E5%9E%8B/</url>
     <content><![CDATA[<h3 id="innodb"><a href="#innodb" class="headerlink" title="innodb"></a>innodb</h3><ol>
@@ -777,6 +777,45 @@
       </categories>
       <tags>
         <tag>Mysql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>js 伪数组</title>
+    <url>/2021/05/25/js-%E4%BC%AA%E6%95%B0%E7%BB%84/</url>
+    <content><![CDATA[<p>在js中，通过document的查询元素api查出来NodeList对象或者<code>arguments</code>等都会以伪数组的方式输出，例如下面的html中，通过<code>document.getElementsByTagName(&#39;li&#39;);</code>查出来的就是伪数组，伪数组和数组都具有length属性，但是伪数组不预备数组的<code>pop</code>、<code>push</code>、<code>slice</code>等方法</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ul</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span>1<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span>2<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span>3<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%84.png"></p>
+<span id="more"></span>
+
+<p>我们使用查出来的结果进行数组的操作，会报错，例如：</p>
+<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%841.png"></p>
+<p>如果我们想要正常操作该数组，则需要将伪数组转为数组，再进行操作。</p>
+<p>伪数组转数组的方式有很多种，下面介绍几种常用的</p>
+<ul>
+<li><code>Array.prototype.slice.call()</code>或者<code>[].slice.call()</code></li>
+</ul>
+<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%842.png"></p>
+<blockquote>
+<p><code>Array.prototype.slice.call()</code>和<code>[].slice.call()</code>其实是一个东西，都是调用数组原型上的slice方法</p>
+</blockquote>
+<ul>
+<li><code>Array.from()</code></li>
+</ul>
+<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%843.png"></p>
+<ul>
+<li>es6 解构赋值</li>
+</ul>
+<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%844.png"></p>
+<ul>
+<li>其他方法<br>例如使用循环，将伪数组一个个push到一个空数组里，也可以进行转化，这种比较繁琐，一般不常用</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Javascript</category>
+      </categories>
+      <tags>
+        <tag>Javascript</tag>
       </tags>
   </entry>
   <entry>
@@ -824,36 +863,24 @@
       </tags>
   </entry>
   <entry>
-    <title>js 伪数组</title>
-    <url>/2021/05/25/js-%E4%BC%AA%E6%95%B0%E7%BB%84/</url>
-    <content><![CDATA[<p>在js中，通过document的查询元素api查出来NodeList对象或者<code>arguments</code>等都会以伪数组的方式输出，例如下面的html中，通过<code>document.getElementsByTagName(&#39;li&#39;);</code>查出来的就是伪数组，伪数组和数组都具有length属性，但是伪数组不预备数组的<code>pop</code>、<code>push</code>、<code>slice</code>等方法</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ul</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span>1<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span>2<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span>3<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%84.png"></p>
+    <title>js 引用数据类型和值数据类型</title>
+    <url>/2021/05/26/js-%E5%BC%95%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%92%8C%E5%80%BC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</url>
+    <content><![CDATA[<p>引用数据类型：对象(Object)、数组(Array)、函数(Function)、正则(RegExp)、日期(Date)等</p>
+<p>值类型(基本类型)：字符串（String）、数字(Number)、布尔(Boolean)、对空（Null）、未定义（Undefined）、Symbol。</p>
+<p>栈内存中保存了变量标识符和指向堆内存中该对象的指针，堆内存中保存了对象的内容</p>
+<p>值数据类型存放在栈中，而引用数据类型存放在堆中，栈中存放的是对象的引用内存地址</p>
+<p>如果变量引用了同一块内存地址，修改其中一个变量的值，其他变量也会跟着修改</p>
 <span id="more"></span>
+<h3 id="对象"><a href="#对象" class="headerlink" title="对象"></a>对象</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> obj1 = obj2 = &#123; <span class="attr">name</span>: <span class="string">&#x27;jerry&#x27;</span>, <span class="attr">age</span>: <span class="number">2</span> &#125;;</span><br><span class="line">obj2[<span class="string">&#x27;age&#x27;</span>] = <span class="number">10</span>;</span><br><span class="line"><span class="built_in">console</span>.log(obj1, obj2); <span class="comment">// &#123;name: &quot;jerry&quot;, age: 10&#125; &#123;name: &quot;jerry&quot;, age: 10&#125;</span></span><br></pre></td></tr></table></figure>
 
-<p>我们使用查出来的结果进行数组的操作，会报错，例如：</p>
-<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%841.png"></p>
-<p>如果我们想要正常操作该数组，则需要将伪数组转为数组，再进行操作。</p>
-<p>伪数组转数组的方式有很多种，下面介绍几种常用的</p>
-<ul>
-<li><code>Array.prototype.slice.call()</code>或者<code>[].slice.call()</code></li>
-</ul>
-<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%842.png"></p>
-<blockquote>
-<p><code>Array.prototype.slice.call()</code>和<code>[].slice.call()</code>其实是一个东西，都是调用数组原型上的slice方法</p>
-</blockquote>
-<ul>
-<li><code>Array.from()</code></li>
-</ul>
-<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%843.png"></p>
-<ul>
-<li>es6 解构赋值</li>
-</ul>
-<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%844.png"></p>
-<ul>
-<li>其他方法<br>例如使用循环，将伪数组一个个push到一个空数组里，也可以进行转化，这种比较繁琐，一般不常用</li>
-</ul>
+<h3 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> arr1 = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="keyword">let</span> arr2 = arr1;</span><br><span class="line">arr2[<span class="number">0</span>] = <span class="number">999</span>;</span><br><span class="line"><span class="built_in">console</span>.log(arr1, arr2);  <span class="comment">// [999, 2, 3]  [999, 2, 3]</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h3><p>函数在js中是一个对象，函数体是保存在函数对象的属性上的，可以使用valueOf修改函数体</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> f1 = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123; <span class="built_in">console</span>.log(<span class="string">&#x27;function&#x27;</span>); &#125;</span><br><span class="line"><span class="keyword">let</span> f2 = f1</span><br><span class="line">f2.valueOf = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123; <span class="keyword">return</span> <span class="string">&#x27;new funciton&#x27;</span> &#125;</span><br><span class="line"><span class="built_in">console</span>.log(f1.valueOf()); <span class="comment">// new funciton</span></span><br><span class="line"><span class="built_in">console</span>.log(f2.valueOf()); <span class="comment">// new funciton</span></span><br></pre></td></tr></table></figure>
+
+<p>栈内存中包括了变量的标识符和变量的值。</p>
+<p>如下所示，其实是分配了两块地址，修改其中一个变量，另一个变量不会随之修改</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> str1 = str2 = <span class="string">&#x27;hello&#x27;</span>;</span><br><span class="line">str2 = <span class="string">&#x27;world&#x27;</span>;</span><br><span class="line"><span class="built_in">console</span>.log(str1, str2);  <span class="comment">// hello world</span></span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>Javascript</category>
@@ -894,33 +921,6 @@
 <li>箭头函数中没有<code>arguments</code>对象，可以使用<code>...args</code>获取参数</li>
 </ul>
 <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> fun1 = <span class="function">(<span class="params">...args</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(args);      <span class="comment">// [1, 2, [3, 4], &#123;num: 5&#125;]</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="built_in">arguments</span>); <span class="comment">// 报错：arguments is not defined</span></span><br><span class="line">&#125;</span><br><span class="line">fun1(<span class="number">1</span>, <span class="number">2</span>, [<span class="number">3</span>, <span class="number">4</span>], &#123;<span class="attr">num</span>: <span class="number">5</span>&#125;)</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Javascript</category>
-      </categories>
-      <tags>
-        <tag>Javascript</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>js 引用数据类型和值数据类型</title>
-    <url>/2021/05/26/js-%E5%BC%95%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%92%8C%E5%80%BC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</url>
-    <content><![CDATA[<p>引用数据类型：对象(Object)、数组(Array)、函数(Function)、正则(RegExp)、日期(Date)等</p>
-<p>值类型(基本类型)：字符串（String）、数字(Number)、布尔(Boolean)、对空（Null）、未定义（Undefined）、Symbol。</p>
-<p>栈内存中保存了变量标识符和指向堆内存中该对象的指针，堆内存中保存了对象的内容</p>
-<p>值数据类型存放在栈中，而引用数据类型存放在堆中，栈中存放的是对象的引用内存地址</p>
-<p>如果变量引用了同一块内存地址，修改其中一个变量的值，其他变量也会跟着修改</p>
-<span id="more"></span>
-<h3 id="对象"><a href="#对象" class="headerlink" title="对象"></a>对象</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> obj1 = obj2 = &#123; <span class="attr">name</span>: <span class="string">&#x27;jerry&#x27;</span>, <span class="attr">age</span>: <span class="number">2</span> &#125;;</span><br><span class="line">obj2[<span class="string">&#x27;age&#x27;</span>] = <span class="number">10</span>;</span><br><span class="line"><span class="built_in">console</span>.log(obj1, obj2); <span class="comment">// &#123;name: &quot;jerry&quot;, age: 10&#125; &#123;name: &quot;jerry&quot;, age: 10&#125;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> arr1 = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="keyword">let</span> arr2 = arr1;</span><br><span class="line">arr2[<span class="number">0</span>] = <span class="number">999</span>;</span><br><span class="line"><span class="built_in">console</span>.log(arr1, arr2);  <span class="comment">// [999, 2, 3]  [999, 2, 3]</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h3><p>函数在js中是一个对象，函数体是保存在函数对象的属性上的，可以使用valueOf修改函数体</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> f1 = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123; <span class="built_in">console</span>.log(<span class="string">&#x27;function&#x27;</span>); &#125;</span><br><span class="line"><span class="keyword">let</span> f2 = f1</span><br><span class="line">f2.valueOf = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123; <span class="keyword">return</span> <span class="string">&#x27;new funciton&#x27;</span> &#125;</span><br><span class="line"><span class="built_in">console</span>.log(f1.valueOf()); <span class="comment">// new funciton</span></span><br><span class="line"><span class="built_in">console</span>.log(f2.valueOf()); <span class="comment">// new funciton</span></span><br></pre></td></tr></table></figure>
-
-<p>栈内存中包括了变量的标识符和变量的值。</p>
-<p>如下所示，其实是分配了两块地址，修改其中一个变量，另一个变量不会随之修改</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> str1 = str2 = <span class="string">&#x27;hello&#x27;</span>;</span><br><span class="line">str2 = <span class="string">&#x27;world&#x27;</span>;</span><br><span class="line"><span class="built_in">console</span>.log(str1, str2);  <span class="comment">// hello world</span></span><br></pre></td></tr></table></figure>
-]]></content>
       <categories>
         <category>Javascript</category>
       </categories>
@@ -972,38 +972,6 @@
       </categories>
       <tags>
         <tag>Javascript</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>xtrabackup备份原理</title>
-    <url>/2017/04/12/xtrabackup%E5%A4%87%E4%BB%BD%E5%8E%9F%E7%90%86/</url>
-    <content><![CDATA[<h3 id="xtrabackup备份原理"><a href="#xtrabackup备份原理" class="headerlink" title="xtrabackup备份原理"></a>xtrabackup备份原理</h3><p>流程图</p>
-<p><img data-src="/images/PXB-backup-procedure.png" alt="PXB-backup-procedure.png"></p>
-<span id="more"></span>
-<p><code>xtrabackup</code>是用来备份<code>InnoDB</code>表的，不能备份非<code>InnoDB</code>表，和<code>mysqld server</code>没有交互；</p>
-<p><code>innobackupex</code>脚本用来备份非 <code>InnoDB</code>表，同时会调用<code>xtrabackup</code>命令来备份<code>InnoDB</code>表，还会和<code>mysqld server</code>发送命令进行交互，如加读锁（FTWRL）、获取位点（SHOW SLAVE STATUS）等。</p>
-<p>简单来说，<code>innobackupex</code>在<code>xtrabackup</code>之上做了一层封装。一般情况下，我们是希望能备份<code>MyISAM</code>表的，虽然我们可能自己不用<code>MyISAM</code>表，但是<code>mysql</code>库下的系统表是 MyISAM 的，因此备份基本都通过innobackupex命令进行；另外一个原因是我们可能需要保存位点信息。</p>
-<h4 id="备份过程"><a href="#备份过程" class="headerlink" title="备份过程"></a>备份过程</h4><ol>
-<li>innobackupex 在启动后，会先 fork 一个进程，启动 xtrabackup进程，然后就等待 xtrabackup 备份完 ibd 数据文件；</li>
-<li>xtrabackup 在备份 InnoDB 相关数据时，是有2种线程的，1种是 redo 拷贝线程，负责拷贝 redo 文件，1种是 ibd 拷贝线程，负责拷贝 ibd 文件；redo 拷贝线程只有一个，在 ibd 拷贝线程之前启动，在 ibd 线程结束后结束（并不是马上结束，而是等到非innodb存储引擎表备份完再结束，这里强调的是先后顺序）。</li>
-<li>xtrabackup 进程开始执行后，先启动 redo 拷贝线程，从最新的 checkpoint 点开始顺序拷贝 redo 日志；然后再启动 ibd 数据拷贝线程，在 xtrabackup 拷贝 ibd 过程中，innobackupex 进程一直处于等待状态（等待文件被创建）。</li>
-<li>xtrabackup 拷贝完成idb后，通知 innobackupex（通过创建文件），同时自己进入等待（redo 线程仍然继续拷贝）;</li>
-<li>innobackupex 收到 xtrabackup 通知后，执行FLUSH TABLES WITH READ LOCK (FTWRL)，取得一致性位点，然后开始备份非 InnoDB 文件（包括 frm、MYD、MYI、CSV、opt、par等）。拷贝非 InnoDB 文件过程中，因为数据库处于全局只读状态，如果在业务的主库备份的话，要特别小心，非 InnoDB 表（主要是MyISAM）比较多的话整库只读时间就会比较长，这个影响一定要评估到。</li>
-<li>当 innobackupex 拷贝完所有非 InnoDB 表文件后，通知 xtrabackup（通过删文件） ，同时自己进入等待（等待另一个文件被创建）；xtrabackup 收到 innobackupex 备份完非 InnoDB 通知后，就停止 redo 拷贝线程，然后通知 innobackupex redo log 拷贝完成（通过创建文件）；</li>
-<li>innobackupex 收到 redo 备份完成通知后，就开始解锁，执行 UNLOCK TABLES；</li>
-<li>最后 innobackupex 和 xtrabackup 进程各自完成收尾工作，如资源的释放、写备份元数据信息等，innobackupex 等待 xtrabackup 子进程结束后退出。</li>
-</ol>
-<h4 id="恢复过程"><a href="#恢复过程" class="headerlink" title="恢复过程"></a>恢复过程</h4><p>如果看恢复备份集的日志，会发现和 mysqld 启动时非常相似，其实备份集的恢复就是类似 mysqld crash后，做一次 crash recover。</p>
-<p>恢复的目的是把备份集中的数据恢复到一个一致性位点，所谓一致就是指原数据库某一时间点各引擎数据的状态，比如 MyISAM 中的数据对应的是 15:00 时间点的，InnoDB 中的数据对应的是 15:20 的，这种状态的数据就是不一致的。PXB 备份集对应的一致点，就是备份时FTWRL的时间点，恢复出来的数据，就对应原数据库FTWRL时的状态。</p>
-<p>因为备份时 FTWRL 后，数据库是处于只读的，非 InnoDB 数据是在持有全局读锁情况下拷贝的，所以非 InnoDB 数据本身就对应 FTWRL 时间点；InnoDB 的 ibd 文件拷贝是在 FTWRL 前做的，拷贝出来的不同 ibd 文件最后更新时间点是不一样的，这种状态的 ibd 文件是不能直接用的，但是 redo log 是从备份开始一直持续拷贝的，最后的 redo 日志点是在持有 FTWRL 后取得的，所以最终通过 redo 应用后的 ibd 数据时间点也是和 FTWRL 一致的。</p>
-<p>所以恢复过程只涉及 InnoDB 文件的恢复，非 InnoDB 数据是不动的。备份恢复完成后，就可以把数据文件拷贝到对应的目录，然后通过mysqld来启动了。</p>
-<p>备份过程中产生的事务会被备份出来，提交了的前滚，未提交的回滚，保持数据的一致性；</p>
-]]></content>
-      <categories>
-        <category>Mysql</category>
-      </categories>
-      <tags>
-        <tag>xtrabackup</tag>
       </tags>
   </entry>
   <entry>
@@ -1095,48 +1063,6 @@
       </categories>
       <tags>
         <tag>HTML</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>如何在vue中替换使用默认的svg loader</title>
-    <url>/2017/07/13/%E5%A6%82%E4%BD%95%E5%9C%A8vue%E4%B8%AD%E6%9B%BF%E6%8D%A2%E4%BD%BF%E7%94%A8%E9%BB%98%E8%AE%A4%E7%9A%84svg-loader/</url>
-    <content><![CDATA[<h3 id="1、要知道如何修改，首先要知道如何查看"><a href="#1、要知道如何修改，首先要知道如何查看" class="headerlink" title="1、要知道如何修改，首先要知道如何查看"></a>1、要知道如何修改，首先要知道如何查看</h3><p><code>vue-cli3</code> 默认是不暴露webpack的配置在项目目录中的，在项目根目录使用<code>vue inspect</code>可以查看所有的webpack配置（如果实在是想看，可以使用<code>vue eject</code> 把所以配置暴露出来，但是该操作不可逆，拿出来了就藏不回去了，慎重使用）</p>
-<p>由于<code>vue inspect</code>命令的输出太太太长了，这里就不贴出来了，但是vue想到了这一点，我们可以指定命令选项来查看我们需要的信息</p>
-<p><code>vue inspect --rule svg </code></p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* config.module.rule(&#x27;svg&#x27;) */</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">test</span>: <span class="regexp">/\.(svg)(\?.*)?$/</span>,</span><br><span class="line">  use: [</span><br><span class="line">    <span class="comment">/* config.module.rule(&#x27;svg&#x27;).use(&#x27;file-loader&#x27;) */</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">loader</span>: <span class="string">&#x27;D:\\Microsoft VS Code\\Repositories\\myrepo\\z-knowledge\\Vue\\project\\study\\node_modules\\file-loader\\dist\\cjs.js&#x27;</span>,</span><br><span class="line">      <span class="attr">options</span>: &#123;</span><br><span class="line">        <span class="attr">name</span>: <span class="string">&#x27;img/[name].[hash:8].[ext]&#x27;</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>我们想要把默认的处理svg的file-loader修改成为<code>svg-sprite-loader</code></p>
-<span id="more"></span>
-
-<h3 id="2、安装-svg-sprite-loader"><a href="#2、安装-svg-sprite-loader" class="headerlink" title="2、安装 svg-sprite-loader"></a>2、安装 svg-sprite-loader</h3><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">npm i svg-sprite-loader -D </span><br></pre></td></tr></table></figure>
-
-<h3 id="3、修改vue-config-js"><a href="#3、修改vue-config-js" class="headerlink" title="3、修改vue.config.js"></a>3、修改vue.config.js</h3><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">&#x27;path&#x27;</span>) <span class="comment">// 下面的处理目录只能使用绝对路径，因此使用nodejs的path方法</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">    <span class="attr">chainWebpack</span>: <span class="function"><span class="params">config</span> =&gt;</span> &#123;</span><br><span class="line">        config.module.rule(<span class="string">&#x27;svg&#x27;</span>)</span><br><span class="line">            .exclude.add(path.resolve(__dirname, <span class="string">&#x27;./src/icons/svgs&#x27;</span>)); <span class="comment">// svg规则不再处理&#x27;./src/icons/svgs&#x27;目录下的文件</span></span><br><span class="line"></span><br><span class="line">        config.module.rule(<span class="string">&#x27;icons&#x27;</span>) <span class="comment">// 新增一个icons规则，处理.svg后缀的文件</span></span><br><span class="line">            .test(<span class="regexp">/\.svg$/</span>)</span><br><span class="line">            .include.add(path.resolve(__dirname, <span class="string">&#x27;./src/icons/svgs&#x27;</span>))</span><br><span class="line">                .end()</span><br><span class="line">            .use(<span class="string">&#x27;svg-sprite-loader&#x27;</span>)</span><br><span class="line">                .loader(<span class="string">&#x27;svg-sprite-loader&#x27;</span>)</span><br><span class="line">                .options(&#123; <span class="attr">symbolId</span>: <span class="string">&#x27;icon-[name]&#x27;</span> &#125;) <span class="comment">// 定义使用svg的方式</span></span><br><span class="line">                .end()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>修改后会新增一个规则<code>icons</code>,该配置如下</p>
-<p><code>vue inspect --rule icons</code></p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* config.module.rule(&#x27;icons&#x27;) */</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">test</span>: <span class="regexp">/\.svg$/</span>,</span><br><span class="line">  include: [</span><br><span class="line">    <span class="string">&#x27;./src/icons/svgs&#x27;</span></span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">use</span>: [</span><br><span class="line">    <span class="comment">/* config.module.rule(&#x27;icons&#x27;).use(&#x27;svg-sprite-loader&#x27;) */</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">loader</span>: <span class="string">&#x27;svg-sprite-loader&#x27;</span>,</span><br><span class="line">      <span class="attr">options</span>: &#123;</span><br><span class="line">        <span class="attr">symbolId</span>: <span class="string">&#x27;icon-[name]&#x27;</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="4、使用svg图标"><a href="#4、使用svg图标" class="headerlink" title="4、使用svg图标"></a>4、使用svg图标</h3><h4 id="4-1-在阿里图标库下载svg格式的图标，保存在src-icons目录下"><a href="#4-1-在阿里图标库下载svg格式的图标，保存在src-icons目录下" class="headerlink" title="4.1 在阿里图标库下载svg格式的图标，保存在src/icons目录下"></a>4.1 在阿里图标库下载svg格式的图标，保存在<code>src/icons</code>目录下</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">|--icons</span><br><span class="line">   |--svgs</span><br><span class="line">      wx.svg</span><br><span class="line">      qq.xvg</span><br></pre></td></tr></table></figure>
-<h4 id="4-2-然后在组件-页面中进行导入"><a href="#4-2-然后在组件-页面中进行导入" class="headerlink" title="4.2 然后在组件/页面中进行导入"></a>4.2 然后在组件/页面中进行导入</h4><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&#x27;@/icons/svgs/wx.svg&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;@/icons/svgs/qq.svg&#x27;</span></span><br></pre></td></tr></table></figure>
-<h4 id="4-3-在标签中进行使用"><a href="#4-3-在标签中进行使用" class="headerlink" title="4.3 在标签中进行使用"></a>4.3 在标签中进行使用</h4><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">svg</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">use</span> <span class="attr">xlink:href</span>=<span class="string">&quot;#icon-wx&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">use</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">svg</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">use</span> <span class="attr">xlink:href</span>=<span class="string">&quot;#icon-qq&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">use</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="5、每次都按需导入十分麻烦，可以一次性导入所有svg图标"><a href="#5、每次都按需导入十分麻烦，可以一次性导入所有svg图标" class="headerlink" title="5、每次都按需导入十分麻烦，可以一次性导入所有svg图标"></a>5、每次都按需导入十分麻烦，可以一次性导入所有svg图标</h3><p>新建文件<code>src/icons/index.js</code>，添加以下代码</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> requireAll = <span class="function"><span class="params">requireContext</span> =&gt;</span> requireContext.keys().map(requireContext);</span><br><span class="line"><span class="keyword">const</span> req = <span class="built_in">require</span>.context(<span class="string">&quot;./svgs&quot;</span>, <span class="literal">false</span>, <span class="regexp">/.svg$/</span>);</span><br><span class="line">requireAll(req);</span><br></pre></td></tr></table></figure>
-
-<p>在<code>main.js</code>中引入该<code>index.js</code>文件</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&#x27;@/icons/index&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>此时就不用了每次使用都单独导入了，因此上面4.2步骤中的导入可以不写了</p>
-<h3 id="6、封装svg组件"><a href="#6、封装svg组件" class="headerlink" title="6、封装svg组件"></a>6、封装svg组件</h3><blockquote>
-<p><code>&#39;@/components/icons/SvgIcon&#39;</code></p>
-</blockquote>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">  <span class="xml"><span class="tag">&lt;<span class="name">svg</span> <span class="attr">:class</span>=<span class="string">&quot;svgClass&quot;</span> <span class="attr">aria-hidden</span>=<span class="string">&quot;true&quot;</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">use</span> <span class="attr">:xlink:href</span>=<span class="string">&quot;iconName&quot;</span> /&gt;</span></span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span></span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span></span><br><span class="line"><span class="javascript"><span class="xml"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">    <span class="attr">name</span>: <span class="string">&#x27;svg-icon&#x27;</span>,</span></span></span><br><span class="line"><span class="javascript"><span class="xml">    <span class="attr">props</span>: &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">        <span class="attr">iconClass</span>: &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">            <span class="attr">type</span>: <span class="built_in">String</span>,</span></span></span><br><span class="line"><span class="javascript"><span class="xml">            <span class="attr">required</span>: <span class="literal">true</span></span></span></span><br><span class="line"><span class="javascript"><span class="xml">        &#125;,</span></span></span><br><span class="line"><span class="javascript"><span class="xml">        <span class="attr">className</span>: &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">            <span class="attr">type</span>: <span class="built_in">String</span>,</span></span></span><br><span class="line"><span class="javascript"><span class="xml">            <span class="attr">default</span>: <span class="string">&#x27;&#x27;</span></span></span></span><br><span class="line"><span class="javascript"><span class="xml">        &#125;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">    &#125;,</span></span></span><br><span class="line"><span class="javascript"><span class="xml">    <span class="attr">computed</span>: &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">        <span class="function"><span class="title">iconName</span>(<span class="params"></span>)</span> &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">            <span class="keyword">return</span> <span class="string">`#icon-<span class="subst">$&#123;<span class="built_in">this</span>.iconClass&#125;</span>`</span></span></span></span><br><span class="line"><span class="javascript"><span class="xml">        &#125;,</span></span></span><br><span class="line"><span class="javascript"><span class="xml">        <span class="function"><span class="title">svgClass</span>(<span class="params"></span>)</span> &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">            <span class="keyword">if</span> (<span class="built_in">this</span>.className) &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">                <span class="keyword">return</span> <span class="string">&#x27;svg-icon&#x27;</span> + <span class="built_in">this</span>.className</span></span></span><br><span class="line"><span class="javascript"><span class="xml">            &#125; <span class="keyword">else</span> &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">                <span class="keyword">return</span> <span class="string">&#x27;svg-icon&#x27;</span></span></span></span><br><span class="line"><span class="javascript"><span class="xml">            &#125;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">        &#125;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">    &#125;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">&#125;</span></span></span><br><span class="line"><span class="javascript"><span class="xml"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">style</span> <span class="attr">scoped</span>&gt;</span><span class="css"></span></span></span><br><span class="line"><span class="css"><span class="xml"><span class="selector-class">.svg-icon</span> &#123;</span></span></span><br><span class="line"><span class="css"><span class="xml">    <span class="attribute">width</span>: <span class="number">1em</span>;</span></span></span><br><span class="line"><span class="css"><span class="xml">    <span class="attribute">height</span>: <span class="number">1em</span>;</span></span></span><br><span class="line"><span class="css"><span class="xml">    <span class="attribute">vertical-align</span>: -<span class="number">0.15em</span>;</span></span></span><br><span class="line"><span class="css"><span class="xml">    fill: currentColor;</span></span></span><br><span class="line"><span class="css"><span class="xml">    <span class="attribute">overflow</span>: hidden;</span></span></span><br><span class="line"><span class="css"><span class="xml">&#125;</span></span></span><br><span class="line"><span class="css"><span class="xml"></span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
-<p>使用</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">SvgIcon</span> <span class="attr">icon-class</span>=<span class="string">&quot;wx&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">SvgIcon</span>&gt;</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Javascript</category>
-        <category>vue</category>
-      </categories>
-      <tags>
-        <tag>vue</tag>
       </tags>
   </entry>
   <entry>
@@ -1438,6 +1364,80 @@
       <tags>
         <tag>Innodb</tag>
         <tag>ACID</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>xtrabackup备份原理</title>
+    <url>/2017/04/12/xtrabackup%E5%A4%87%E4%BB%BD%E5%8E%9F%E7%90%86/</url>
+    <content><![CDATA[<h3 id="xtrabackup备份原理"><a href="#xtrabackup备份原理" class="headerlink" title="xtrabackup备份原理"></a>xtrabackup备份原理</h3><p>流程图</p>
+<p><img data-src="/images/PXB-backup-procedure.png" alt="PXB-backup-procedure.png"></p>
+<span id="more"></span>
+<p><code>xtrabackup</code>是用来备份<code>InnoDB</code>表的，不能备份非<code>InnoDB</code>表，和<code>mysqld server</code>没有交互；</p>
+<p><code>innobackupex</code>脚本用来备份非 <code>InnoDB</code>表，同时会调用<code>xtrabackup</code>命令来备份<code>InnoDB</code>表，还会和<code>mysqld server</code>发送命令进行交互，如加读锁（FTWRL）、获取位点（SHOW SLAVE STATUS）等。</p>
+<p>简单来说，<code>innobackupex</code>在<code>xtrabackup</code>之上做了一层封装。一般情况下，我们是希望能备份<code>MyISAM</code>表的，虽然我们可能自己不用<code>MyISAM</code>表，但是<code>mysql</code>库下的系统表是 MyISAM 的，因此备份基本都通过innobackupex命令进行；另外一个原因是我们可能需要保存位点信息。</p>
+<h4 id="备份过程"><a href="#备份过程" class="headerlink" title="备份过程"></a>备份过程</h4><ol>
+<li>innobackupex 在启动后，会先 fork 一个进程，启动 xtrabackup进程，然后就等待 xtrabackup 备份完 ibd 数据文件；</li>
+<li>xtrabackup 在备份 InnoDB 相关数据时，是有2种线程的，1种是 redo 拷贝线程，负责拷贝 redo 文件，1种是 ibd 拷贝线程，负责拷贝 ibd 文件；redo 拷贝线程只有一个，在 ibd 拷贝线程之前启动，在 ibd 线程结束后结束（并不是马上结束，而是等到非innodb存储引擎表备份完再结束，这里强调的是先后顺序）。</li>
+<li>xtrabackup 进程开始执行后，先启动 redo 拷贝线程，从最新的 checkpoint 点开始顺序拷贝 redo 日志；然后再启动 ibd 数据拷贝线程，在 xtrabackup 拷贝 ibd 过程中，innobackupex 进程一直处于等待状态（等待文件被创建）。</li>
+<li>xtrabackup 拷贝完成idb后，通知 innobackupex（通过创建文件），同时自己进入等待（redo 线程仍然继续拷贝）;</li>
+<li>innobackupex 收到 xtrabackup 通知后，执行FLUSH TABLES WITH READ LOCK (FTWRL)，取得一致性位点，然后开始备份非 InnoDB 文件（包括 frm、MYD、MYI、CSV、opt、par等）。拷贝非 InnoDB 文件过程中，因为数据库处于全局只读状态，如果在业务的主库备份的话，要特别小心，非 InnoDB 表（主要是MyISAM）比较多的话整库只读时间就会比较长，这个影响一定要评估到。</li>
+<li>当 innobackupex 拷贝完所有非 InnoDB 表文件后，通知 xtrabackup（通过删文件） ，同时自己进入等待（等待另一个文件被创建）；xtrabackup 收到 innobackupex 备份完非 InnoDB 通知后，就停止 redo 拷贝线程，然后通知 innobackupex redo log 拷贝完成（通过创建文件）；</li>
+<li>innobackupex 收到 redo 备份完成通知后，就开始解锁，执行 UNLOCK TABLES；</li>
+<li>最后 innobackupex 和 xtrabackup 进程各自完成收尾工作，如资源的释放、写备份元数据信息等，innobackupex 等待 xtrabackup 子进程结束后退出。</li>
+</ol>
+<h4 id="恢复过程"><a href="#恢复过程" class="headerlink" title="恢复过程"></a>恢复过程</h4><p>如果看恢复备份集的日志，会发现和 mysqld 启动时非常相似，其实备份集的恢复就是类似 mysqld crash后，做一次 crash recover。</p>
+<p>恢复的目的是把备份集中的数据恢复到一个一致性位点，所谓一致就是指原数据库某一时间点各引擎数据的状态，比如 MyISAM 中的数据对应的是 15:00 时间点的，InnoDB 中的数据对应的是 15:20 的，这种状态的数据就是不一致的。PXB 备份集对应的一致点，就是备份时FTWRL的时间点，恢复出来的数据，就对应原数据库FTWRL时的状态。</p>
+<p>因为备份时 FTWRL 后，数据库是处于只读的，非 InnoDB 数据是在持有全局读锁情况下拷贝的，所以非 InnoDB 数据本身就对应 FTWRL 时间点；InnoDB 的 ibd 文件拷贝是在 FTWRL 前做的，拷贝出来的不同 ibd 文件最后更新时间点是不一样的，这种状态的 ibd 文件是不能直接用的，但是 redo log 是从备份开始一直持续拷贝的，最后的 redo 日志点是在持有 FTWRL 后取得的，所以最终通过 redo 应用后的 ibd 数据时间点也是和 FTWRL 一致的。</p>
+<p>所以恢复过程只涉及 InnoDB 文件的恢复，非 InnoDB 数据是不动的。备份恢复完成后，就可以把数据文件拷贝到对应的目录，然后通过mysqld来启动了。</p>
+<p>备份过程中产生的事务会被备份出来，提交了的前滚，未提交的回滚，保持数据的一致性；</p>
+]]></content>
+      <categories>
+        <category>Mysql</category>
+      </categories>
+      <tags>
+        <tag>xtrabackup</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>如何在vue中替换使用默认的svg loader</title>
+    <url>/2017/07/13/%E5%A6%82%E4%BD%95%E5%9C%A8vue%E4%B8%AD%E6%9B%BF%E6%8D%A2%E4%BD%BF%E7%94%A8%E9%BB%98%E8%AE%A4%E7%9A%84svg-loader/</url>
+    <content><![CDATA[<h3 id="1、要知道如何修改，首先要知道如何查看"><a href="#1、要知道如何修改，首先要知道如何查看" class="headerlink" title="1、要知道如何修改，首先要知道如何查看"></a>1、要知道如何修改，首先要知道如何查看</h3><p><code>vue-cli3</code> 默认是不暴露webpack的配置在项目目录中的，在项目根目录使用<code>vue inspect</code>可以查看所有的webpack配置（如果实在是想看，可以使用<code>vue eject</code> 把所以配置暴露出来，但是该操作不可逆，拿出来了就藏不回去了，慎重使用）</p>
+<p>由于<code>vue inspect</code>命令的输出太太太长了，这里就不贴出来了，但是vue想到了这一点，我们可以指定命令选项来查看我们需要的信息</p>
+<p><code>vue inspect --rule svg </code></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* config.module.rule(&#x27;svg&#x27;) */</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">test</span>: <span class="regexp">/\.(svg)(\?.*)?$/</span>,</span><br><span class="line">  use: [</span><br><span class="line">    <span class="comment">/* config.module.rule(&#x27;svg&#x27;).use(&#x27;file-loader&#x27;) */</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">loader</span>: <span class="string">&#x27;D:\\Microsoft VS Code\\Repositories\\myrepo\\z-knowledge\\Vue\\project\\study\\node_modules\\file-loader\\dist\\cjs.js&#x27;</span>,</span><br><span class="line">      <span class="attr">options</span>: &#123;</span><br><span class="line">        <span class="attr">name</span>: <span class="string">&#x27;img/[name].[hash:8].[ext]&#x27;</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们想要把默认的处理svg的file-loader修改成为<code>svg-sprite-loader</code></p>
+<span id="more"></span>
+
+<h3 id="2、安装-svg-sprite-loader"><a href="#2、安装-svg-sprite-loader" class="headerlink" title="2、安装 svg-sprite-loader"></a>2、安装 svg-sprite-loader</h3><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">npm i svg-sprite-loader -D </span><br></pre></td></tr></table></figure>
+
+<h3 id="3、修改vue-config-js"><a href="#3、修改vue-config-js" class="headerlink" title="3、修改vue.config.js"></a>3、修改vue.config.js</h3><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">&#x27;path&#x27;</span>) <span class="comment">// 下面的处理目录只能使用绝对路径，因此使用nodejs的path方法</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">    <span class="attr">chainWebpack</span>: <span class="function"><span class="params">config</span> =&gt;</span> &#123;</span><br><span class="line">        config.module.rule(<span class="string">&#x27;svg&#x27;</span>)</span><br><span class="line">            .exclude.add(path.resolve(__dirname, <span class="string">&#x27;./src/icons/svgs&#x27;</span>)); <span class="comment">// svg规则不再处理&#x27;./src/icons/svgs&#x27;目录下的文件</span></span><br><span class="line"></span><br><span class="line">        config.module.rule(<span class="string">&#x27;icons&#x27;</span>) <span class="comment">// 新增一个icons规则，处理.svg后缀的文件</span></span><br><span class="line">            .test(<span class="regexp">/\.svg$/</span>)</span><br><span class="line">            .include.add(path.resolve(__dirname, <span class="string">&#x27;./src/icons/svgs&#x27;</span>))</span><br><span class="line">                .end()</span><br><span class="line">            .use(<span class="string">&#x27;svg-sprite-loader&#x27;</span>)</span><br><span class="line">                .loader(<span class="string">&#x27;svg-sprite-loader&#x27;</span>)</span><br><span class="line">                .options(&#123; <span class="attr">symbolId</span>: <span class="string">&#x27;icon-[name]&#x27;</span> &#125;) <span class="comment">// 定义使用svg的方式</span></span><br><span class="line">                .end()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>修改后会新增一个规则<code>icons</code>,该配置如下</p>
+<p><code>vue inspect --rule icons</code></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* config.module.rule(&#x27;icons&#x27;) */</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">test</span>: <span class="regexp">/\.svg$/</span>,</span><br><span class="line">  include: [</span><br><span class="line">    <span class="string">&#x27;./src/icons/svgs&#x27;</span></span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">use</span>: [</span><br><span class="line">    <span class="comment">/* config.module.rule(&#x27;icons&#x27;).use(&#x27;svg-sprite-loader&#x27;) */</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">loader</span>: <span class="string">&#x27;svg-sprite-loader&#x27;</span>,</span><br><span class="line">      <span class="attr">options</span>: &#123;</span><br><span class="line">        <span class="attr">symbolId</span>: <span class="string">&#x27;icon-[name]&#x27;</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4、使用svg图标"><a href="#4、使用svg图标" class="headerlink" title="4、使用svg图标"></a>4、使用svg图标</h3><h4 id="4-1-在阿里图标库下载svg格式的图标，保存在src-icons目录下"><a href="#4-1-在阿里图标库下载svg格式的图标，保存在src-icons目录下" class="headerlink" title="4.1 在阿里图标库下载svg格式的图标，保存在src/icons目录下"></a>4.1 在阿里图标库下载svg格式的图标，保存在<code>src/icons</code>目录下</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">|--icons</span><br><span class="line">   |--svgs</span><br><span class="line">      wx.svg</span><br><span class="line">      qq.xvg</span><br></pre></td></tr></table></figure>
+<h4 id="4-2-然后在组件-页面中进行导入"><a href="#4-2-然后在组件-页面中进行导入" class="headerlink" title="4.2 然后在组件/页面中进行导入"></a>4.2 然后在组件/页面中进行导入</h4><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&#x27;@/icons/svgs/wx.svg&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;@/icons/svgs/qq.svg&#x27;</span></span><br></pre></td></tr></table></figure>
+<h4 id="4-3-在标签中进行使用"><a href="#4-3-在标签中进行使用" class="headerlink" title="4.3 在标签中进行使用"></a>4.3 在标签中进行使用</h4><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">svg</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">use</span> <span class="attr">xlink:href</span>=<span class="string">&quot;#icon-wx&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">use</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">svg</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">use</span> <span class="attr">xlink:href</span>=<span class="string">&quot;#icon-qq&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">use</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="5、每次都按需导入十分麻烦，可以一次性导入所有svg图标"><a href="#5、每次都按需导入十分麻烦，可以一次性导入所有svg图标" class="headerlink" title="5、每次都按需导入十分麻烦，可以一次性导入所有svg图标"></a>5、每次都按需导入十分麻烦，可以一次性导入所有svg图标</h3><p>新建文件<code>src/icons/index.js</code>，添加以下代码</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> requireAll = <span class="function"><span class="params">requireContext</span> =&gt;</span> requireContext.keys().map(requireContext);</span><br><span class="line"><span class="keyword">const</span> req = <span class="built_in">require</span>.context(<span class="string">&quot;./svgs&quot;</span>, <span class="literal">false</span>, <span class="regexp">/.svg$/</span>);</span><br><span class="line">requireAll(req);</span><br></pre></td></tr></table></figure>
+
+<p>在<code>main.js</code>中引入该<code>index.js</code>文件</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&#x27;@/icons/index&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>此时就不用了每次使用都单独导入了，因此上面4.2步骤中的导入可以不写了</p>
+<h3 id="6、封装svg组件"><a href="#6、封装svg组件" class="headerlink" title="6、封装svg组件"></a>6、封装svg组件</h3><blockquote>
+<p><code>&#39;@/components/icons/SvgIcon&#39;</code></p>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">  <span class="xml"><span class="tag">&lt;<span class="name">svg</span> <span class="attr">:class</span>=<span class="string">&quot;svgClass&quot;</span> <span class="attr">aria-hidden</span>=<span class="string">&quot;true&quot;</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">use</span> <span class="attr">:xlink:href</span>=<span class="string">&quot;iconName&quot;</span> /&gt;</span></span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span></span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span></span><br><span class="line"><span class="javascript"><span class="xml"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">    <span class="attr">name</span>: <span class="string">&#x27;svg-icon&#x27;</span>,</span></span></span><br><span class="line"><span class="javascript"><span class="xml">    <span class="attr">props</span>: &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">        <span class="attr">iconClass</span>: &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">            <span class="attr">type</span>: <span class="built_in">String</span>,</span></span></span><br><span class="line"><span class="javascript"><span class="xml">            <span class="attr">required</span>: <span class="literal">true</span></span></span></span><br><span class="line"><span class="javascript"><span class="xml">        &#125;,</span></span></span><br><span class="line"><span class="javascript"><span class="xml">        <span class="attr">className</span>: &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">            <span class="attr">type</span>: <span class="built_in">String</span>,</span></span></span><br><span class="line"><span class="javascript"><span class="xml">            <span class="attr">default</span>: <span class="string">&#x27;&#x27;</span></span></span></span><br><span class="line"><span class="javascript"><span class="xml">        &#125;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">    &#125;,</span></span></span><br><span class="line"><span class="javascript"><span class="xml">    <span class="attr">computed</span>: &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">        <span class="function"><span class="title">iconName</span>(<span class="params"></span>)</span> &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">            <span class="keyword">return</span> <span class="string">`#icon-<span class="subst">$&#123;<span class="built_in">this</span>.iconClass&#125;</span>`</span></span></span></span><br><span class="line"><span class="javascript"><span class="xml">        &#125;,</span></span></span><br><span class="line"><span class="javascript"><span class="xml">        <span class="function"><span class="title">svgClass</span>(<span class="params"></span>)</span> &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">            <span class="keyword">if</span> (<span class="built_in">this</span>.className) &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">                <span class="keyword">return</span> <span class="string">&#x27;svg-icon&#x27;</span> + <span class="built_in">this</span>.className</span></span></span><br><span class="line"><span class="javascript"><span class="xml">            &#125; <span class="keyword">else</span> &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">                <span class="keyword">return</span> <span class="string">&#x27;svg-icon&#x27;</span></span></span></span><br><span class="line"><span class="javascript"><span class="xml">            &#125;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">        &#125;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">    &#125;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">&#125;</span></span></span><br><span class="line"><span class="javascript"><span class="xml"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">style</span> <span class="attr">scoped</span>&gt;</span><span class="css"></span></span></span><br><span class="line"><span class="css"><span class="xml"><span class="selector-class">.svg-icon</span> &#123;</span></span></span><br><span class="line"><span class="css"><span class="xml">    <span class="attribute">width</span>: <span class="number">1em</span>;</span></span></span><br><span class="line"><span class="css"><span class="xml">    <span class="attribute">height</span>: <span class="number">1em</span>;</span></span></span><br><span class="line"><span class="css"><span class="xml">    <span class="attribute">vertical-align</span>: -<span class="number">0.15em</span>;</span></span></span><br><span class="line"><span class="css"><span class="xml">    fill: currentColor;</span></span></span><br><span class="line"><span class="css"><span class="xml">    <span class="attribute">overflow</span>: hidden;</span></span></span><br><span class="line"><span class="css"><span class="xml">&#125;</span></span></span><br><span class="line"><span class="css"><span class="xml"></span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
+<p>使用</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">SvgIcon</span> <span class="attr">icon-class</span>=<span class="string">&quot;wx&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">SvgIcon</span>&gt;</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Javascript</category>
+        <category>vue</category>
+      </categories>
+      <tags>
+        <tag>vue</tag>
       </tags>
   </entry>
   <entry>
