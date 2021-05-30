@@ -153,7 +153,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#generator%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7"><span class="nav-text">generator函数特性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="nav-text">基本使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%92%E5%BD%92%E8%BE%93%E5%87%BA"><span class="nav-text">递归输出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#next%E4%BC%A0%E5%8F%82"><span class="nav-text">next传参</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%92%8Citerator%E6%8E%A5%E5%8F%A3%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-text">和iterator接口的关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#yield-%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-text">yield* 表达式</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#generator%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7"><span class="nav-text">generator函数特性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="nav-text">基本使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%92%E5%BD%92%E8%BE%93%E5%87%BA"><span class="nav-text">递归输出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#next%E4%BC%A0%E5%8F%82"><span class="nav-text">next传参</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%92%8Citerator%E6%8E%A5%E5%8F%A3%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-text">和iterator接口的关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#yield-%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-text">yield* 表达式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#generator%E5%87%BD%E6%95%B0%E5%BC%82%E6%AD%A5%E5%BA%94%E7%94%A8"><span class="nav-text">generator函数异步应用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#thunkify"><span class="nav-text">thunkify</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#co"><span class="nav-text">co</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -169,7 +169,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-count">26</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -215,6 +215,9 @@
     </div>
     <ul class="links-of-recent-posts-list">
         <li class="links-of-recent-posts-item">
+          <a href="/2021/05/30/js-async-await%E5%87%BD%E6%95%B0/" title="2021&#x2F;05&#x2F;30&#x2F;js-async-await函数&#x2F;">js async/await函数</a>
+        </li>
+        <li class="links-of-recent-posts-item">
           <a href="/2021/05/29/js-generator%E5%87%BD%E6%95%B0/" title="2021&#x2F;05&#x2F;29&#x2F;js-generator函数&#x2F;">js generator函数</a>
         </li>
         <li class="links-of-recent-posts-item">
@@ -225,9 +228,6 @@
         </li>
         <li class="links-of-recent-posts-item">
           <a href="/2021/05/26/js-%E4%BD%9C%E7%94%A8%E5%9F%9F%E9%93%BE/" title="2021&#x2F;05&#x2F;26&#x2F;js-作用域链&#x2F;">js 作用域链</a>
-        </li>
-        <li class="links-of-recent-posts-item">
-          <a href="/2021/05/26/js-%E5%BC%95%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%92%8C%E5%80%BC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" title="2021&#x2F;05&#x2F;26&#x2F;js-引用数据类型和值数据类型&#x2F;">js 引用数据类型和值数据类型</a>
         </li>
     </ul>
   </div>
@@ -304,7 +304,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.7k</span>
+      <span>2.3k</span>
     </span>
 
   
@@ -362,6 +362,26 @@
 <blockquote>
 <p>以上示例来自<a target="_blank" rel="noopener" href="https://es6.ruanyifeng.com/#docs/generator#yield--%E8%A1%A8%E8%BE%BE%E5%BC%8F">阮一峰的ES6教程</a></p>
 </blockquote>
+<h3 id="generator函数异步应用"><a href="#generator函数异步应用" class="headerlink" title="generator函数异步应用"></a>generator函数异步应用</h3><p><code>javascript</code>的异步操作都是使用回调函数的方式进行的，但是会造成回调地狱的问题，后来<code>generator</code>函数出现了，配合<code>thunk</code>函数和执行器可以实现同步操作，而不使用回调函数，再结合后面的<code>async/await</code>，可以使我们用同步的形式写异步代码</p>
+<h4 id="thunkify"><a href="#thunkify" class="headerlink" title="thunkify"></a>thunkify</h4><p><code>Thunk</code> 函数是自动执行<code>Generator</code>函数的一种方法。<code>Thunk</code>函数不是函数类型，而是一种编程方式，把多个入参的函数转换为一个入参的方式</p>
+<p>例如</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 正常版本的readFile（多参数版本）</span></span><br><span class="line">fs.readFile(fileName, callback);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Thunk版本的readFile（单参数版本）</span></span><br><span class="line"><span class="keyword">var</span> Thunk = <span class="function"><span class="keyword">function</span> (<span class="params">fileName</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> (<span class="params">callback</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> fs.readFile(fileName, callback);</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> readFileThunk = Thunk(fileName);</span><br><span class="line">readFileThunk(callback);</span><br></pre></td></tr></table></figure>
+
+<p><code>thunk</code>函数在<code>generator</code>函数中的使用，一般使用<code>thunkify</code>模块</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"><span class="keyword">var</span> thunkify = <span class="built_in">require</span>(<span class="string">&#x27;thunkify&#x27;</span>);</span><br><span class="line"><span class="keyword">var</span> readFileThunk = thunkify(fs.readFile);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> gen = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> r1 = <span class="keyword">yield</span> readFileThunk(<span class="string">&#x27;./data/a.text&#x27;</span>);</span><br><span class="line">    <span class="keyword">var</span> r2 = <span class="keyword">yield</span> readFileThunk(<span class="string">&#x27;./data/b.text&#x27;</span>);</span><br><span class="line">    <span class="built_in">console</span>.log(r1.toString());</span><br><span class="line">    <span class="built_in">console</span>.log(r2.toString());</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 手动的执行</span></span><br><span class="line"><span class="keyword">var</span> g = gen();</span><br><span class="line"><span class="keyword">var</span> r1 = g.next();</span><br><span class="line"><span class="built_in">console</span>.log(r1);        <span class="comment">// &#123; value: [Function], done: false &#125;   vale值就是yield出来的thunk函数</span></span><br><span class="line">r1.value(<span class="function"><span class="keyword">function</span> (<span class="params">err, data</span>) </span>&#123;   <span class="comment">// 执行thunk函数的回调函数, data就是readFileThunk的结果，然后把结果传入给generator</span></span><br><span class="line">    <span class="keyword">if</span> (err) <span class="keyword">throw</span> err;</span><br><span class="line">    <span class="comment">// console.log(data.toString()); // aaaaa, 但是一般不在执行器里面处理结果，执行器仅进行流程控制，一般是把得到的结果传给generator，在generator里面进行处理</span></span><br><span class="line">    <span class="keyword">var</span> r2 = g.next(data); <span class="comment">// 把结果data传入generator函数中</span></span><br><span class="line">    r2.value(<span class="function"><span class="keyword">function</span> (<span class="params">err, data</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (err) <span class="keyword">throw</span> err;</span><br><span class="line">        g.next(data);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p><code>generator</code>自动执行器，自动管理需要自己写一个方法，递归的进行自动处理，或者使用下文介绍的<code>co</code>模块</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">run</span>(<span class="params">fn</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> gen = fn();</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">next</span>(<span class="params">err, data</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> result = gen.next(data);</span><br><span class="line">        <span class="keyword">if</span> (result.done) <span class="keyword">return</span>;</span><br><span class="line">        result.value(next);</span><br><span class="line">    &#125;</span><br><span class="line">    next();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">run(gen)</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>上面这种方式是同步输出的</p>
+</blockquote>
+<h4 id="co"><a href="#co" class="headerlink" title="co"></a>co</h4><p><code>co</code>模块是著名程序员<code>TJ Holowaychuk</code> 于 2013 年 6 月发布的一个小工具，用于<code>Generator</code> 函数的自动执行。效果和自己写的<code>run</code>方法作用一样，但是<code>co</code>内部进行了很多处理，逻辑更加严谨，在<code>co</code>的<code>4.0</code>版本中,<code>yield</code>不仅可以是一个<code>thunk</code>函数,也可以是一个<code>Promise</code>对象</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"><span class="keyword">var</span> thunkify = <span class="built_in">require</span>(<span class="string">&#x27;thunkify&#x27;</span>);</span><br><span class="line"><span class="keyword">var</span> readFileThunk = thunkify(fs.readFile);</span><br><span class="line"><span class="keyword">var</span> co = <span class="built_in">require</span>(<span class="string">&#x27;co&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> gen = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> r1 = <span class="keyword">yield</span> readFileThunk(<span class="string">&#x27;./data/a.text&#x27;</span>);</span><br><span class="line">    <span class="keyword">var</span> r2 = <span class="keyword">yield</span> readFileThunk(<span class="string">&#x27;./data/b.text&#x27;</span>);</span><br><span class="line">    <span class="built_in">console</span>.log(r1.toString());</span><br><span class="line">    <span class="built_in">console</span>.log(r2.toString());</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">co(gen)</span><br></pre></td></tr></table></figure>
+
+<p><code>co</code>还支持并发的异步操作，就是把各个一步操作放在一个数组里面，当所有的操作执行成功后，再进行下一步</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"><span class="keyword">var</span> co = <span class="built_in">require</span>(<span class="string">&#x27;co&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> readFile = <span class="function"><span class="keyword">function</span> (<span class="params">fileName</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</span><br><span class="line">        fs.readFile(fileName, <span class="function"><span class="keyword">function</span> (<span class="params">error, data</span>) </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (error) reject(error);</span><br><span class="line">            resolve(data.toString());</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 数组的写法</span></span><br><span class="line">co(<span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> res = <span class="keyword">yield</span> [</span><br><span class="line">        readFile(<span class="string">&#x27;./data/a.text&#x27;</span>),</span><br><span class="line">        readFile(<span class="string">&#x27;./data/b.text&#x27;</span>)</span><br><span class="line">    ];</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;res&#x27;</span>, res);</span><br><span class="line">&#125;).catch();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对象的写法</span></span><br><span class="line">co(<span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> res = <span class="keyword">yield</span> &#123;</span><br><span class="line">        <span class="number">1</span>: <span class="built_in">Promise</span>.resolve(<span class="number">1</span>),</span><br><span class="line">        <span class="number">2</span>: <span class="built_in">Promise</span>.resolve(<span class="number">2</span>),</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="built_in">console</span>.log(res);</span><br><span class="line">&#125;).catch();</span><br></pre></td></tr></table></figure>
+<p>输出结果</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#123; <span class="string">&#x27;1&#x27;</span>: <span class="number">1</span>, <span class="string">&#x27;2&#x27;</span>: <span class="number">2</span> &#125;</span><br><span class="line">res [ <span class="string">&#x27;aaaaa&#x27;</span>, <span class="string">&#x27;bbbbb&#x27;</span> ]</span><br></pre></td></tr></table></figure>
+<p>由于都是异步操作，虽然读取文件是在<code>Promise.resolve</code>前面，但是读取文件是需要时间的，所以对象写法的输出会在前面</p>
 
     </div>
 
@@ -369,6 +389,12 @@
     
     
       
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\05\30\js-async-await函数\" rel="bookmark">js async/await函数</a></div>
+    </li>
+  </ul>
 
 
     <footer class="post-footer">
@@ -402,6 +428,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2021/05/30/js-async-await%E5%87%BD%E6%95%B0/" rel="next" title="js async/await函数">
+                  js async/await函数 <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>
