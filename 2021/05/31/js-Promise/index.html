@@ -416,7 +416,7 @@
 <p>以上代码等同于</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> p = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> reject(<span class="string">&#x27;出错了&#x27;</span>));</span><br><span class="line">p.catch(<span class="function"><span class="params">err</span> =&gt;</span> <span class="built_in">console</span>.log(err)); <span class="comment">// 出错了</span></span><br></pre></td></tr></table></figure>
 
-<p>最后提一下，在社区有很多库实现了<code>Promise</code>，都遵循<a target="_blank" rel="noopener" href="https://promisesaplus.com/">Primise/A+</a>规范，有人测试社区的多种实现中，<code>bluebird.js</code>的性能比官方的ES6要高三倍，而且很多还在草案中的特性，<code>bluebird.js</code>都已经实现了，如果想要使用或者学习新的<code>Promise</code>特性，不妨试试<code>bluebird.js</code>。</p>
+<p>最后提一下，在社区有很多库实现了<code>Promise</code>，都遵循<a target="_blank" rel="noopener" href="https://promisesaplus.com/">Primise/A+</a>规范，有人测试社区的多种实现中，<a target="_blank" rel="noopener" href="http://bluebirdjs.com/docs/getting-started.html">bluebird.js</a>的性能比官方的ES6要高三倍，而且很多还在草案中的特性，<code>bluebird.js</code>都已经实现了，如果想要使用或者学习新的<code>Promise</code>特性，不妨试试<code>bluebird.js</code>。</p>
 
     </div>
 
