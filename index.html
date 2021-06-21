@@ -213,10 +213,10 @@
           <a href="/2021/06/11/js-for-in%E5%BE%AA%E7%8E%AF%E5%92%8Cfor-of%E5%BE%AA%E7%8E%AF/" title="2021&#x2F;06&#x2F;11&#x2F;js-for-in循环和for-of循环&#x2F;">js for...in循环和for...of循环</a>
         </li>
         <li class="links-of-recent-posts-item">
-          <a href="/2021/06/11/js-%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E4%BB%A5%E5%8F%8A%E5%86%85%E7%BD%AE%E5%8F%82%E6%95%B0arguments/" title="2021&#x2F;06&#x2F;11&#x2F;js-函数参数以及内置参数arguments&#x2F;">js 函数参数以及内置参数arguments</a>
+          <a href="/2021/06/11/js-%E9%98%B2%E6%8A%96%E5%92%8C%E8%8A%82%E6%B5%81/" title="2021&#x2F;06&#x2F;11&#x2F;js-防抖和节流&#x2F;">js 防抖和节流</a>
         </li>
         <li class="links-of-recent-posts-item">
-          <a href="/2021/06/11/js-%E9%98%B2%E6%8A%96%E5%92%8C%E8%8A%82%E6%B5%81/" title="2021&#x2F;06&#x2F;11&#x2F;js-防抖和节流&#x2F;">js 防抖和节流</a>
+          <a href="/2021/06/11/js-%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E4%BB%A5%E5%8F%8A%E5%86%85%E7%BD%AE%E5%8F%82%E6%95%B0arguments/" title="2021&#x2F;06&#x2F;11&#x2F;js-函数参数以及内置参数arguments&#x2F;">js 函数参数以及内置参数arguments</a>
         </li>
         <li class="links-of-recent-posts-item">
           <a href="/2021/06/08/js-this%E6%8C%87%E5%90%91%E9%97%AE%E9%A2%98%E4%BB%A5%E5%8F%8A%E6%94%B9%E5%8F%98this%E6%8C%87%E5%90%91%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%88call-apply-bind%EF%BC%89/" title="2021&#x2F;06&#x2F;08&#x2F;js-this指向问题以及改变this指向的三种方法（call-apply-bind）&#x2F;">js this指向问题以及改变this指向的三种方法（call/apply/bind）</a>
@@ -295,7 +295,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>0</span>
+      <span>612</span>
     </span>
 
   
@@ -308,7 +308,37 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          
+          <p><a target="_blank" rel="noopener" href="https://es6.ruanyifeng.com/#docs/set-map">本文参考阮一峰ES6基础教程</a></p>
+<h3 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h3><p><code>ES6</code> 提供了新的数据结构 <code>Set</code>。它类似于数组，但是成员的值都是唯一的，没有重复的值。</p>
+<p><code>Set</code>本身是一个构造函数，用来生成 <code>Set</code> 数据结构。</p>
+<p><code>Set</code>函数可以接受一个数组（或者具有 <code>iterable</code> 接口的其他数据结构）作为参数，用来初始化</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 例一</span></span><br><span class="line"><span class="keyword">const</span> set = <span class="keyword">new</span> <span class="built_in">Set</span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">4</span>]);</span><br><span class="line">[...set]</span><br><span class="line"><span class="comment">// [1, 2, 3, 4]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 例二</span></span><br><span class="line"><span class="keyword">const</span> items = <span class="keyword">new</span> <span class="built_in">Set</span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">5</span>]);</span><br><span class="line">items.size <span class="comment">// 5</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 例三</span></span><br><span class="line"><span class="keyword">const</span> set = <span class="keyword">new</span> <span class="built_in">Set</span>(<span class="built_in">document</span>.querySelectorAll(<span class="string">&#x27;div&#x27;</span>));</span><br><span class="line">set.size <span class="comment">// 56</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 类似于</span></span><br><span class="line"><span class="keyword">const</span> set = <span class="keyword">new</span> <span class="built_in">Set</span>();</span><br><span class="line"><span class="built_in">document</span></span><br><span class="line"> .querySelectorAll(<span class="string">&#x27;div&#x27;</span>)</span><br><span class="line"> .forEach(<span class="function"><span class="params">div</span> =&gt;</span> set.add(div));</span><br><span class="line">set.size <span class="comment">// 56</span></span><br></pre></td></tr></table></figure>
+
+<p><code>Set</code>中没有重复的值，里面包含了各个item和一个size属性</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> set = <span class="keyword">new</span> <span class="built_in">Set</span>([<span class="number">1</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">3</span>])</span><br><span class="line"><span class="built_in">console</span>.log(set);</span><br></pre></td></tr></table></figure>
+<p><img data-src="/images/set.gif"></p>
+<p>基于这一特性，我们可以进行去重处理</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 去除数组的重复成员</span></span><br><span class="line">[...new <span class="built_in">Set</span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">3</span>, <span class="number">3</span>])]</span><br><span class="line"><span class="comment">// [1, 2, 3]</span></span><br><span class="line"></span><br><span class="line">[...new <span class="built_in">Set</span>(<span class="string">&#x27;ababbc&#x27;</span>)].join(<span class="string">&#x27;&#x27;</span>)</span><br><span class="line"><span class="comment">// &quot;abc&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>注意</strong>，两个对象是不相等的，而<code>NaN</code>，<code>null</code>，<code>undefined</code>都视为相等的，<code>Set</code>内部判断两个值是否不同，使用的算法叫做<code>Same-value-zero equality</code>，它类似于精确相等运算符（<code>===</code>）</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> set1 = <span class="keyword">new</span> <span class="built_in">Set</span>();</span><br><span class="line">set1.add(<span class="literal">NaN</span>).add(<span class="literal">NaN</span>);</span><br><span class="line"><span class="built_in">console</span>.log(set1);</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> set2 = <span class="keyword">new</span> <span class="built_in">Set</span>();</span><br><span class="line">set2.add(<span class="literal">null</span>).add(<span class="literal">null</span>);</span><br><span class="line"><span class="built_in">console</span>.log(set2);</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> set3 = <span class="keyword">new</span> <span class="built_in">Set</span>();</span><br><span class="line">set3.add(<span class="literal">undefined</span>).add(<span class="literal">undefined</span>);</span><br><span class="line"><span class="built_in">console</span>.log(set3);</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> set4 = <span class="keyword">new</span> <span class="built_in">Set</span>();</span><br><span class="line">set4.add(&#123;&#125;).add(&#123;&#125;);</span><br><span class="line"><span class="built_in">console</span>.log(set4);</span><br></pre></td></tr></table></figure>
+
+<p><code>Set</code>数据结构的<code>key</code>和<code>value</code>是相同的；</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> item <span class="keyword">of</span> colorSet.keys()) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(item);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// red</span></span><br><span class="line"><span class="comment">// green</span></span><br><span class="line"><span class="comment">// blue</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> item <span class="keyword">of</span> colorSet.values()) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(item);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// red</span></span><br><span class="line"><span class="comment">// green</span></span><br><span class="line"><span class="comment">// blue</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> item <span class="keyword">of</span> colorSet.entries()) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(item);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// [&quot;red&quot;, &quot;red&quot;]</span></span><br><span class="line"><span class="comment">// [&quot;green&quot;, &quot;green&quot;]</span></span><br><span class="line"><span class="comment">// [&quot;blue&quot;, &quot;blue&quot;]</span></span><br></pre></td></tr></table></figure>
+
+<p><code>Set</code>结构的实例有以下属性</p>
+<ul>
+<li><code>Set.prototype.constructor</code>   构造函数，默认就是Set函数。</li>
+<li><code>Set.prototype.size</code>          返回Set实例的成员总数。</li>
+</ul>
+<p><code>Set</code>实例的方法分为两大类：操作方法（用于操作数据）和遍历方法（用于遍历成员）。</p>
+<ul>
+<li><code>Set.prototype.add(value)</code>        添加某个值，返回 Set 结构本身。</li>
+<li><code>Set.prototype.delete(value)</code>     删除某个值，返回一个布尔值，表示删除是否成功。</li>
+<li><code>Set.prototype.has(value)</code>        返回一个布尔值，表示该值是否为Set的成员。</li>
+<li><code>Set.prototype.clear()</code>           清除所有成员，没有返回值。<h3 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h3></li>
+</ul>
+<h3 id="WeakSet"><a href="#WeakSet" class="headerlink" title="WeakSet"></a>WeakSet</h3><h3 id="WeakMap"><a href="#WeakMap" class="headerlink" title="WeakMap"></a>WeakMap</h3>
       
     </div>
 
@@ -403,6 +433,96 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2021/06/11/js-for-in%E5%BE%AA%E7%8E%AF%E5%92%8Cfor-of%E5%BE%AA%E7%8E%AF/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/11/js-%E9%98%B2%E6%8A%96%E5%92%8C%E8%8A%82%E6%B5%81/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="小白">
+      <meta itemprop="description" content="走得很慢，但从未放弃。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小白">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/06/11/js-%E9%98%B2%E6%8A%96%E5%92%8C%E8%8A%82%E6%B5%81/" class="post-title-link" itemprop="url">js 防抖和节流</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-06-11 00:01:51" itemprop="dateCreated datePublished" datetime="2021-06-11T00:01:51+08:00">2021-06-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Javascript/" itemprop="url" rel="index"><span itemprop="name">Javascript</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>43</span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p><code>lodash</code>里面有封装好的现成的方法，可以直接拿来用，下面是自己的实现</p>
+<h3 id="防抖函数"><a href="#防抖函数" class="headerlink" title="防抖函数"></a>防抖函数</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* <span class="doctag">@desc   </span>函数防抖      “立即执行版本” 和 “非立即执行版本” 的组合版本</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param  </span>func         需要执行的函数</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param  </span>wait         延迟执行时间（毫秒）</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param  </span>immediate    true表示立即执行 false表示非立即执行 默认false</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">debounce</span>(<span class="params">func, wait, immediate = <span class="literal">false</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> timer;</span><br><span class="line">    <span class="comment">// 这里用到了闭包，timer本来在debounde函数执行完毕的时候就会被销毁</span></span><br><span class="line">    <span class="comment">// 但是下面return的代码中使用了timer，因此不会被销毁，被保留了下来</span></span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> (<span class="params">...args</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (timer) <span class="built_in">clearTimeout</span>(timer);</span><br><span class="line">        <span class="keyword">if</span> (immediate) &#123;</span><br><span class="line">            <span class="keyword">var</span> callNow = !timer;</span><br><span class="line">            timer = <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">                timer = <span class="literal">null</span>;</span><br><span class="line">            &#125;, wait)</span><br><span class="line">            <span class="keyword">if</span> (callNow) func.apply(<span class="built_in">this</span>, args)</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            timer = <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">                func.apply(<span class="built_in">this</span>, args)  <span class="comment">// 这里要修改this指向，否则this指向的不是时间出发对象，而是window</span></span><br><span class="line">            &#125;, wait);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/06/11/js-%E9%98%B2%E6%8A%96%E5%92%8C%E8%8A%82%E6%B5%81/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -529,96 +649,6 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/11/js-%E9%98%B2%E6%8A%96%E5%92%8C%E8%8A%82%E6%B5%81/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="小白">
-      <meta itemprop="description" content="走得很慢，但从未放弃。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小白">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/06/11/js-%E9%98%B2%E6%8A%96%E5%92%8C%E8%8A%82%E6%B5%81/" class="post-title-link" itemprop="url">js 防抖和节流</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-06-11 00:01:51" itemprop="dateCreated datePublished" datetime="2021-06-11T00:01:51+08:00">2021-06-11</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Javascript/" itemprop="url" rel="index"><span itemprop="name">Javascript</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>43</span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><code>lodash</code>里面有封装好的现成的方法，可以直接拿来用，下面是自己的实现</p>
-<h3 id="防抖函数"><a href="#防抖函数" class="headerlink" title="防抖函数"></a>防抖函数</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* <span class="doctag">@desc   </span>函数防抖      “立即执行版本” 和 “非立即执行版本” 的组合版本</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param  </span>func         需要执行的函数</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param  </span>wait         延迟执行时间（毫秒）</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param  </span>immediate    true表示立即执行 false表示非立即执行 默认false</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">debounce</span>(<span class="params">func, wait, immediate = <span class="literal">false</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> timer;</span><br><span class="line">    <span class="comment">// 这里用到了闭包，timer本来在debounde函数执行完毕的时候就会被销毁</span></span><br><span class="line">    <span class="comment">// 但是下面return的代码中使用了timer，因此不会被销毁，被保留了下来</span></span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> (<span class="params">...args</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (timer) <span class="built_in">clearTimeout</span>(timer);</span><br><span class="line">        <span class="keyword">if</span> (immediate) &#123;</span><br><span class="line">            <span class="keyword">var</span> callNow = !timer;</span><br><span class="line">            timer = <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">                timer = <span class="literal">null</span>;</span><br><span class="line">            &#125;, wait)</span><br><span class="line">            <span class="keyword">if</span> (callNow) func.apply(<span class="built_in">this</span>, args)</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            timer = <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">                func.apply(<span class="built_in">this</span>, args)  <span class="comment">// 这里要修改this指向，否则this指向的不是时间出发对象，而是window</span></span><br><span class="line">            &#125;, wait);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/06/11/js-%E9%98%B2%E6%8A%96%E5%92%8C%E8%8A%82%E6%B5%81/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/08/js-this%E6%8C%87%E5%90%91%E9%97%AE%E9%A2%98%E4%BB%A5%E5%8F%8A%E6%94%B9%E5%8F%98this%E6%8C%87%E5%90%91%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%88call-apply-bind%EF%BC%89/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -681,37 +711,15 @@
 <p>总结：</p>
 <ul>
 <li><code>this</code>在定义的时候不会指定，只有在函数调用的时候才会指定</li>
-<li><code>this</code>指向的是在调用函数时最近的调用者</li>
-</ul>
-<h3 id="node环境中this的指向"><a href="#node环境中this的指向" class="headerlink" title="node环境中this的指向"></a><code>node</code>环境中<code>this</code>的指向</h3><p>而在<code>node</code>环境中，<code>this</code>的指向和浏览器中有着较大出入；<br>在全局打印<code>this</code>，这里的<code>this</code>是一个空对象<code>&#123;&#125;</code></p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="built_in">this</span>); <span class="comment">// &#123;&#125;</span></span><br></pre></td></tr></table></figure>
-
-<p>在浏览器环境中，这里的结果是<code>true</code>，但是在<code>node</code>环境中，会报错，因为变量<code>b</code>是定义在this上的，而<code>this</code>指向的是一个空对象，而<code>a === b</code>中的变量<code>b</code>是根本没有定义的</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">a = <span class="number">10</span>;</span><br><span class="line"><span class="built_in">this</span>.b = <span class="number">10</span>;</span><br><span class="line"><span class="built_in">console</span>.log(a === b); <span class="comment">// ReferenceError: b is not defined</span></span><br></pre></td></tr></table></figure>
-
-<p>有趣的是，在函数中，this指向的又不是空对象，而是<code>global</code>对象，指向函数<code>fn1</code>的调用者<code>global</code></p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"> <span class="function"><span class="keyword">function</span> <span class="title">fn1</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">this</span>);</span><br><span class="line">&#125;</span><br><span class="line">fn1(); <span class="comment">// Object [global] &#123;...&#125;</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">    <span class="attr">c</span>: <span class="number">10</span>,</span><br><span class="line">    <span class="attr">fn2</span>: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="built_in">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">obj.fn2() <span class="comment">// &#123; c: 10, fn2: [Function: fn2] &#125; =&gt; 指向obj</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj2 = &#123;</span><br><span class="line">    <span class="attr">d</span>: <span class="number">10</span>,</span><br><span class="line">    <span class="attr">e</span>: &#123;</span><br><span class="line">        <span class="attr">f</span>: <span class="number">10</span>,</span><br><span class="line">        <span class="attr">fn3</span>: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="built_in">this</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">obj2.e.fn3() <span class="comment">// &#123; f: 10, fn3: [Function: fn3] &#125; =&gt; 指向e</span></span><br></pre></td></tr></table></figure>
-<p>总结：</p>
-<ul>
-<li><code>node</code>环境中直接打印的<code>this</code>指向空对象，浏览器环境直接打印<code>this</code>指向<code>window</code></li>
-<li><code>this</code>指向和浏览器环境中是一样的，只是区别在于，浏览器环境全局是<code>window</code>，而<code>node</code>环境全局是<code>global</code></li>
-</ul>
-<h3 id="改变this指向的三种方法；"><a href="#改变this指向的三种方法；" class="headerlink" title="改变this指向的三种方法；"></a>改变<code>this</code>指向的三种方法；</h3><h4 id="call"><a href="#call" class="headerlink" title="call"></a>call</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fun1</span>(<span class="params">a, b, c</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">this</span>);</span><br><span class="line">    <span class="built_in">console</span>.log(a + b + c);</span><br><span class="line">&#125;</span><br><span class="line">obj = &#123; <span class="attr">name</span>: <span class="string">&#x27;jerry&#x27;</span>, <span class="attr">age</span>: <span class="number">18</span> &#125;;</span><br><span class="line"></span><br><span class="line">fun1() <span class="comment">// 这里函数里的this指向window对象</span></span><br><span class="line"></span><br><span class="line">fun1.call(obj, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>); <span class="comment">// 这里函数中的this指向obj，而不是fun1</span></span><br></pre></td></tr></table></figure>
-<h4 id="apply"><a href="#apply" class="headerlink" title="apply"></a>apply</h4><p><code>apply</code>和<code>call</code>的区别是<code>apply</code>传递的参数需要使用数组，而<code>call</code>直接传就行了</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"> <span class="function"><span class="keyword">function</span> <span class="title">fun2</span>(<span class="params">a, b, c</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">this</span>);</span><br><span class="line">    <span class="built_in">console</span>.log(a + b + c);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fun2.apply(obj, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br></pre></td></tr></table></figure>
-<h4 id="bind"><a href="#bind" class="headerlink" title="bind"></a>bind</h4><p><code>bind</code>区别是<code>bind</code>只会改变<code>this</code>指向，并不会执行函数，而<code>call</code>和<code>apply</code>不仅改变<code>this</code>指向，并且会执行函数</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"> <span class="function"><span class="keyword">function</span> <span class="title">fun3</span>(<span class="params">a, b, c</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">this</span>);</span><br><span class="line">    <span class="built_in">console</span>.log(a + b + c);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fun3.bind(obj, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>); <span class="comment">// 并不会执行fun3</span></span><br></pre></td></tr></table></figure>
-
-<p>需要特别注意的是，bind方法并不会直接去更改函数的this指向，而是返回一个新的修改了this指向的函数，如果要调用，则需要使用其他变量接收或者直接调用</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"> <span class="function"><span class="keyword">function</span> <span class="title">fun3</span>(<span class="params">a, b, c</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">this</span>);</span><br><span class="line">    <span class="built_in">console</span>.log(a + b + c);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fun3.bind(obj, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>); <span class="comment">// 并不会执行fun3</span></span><br><span class="line"></span><br><span class="line">fun3() <span class="comment">// 这里的this指向并没有发生改变</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果想要调用，用变量接收</span></span><br><span class="line"><span class="keyword">let</span> newFun3 = fun3.bind(obj, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);</span><br><span class="line">newFun3()</span><br><span class="line"></span><br><span class="line"><span class="comment">// 或者直接调用</span></span><br><span class="line">fun3.bind(obj, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)()</span><br></pre></td></tr></table></figure>
-
-<h3 id="一个bind方法的小例子"><a href="#一个bind方法的小例子" class="headerlink" title="一个bind方法的小例子"></a>一个bind方法的小例子</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;zh-CN&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;viewport&quot;</span> <span class="attr">content</span>=<span class="string">&quot;width=device-width, initial-scale=1.0&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>Document<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">button</span>&gt;</span>获取验证码<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript">        <span class="comment">// 注意这里，如果不加bind(this)，那么定时器里面的this指向的是window</span></span></span><br><span class="line"><span class="javascript">        <span class="comment">// 这里加了bind(this)，那么定时器里面的this就指向了btn事件源，从而可以使用this来操作btn</span></span></span><br><span class="line"><span class="javascript">        <span class="keyword">let</span> btn = <span class="built_in">document</span>.querySelector(<span class="string">&#x27;button&#x27;</span>);</span></span><br><span class="line"><span class="javascript">        btn.onclick = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">            <span class="keyword">let</span> time = <span class="number">10</span>;</span></span><br><span class="line"><span class="javascript">            <span class="built_in">this</span>.disabled = <span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">            <span class="built_in">this</span>.innerText = <span class="string">`重新获取(<span class="subst">$&#123;time&#125;</span>)`</span></span></span><br><span class="line"><span class="javascript">            <span class="built_in">this</span>.timer = <span class="built_in">setInterval</span>(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">                time -= <span class="number">1</span>;</span></span><br><span class="line"><span class="javascript">                <span class="built_in">this</span>.innerText = <span class="string">`重新获取(<span class="subst">$&#123;time&#125;</span>)`</span></span></span><br><span class="line"><span class="javascript">                <span class="keyword">if</span> (time == <span class="number">0</span>) &#123;</span></span><br><span class="line"><span class="javascript">                    <span class="built_in">this</span>.disabled = <span class="literal">false</span>;</span></span><br><span class="line"><span class="javascript">                    <span class="built_in">this</span>.innerText = <span class="string">`获取验证码`</span></span></span><br><span class="line"><span class="javascript">                    <span class="built_in">clearInterval</span>(<span class="built_in">this</span>.timer)</span></span><br><span class="line"><span class="javascript">                &#125;</span></span><br><span class="line"><span class="javascript">            &#125;.bind(<span class="built_in">this</span>), <span class="number">1000</span>)</span></span><br><span class="line"><span class="javascript">        &#125;</span></span><br><span class="line"><span class="javascript">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p><img data-src="/images/bind.gif"></p>
-
+<li><code>this</code>指向的是在调用函数时最近的调用者
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/06/08/js-this%E6%8C%87%E5%90%91%E9%97%AE%E9%A2%98%E4%BB%A5%E5%8F%8A%E6%94%B9%E5%8F%98this%E6%8C%87%E5%90%91%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%88call-apply-bind%EF%BC%89/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 

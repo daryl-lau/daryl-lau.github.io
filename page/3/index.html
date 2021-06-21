@@ -213,10 +213,10 @@
           <a href="/2021/06/11/js-for-in%E5%BE%AA%E7%8E%AF%E5%92%8Cfor-of%E5%BE%AA%E7%8E%AF/" title="2021&#x2F;06&#x2F;11&#x2F;js-for-in循环和for-of循环&#x2F;">js for...in循环和for...of循环</a>
         </li>
         <li class="links-of-recent-posts-item">
-          <a href="/2021/06/11/js-%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E4%BB%A5%E5%8F%8A%E5%86%85%E7%BD%AE%E5%8F%82%E6%95%B0arguments/" title="2021&#x2F;06&#x2F;11&#x2F;js-函数参数以及内置参数arguments&#x2F;">js 函数参数以及内置参数arguments</a>
+          <a href="/2021/06/11/js-%E9%98%B2%E6%8A%96%E5%92%8C%E8%8A%82%E6%B5%81/" title="2021&#x2F;06&#x2F;11&#x2F;js-防抖和节流&#x2F;">js 防抖和节流</a>
         </li>
         <li class="links-of-recent-posts-item">
-          <a href="/2021/06/11/js-%E9%98%B2%E6%8A%96%E5%92%8C%E8%8A%82%E6%B5%81/" title="2021&#x2F;06&#x2F;11&#x2F;js-防抖和节流&#x2F;">js 防抖和节流</a>
+          <a href="/2021/06/11/js-%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E4%BB%A5%E5%8F%8A%E5%86%85%E7%BD%AE%E5%8F%82%E6%95%B0arguments/" title="2021&#x2F;06&#x2F;11&#x2F;js-函数参数以及内置参数arguments&#x2F;">js 函数参数以及内置参数arguments</a>
         </li>
         <li class="links-of-recent-posts-item">
           <a href="/2021/06/08/js-this%E6%8C%87%E5%90%91%E9%97%AE%E9%A2%98%E4%BB%A5%E5%8F%8A%E6%94%B9%E5%8F%98this%E6%8C%87%E5%90%91%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%88call-apply-bind%EF%BC%89/" title="2021&#x2F;06&#x2F;08&#x2F;js-this指向问题以及改变this指向的三种方法（call-apply-bind）&#x2F;">js this指向问题以及改变this指向的三种方法（call/apply/bind）</a>
@@ -915,6 +915,98 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%8D%8A%E5%90%8C%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="小白">
+      <meta itemprop="description" content="走得很慢，但从未放弃。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小白">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%8D%8A%E5%90%8C%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" class="post-title-link" itemprop="url">Mysql主从复制-半同步主从复制</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2017-04-14 00:00:00" itemprop="dateCreated datePublished" datetime="2017-04-14T00:00:00+08:00">2017-04-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Mysql/" itemprop="url" rel="index"><span itemprop="name">Mysql</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>286</span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <blockquote>
+<p>半同步复制可以直接在异步复制的基础上完成，参考<a target="_blank" rel="noopener" href="https://www.baihuzi.com/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%BC%82%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">异步主从复制</a></p>
+</blockquote>
+<h3 id="开启半同步主从复制"><a href="#开启半同步主从复制" class="headerlink" title="开启半同步主从复制"></a>开启半同步主从复制</h3><h4 id="先检查是否支持动态安装插件"><a href="#先检查是否支持动态安装插件" class="headerlink" title="先检查是否支持动态安装插件"></a>先检查是否支持动态安装插件</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> @<span class="variable">@have</span>_dynamic_loading</span><br><span class="line">    <span class="operator">-</span><span class="operator">&gt;</span> ;</span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------+</span></span><br><span class="line"><span class="operator">|</span> @<span class="variable">@have</span>_dynamic_loading <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------+</span></span><br><span class="line"><span class="operator">|</span> YES                    <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%8D%8A%E5%90%8C%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="http://example.com/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%BC%82%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -994,98 +1086,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%BC%82%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%8D%8A%E5%90%8C%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="小白">
-      <meta itemprop="description" content="走得很慢，但从未放弃。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小白">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%8D%8A%E5%90%8C%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" class="post-title-link" itemprop="url">Mysql主从复制-半同步主从复制</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2017-04-14 00:00:00" itemprop="dateCreated datePublished" datetime="2017-04-14T00:00:00+08:00">2017-04-14</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Mysql/" itemprop="url" rel="index"><span itemprop="name">Mysql</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>286</span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <blockquote>
-<p>半同步复制可以直接在异步复制的基础上完成，参考<a target="_blank" rel="noopener" href="https://www.baihuzi.com/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%BC%82%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">异步主从复制</a></p>
-</blockquote>
-<h3 id="开启半同步主从复制"><a href="#开启半同步主从复制" class="headerlink" title="开启半同步主从复制"></a>开启半同步主从复制</h3><h4 id="先检查是否支持动态安装插件"><a href="#先检查是否支持动态安装插件" class="headerlink" title="先检查是否支持动态安装插件"></a>先检查是否支持动态安装插件</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> @<span class="variable">@have</span>_dynamic_loading</span><br><span class="line">    <span class="operator">-</span><span class="operator">&gt;</span> ;</span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------+</span></span><br><span class="line"><span class="operator">|</span> @<span class="variable">@have</span>_dynamic_loading <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------+</span></span><br><span class="line"><span class="operator">|</span> YES                    <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%8D%8A%E5%90%8C%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
