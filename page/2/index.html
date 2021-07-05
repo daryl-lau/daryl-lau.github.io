@@ -161,20 +161,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">34</span>
+          <span class="site-state-item-count">35</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-count">14</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -207,6 +207,9 @@
     </div>
     <ul class="links-of-recent-posts-list">
         <li class="links-of-recent-posts-item">
+          <a href="/2021/07/05/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E9%87%8D%E6%8E%92%E4%B8%8E%E9%87%8D%E7%BB%98/" title="2021&#x2F;07&#x2F;05&#x2F;浏览器的重排与重绘&#x2F;">浏览器的重排与重绘</a>
+        </li>
+        <li class="links-of-recent-posts-item">
           <a href="/2021/06/30/js-%E5%8E%9F%E5%9E%8B%E3%80%81%E5%8E%9F%E5%9E%8B%E9%93%BE%E3%80%81%E7%BB%A7%E6%89%BF/" title="2021&#x2F;06&#x2F;30&#x2F;js-原型、原型链、继承&#x2F;">js 原型、原型链、继承</a>
         </li>
         <li class="links-of-recent-posts-item">
@@ -217,9 +220,6 @@
         </li>
         <li class="links-of-recent-posts-item">
           <a href="/2021/06/11/js-%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E4%BB%A5%E5%8F%8A%E5%86%85%E7%BD%AE%E5%8F%82%E6%95%B0arguments/" title="2021&#x2F;06&#x2F;11&#x2F;js-函数参数以及内置参数arguments&#x2F;">js 函数参数以及内置参数arguments</a>
-        </li>
-        <li class="links-of-recent-posts-item">
-          <a href="/2021/06/11/js-%E9%98%B2%E6%8A%96%E5%92%8C%E8%8A%82%E6%B5%81/" title="2021&#x2F;06&#x2F;11&#x2F;js-防抖和节流&#x2F;">js 防抖和节流</a>
         </li>
     </ul>
   </div>
@@ -244,6 +244,100 @@
 
 
       <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/29/js-generator%E5%87%BD%E6%95%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="小白">
+      <meta itemprop="description" content="走得很慢，但从未放弃。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小白">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/05/29/js-generator%E5%87%BD%E6%95%B0/" class="post-title-link" itemprop="url">js generator函数</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-05-29 19:29:15" itemprop="dateCreated datePublished" datetime="2021-05-29T19:29:15+08:00">2021-05-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Javascript/" itemprop="url" rel="index"><span itemprop="name">Javascript</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.3k</span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h3 id="generator函数特性"><a href="#generator函数特性" class="headerlink" title="generator函数特性"></a>generator函数特性</h3><ul>
+<li>函数声明<code>function</code>和<code>函数名</code>之间加<code>*</code>号，<code>*</code>只要在中间，中间有空格也无所谓</li>
+<li><code>yield</code> 关键字后面跟上返回值，使用<code>.next()</code>调用，输出<code>&#123;value: VALUE, done: [falise|true]&#125;</code></li>
+<li>当<code>done</code>状态为<code>true</code>之后，<code>value</code>值就全都是<code>undefined</code>了，<code>value</code> 为 <code>undefined</code>不能被<code>for of</code>循环获取到</li>
+<li> 同一个作用域中函数不能被重复调用，执行完一遍之后 内部的<code>done</code>变为 <code>true</code>之后就不能再调用了</li>
+<li>如果一个对象实现了<code>iterator</code>属性，且这个属性是一个<code>generator</code>函数，则<code>generator</code>函数的<code>yield</code>的值可以作为遍历的值
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/05/29/js-generator%E5%87%BD%E6%95%B0/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1069,95 +1163,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2017/05/30/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%8B%E5%8A%A1/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2017/05/10/Mysql-Innodb%E7%89%B9%E6%80%A7/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="小白">
-      <meta itemprop="description" content="走得很慢，但从未放弃。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小白">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2017/05/10/Mysql-Innodb%E7%89%B9%E6%80%A7/" class="post-title-link" itemprop="url">Mysql Innodb特性</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2017-05-10 00:00:00" itemprop="dateCreated datePublished" datetime="2017-05-10T00:00:00+08:00">2017-05-10</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Mysql/" itemprop="url" rel="index"><span itemprop="name">Mysql</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>1.3k</span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h3 id="Innodb特性"><a href="#Innodb特性" class="headerlink" title="Innodb特性"></a>Innodb特性</h3><h4 id="插入缓存（insert-buffer）"><a href="#插入缓存（insert-buffer）" class="headerlink" title="插入缓存（insert buffer）"></a>插入缓存（insert buffer）</h4><p>对非聚集索引的插入或者<code>update</code>，<code>purge</code>等操作，并非每一次直接插入索引页，而是把若干对于同一页面的更新缓存起来合并为一次操作，随机IO –&gt; 顺序IO，避免随机IO带的性能消耗，提高写性能。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2017/05/10/Mysql-Innodb%E7%89%B9%E6%80%A7/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
