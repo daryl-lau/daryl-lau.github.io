@@ -228,7 +228,7 @@
           <a href="/2021/06/11/js-for-in%E5%BE%AA%E7%8E%AF%E5%92%8Cfor-of%E5%BE%AA%E7%8E%AF/" title="2021&#x2F;06&#x2F;11&#x2F;js-for-in循环和for-of循环&#x2F;">js for...in循环和for...of循环</a>
         </li>
         <li class="links-of-recent-posts-item">
-          <a href="/2021/06/11/js-%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E4%BB%A5%E5%8F%8A%E5%86%85%E7%BD%AE%E5%8F%82%E6%95%B0arguments/" title="2021&#x2F;06&#x2F;11&#x2F;js-函数参数以及内置参数arguments&#x2F;">js 函数参数以及内置参数arguments</a>
+          <a href="/2021/06/11/js-%E9%98%B2%E6%8A%96%E5%92%8C%E8%8A%82%E6%B5%81/" title="2021&#x2F;06&#x2F;11&#x2F;js-防抖和节流&#x2F;">js 防抖和节流</a>
         </li>
     </ul>
   </div>
@@ -305,7 +305,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.3k</span>
+      <span>2.4k</span>
     </span>
 
   
@@ -385,6 +385,8 @@
 <li>使用<code>cloneNode</code>(true or false) 和 <code>replaceChild</code> 技术，引发一次回流和重绘；</li>
 <li>将需要多次重排的元素，<code>position</code>属性设为<code>absolute</code>或<code>fixed</code>，元素脱离了文档流，它的变化不会影响到其他元素；</li>
 <li>如果需要创建多个<code>DOM</code>节点，可以使用<code>DocumentFragment</code>创建完后一次性的加入<code>document</code>；</li>
+<li>尽量不要使用<code>table</code>布局。</li>
+<li>制作动画时，尽量使用 <code>CSS3</code> 的 <code>transform</code>，因为 <code>transform</code> 属性不会改变元素的布局（更详细的知识可以参考：<a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903502678867981">详谈层合成composite</a> ）</li>
 </ul>
 
     </div>
