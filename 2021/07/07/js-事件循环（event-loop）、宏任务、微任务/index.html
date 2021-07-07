@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon-128x128.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css" integrity="sha256-no0c5ccDODBwp+9hSmV5VvPpKwHCpbVzXHexIkupM6U=" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js" integrity="sha256-a5YRB27CcBwBFcT5EF/f3E4vzIqyHrSR878nseNYw64=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;example.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Mist&quot;,&quot;version&quot;:&quot;8.4.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;left&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:true,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;manual&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:true,&quot;lazyload&quot;:true,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:true,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;},&quot;path&quot;:&quot;&#x2F;search.xml&quot;,&quot;localsearch&quot;:{&quot;enable&quot;:true,&quot;trigger&quot;:&quot;auto&quot;,&quot;top_n_per_article&quot;:1,&quot;unescape&quot;:false,&quot;preload&quot;:false}}</script>
+<meta name="description" content="前言Google工程师Jake Archibald写了一篇关于事件循环以及宏任务微任务的文章，非常经典，本文的例子都来源于改文章，有兴趣的可以去浏览原文Tasks, microtasks, queues and schedules 在该文中也提供了Philip Roberts在youtube上的一个关于事件循环的视频What the heck is the event loop anyway?（需">
+<meta property="og:type" content="article">
+<meta property="og:title" content="js 事件循环（event loop）、宏任务、微任务">
+<meta property="og:url" content="http://example.com/2021/07/07/js-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%EF%BC%88event-loop%EF%BC%89%E3%80%81%E5%AE%8F%E4%BB%BB%E5%8A%A1%E3%80%81%E5%BE%AE%E4%BB%BB%E5%8A%A1/index.html">
+<meta property="og:site_name" content="小白">
+<meta property="og:description" content="前言Google工程师Jake Archibald写了一篇关于事件循环以及宏任务微任务的文章，非常经典，本文的例子都来源于改文章，有兴趣的可以去浏览原文Tasks, microtasks, queues and schedules 在该文中也提供了Philip Roberts在youtube上的一个关于事件循环的视频What the heck is the event loop anyway?（需">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/eventloop.gif">
+<meta property="og:image" content="http://example.com/images/eventloop2.gif">
+<meta property="og:image" content="http://example.com/images/eventloop3.gif">
+<meta property="og:image" content="http://example.com/images/eventloop4.png">
+<meta property="og:image" content="http://example.com/images/eventloop5.png">
+<meta property="article:published_time" content="2021-07-07T15:41:36.000Z">
+<meta property="article:modified_time" content="2021-07-07T15:41:36.000Z">
+<meta property="article:author" content="小白">
+<meta property="article:tag" content="JavaScript">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/eventloop.gif">
+
+
+<link rel="canonical" href="http://example.com/2021/07/07/js-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%EF%BC%88event-loop%EF%BC%89%E3%80%81%E5%AE%8F%E4%BB%BB%E5%8A%A1%E3%80%81%E5%BE%AE%E4%BB%BB%E5%8A%A1/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;2021&#x2F;07&#x2F;07&#x2F;js-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%EF%BC%88event-loop%EF%BC%89%E3%80%81%E5%AE%8F%E4%BB%BB%E5%8A%A1%E3%80%81%E5%BE%AE%E4%BB%BB%E5%8A%A1&#x2F;&quot;,&quot;path&quot;:&quot;2021&#x2F;07&#x2F;07&#x2F;js-事件循环（event-loop）、宏任务、微任务&#x2F;&quot;,&quot;title&quot;:&quot;js 事件循环（event loop）、宏任务、微任务&quot;}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
+<title>js 事件循环（event loop）、宏任务、微任务 | 小白</title><script src="/js/config.js"></script>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="container">
+    <div class="headband"></div>
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">&nbsp;&nbsp;&nbsp;&nbsp;小白&nbsp;&nbsp;&nbsp;&nbsp;</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时间线</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-text">事件循环的基本概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E4%BE%8B%E5%AD%90%E6%9D%A5%E7%90%86%E8%A7%A3"><span class="nav-text">通过一个简单的例子来理解</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81"><span class="nav-text">代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E6%9C%89%E8%BF%99%E6%A0%B7%E7%9A%84%E7%BB%93%E6%9E%9C%EF%BC%9F"><span class="nav-text">为什么会有这样的结果？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E6%9B%B4%E5%A4%8D%E6%9D%82%E7%9A%84%E4%BE%8B%E5%AD%90"><span class="nav-text">一个更复杂的例子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E4%BB%A3%E7%A0%81%E6%B4%BE%E5%8F%91%E4%BA%8B%E4%BB%B6%E4%BC%9A%E5%8F%91%E7%94%9F%E4%BB%80%E4%B9%88%E4%BA%8B%EF%BC%9F"><span class="nav-text">使用代码派发事件会发生什么事？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#async-await%E7%9A%84%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF"><span class="nav-text">async&#x2F;await的事件循环</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小白"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">小白</p>
+  <div class="site-description" itemprop="description">走得很慢，但从未放弃。</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">36</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yourname" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://es6.ruanyifeng.com/" title="https:&#x2F;&#x2F;es6.ruanyifeng.com&#x2F;" rel="noopener" target="_blank">阮一峰ES6教程</a>
+        </li>
+    </ul>
+  </div>
+
+  <div class="links-of-recent-posts animated">
+    <div class="links-of-recent-posts-title">
+      <i class="fa fa-history fa-fw"></i>
+      最近文章
+    </div>
+    <ul class="links-of-recent-posts-list">
+        <li class="links-of-recent-posts-item">
+          <a href="/2021/07/07/js-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%EF%BC%88event-loop%EF%BC%89%E3%80%81%E5%AE%8F%E4%BB%BB%E5%8A%A1%E3%80%81%E5%BE%AE%E4%BB%BB%E5%8A%A1/" title="2021&#x2F;07&#x2F;07&#x2F;js-事件循环（event-loop）、宏任务、微任务&#x2F;">js 事件循环（event loop）、宏任务、微任务</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2021/07/05/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E9%87%8D%E6%8E%92%E4%B8%8E%E9%87%8D%E7%BB%98/" title="2021&#x2F;07&#x2F;05&#x2F;浏览器的重排与重绘&#x2F;">浏览器的重排与重绘</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2021/06/30/js-%E5%8E%9F%E5%9E%8B%E3%80%81%E5%8E%9F%E5%9E%8B%E9%93%BE%E3%80%81%E7%BB%A7%E6%89%BF/" title="2021&#x2F;06&#x2F;30&#x2F;js-原型、原型链、继承&#x2F;">js 原型、原型链、继承</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2021/06/11/js-ES6%E6%96%B0%E5%A2%9E%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8BSet-Map-Symbol/" title="2021&#x2F;06&#x2F;11&#x2F;js-ES6新增数据类型Set-Map-Symbol&#x2F;">js ES6新增数据类型Set/Map/Symbol</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2021/06/11/js-for-in%E5%BE%AA%E7%8E%AF%E5%92%8Cfor-of%E5%BE%AA%E7%8E%AF/" title="2021&#x2F;06&#x2F;11&#x2F;js-for-in循环和for-of循环&#x2F;">js for...in循环和for...of循环</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/07/07/js-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%EF%BC%88event-loop%EF%BC%89%E3%80%81%E5%AE%8F%E4%BB%BB%E5%8A%A1%E3%80%81%E5%BE%AE%E4%BB%BB%E5%8A%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="小白">
+      <meta itemprop="description" content="走得很慢，但从未放弃。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小白">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          js 事件循环（event loop）、宏任务、微任务
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-07-07 23:41:36" itemprop="dateCreated datePublished" datetime="2021-07-07T23:41:36+08:00">2021-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/JavaScript/" itemprop="url" rel="index"><span itemprop="name">JavaScript</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.9k</span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>Google工程师<code>Jake Archibald</code>写了一篇关于事件循环以及宏任务微任务的文章，非常经典，本文的例子都来源于改文章，有兴趣的可以去浏览原文<a target="_blank" rel="noopener" href="https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/?utm_source=html5weekly">Tasks, microtasks, queues and schedules</a></p>
+<p>在该文中也提供了<code>Philip Roberts</code>在youtube上的一个关于事件循环的视频<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=8aGhZQkoFbQ">What the heck is the event loop anyway?</a>（需要梯子），视频里讲的非常好，有兴趣可以看下。</p>
+<h3 id="事件循环的基本概念"><a href="#事件循环的基本概念" class="headerlink" title="事件循环的基本概念"></a>事件循环的基本概念</h3><ul>
+<li><code>JavaScript</code>是单线程的，同时只能执行一个代码片段。如果存在耗时的异步操作，则会被阻塞（<code>blocking</code>）.</li>
+<li><code>JavaScript</code>代码的执行过程中，除了依靠函数调用栈来搞定函数的执行顺序外，还依靠任务队列(<code>task queue</code>)来搞定另外一些代码的执行，例如<code>setTimeout</code>，<code>AJAX(XHR)</code>等，这些都是<code>Web API</code>，由浏览器提供，不存在于<code>V8引擎</code>内。</li>
+<li>任务队列又分为<code>macro-task</code>（宏任务）与<code>micro-task</code>（微任务），在最新标准中，它们被分别称为<code>task</code>与<code>jobs</code>。<strong>微任务在一次事件循环中，总是先于宏任务执行</strong></li>
+<li>一个线程中，事件循环是唯一的，但是任务队列里的任务可以拥有多个。</li>
+<li><code>macro-task</code>大概包括：<code>script</code>(整体代码), <code>setTimeout</code>, <code>setInterval</code>, <code>setImmediate</code>, <code>I/O</code>, <code>UI rendering</code>。</li>
+<li><code>micro-task</code>大概包括: <code>process.nextTick</code>, <code>Promise</code>的<code>then catch finally</code>, <code>Object.observe</code>(已废弃), <code>MutationObserver</code>(<code>html5</code>新特性)</li>
+<li><code>setTimeout/Promise</code>等我们称之为任务源。而进入任务队列的是他们指定的具体执行任务。</li>
+<li><code>Promise</code>的实例化会在主执行栈中执行<span id="more"></span></li>
+</ul>
+<h3 id="通过一个简单的例子来理解"><a href="#通过一个简单的例子来理解" class="headerlink" title="通过一个简单的例子来理解"></a>通过一个简单的例子来理解</h3><h4 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;script start&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;setTimeout&#x27;</span>);</span><br><span class="line">&#125;, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">Promise</span>.resolve()</span><br><span class="line">  .then(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;promise1&#x27;</span>);</span><br><span class="line">  &#125;)</span><br><span class="line">  .then(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;promise2&#x27;</span>);</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;script end&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>打印结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">script start</span><br><span class="line">script end</span><br><span class="line">promise1</span><br><span class="line">promise2</span><br><span class="line">setTimeout</span><br></pre></td></tr></table></figure>
+<h4 id="为什么会有这样的结果？"><a href="#为什么会有这样的结果？" class="headerlink" title="为什么会有这样的结果？"></a>为什么会有这样的结果？</h4><p>逐步分析：</p>
+<ol>
+<li>主执行栈开始，执行<code>console.log(&#39;script start&#39;);</code>，打印<code>script start</code></li>
+<li>执行栈往下执行<code>setTimeout</code>，由于<code>setTimeout</code>是属于宏任务，浏览器等待<code>0ms</code>，将<code>setTimeout</code>的<code>callback</code>函数放入宏任务队列中</li>
+<li>执行栈继续执行<code>Promise</code>，由于<code>Promise</code>的<code>then</code>属于微任务，则将<strong>第一个</strong><code>then</code>中的回调函数放入到微任务队列中，第二个<code>then</code>需要等待第一个<code>then</code>执行完毕才会执行，因此这里不会讲第二个<code>then</code>的回调函数放入微任务队列中</li>
+<li>执行栈执行<code>console.log(&#39;script end&#39;);</code>，打印<code>script end</code></li>
+<li>由于微任务总是先于宏任务执行，则先取出微任务队列中的第一个then的回调函数执行，打印<code>promise1</code></li>
+<li>第一个<code>then</code>执行完，紧接着又有一个<code>then</code>，再将其放入微任务队列中</li>
+<li>只要微任务队列中还有任务没有执行完，则优先执行，因此执行第二个<code>then</code>的回调函数，打印<code>promise2</code></li>
+<li>微任务队列都执行完毕，此时执行宏任务队列里的任务，打印<code>setTimeout</code></li>
+</ol>
+<p>动画演示：<br><img data-src="/images/eventloop.gif"></p>
+<h3 id="一个更复杂的例子"><a href="#一个更复杂的例子" class="headerlink" title="一个更复杂的例子"></a>一个更复杂的例子</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;en&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">&quot;X-UA-Compatible&quot;</span> <span class="attr">content</span>=<span class="string">&quot;IE=edge&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;viewport&quot;</span> <span class="attr">content</span>=<span class="string">&quot;width=device-width, initial-scale=1.0&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>Document<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="css"></span></span><br><span class="line"><span class="css">        <span class="selector-class">.outer</span> &#123;</span></span><br><span class="line"><span class="css">            <span class="attribute">background</span>: <span class="number">#D4D4D4</span>;</span></span><br><span class="line"><span class="css">            <span class="attribute">padding</span>: <span class="number">25px</span>;</span></span><br><span class="line"><span class="css">            <span class="attribute">width</span>: <span class="number">92px</span>;</span></span><br><span class="line"><span class="css">            <span class="attribute">margin</span>: <span class="number">0</span> auto;</span></span><br><span class="line"><span class="css">        &#125;</span></span><br><span class="line"><span class="css">        <span class="selector-class">.inner</span> &#123;</span></span><br><span class="line"><span class="css">            <span class="attribute">background</span>: <span class="number">#ADADAD</span>;</span></span><br><span class="line"><span class="css">            <span class="attribute">padding</span>: <span class="number">46px</span>;</span></span><br><span class="line"><span class="css">            <span class="attribute">width</span>: <span class="number">0</span>;</span></span><br><span class="line"><span class="css">        &#125;</span></span><br><span class="line"><span class="css">    </span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;outer&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;inner&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript">        <span class="comment">// Let&#x27;s get hold of those elements</span></span></span><br><span class="line"><span class="javascript">        <span class="keyword">var</span> outer = <span class="built_in">document</span>.querySelector(<span class="string">&#x27;.outer&#x27;</span>);</span></span><br><span class="line"><span class="javascript">        <span class="keyword">var</span> inner = <span class="built_in">document</span>.querySelector(<span class="string">&#x27;.inner&#x27;</span>);</span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript">        <span class="comment">// Let&#x27;s listen for attribute changes on the</span></span></span><br><span class="line"><span class="javascript">        <span class="comment">// outer element</span></span></span><br><span class="line"><span class="javascript">        <span class="keyword">new</span> MutationObserver(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">        <span class="built_in">console</span>.log(<span class="string">&#x27;mutate&#x27;</span>);</span></span><br><span class="line"><span class="javascript">        &#125;).observe(outer, &#123;</span></span><br><span class="line"><span class="javascript">        <span class="attr">attributes</span>: <span class="literal">true</span>,</span></span><br><span class="line"><span class="javascript">        &#125;);</span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript">        <span class="comment">// Here&#x27;s a click listener…</span></span></span><br><span class="line"><span class="javascript">        <span class="function"><span class="keyword">function</span> <span class="title">onClick</span>(<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">        <span class="built_in">console</span>.log(<span class="string">&#x27;click&#x27;</span>);</span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript">        <span class="built_in">setTimeout</span>(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">            <span class="built_in">console</span>.log(<span class="string">&#x27;timeout&#x27;</span>);</span></span><br><span class="line"><span class="javascript">        &#125;, <span class="number">0</span>);</span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript">        <span class="built_in">Promise</span>.resolve().then(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">            <span class="built_in">console</span>.log(<span class="string">&#x27;promise&#x27;</span>);</span></span><br><span class="line"><span class="javascript">        &#125;);</span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript">        outer.setAttribute(<span class="string">&#x27;data-random&#x27;</span>, <span class="built_in">Math</span>.random());</span></span><br><span class="line"><span class="javascript">        &#125;</span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript">        <span class="comment">// …which we&#x27;ll attach to both elements</span></span></span><br><span class="line"><span class="javascript">        inner.addEventListener(<span class="string">&#x27;click&#x27;</span>, onClick);</span></span><br><span class="line"><span class="javascript">        outer.addEventListener(<span class="string">&#x27;click&#x27;</span>, onClick);</span></span><br><span class="line"><span class="javascript">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>打印结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">click</span><br><span class="line">promise</span><br><span class="line">mutate</span><br><span class="line">click</span><br><span class="line">promise</span><br><span class="line">mutate</span><br><span class="line">timeout</span><br><span class="line">timeout</span><br></pre></td></tr></table></figure>
+<p>我们这里就不逐步分析了，由于事件的冒泡机制，当第一个事件循环结束后，事件冒泡，会开启第二个事件循环，重复来一遍，看下动画演示：<br><img data-src="/images/eventloop2.gif"></p>
+<h3 id="使用代码派发事件会发生什么事？"><a href="#使用代码派发事件会发生什么事？" class="headerlink" title="使用代码派发事件会发生什么事？"></a>使用代码派发事件会发生什么事？</h3><p>上面的代码，我们是通过点击鼠标来触发事件，但是如果我们直接在代码中触发事件，会发生什么事呢？</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 其他代码不变</span></span><br><span class="line">inner.click(); <span class="comment">// 在代码中派发事件</span></span><br></pre></td></tr></table></figure>
+
+<p>打印结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">click</span><br><span class="line">click</span><br><span class="line">promise</span><br><span class="line">mutate</span><br><span class="line">promise</span><br><span class="line">timeout</span><br><span class="line">timeout</span><br></pre></td></tr></table></figure>
+
+<p>为什么差距这么大，哪里影响了代码的执行顺序？实际上是我们触发事件的方式引起的区别（废话），当直接在代码中触发事件的时候，此时js主执行栈并不是空的，因此不会先去执行微任务宏任务队列中的任务，再去触发<code>outer element</code>的点击事件，而是直接触发<code>outer element</code>的点击事件，当主执行栈没有任务的时候，再去执行微任务宏任务队列中的任务。</p>
+<p>为什么<code>mutate</code>只打印了一次，那是因为<code>MutationObserver</code>的监听是异步触发，在所有的DOM操作完成后才触发使回调函数进入微任务队列。</p>
+<p>比如，程序中有10个修改DOM的操作，只有在第十个处理完之后，回调函数才进入微任务队列。</p>
+<p>通过动画就一目了然了：<br><img data-src="/images/eventloop3.gif"></p>
+<h3 id="async-await的事件循环"><a href="#async-await的事件循环" class="headerlink" title="async/await的事件循环"></a>async/await的事件循环</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">async1</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log( <span class="string">&#x27;async1 start&#x27;</span> ) </span><br><span class="line">    <span class="keyword">await</span> async2()</span><br><span class="line">    <span class="built_in">console</span>.log( <span class="string">&#x27;async1 end&#x27;</span> )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">async2</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log( <span class="string">&#x27;async2&#x27;</span> )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log( <span class="string">&#x27;script start&#x27;</span> )</span><br><span class="line"></span><br><span class="line"><span class="built_in">setTimeout</span>( <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log( <span class="string">&#x27;setTimeout&#x27;</span> )</span><br><span class="line">&#125;, <span class="number">0</span> )</span><br><span class="line"></span><br><span class="line">async1();</span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params"> resolve </span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log( <span class="string">&#x27;promise1&#x27;</span> )</span><br><span class="line">    resolve();</span><br><span class="line">&#125;).then(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log( <span class="string">&#x27;promise2&#x27;</span> ) </span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log( <span class="string">&#x27;script end&#x27;</span> )</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">script start</span><br><span class="line">async1 start</span><br><span class="line">async2</span><br><span class="line">promise1</span><br><span class="line">script end</span><br><span class="line">async1 end</span><br><span class="line">promise2</span><br><span class="line">setTimeout</span><br></pre></td></tr></table></figure>
+<p><code>await</code>之后的代码必须等<code>await</code>语句执行完成后（包括微任务完成），才能执行后面的，也就是说，只有运行完<code>await</code>语句，才把<code>await</code>语句后面的全部代码加入到微任务行列</p>
+<p><code>await</code>语句是同步的，<code>await</code>语句后面全部代码才是异步的微任务<br><img data-src="/images/eventloop4.png"><br><img data-src="/images/eventloop5.png"></p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\06\03\bluebird-Promise库\" rel="bookmark">bluebird Promise库</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\06\11\js-ES6新增数据类型Set-Map-Symbol\" rel="bookmark">js ES6新增数据类型Set/Map/Symbol</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\06\11\js-for-in循环和for-of循环\" rel="bookmark">js for...in循环和for...of循环</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\06\08\js-this指向问题以及改变this指向的三种方法（call-apply-bind）\" rel="bookmark">js this指向问题以及改变this指向的三种方法（call/apply/bind）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\05\25\js-伪数组\" rel="bookmark">js 伪数组</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>小白
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://example.com/2021/07/07/js-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%EF%BC%88event-loop%EF%BC%89%E3%80%81%E5%AE%8F%E4%BB%BB%E5%8A%A1%E3%80%81%E5%BE%AE%E4%BB%BB%E5%8A%A1/" title="js 事件循环（event loop）、宏任务、微任务">http://example.com/2021/07/07/js-事件循环（event-loop）、宏任务、微任务/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/JavaScript/" rel="tag"><i class="fa fa-tag"></i> JavaScript</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/07/05/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E9%87%8D%E6%8E%92%E4%B8%8E%E9%87%8D%E7%BB%98/" rel="prev" title="浏览器的重排与重绘">
+                  <i class="fa fa-chevron-left"></i> 浏览器的重排与重绘
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+<script src="/js/comments.js"></script>
+</div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">鄂ICP备20006679号-1 </a>
+      <img src="/images/beian.png"><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=42010602004216" rel="noopener" target="_blank">鄂公网安备 42010602004216号 </a>
+  </div>
+
+<div class="copyright">
+  &copy; 2016 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小白</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+      </div>
+    </footer>
+
+    
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js" integrity="sha256-EdPgYcPk/IIrw7FYeuJQexva49pVRZNmt3LculEr7zM=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+    
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script class="next-config" data-name="nprogress" type="application/json">{&quot;enable&quot;:true,&quot;spinner&quot;:false}</script>
+  <script src="/js/third-party/nprogress.js"></script>
+
+    
+
+
+
+
+
+  </div>
+</body>
+</html>
