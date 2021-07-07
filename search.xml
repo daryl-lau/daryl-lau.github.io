@@ -1,6 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>MySQL备份-LOAD DATA</title>
+    <url>/2017/04/18/MySQL%E5%A4%87%E4%BB%BD-LOAD-DATA/</url>
+    <content><![CDATA[<p>注意，使用load data备份恢复方式，表结构必须存在；</p>
+<p>使用<code>select ...into outfile</code>备份数据</p>
+<p>语法格式如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select 语句 into outfile BACKFILE  [OPTIONS]</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<p>[OPTIONS]</p>
+<ul>
+<li>fields terminated by ‘字符串’ ： 字符串分割符，默认是制表符’\t’</li>
+<li>fileds escaped by ’字符‘ ： 转义字符，默认是’\‘</li>
+<li>fileds [optionally] enclose by 字符’‘： 字段引用符，负责向字段值两端加上字段引用符。如果使用optionally 选项，则表示字符串类型上添加字段分隔符。</li>
+<li>lines starting by ‘字符串’，每条记录前添加该字段。</li>
+<li>lines terminated by ’字符串‘，每条记录后添加该字符串，默认是换行符 ‘\n’</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test.t1 <span class="keyword">into</span> outfile <span class="string">&#x27;/data/mysql/t1_bak&#x27;</span>;</span><br><span class="line">Query OK, <span class="number">3</span> <span class="keyword">rows</span> affected (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure>
+
+<p>结果会生成在<code>/data/mysql/</code>目录下，对应的数据库目录下面。可以直接使用cat命令查看。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# cat /data/mysql/t1_bak</span><br><span class="line">1      张三   12     南京</span><br><span class="line">2      李四   21     北京</span><br><span class="line">3      王五   23     上海</span><br></pre></td></tr></table></figure>
+
+<p>恢复表数据：</p>
+<p>使用<code>load data infile...</code>快速地从一个指定格式的文本文件中读取数据到一个数据库表中。</p>
+<p>语法：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">LOAD DATA INFILE &#x27;data.txt&#x27; INTO TABLE db2.my_table;</span><br></pre></td></tr></table></figure>
+
+<p>例如：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">delete</span> <span class="keyword">from</span> test.t1;</span><br><span class="line">Query OK, <span class="number">3</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> LOAD DATA INFILE <span class="string">&#x27;/data/mysql/t1_bak&#x27;</span> <span class="keyword">INTO</span> <span class="keyword">TABLE</span> test.t1;</span><br><span class="line">Query OK, <span class="number">3</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line">Records: <span class="number">3</span>  Deleted: <span class="number">0</span>  Skipped: <span class="number">0</span>  Warnings: <span class="number">0</span></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test.t1;</span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------+-----+--------+</span></span><br><span class="line"><span class="operator">|</span> id <span class="operator">|</span> name   <span class="operator">|</span> age <span class="operator">|</span> addr   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------+-----+--------+</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">1</span> <span class="operator">|</span> 张三   <span class="operator">|</span>  <span class="number">12</span> <span class="operator">|</span> 南京   <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">2</span> <span class="operator">|</span> 李四   <span class="operator">|</span>  <span class="number">21</span> <span class="operator">|</span> 北京   <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">3</span> <span class="operator">|</span> 王五   <span class="operator">|</span>  <span class="number">23</span> <span class="operator">|</span> 上海   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------+-----+--------+</span></span><br><span class="line"><span class="number">3</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意：如果导出数据的时候后面使用了分隔符，导入的时候不需要加，还是按照上面的方式导；</p>
+</blockquote>
+<p>更复杂的配置就不写了，没什么必要，还增加大脑的负担。等用到的时候，去网上查找具体的参数即可，我们并不擅长记忆这些并不常用的选项。 一句话概括这种逻辑备份的精要：怎么吃我的，怎么给我吐出来。怎么吐出来来，怎么给我装进去。选用了什么样的分割选项，导入数据的时候就需要使用对应的分割选项去导入数据。 结合我自己平时的工作内容与实践，基本上不使用这种方式导出。反而使用mysqldump 更多一点。</p>
+]]></content>
+      <categories>
+        <category>Mysql</category>
+      </categories>
+      <tags>
+        <tag>Mysql</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>InnoDB Redo Flush及脏页刷新机制深入分析</title>
     <url>/2017/04/16/InnoDB-Redo-Flush%E5%8F%8A%E8%84%8F%E9%A1%B5%E5%88%B7%E6%96%B0%E6%9C%BA%E5%88%B6%E6%B7%B1%E5%85%A5%E5%88%86%E6%9E%90/</url>
     <content><![CDATA[<h4 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h4><p>我们知道InnoDB采用<code>Write Ahead Log</code>策略来防止宕机数据丢失，即事务提交时，先写重做日志，再修改内存数据页，这样就产生了脏页。既然有重做日志保证数据持久性，查询时也可以直接从缓冲池页中取数据，那为什么还要刷新脏页到磁盘呢？如果重做日志可以无限增大，同时缓冲池足够大，能够缓存所有数据，那么是不需要将缓冲池中的脏页刷新到磁盘。但是，通常会有以下几个问题：</p>
@@ -144,91 +186,6 @@
       </tags>
   </entry>
   <entry>
-    <title>MySQL备份-LOAD DATA</title>
-    <url>/2017/04/18/MySQL%E5%A4%87%E4%BB%BD-LOAD-DATA/</url>
-    <content><![CDATA[<p>注意，使用load data备份恢复方式，表结构必须存在；</p>
-<p>使用<code>select ...into outfile</code>备份数据</p>
-<p>语法格式如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select 语句 into outfile BACKFILE  [OPTIONS]</span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-<p>[OPTIONS]</p>
-<ul>
-<li>fields terminated by ‘字符串’ ： 字符串分割符，默认是制表符’\t’</li>
-<li>fileds escaped by ’字符‘ ： 转义字符，默认是’\‘</li>
-<li>fileds [optionally] enclose by 字符’‘： 字段引用符，负责向字段值两端加上字段引用符。如果使用optionally 选项，则表示字符串类型上添加字段分隔符。</li>
-<li>lines starting by ‘字符串’，每条记录前添加该字段。</li>
-<li>lines terminated by ’字符串‘，每条记录后添加该字符串，默认是换行符 ‘\n’</li>
-</ul>
-<p>例如：</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test.t1 <span class="keyword">into</span> outfile <span class="string">&#x27;/data/mysql/t1_bak&#x27;</span>;</span><br><span class="line">Query OK, <span class="number">3</span> <span class="keyword">rows</span> affected (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure>
-
-<p>结果会生成在<code>/data/mysql/</code>目录下，对应的数据库目录下面。可以直接使用cat命令查看。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# cat /data/mysql/t1_bak</span><br><span class="line">1      张三   12     南京</span><br><span class="line">2      李四   21     北京</span><br><span class="line">3      王五   23     上海</span><br></pre></td></tr></table></figure>
-
-<p>恢复表数据：</p>
-<p>使用<code>load data infile...</code>快速地从一个指定格式的文本文件中读取数据到一个数据库表中。</p>
-<p>语法：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">LOAD DATA INFILE &#x27;data.txt&#x27; INTO TABLE db2.my_table;</span><br></pre></td></tr></table></figure>
-
-<p>例如：</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">delete</span> <span class="keyword">from</span> test.t1;</span><br><span class="line">Query OK, <span class="number">3</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> LOAD DATA INFILE <span class="string">&#x27;/data/mysql/t1_bak&#x27;</span> <span class="keyword">INTO</span> <span class="keyword">TABLE</span> test.t1;</span><br><span class="line">Query OK, <span class="number">3</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line">Records: <span class="number">3</span>  Deleted: <span class="number">0</span>  Skipped: <span class="number">0</span>  Warnings: <span class="number">0</span></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test.t1;</span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------+-----+--------+</span></span><br><span class="line"><span class="operator">|</span> id <span class="operator">|</span> name   <span class="operator">|</span> age <span class="operator">|</span> addr   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------+-----+--------+</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">1</span> <span class="operator">|</span> 张三   <span class="operator">|</span>  <span class="number">12</span> <span class="operator">|</span> 南京   <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">2</span> <span class="operator">|</span> 李四   <span class="operator">|</span>  <span class="number">21</span> <span class="operator">|</span> 北京   <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">3</span> <span class="operator">|</span> 王五   <span class="operator">|</span>  <span class="number">23</span> <span class="operator">|</span> 上海   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------+-----+--------+</span></span><br><span class="line"><span class="number">3</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>注意：如果导出数据的时候后面使用了分隔符，导入的时候不需要加，还是按照上面的方式导；</p>
-</blockquote>
-<p>更复杂的配置就不写了，没什么必要，还增加大脑的负担。等用到的时候，去网上查找具体的参数即可，我们并不擅长记忆这些并不常用的选项。 一句话概括这种逻辑备份的精要：怎么吃我的，怎么给我吐出来。怎么吐出来来，怎么给我装进去。选用了什么样的分割选项，导入数据的时候就需要使用对应的分割选项去导入数据。 结合我自己平时的工作内容与实践，基本上不使用这种方式导出。反而使用mysqldump 更多一点。</p>
-]]></content>
-      <categories>
-        <category>Mysql</category>
-      </categories>
-      <tags>
-        <tag>Mysql</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Mysql-5.7 安装</title>
-    <url>/2017/04/08/Mysql-5-7-%E5%AE%89%E8%A3%85/</url>
-    <content><![CDATA[<h3 id="安装前说明"><a href="#安装前说明" class="headerlink" title="安装前说明"></a>安装前说明</h3><p>如果机器上已经有了mysql或者MariaDB，先卸载再安装；</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# rpm -e mariadb-libs-5.5.41-2.el7_0.x86_64 --nodeps</span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-
-<h3 id="创建mysql用户"><a href="#创建mysql用户" class="headerlink" title="创建mysql用户"></a>创建mysql用户</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# useradd mysql</span><br></pre></td></tr></table></figure>
-
-<h3 id="下载软件包并解压授权"><a href="#下载软件包并解压授权" class="headerlink" title="下载软件包并解压授权"></a>下载软件包并解压授权</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# wget https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.21-linux-glibc2.12-x86_64.tar.gz</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# tar -xf mysql-5.7.21-linux-glibc2.12-x86_64.tar.gz -C /usr/local/</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# mv /usr/local/mysql-5.7.21-linux-glibc2.12-x86_64/ /usr/local/mysql</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# chown mysql:mysql /usr/local/mysql/</span><br></pre></td></tr></table></figure>
-
-<h3 id="创建数据目录"><a href="#创建数据目录" class="headerlink" title="创建数据目录"></a>创建数据目录</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# mkdir /data/mysql -p</span><br><span class="line">[root@lyucan ~]# chown -R mysql:mysql /data/mysql/</span><br></pre></td></tr></table></figure>
-
-
-<h3 id="创建my-cnf配置文件"><a href="#创建my-cnf配置文件" class="headerlink" title="创建my.cnf配置文件"></a>创建my.cnf配置文件</h3><p>mysql5.7没有默认的my_default.cnf文件，需要自己手动创建，下面这个是一个简单的模板；</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan mysql]# vim /etc/my.cnf</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[client]</span><br><span class="line">port = 3306</span><br><span class="line">socket = /tmp/mysql.sock</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[mysqld]</span><br><span class="line">character_set_server=utf8</span><br><span class="line">init_connect=&#x27;SET NAMES utf8&#x27;</span><br><span class="line">basedir=/usr/local/mysql</span><br><span class="line">datadir=/data/mysql/</span><br><span class="line">socket=/tmp/mysql.sock</span><br><span class="line">log-error=/usr/local/mysql/mysqld.err</span><br><span class="line">pid-file=/usr/local/mysql/mysqld.pid</span><br><span class="line">#不区分大小写</span><br><span class="line">lower_case_table_names = 1</span><br><span class="line">#</span><br><span class="line">sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION</span><br><span class="line">#</span><br><span class="line">max_connections=5000</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">##修改my.cnf权限</span><br><span class="line">[mysql@lyucan ~]$ chown mysql:mysql /etc/my.cnf</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h3 id="初始化数据"><a href="#初始化数据" class="headerlink" title="初始化数据"></a>初始化数据</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan bin]# /usr/local/mysql/bin/mysqld --initialize --user=mysql --basedir=/usr/local/mysql --datadir=/data/mysql</span><br><span class="line"></span><br><span class="line">#这条命令没有输出，但是会创建一个临时的root密码，在上面配置文件定义的/usr/local/mysql/mysqld.err文件中，如下所示，临时密码为 5SEAgHPPqK&lt;u</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# cat /usr/local/mysql/mysqld.err</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">2017-04-08T16:39:16.991943Z 0 [Warning] TIMESTAMP with implicit DEFAULT value is deprecated. Please use --explicit_defaults_for_timestamp server option (see documentation for more details).</span><br><span class="line">2017-04-08T16:39:17.284209Z 0 [Warning] InnoDB: New log files created, LSN=45790</span><br><span class="line">2017-04-08T16:39:17.337845Z 0 [Warning] InnoDB: Creating foreign key constraint system tables.</span><br><span class="line">2017-04-08T16:39:17.395477Z 0 [Warning] No existing UUID has been found, so we assume that this is the first time that this server has been started. Generating a new UUID: 61308035-3b4b-11e8-9bb4-da8255dea6c5.</span><br><span class="line">2017-04-08T16:39:17.396765Z 0 [Warning] Gtid table is not ready to be used. Table &#x27;mysql.gtid_executed&#x27; cannot be opened.</span><br><span class="line">2017-04-08T16:39:17.397767Z 1 [Note] A temporary password is generated for root@localhost: 5SEAgHPPqK&lt;u</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>上面的<code>root@localhost: 5SEAgHPPqK&lt;u</code>需要记住，后面需要用到</p>
-</blockquote>
-<h3 id="启动mysql"><a href="#启动mysql" class="headerlink" title="启动mysql"></a>启动mysql</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan support-files]# cd /usr/local/mysql/support-files/</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@lyucan support-files]# ./mysql.server start</span><br><span class="line">Starting MySQL. SUCCESS!</span><br></pre></td></tr></table></figure>
-
-<h3 id="连接mysql"><a href="#连接mysql" class="headerlink" title="连接mysql"></a>连接mysql</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan support-files]# cd /usr/local/mysql/bin/</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@lyucan bin]# ./mysql -uroot -p</span><br><span class="line">Enter password:                 ##这里的密码就是上面的临时root密码 5SEAgHPPqK&lt;u</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Welcome to the MySQL monitor.  Commands end with ; or \g.</span><br><span class="line">Your MySQL connection id is 3</span><br><span class="line">Server version: 5.7.21</span><br><span class="line"></span><br><span class="line">Copyright (c) 2000, 2017, Oracle and/or its affiliates. All rights reserved.</span><br><span class="line"></span><br><span class="line">Oracle is a registered trademark of Oracle Corporation and/or its</span><br><span class="line">affiliates. Other names may be trademarks of their respective</span><br><span class="line">owners.</span><br><span class="line"></span><br><span class="line">Type &#x27;help;&#x27; or &#x27;\h&#x27; for help. Type &#x27;\c&#x27; to clear the current input statement.</span><br><span class="line"></span><br><span class="line">mysql&gt;</span><br></pre></td></tr></table></figure>
-
-<h3 id="修改root密码"><a href="#修改root密码" class="headerlink" title="修改root密码"></a>修改root密码</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">set</span> password<span class="operator">=</span>password(<span class="string">&#x27;root123&#x27;</span>);</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected, <span class="number">1</span> warning (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
-
-<h3 id="安装后操作"><a href="#安装后操作" class="headerlink" title="安装后操作"></a>安装后操作</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#设置开机自启动；</span><br><span class="line"></span><br><span class="line">[root@lyucan bin]# cp -a /usr/local/mysql/support-files/mysql.server /etc/init.d/mysqld</span><br><span class="line">[root@lyucan bin]# chkconfig --add mysqld</span><br><span class="line">[root@lyucan bin]# chkconfig mysqld on</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#当复制到/etc/init.d/mysqld后，可以使用service mysqld start|stop的方式启停；</span><br><span class="line"></span><br><span class="line">[root@lyucan bin]# service mysqld status</span><br><span class="line">SUCCESS! MySQL running (25732)</span><br><span class="line">[root@lyucan bin]# service mysqld stop</span><br><span class="line">Shutting down MySQL.. SUCCESS!</span><br><span class="line">[root@lyucan bin]# service mysqld start</span><br><span class="line">Starting MySQL. SUCCESS!</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#将mysql工具的命令添加到PATH环境变量里面去，使用的时候就不用使用绝对路径；</span><br><span class="line">[root@lyucan bin]# echo &quot;export PATH=$PATH:/usr/local/mysql/bin&quot; &gt;&gt; /etc/profile</span><br><span class="line">[root@lyucan bin]# source /etc/profile</span><br></pre></td></tr></table></figure>
-
-<h3 id="创建远程连接用户"><a href="#创建远程连接用户" class="headerlink" title="创建远程连接用户"></a>创建远程连接用户</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">grant</span> <span class="keyword">all</span> privileges <span class="keyword">on</span> <span class="operator">*</span>.<span class="operator">*</span> <span class="keyword">to</span> <span class="string">&#x27;lyucan&#x27;</span>@<span class="string">&#x27;%&#x27;</span> identified <span class="keyword">by</span> <span class="string">&#x27;echo123.&#x27;</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected, <span class="number">1</span> warning (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> flush privileges;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
-
-<h3 id="远程连接检测"><a href="#远程连接检测" class="headerlink" title="远程连接检测"></a>远程连接检测</h3><p>注意放通或关掉防火墙</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# firewall-cmd --permanent --add-service=mysql</span><br><span class="line">success</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# firewall-cmd --reload</span><br><span class="line">success</span><br></pre></td></tr></table></figure>
-
-<p><img data-src="/images/mysql%E5%AE%89%E8%A3%85.png" alt="mysql安装"></p>
-]]></content>
-      <categories>
-        <category>Mysql</category>
-      </categories>
-      <tags>
-        <tag>Mysql</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>MySQL通过二进制日志恢复数据</title>
     <url>/2018/04/10/MySQL%E9%80%9A%E8%BF%87%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%97%A5%E5%BF%97%E6%81%A2%E5%A4%8D%E6%95%B0%E6%8D%AE/</url>
     <content><![CDATA[<h3 id="开启二进制日志"><a href="#开启二进制日志" class="headerlink" title="开启二进制日志"></a>开启二进制日志</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# vim /etc/my.cnf</span><br><span class="line"></span><br><span class="line">[mysqld]</span><br><span class="line">server-id=1</span><br><span class="line">log-bin=mysql-bin</span><br><span class="line">sync-binlog=1</span><br><span class="line">innodb_support_xa=1</span><br><span class="line">binlog_format=statement</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# service mysqld restart</span><br><span class="line">Shutting down MySQL.. SUCCESS!</span><br><span class="line">Starting MySQL.. SUCCESS!</span><br></pre></td></tr></table></figure>
@@ -295,6 +252,49 @@
 </ul>
 <p>上面的例子可能举得不是很恰当，因为我们都知道已经丢失的数据是什么了，但是在实际情况中，我们往往不知道丢失了哪些数据，万一drop掉了整个数据库，难道要一条条去恢复吗，显然不可能，这就需要我们定时做好备份工作，一个完整的备份往往是全量备份+增量备份+二进制日志备份，在进行全量备份的时候，我们需要知道当前二进制日志的<code>position</code>号，这样就可以进行完全恢复；</p>
 <p>在进行<code>mysqldump</code>的时候，我们可以指定一个<code>-F</code>参数，在备份的时候刷新下<code>binlog</code>日志，这样新的操作都会记录到另一个新的<code>binlog</code>文件里面去，便于我们进行数据恢复，而不用费时费力去找要从哪里进行我二进制日志的恢复；</p>
+]]></content>
+      <categories>
+        <category>Mysql</category>
+      </categories>
+      <tags>
+        <tag>Mysql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Mysql-5.7 安装</title>
+    <url>/2017/04/08/Mysql-5-7-%E5%AE%89%E8%A3%85/</url>
+    <content><![CDATA[<h3 id="安装前说明"><a href="#安装前说明" class="headerlink" title="安装前说明"></a>安装前说明</h3><p>如果机器上已经有了mysql或者MariaDB，先卸载再安装；</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# rpm -e mariadb-libs-5.5.41-2.el7_0.x86_64 --nodeps</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+
+<h3 id="创建mysql用户"><a href="#创建mysql用户" class="headerlink" title="创建mysql用户"></a>创建mysql用户</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# useradd mysql</span><br></pre></td></tr></table></figure>
+
+<h3 id="下载软件包并解压授权"><a href="#下载软件包并解压授权" class="headerlink" title="下载软件包并解压授权"></a>下载软件包并解压授权</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# wget https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.21-linux-glibc2.12-x86_64.tar.gz</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# tar -xf mysql-5.7.21-linux-glibc2.12-x86_64.tar.gz -C /usr/local/</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# mv /usr/local/mysql-5.7.21-linux-glibc2.12-x86_64/ /usr/local/mysql</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# chown mysql:mysql /usr/local/mysql/</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建数据目录"><a href="#创建数据目录" class="headerlink" title="创建数据目录"></a>创建数据目录</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# mkdir /data/mysql -p</span><br><span class="line">[root@lyucan ~]# chown -R mysql:mysql /data/mysql/</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="创建my-cnf配置文件"><a href="#创建my-cnf配置文件" class="headerlink" title="创建my.cnf配置文件"></a>创建my.cnf配置文件</h3><p>mysql5.7没有默认的my_default.cnf文件，需要自己手动创建，下面这个是一个简单的模板；</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan mysql]# vim /etc/my.cnf</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[client]</span><br><span class="line">port = 3306</span><br><span class="line">socket = /tmp/mysql.sock</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[mysqld]</span><br><span class="line">character_set_server=utf8</span><br><span class="line">init_connect=&#x27;SET NAMES utf8&#x27;</span><br><span class="line">basedir=/usr/local/mysql</span><br><span class="line">datadir=/data/mysql/</span><br><span class="line">socket=/tmp/mysql.sock</span><br><span class="line">log-error=/usr/local/mysql/mysqld.err</span><br><span class="line">pid-file=/usr/local/mysql/mysqld.pid</span><br><span class="line">#不区分大小写</span><br><span class="line">lower_case_table_names = 1</span><br><span class="line">#</span><br><span class="line">sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION</span><br><span class="line">#</span><br><span class="line">max_connections=5000</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">##修改my.cnf权限</span><br><span class="line">[mysql@lyucan ~]$ chown mysql:mysql /etc/my.cnf</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="初始化数据"><a href="#初始化数据" class="headerlink" title="初始化数据"></a>初始化数据</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan bin]# /usr/local/mysql/bin/mysqld --initialize --user=mysql --basedir=/usr/local/mysql --datadir=/data/mysql</span><br><span class="line"></span><br><span class="line">#这条命令没有输出，但是会创建一个临时的root密码，在上面配置文件定义的/usr/local/mysql/mysqld.err文件中，如下所示，临时密码为 5SEAgHPPqK&lt;u</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# cat /usr/local/mysql/mysqld.err</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">2017-04-08T16:39:16.991943Z 0 [Warning] TIMESTAMP with implicit DEFAULT value is deprecated. Please use --explicit_defaults_for_timestamp server option (see documentation for more details).</span><br><span class="line">2017-04-08T16:39:17.284209Z 0 [Warning] InnoDB: New log files created, LSN=45790</span><br><span class="line">2017-04-08T16:39:17.337845Z 0 [Warning] InnoDB: Creating foreign key constraint system tables.</span><br><span class="line">2017-04-08T16:39:17.395477Z 0 [Warning] No existing UUID has been found, so we assume that this is the first time that this server has been started. Generating a new UUID: 61308035-3b4b-11e8-9bb4-da8255dea6c5.</span><br><span class="line">2017-04-08T16:39:17.396765Z 0 [Warning] Gtid table is not ready to be used. Table &#x27;mysql.gtid_executed&#x27; cannot be opened.</span><br><span class="line">2017-04-08T16:39:17.397767Z 1 [Note] A temporary password is generated for root@localhost: 5SEAgHPPqK&lt;u</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>上面的<code>root@localhost: 5SEAgHPPqK&lt;u</code>需要记住，后面需要用到</p>
+</blockquote>
+<h3 id="启动mysql"><a href="#启动mysql" class="headerlink" title="启动mysql"></a>启动mysql</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan support-files]# cd /usr/local/mysql/support-files/</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@lyucan support-files]# ./mysql.server start</span><br><span class="line">Starting MySQL. SUCCESS!</span><br></pre></td></tr></table></figure>
+
+<h3 id="连接mysql"><a href="#连接mysql" class="headerlink" title="连接mysql"></a>连接mysql</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan support-files]# cd /usr/local/mysql/bin/</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@lyucan bin]# ./mysql -uroot -p</span><br><span class="line">Enter password:                 ##这里的密码就是上面的临时root密码 5SEAgHPPqK&lt;u</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Welcome to the MySQL monitor.  Commands end with ; or \g.</span><br><span class="line">Your MySQL connection id is 3</span><br><span class="line">Server version: 5.7.21</span><br><span class="line"></span><br><span class="line">Copyright (c) 2000, 2017, Oracle and/or its affiliates. All rights reserved.</span><br><span class="line"></span><br><span class="line">Oracle is a registered trademark of Oracle Corporation and/or its</span><br><span class="line">affiliates. Other names may be trademarks of their respective</span><br><span class="line">owners.</span><br><span class="line"></span><br><span class="line">Type &#x27;help;&#x27; or &#x27;\h&#x27; for help. Type &#x27;\c&#x27; to clear the current input statement.</span><br><span class="line"></span><br><span class="line">mysql&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="修改root密码"><a href="#修改root密码" class="headerlink" title="修改root密码"></a>修改root密码</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">set</span> password<span class="operator">=</span>password(<span class="string">&#x27;root123&#x27;</span>);</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected, <span class="number">1</span> warning (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<h3 id="安装后操作"><a href="#安装后操作" class="headerlink" title="安装后操作"></a>安装后操作</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#设置开机自启动；</span><br><span class="line"></span><br><span class="line">[root@lyucan bin]# cp -a /usr/local/mysql/support-files/mysql.server /etc/init.d/mysqld</span><br><span class="line">[root@lyucan bin]# chkconfig --add mysqld</span><br><span class="line">[root@lyucan bin]# chkconfig mysqld on</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#当复制到/etc/init.d/mysqld后，可以使用service mysqld start|stop的方式启停；</span><br><span class="line"></span><br><span class="line">[root@lyucan bin]# service mysqld status</span><br><span class="line">SUCCESS! MySQL running (25732)</span><br><span class="line">[root@lyucan bin]# service mysqld stop</span><br><span class="line">Shutting down MySQL.. SUCCESS!</span><br><span class="line">[root@lyucan bin]# service mysqld start</span><br><span class="line">Starting MySQL. SUCCESS!</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#将mysql工具的命令添加到PATH环境变量里面去，使用的时候就不用使用绝对路径；</span><br><span class="line">[root@lyucan bin]# echo &quot;export PATH=$PATH:/usr/local/mysql/bin&quot; &gt;&gt; /etc/profile</span><br><span class="line">[root@lyucan bin]# source /etc/profile</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建远程连接用户"><a href="#创建远程连接用户" class="headerlink" title="创建远程连接用户"></a>创建远程连接用户</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">grant</span> <span class="keyword">all</span> privileges <span class="keyword">on</span> <span class="operator">*</span>.<span class="operator">*</span> <span class="keyword">to</span> <span class="string">&#x27;lyucan&#x27;</span>@<span class="string">&#x27;%&#x27;</span> identified <span class="keyword">by</span> <span class="string">&#x27;echo123.&#x27;</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected, <span class="number">1</span> warning (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> flush privileges;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<h3 id="远程连接检测"><a href="#远程连接检测" class="headerlink" title="远程连接检测"></a>远程连接检测</h3><p>注意放通或关掉防火墙</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# firewall-cmd --permanent --add-service=mysql</span><br><span class="line">success</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# firewall-cmd --reload</span><br><span class="line">success</span><br></pre></td></tr></table></figure>
+
+<p><img data-src="/images/mysql%E5%AE%89%E8%A3%85.png" alt="mysql安装"></p>
 ]]></content>
       <categories>
         <category>Mysql</category>
@@ -460,6 +460,47 @@
       </tags>
   </entry>
   <entry>
+    <title>Mysql备份</title>
+    <url>/2017/04/18/Mysql%E5%A4%87%E4%BB%BD/</url>
+    <content><![CDATA[<p>备份的方法可以分为：</p>
+<h3 id="Hot-backup-热备"><a href="#Hot-backup-热备" class="headerlink" title="Hot backup(热备)"></a>Hot backup(热备)</h3><p>Hot backup是指在数据库运行中直接备份，对正在运行的数据库没有任何影响</p>
+<h3 id="Cold-backup（冷备）"><a href="#Cold-backup（冷备）" class="headerlink" title="Cold backup（冷备）"></a>Cold backup（冷备）</h3><p>Cold backup是指在数据库停止的情况下进行备份，只需要拷贝相关的数据库物理文件</p>
+<h4 id="优点："><a href="#优点：" class="headerlink" title="优点："></a>优点：</h4><ul>
+<li>备份简单，只要拷贝相关文件即可</li>
+<li>备份文件易于在不用操作系统，不同mysql版本上进行恢复</li>
+<li>恢复简单，速度快，不需要执行sql语句和重建索引</li>
+</ul>
+<h4 id="缺点："><a href="#缺点：" class="headerlink" title="缺点："></a>缺点：</h4><ul>
+<li>冷备的文件通常比逻辑文件大很<span id="more"></span>
+<h3 id="Warm-backup（温备）"><a href="#Warm-backup（温备）" class="headerlink" title="Warm backup（温备）"></a>Warm backup（温备）</h3>Warm backup备份同样是在数据库运行时进行，但是会对当前数据库操作有所影响</li>
+</ul>
+<h3 id="按照备份后文件的内容来分："><a href="#按照备份后文件的内容来分：" class="headerlink" title="按照备份后文件的内容来分："></a>按照备份后文件的内容来分：</h3><ol>
+<li><p>逻辑备份<br>在mysql数据库中，逻辑备份是指备份后的文件内容是可读的，通常是文本文件，内容一般是sql语句，或者是表内的实际数据，如mysqldump和select * into outfile的方法，这类方法的好处是可以看到导出文件的内容，一般适用于数据库的升级，迁移等工作，但是恢复所需要的时间往往较长。</p>
+</li>
+<li><p>裸文件备份<br>裸文件备份是指拷贝数据库的物理文件（xtrabackup），数据库既可以处于运行状态，也可以处于停止状态，这类备份的恢复时间往往比逻辑备份短很多。</p>
+</li>
+</ol>
+<h3 id="按照备份数据库的内容来分："><a href="#按照备份数据库的内容来分：" class="headerlink" title="按照备份数据库的内容来分："></a>按照备份数据库的内容来分：</h3><ol>
+<li><p>完全备份<br>完全备份是指对数据库进行一个完整的备份；</p>
+</li>
+<li><p>增量备份<br>增量备份是指在上次的完全备份基础上，对更新的数据进行备份；</p>
+</li>
+<li><p>日志备份<br>日志备份主要是指对mysql数据库二进制日志的备份，通过对一个完全备份进行二进制日志的重做来完成数据库的point-in-time恢复工作，Mysql数据库复制的原理就是异步实时进行二进制日志重做；</p>
+</li>
+</ol>
+<blockquote>
+<p>mysqldump和load data的备份方式都是逻辑备份<br>xtarbackup是物理备份</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>Mysql</category>
+      </categories>
+      <tags>
+        <tag>mysqldump</tag>
+        <tag>xtarbackup</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Mysql主从复制-异步主从复制</title>
     <url>/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%BC%82%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/</url>
     <content><![CDATA[<h3 id="环境介绍"><a href="#环境介绍" class="headerlink" title="环境介绍"></a>环境介绍</h3><table>
@@ -511,100 +552,6 @@
       </categories>
       <tags>
         <tag>Mysql</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Mysql主从复制概述</title>
-    <url>/2017/04/13/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%A6%82%E8%BF%B0/</url>
-    <content><![CDATA[<h3 id="MySQL主从复制概述"><a href="#MySQL主从复制概述" class="headerlink" title="MySQL主从复制概述"></a>MySQL主从复制概述</h3><p>复制是mysql数据库提供的一种高可用、高性能的解决方案，一般用来建立大型的应用；</p>
-<p>mysql支持单向，双向，链式级联，异步复制,半同步制(mysql5.5版本之后)，复制过程中,一台服务器当主<code>master</code>，而一个或者多个服务器<code>slave</code>；</p>
-<p>复制可以是单向：<code>M --&gt; S</code>,也可以双向<code>M &lt;--&gt; M</code></p>
-<p>如设置了链式级联复制，那么从服务器本身除了充当<code>slave</code>之外，还是其下面从服务器的主服务器，结构如同<code>M --&gt; S1 --&gt; S2 --&gt; S3</code> 的复制形式</p>
-<span id="more"></span>
-
-<h4 id="单向主从复制"><a href="#单向主从复制" class="headerlink" title="单向主从复制"></a>单向主从复制</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">master  --&gt;  slave</span><br></pre></td></tr></table></figure>
-
-<h4 id="一主多从模式"><a href="#一主多从模式" class="headerlink" title="一主多从模式"></a>一主多从模式</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">        -------slave1</span><br><span class="line">        |</span><br><span class="line">master——|------slave2</span><br><span class="line">        |</span><br><span class="line">        -------slave3</span><br></pre></td></tr></table></figure>
-
-<h4 id="线性级联模式"><a href="#线性级联模式" class="headerlink" title="线性级联模式"></a>线性级联模式</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">master --&gt; slave1 --&gt; salve2 --&gt; slave3</span><br></pre></td></tr></table></figure>
-
-<h4 id="双主模式，互为主从"><a href="#双主模式，互为主从" class="headerlink" title="双主模式，互为主从"></a>双主模式，互为主从</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">master &lt;--&gt; master</span><br></pre></td></tr></table></figure>
-
-<h4 id="混用"><a href="#混用" class="headerlink" title="混用"></a>混用</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">master &lt;--&gt; master</span><br><span class="line">   |</span><br><span class="line"> slave</span><br></pre></td></tr></table></figure>
-
-<h3 id="mysql主从复制原理"><a href="#mysql主从复制原理" class="headerlink" title="mysql主从复制原理"></a>mysql主从复制原理</h3><p><img data-src="/images/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6.png" alt="mysql主从复制"></p>
-<h3 id="复制三个步骤"><a href="#复制三个步骤" class="headerlink" title="复制三个步骤"></a>复制三个步骤</h3><ol>
-<li>主服务器将数据更新记录到二进制日志中；</li>
-<li>从服务器把主服务器的二进制日志拷贝到自己的中继日志中；</li>
-<li>从服务器重做中继日志中的时间，把更新应用到自己的数据库上；</li>
-</ol>
-<h4 id="主服务器中的线程"><a href="#主服务器中的线程" class="headerlink" title="主服务器中的线程"></a>主服务器中的线程</h4><ul>
-<li><p>I/O线程</p>
-<p>接收到从库发来的请求后，负责给从库发送二进制日志；</p>
-</li>
-</ul>
-<h4 id="从库中的线程"><a href="#从库中的线程" class="headerlink" title="从库中的线程"></a>从库中的线程</h4><ul>
-<li>I/O线程接收主库发来的二进制日志，并将其保存在自己的中继日志中</li>
-<li>sql线程来复制中继日志中的日志</li>
-</ul>
-<h4 id="主动复制分为异步复制、半同步复制和基于GTID的复制；"><a href="#主动复制分为异步复制、半同步复制和基于GTID的复制；" class="headerlink" title="主动复制分为异步复制、半同步复制和基于GTID的复制；"></a>主动复制分为异步复制、半同步复制和基于GTID的复制；</h4><ul>
-<li>异步复制：MySQL复制默认是异步复制，<code>Master</code>将事件写入<code>binlog</code>，但并不知道<code>Slave</code>是否或何时已经接收且已处理。在异步复制的机制的情况下，如果<code>Master</code>宕机，事务在<code>Master</code>上已提交，但很可能这些事务没有传到任何的<code>Slave</code>上。假设有<code>Master-&gt;Salve</code>故障转移的机制，此时<code>Slave</code>也可能会丢失事务。`</li>
-<li>半同步复制：当<code>Slave</code>主机连接到<code>Master</code>时，能够查看其是否处于半同步复制的机制，当<code>Master</code>上开启半同步复制的功能时，至少应该有一个<code>Slave</code>开启其功能。此时，一个线程在<code>Master</code>上提交事务将受到阻塞，直到得知一个已开启半同步复制功能的<code>Slave</code>已收到此事务的所有事件，或等待超时。当一个事务的事件都已写入其<code>relay-log</code>中且已刷新到磁盘上，<code>Slave</code>才会告知已收到，如果等待超时，也就是Master没被告知已收到，此时<code>Master</code>会自动转换为异步复制的机制。当至少一个半同步的<code>Slave</code>赶上了，<code>Master</code>与其<code>Slave</code>自动转换为半同步复制的机制。半同步复制的功能要在<code>Master</code>，<code>Slave</code>都开启，半同步复制才会起作用；否则，只开启一边，它依然为异步复制</li>
-</ul>
-<p><img data-src="/images/%E5%8D%8A%E5%90%8C%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6.png" alt="半同步主从复制"></p>
-<h3 id="主从复制应用场景"><a href="#主从复制应用场景" class="headerlink" title="主从复制应用场景"></a>主从复制应用场景</h3><ul>
-<li>主从复制有利于数据库架构的健壮性，提升访问速度，易于管理；</li>
-<li>主从服务器互为备份</li>
-<li>M-S服务器架构的设置，可以大大的加强数据库架构的健壮性，当主库出现问题，可以切换到从库，从而不影响正常生产业务的进行；</li>
-<li>主从复制读写分离分担网站压力</li>
-<li>主从服务器架构通过程序(php,java）对客户端的请求实现读写分离，在从服务器上仅仅处理用户的select查询请求，降低用户查询响应时间，以及读写操作同时在主服务器带来的压力；</li>
-</ul>
-<h3 id="GTID主从复制"><a href="#GTID主从复制" class="headerlink" title="GTID主从复制"></a>GTID主从复制</h3><h4 id="GTID的概述："><a href="#GTID的概述：" class="headerlink" title="GTID的概述："></a>GTID的概述：</h4><ol>
-<li>全局事物标识：global transaction identifieds。</li>
-<li>GTID事物是全局唯一性的，且一个事务对应一个GTID。</li>
-<li>一个GTID在一个服务器上只执行一次，避免重复执行导致数据混乱或者主从不一致。</li>
-<li>GTID用来代替classic的复制方法，不在使用binlog+pos开启复制。而是使用master_auto_postion=1的方式自动匹配GTID断点进行复制。</li>
-<li>MySQL-5.6.5开始支持的，MySQL-5.6.10后开始完善。</li>
-<li>在传统的slave端，binlog是不用开启的，但是在GTID中，slave端的binlog是必须开启的，目的是记录执行过的GTID（强制）</li>
-</ol>
-<h4 id="GTID的组成部分："><a href="#GTID的组成部分：" class="headerlink" title="GTID的组成部分："></a>GTID的组成部分：</h4><ol>
-<li>前面是server_uuid：后面是一个序列号</li>
-<li>例如：server_uuid：sequence number</li>
-<li>7800a22c-95ae-11e4-983d-080027de205a:10</li>
-<li>UUID：每个mysql实例的唯一ID，由于会传递到slave，所以也可以理解为源ID。</li>
-<li>Sequence number：在每台MySQL服务器上都是从1开始自增长的序列，一个数值对应一个事务。</li>
-</ol>
-<h4 id="GTID比传统复制的优势："><a href="#GTID比传统复制的优势：" class="headerlink" title="GTID比传统复制的优势："></a>GTID比传统复制的优势：</h4><ol>
-<li>更简单的实现failover，不用以前那样在需要找log_file和log_Pos。</li>
-<li>更简单的搭建主从复制。</li>
-<li>比传统复制更加安全。</li>
-<li>GTID是连续没有空洞的，因此主从库出现数据冲突时，可以用添加空事物的方式进行跳过。</li>
-</ol>
-<h4 id="GTID的工作原理："><a href="#GTID的工作原理：" class="headerlink" title="GTID的工作原理："></a>GTID的工作原理：</h4><ol>
-<li>master更新数据时，会在事务前产生GTID，一同记录到binlog日志中。</li>
-<li>slave端的i/o 线程将变更的binlog，写入到本地的relay log中。</li>
-<li>sql线程从relay log中获取GTID，然后对比slave端的binlog是否有记录。</li>
-<li>如果有记录，说明该GTID的事务已经执行，slave会忽略。</li>
-<li>如果没有记录，slave就会从relay log中执行该GTID的事务，并记录到binlog。</li>
-<li>在解析过程中会判断是否有主键，如果没有就用二级索引，如果没有就用全部扫描。</li>
-</ol>
-<h4 id="GTID的限制："><a href="#GTID的限制：" class="headerlink" title="GTID的限制："></a>GTID的限制：</h4><ol>
-<li>不支持非事务引擎（从库报错，stopslave; start slave; 忽略）</li>
-<li>不支持create table … select 语句复制（主库直接报错）</li>
-<li>不允许在一个SQL同时更新一个事务引擎和非事务引擎的表</li>
-<li>在一个复制组中，必须要求统一开启CTID或是关闭GTID</li>
-<li>开启DTID需要重启（5.7中可能不需要）</li>
-<li>开启DTID后，就不在使用原来的传统的复制方式</li>
-<li>对于createtemporary table 和drop temporary table语句不支持</li>
-<li>不支持sql_slave_skip_counter</li>
-</ol>
-]]></content>
-      <categories>
-        <category>Mysql</category>
-      </categories>
-      <tags>
-        <tag>Mysql</tag>
-        <tag>GTID</tag>
       </tags>
   </entry>
   <entry>
@@ -693,47 +640,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Mysql备份</title>
-    <url>/2017/04/18/Mysql%E5%A4%87%E4%BB%BD/</url>
-    <content><![CDATA[<p>备份的方法可以分为：</p>
-<h3 id="Hot-backup-热备"><a href="#Hot-backup-热备" class="headerlink" title="Hot backup(热备)"></a>Hot backup(热备)</h3><p>Hot backup是指在数据库运行中直接备份，对正在运行的数据库没有任何影响</p>
-<h3 id="Cold-backup（冷备）"><a href="#Cold-backup（冷备）" class="headerlink" title="Cold backup（冷备）"></a>Cold backup（冷备）</h3><p>Cold backup是指在数据库停止的情况下进行备份，只需要拷贝相关的数据库物理文件</p>
-<h4 id="优点："><a href="#优点：" class="headerlink" title="优点："></a>优点：</h4><ul>
-<li>备份简单，只要拷贝相关文件即可</li>
-<li>备份文件易于在不用操作系统，不同mysql版本上进行恢复</li>
-<li>恢复简单，速度快，不需要执行sql语句和重建索引</li>
-</ul>
-<h4 id="缺点："><a href="#缺点：" class="headerlink" title="缺点："></a>缺点：</h4><ul>
-<li>冷备的文件通常比逻辑文件大很<span id="more"></span>
-<h3 id="Warm-backup（温备）"><a href="#Warm-backup（温备）" class="headerlink" title="Warm backup（温备）"></a>Warm backup（温备）</h3>Warm backup备份同样是在数据库运行时进行，但是会对当前数据库操作有所影响</li>
-</ul>
-<h3 id="按照备份后文件的内容来分："><a href="#按照备份后文件的内容来分：" class="headerlink" title="按照备份后文件的内容来分："></a>按照备份后文件的内容来分：</h3><ol>
-<li><p>逻辑备份<br>在mysql数据库中，逻辑备份是指备份后的文件内容是可读的，通常是文本文件，内容一般是sql语句，或者是表内的实际数据，如mysqldump和select * into outfile的方法，这类方法的好处是可以看到导出文件的内容，一般适用于数据库的升级，迁移等工作，但是恢复所需要的时间往往较长。</p>
-</li>
-<li><p>裸文件备份<br>裸文件备份是指拷贝数据库的物理文件（xtrabackup），数据库既可以处于运行状态，也可以处于停止状态，这类备份的恢复时间往往比逻辑备份短很多。</p>
-</li>
-</ol>
-<h3 id="按照备份数据库的内容来分："><a href="#按照备份数据库的内容来分：" class="headerlink" title="按照备份数据库的内容来分："></a>按照备份数据库的内容来分：</h3><ol>
-<li><p>完全备份<br>完全备份是指对数据库进行一个完整的备份；</p>
-</li>
-<li><p>增量备份<br>增量备份是指在上次的完全备份基础上，对更新的数据进行备份；</p>
-</li>
-<li><p>日志备份<br>日志备份主要是指对mysql数据库二进制日志的备份，通过对一个完全备份进行二进制日志的重做来完成数据库的point-in-time恢复工作，Mysql数据库复制的原理就是异步实时进行二进制日志重做；</p>
-</li>
-</ol>
-<blockquote>
-<p>mysqldump和load data的备份方式都是逻辑备份<br>xtarbackup是物理备份</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>Mysql</category>
-      </categories>
-      <tags>
-        <tag>mysqldump</tag>
-        <tag>xtarbackup</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Mysql存储引擎类型</title>
     <url>/2017/04/17/Mysql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%B1%BB%E5%9E%8B/</url>
     <content><![CDATA[<h3 id="innodb"><a href="#innodb" class="headerlink" title="innodb"></a>innodb</h3><ol>
@@ -777,68 +683,6 @@
       </categories>
       <tags>
         <tag>Mysql</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>bluebird Promise库</title>
-    <url>/2021/06/03/bluebird-Promise%E5%BA%93/</url>
-    <content><![CDATA[<p>整理一些<code>Promise</code>库<code>bluebird</code>的常用api</p>
-<h3 id="Promis-promisify"><a href="#Promis-promisify" class="headerlink" title="Promis.promisify"></a>Promis.promisify</h3><p><code>promisify</code>可以帮我们吧一些常用异步方法或者库转化成<code>Promise</code>对象，这样我们就不用自己封装了；</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> <span class="built_in">Promise</span> = <span class="built_in">require</span>(<span class="string">&#x27;bluebird&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> readFile = <span class="built_in">Promise</span>.promisify(fs.readFile);</span><br><span class="line"></span><br><span class="line">readFile(<span class="string">&#x27;./data/a.txt&#x27;</span>).then(<span class="function"><span class="params">data</span> =&gt;</span> <span class="built_in">console</span>.log(data.toString()));</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>这里仅做个最简单的介绍，更多详细用法查看官网<a href="http://bluebirdjs.com/docs/features.html">Promis.promisify</a></p>
-</blockquote>
-<span id="more"></span>
-<h3 id="Promise-promisifyAll"><a href="#Promise-promisifyAll" class="headerlink" title="Promise.promisifyAll"></a>Promise.promisifyAll</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="built_in">Promise</span> = <span class="built_in">require</span>(<span class="string">&#x27;bluebird&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> fs = <span class="built_in">Promise</span>.promisifyAll(<span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>));</span><br><span class="line"></span><br><span class="line">fs.readFileAsync(<span class="string">&quot;./data/a.txt&quot;</span>).then(<span class="function"><span class="params">contents</span> =&gt;</span> &#123; <span class="comment">// 实际是readFile方法，Async只是Promise.promisifyAll为我们自动添加的后缀，下面会介绍</span></span><br><span class="line">    <span class="built_in">console</span>.log(contents);</span><br><span class="line">&#125;).catch(<span class="function"><span class="params">err</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.error(err);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-<p>可以为包装后的函数添加后缀，以区分原始方法，默认的后缀是<code>Async</code></p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="built_in">Promise</span> = <span class="built_in">require</span>(<span class="string">&#x27;bluebird&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> fs = <span class="built_in">Promise</span>.promisifyAll(<span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>), &#123;<span class="attr">suffix</span>: <span class="string">&#x27;Promise&#x27;</span>&#125;);</span><br><span class="line"></span><br><span class="line">fs.readFilePromise(<span class="string">&quot;./data/a.txt&quot;</span>, <span class="string">&quot;utf8&quot;</span>).then(<span class="function"><span class="params">contents</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(contents);</span><br><span class="line">&#125;).catch(<span class="function"><span class="params">err</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.error(err);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>更多用法查看官网<a href="http://bluebirdjs.com/docs/api/promise.promisifyall.html">Promis.promisify</a></p>
-</blockquote>
-<p><code>Promise.promisifyAll</code>可以接受数组，一次性<code>promisify</code>多个类；</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> Pool = <span class="built_in">require</span>(<span class="string">&quot;mysql/lib/Pool&quot;</span>);</span><br><span class="line"><span class="keyword">var</span> Connection = <span class="built_in">require</span>(<span class="string">&quot;mysql/lib/Connection&quot;</span>);</span><br><span class="line"><span class="built_in">Promise</span>.promisifyAll([Pool, Connection]);</span><br></pre></td></tr></table></figure>
-
-<h3 id="Cancellation"><a href="#Cancellation" class="headerlink" title="Cancellation"></a>Cancellation</h3><p>javascript中的Promise是不支持取消异步操作的，但是bluebird支持取消异步操作，这个是一个很好的特性，能够帮我们解决很多问题，比如在React中，组件挂载时请求接口，如果在接口返回之前这个组件被卸载了，React会抛出一个异常，我们就可以利用bluebird的这一特性，来帮我们处理这个问题；</p>
-<p>想要使用<code>Cancellation</code>必须配置开启，如下第二行代码，此时Promise就可以取消了，还可以定义取消的回调函数，当取消的时候，执行一些操作。</p>
-<p>注意：<code>.cancel</code>操作是同步的</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="built_in">Promise</span> = <span class="built_in">require</span>(<span class="string">&#x27;bluebird&#x27;</span>);</span><br><span class="line"><span class="built_in">Promise</span>.config(&#123;<span class="attr">cancellation</span>: <span class="literal">true</span>&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> p1 = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="params">resolve</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> resolve(<span class="string">&#x27;p1&#x27;</span>), <span class="number">3000</span>);</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 第三个参数只有当cancellation配置为true时才有</span></span><br><span class="line"><span class="keyword">let</span> p2 = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject, onCancel</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> resolve(<span class="string">&#x27;p2&#x27;</span>), <span class="number">5000</span>);</span><br><span class="line">    onCancel(<span class="function">() =&gt;</span> <span class="built_in">console</span>.log(<span class="string">&#x27;p2 canceled&#x27;</span>))</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> p3 = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="params">resolve</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> resolve(<span class="string">&#x27;p3&#x27;</span>), <span class="number">7000</span>);</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">p1.then(<span class="function"><span class="params">res</span> =&gt;</span> <span class="built_in">console</span>.log(res));</span><br><span class="line">p2.then(<span class="function"><span class="params">res</span> =&gt;</span> <span class="built_in">console</span>.log(res));</span><br><span class="line">p3.then(<span class="function"><span class="params">res</span> =&gt;</span> <span class="built_in">console</span>.log(res));</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;-----------------&#x27;</span>);</span><br><span class="line">p2.cancel();</span><br></pre></td></tr></table></figure>
-<p>输出</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">----------------- // 执行栈直接输出</span><br><span class="line">p2 canceled       // 调用p2的cancel方法时输出，.cancel方法是同步的，因此会在-----后直接输出</span><br><span class="line">p1                // 等待3秒后输出</span><br><span class="line">p3                // 等待7秒后输出，注意这里不是p1三秒结束后再等待7秒，而是从一开始等待7秒，因为Promise一旦创建就立即执行了</span><br></pre></td></tr></table></figure>
-
-<p>使用已经取消了的<code>Promise</code>是会报错的<code>SubError [CancellationError]: late cancellation observer</code></p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="built_in">Promise</span> = <span class="built_in">require</span>(<span class="string">&#x27;bluebird&#x27;</span>);</span><br><span class="line"><span class="built_in">Promise</span>.config(&#123;<span class="attr">cancellation</span>: <span class="literal">true</span>&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> p2 = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject, onCancel</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> resolve(<span class="string">&#x27;p2&#x27;</span>), <span class="number">5000</span>);</span><br><span class="line">    onCancel(<span class="function">() =&gt;</span> <span class="built_in">console</span>.log(<span class="string">&#x27;p2 canceled&#x27;</span>));</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">p2.cancel(); <span class="comment">// 已取消</span></span><br><span class="line"></span><br><span class="line">p2.then(<span class="function"><span class="params">res</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(res);</span><br><span class="line">&#125;).catch(<span class="function"><span class="params">err</span> =&gt;</span> <span class="built_in">console</span>.log(err));</span><br></pre></td></tr></table></figure>
-<p>结果</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">p2 canceled</span><br><span class="line">SubError [CancellationError]: late cancellation observer</span><br><span class="line">    at Promise._then (C:\Users\lyucan\Desktop\pro\newRepo\Repositories\node_modules\bluebird\js\release\promise.js:285:21)</span><br><span class="line">    at Promise.then (C:\Users\lyucan\Desktop\pro\newRepo\Repositories\node_modules\bluebird\js\release\promise.js:154:17)</span><br><span class="line">    at Object.&lt;anonymous&gt; (C:\Users\lyucan\Desktop\pro\newRepo\Repositories\myrepo</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
-
-<h3 id="Promise-spread"><a href="#Promise-spread" class="headerlink" title="Promise.spread"></a>Promise.spread</h3><p><code>Promise.spread</code>可以把一个<code>Promise</code>数组进行解构，例如我们使用<code>Promise.all</code>进行多个异步操作，正常的<code>.then</code>拿到的入参就是一个数组，如果我们使用<code>Promise.spread</code>，那么我们获取到的就是数组里对应的值，而不是一个数组，结果和<code>Promise</code>对象的数组顺序一一对应，如果只传一个入参，则只获取第一个结果。</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> <span class="built_in">Promise</span> = <span class="built_in">require</span>(<span class="string">&#x27;bluebird&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> readFile = <span class="built_in">Promise</span>.promisify(fs.readFile);</span><br><span class="line"></span><br><span class="line"><span class="built_in">Promise</span>.all([</span><br><span class="line">    readFile(<span class="string">&#x27;./data/a.txt&#x27;</span>),</span><br><span class="line">    readFile(<span class="string">&#x27;./data/b.txt&#x27;</span>)</span><br><span class="line">]).then(<span class="function"><span class="params">res</span> =&gt;</span> <span class="built_in">console</span>.log(res.map(<span class="function"><span class="params">str</span> =&gt;</span> str.toString())))</span><br><span class="line"></span><br><span class="line"><span class="comment">// [ &#x27;aaaaaaaaaaaaaaaaaaaaaa&#x27;, &#x27;bbbbbbbbbbbbbbbbbbbbbb&#x27; ]</span></span><br></pre></td></tr></table></figure>
-<p>使用<code>Promise.spread</code>，我们可以看到入参是数组每一项的值，而不是一整个数组</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> <span class="built_in">Promise</span> = <span class="built_in">require</span>(<span class="string">&#x27;bluebird&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> readFile = <span class="built_in">Promise</span>.promisify(fs.readFile);</span><br><span class="line"></span><br><span class="line"><span class="built_in">Promise</span>.all([</span><br><span class="line">    readFile(<span class="string">&#x27;./data/a.txt&#x27;</span>),</span><br><span class="line">    readFile(<span class="string">&#x27;./data/b.txt&#x27;</span>)</span><br><span class="line">]).spread(<span class="function">(<span class="params">res1, res2</span>) =&gt;</span> <span class="built_in">console</span>.log(res1.toString(), res2.toString()))</span><br><span class="line"></span><br><span class="line"><span class="comment">// &#x27;aaaaaaaaaaaaaaaaaaaaaa&#x27; &#x27;bbbbbbbbbbbbbbbbbbbbbb&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="Promise-bind"><a href="#Promise-bind" class="headerlink" title="Promise.bind"></a>Promise.bind</h3><p><code>Promise.bind</code>可以修改当前的<code>this</code>指向</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> <span class="built_in">Promise</span> = <span class="built_in">require</span>(<span class="string">&#x27;bluebird&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> readFile = <span class="built_in">Promise</span>.promisify(fs.readFile);</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyClass</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="title">constructor</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="built_in">this</span>.fileName = <span class="string">&#x27;./data/a.txt&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="title">error</span>(<span class="params">error</span>)</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(error)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">MyClass.prototype.method = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">this</span>); <span class="comment">// 这里this指向MyClass</span></span><br><span class="line">    <span class="keyword">return</span> readFile(<span class="built_in">this</span>.fileName).bind(<span class="built_in">this</span>) <span class="comment">// 绑定this指向</span></span><br><span class="line">    .then(<span class="function">(<span class="params">contents</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(contents)</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="built_in">this</span>)   <span class="comment">// 这里this指向MyClass，如果没有上面的bind(this)，那么这里将指向全局对象</span></span><br><span class="line">    &#125;).catch(<span class="function">(<span class="params">e</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.error(e.stack); <span class="comment">// 这里this指向MyClass，，如果没有上面的bind(this)，那么这里将指向全局对象</span></span><br><span class="line">    &#125;);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> me = <span class="keyword">new</span> MyClass()</span><br><span class="line">me.method()</span><br></pre></td></tr></table></figure>
-
-<h3 id="Promise-props"><a href="#Promise-props" class="headerlink" title="Promise.props"></a>Promise.props</h3><p><code>Promise.props</code>和<code>Promise.all</code>的作用类似，都是组合<code>Promise</code>对象，最大的区别是，<code>Promise.all</code>是需要一个具有<code>iterator</code>接口的对象，例如数组，而<code>Promise.props</code>的入参是一个<code>key: [Promise]</code>对象，而结果也会是一个<code>key: [result]</code>对象，</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> <span class="built_in">Promise</span> = <span class="built_in">require</span>(<span class="string">&#x27;bluebird&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> readFile = <span class="built_in">Promise</span>.promisify(fs.readFile);</span><br><span class="line"></span><br><span class="line"><span class="built_in">Promise</span>.props(&#123;</span><br><span class="line">    <span class="attr">txtA</span>: readFile(<span class="string">&#x27;./data/a.txt&#x27;</span>),</span><br><span class="line">    <span class="attr">txtB</span>: readFile(<span class="string">&#x27;./data/b.txt&#x27;</span>),</span><br><span class="line">&#125;).then(<span class="function"><span class="params">result</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(result.txtA.toString());</span><br><span class="line">    <span class="built_in">console</span>.log(result.txtB.toString());</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// aaaaaaaaaaaaaaaaaaaaaa</span></span><br><span class="line"><span class="comment">// bbbbbbbbbbbbbbbbbbbbbb</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="Promise-some"><a href="#Promise-some" class="headerlink" title="Promise.some"></a>Promise.some</h3><p><code>Promise.some</code>接收两个参数，第一个是<code>Promise</code>对象数组（不一定是数组，具有<code>iterator</code>接口就行），第二个参数是返回的个数，这个个数是在所有的<code>Promise</code>对象中，状态最快变为<code>fulfilled</code>的前几个，例如下面的代码，读取4个文件，返回最快读到的前2个；</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> <span class="built_in">Promise</span> = <span class="built_in">require</span>(<span class="string">&#x27;bluebird&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> readFile = <span class="built_in">Promise</span>.promisify(fs.readFile);</span><br><span class="line"></span><br><span class="line"><span class="built_in">Promise</span>.some([</span><br><span class="line">    readFile(<span class="string">&#x27;./data/a.txt&#x27;</span>),</span><br><span class="line">    readFile(<span class="string">&#x27;./data/b.txt&#x27;</span>),</span><br><span class="line">    readFile(<span class="string">&#x27;./data/c.txt&#x27;</span>),</span><br><span class="line">    readFile(<span class="string">&#x27;./data/d.txt&#x27;</span>),</span><br><span class="line">], <span class="number">2</span>).then(<span class="function"><span class="params">res</span> =&gt;</span> &#123;<span class="built_in">console</span>.log(res)&#125;)</span><br></pre></td></tr></table></figure>
-<p>如果成功的个数小于第二个参数指定的个数，会抛出一个异常</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">Unhandled rejection AggregateError: aggregate error</span><br><span class="line">    at SomePromiseArray._checkOutcome (C:\Users\lyucan\Desktop\pro\newRepo\Repositories\node_modules\bluebird\js\release\some.js:<span class="number">82</span>:<span class="number">17</span>)</span><br><span class="line">    at SomePromiseArray._promiseRejected (C:\Users\lyucan\Desktop\pro\newRepo\Repositories\node_modules\bluebird\js\release\some.js:<span class="number">69</span>:<span class="number">17</span>)</span><br><span class="line">    at <span class="built_in">Promise</span>._settlePromise (C:\Users\lyucan\Desktop\pro\newRepo\Repositories\node_modules\bluebird\js\release\promise.js:<span class="number">611</span>:<span class="number">26</span>)</span><br></pre></td></tr></table></figure>
-<p>我们可以直接<code>.catch</code>捕获，但是此时捕获的错误是一个<code>rejected Promise</code>的数组，具有<code>length</code>属性和一些数组的操作方法</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> <span class="built_in">Promise</span> = <span class="built_in">require</span>(<span class="string">&#x27;bluebird&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> readFile = <span class="built_in">Promise</span>.promisify(fs.readFile);</span><br><span class="line"></span><br><span class="line"><span class="built_in">Promise</span>.some([</span><br><span class="line">    readFile(<span class="string">&#x27;./data/a.txt&#x27;</span>),</span><br><span class="line">    readFile(<span class="string">&#x27;./data/bd.txt&#x27;</span>),</span><br><span class="line">    readFile(<span class="string">&#x27;./data/cd.txt&#x27;</span>),</span><br><span class="line">], <span class="number">2</span>).then(<span class="function"><span class="params">res</span> =&gt;</span> &#123;<span class="built_in">console</span>.log(res)&#125;).catch(<span class="function"><span class="params">err</span> =&gt;</span> <span class="built_in">console</span>.log(err))</span><br></pre></td></tr></table></figure>
-<p>此时<code>bd.txt</code>和<code>cd.txt</code>文件是不存在的，只有<code>a.txt</code>能读取成功，而我们定义了成功的数量是前两个，此时就会进入异常</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">SubError [AggregateError]: aggregate error</span><br><span class="line">    at SomePromiseArray._checkOutcome (C:\Users\lyucan\Desktop\pro\newRepo\Repositories\node_modules\bluebird\js\release\some.js:<span class="number">82</span>:<span class="number">17</span>)</span><br><span class="line">    ...</span><br><span class="line">    at processImmediate (internal/timers.js:<span class="number">439</span>:<span class="number">21</span>) &#123;</span><br><span class="line">  <span class="string">&#x27;0&#x27;</span>: [OperationalError: ENOENT: no such file or directory, open <span class="string">&#x27;C:\Users\lyucan\Desktop\pro\newRepo\Repositories\myrepo\nodejs\promise\data\bd.txt&#x27;</span>] &#123;</span><br><span class="line">    <span class="attr">cause</span>: [<span class="built_in">Error</span>: ENOENT: no such file or directory, open <span class="string">&#x27;C:\Users\lyucan\Desktop\pro\newRepo\Repositories\myrepo\nodejs\promise\data\bd.txt&#x27;</span>] &#123;</span><br><span class="line">      <span class="attr">errno</span>: -<span class="number">4058</span>,</span><br><span class="line">      <span class="attr">code</span>: <span class="string">&#x27;ENOENT&#x27;</span>,</span><br><span class="line">      <span class="attr">syscall</span>: <span class="string">&#x27;open&#x27;</span>,</span><br><span class="line">      <span class="attr">path</span>: <span class="string">&#x27;C:\\Users\\lyucan\\Desktop\\pro\\newRepo\\Repositories\\myrepo\\nodejs\\promise\\data\\bd.txt&#x27;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">isOperational</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">errno</span>: -<span class="number">4058</span>,</span><br><span class="line">    <span class="attr">code</span>: <span class="string">&#x27;ENOENT&#x27;</span>,</span><br><span class="line">    <span class="attr">syscall</span>: <span class="string">&#x27;open&#x27;</span>,</span><br><span class="line">    <span class="attr">path</span>: <span class="string">&#x27;C:\\Users\\lyucan\\Desktop\\pro\\newRepo\\Repositories\\myrepo\\nodejs\\promise\\data\\bd.txt&#x27;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">&#x27;1&#x27;</span>: [OperationalError: ENOENT: no such file or directory, open <span class="string">&#x27;C:\Users\lyucan\Desktop\pro\newRepo\Repositories\myrepo\nodejs\promise\data\cd.txt&#x27;</span>] &#123;</span><br><span class="line">    <span class="attr">cause</span>: [<span class="built_in">Error</span>: ENOENT: no such file or directory, open <span class="string">&#x27;C:\Users\lyucan\Desktop\pro\newRepo\Repositories\myrepo\nodejs\promise\data\cd.txt&#x27;</span>] &#123;</span><br><span class="line">      <span class="attr">errno</span>: -<span class="number">4058</span>,</span><br><span class="line">      <span class="attr">code</span>: <span class="string">&#x27;ENOENT&#x27;</span>,</span><br><span class="line">      <span class="attr">syscall</span>: <span class="string">&#x27;open&#x27;</span>,</span><br><span class="line">      <span class="attr">path</span>: <span class="string">&#x27;C:\\Users\\lyucan\\Desktop\\pro\\newRepo\\Repositories\\myrepo\\nodejs\\promise\\data\\cd.txt&#x27;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">isOperational</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">errno</span>: -<span class="number">4058</span>,</span><br><span class="line">    <span class="attr">code</span>: <span class="string">&#x27;ENOENT&#x27;</span>,</span><br><span class="line">    <span class="attr">syscall</span>: <span class="string">&#x27;open&#x27;</span>,</span><br><span class="line">    <span class="attr">path</span>: <span class="string">&#x27;C:\\Users\\lyucan\\Desktop\\pro\\newRepo\\Repositories\\myrepo\\nodejs\\promise\\data\\cd.txt&#x27;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">length</span>: <span class="number">2</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>返回的整个错误是可以调用数组方法的，例如</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> <span class="built_in">Promise</span> = <span class="built_in">require</span>(<span class="string">&#x27;bluebird&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> readFile = <span class="built_in">Promise</span>.promisify(fs.readFile);</span><br><span class="line"></span><br><span class="line"><span class="built_in">Promise</span>.some([</span><br><span class="line">    readFile(<span class="string">&#x27;./data/a.txt&#x27;</span>),</span><br><span class="line">    readFile(<span class="string">&#x27;./data/bd.txt&#x27;</span>),</span><br><span class="line">    readFile(<span class="string">&#x27;./data/cd.txt&#x27;</span>),</span><br><span class="line">], <span class="number">2</span>).then(<span class="function"><span class="params">res</span> =&gt;</span> &#123;<span class="built_in">console</span>.log(res)&#125;).catch(<span class="function"><span class="params">err</span> =&gt;</span> <span class="built_in">console</span>.log(err.map(<span class="function"><span class="params">errItem</span> =&gt;</span> errItem)))</span><br></pre></td></tr></table></figure>
-<p>结果</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">[</span><br><span class="line">  [OperationalError: ENOENT: no such file or directory, open <span class="string">&#x27;C:\Users\lyucan\Desktop\pro\newRepo\Repositories\myrepo\nodejs\promise\data\bd.txt&#x27;</span>] &#123;</span><br><span class="line">    <span class="attr">cause</span>: [<span class="built_in">Error</span>: ENOENT: no such file or directory, open <span class="string">&#x27;C:\Users\lyucan\Desktop\pro\newRepo\Repositories\myrepo\nodejs\promise\data\bd.txt&#x27;</span>] &#123;</span><br><span class="line">      <span class="attr">errno</span>: -<span class="number">4058</span>,</span><br><span class="line">      <span class="attr">code</span>: <span class="string">&#x27;ENOENT&#x27;</span>,</span><br><span class="line">      <span class="attr">syscall</span>: <span class="string">&#x27;open&#x27;</span>,</span><br><span class="line">      <span class="attr">path</span>: <span class="string">&#x27;C:\\Users\\lyucan\\Desktop\\pro\\newRepo\\Repositories\\myrepo\\nodejs\\promise\\data\\bd.txt&#x27;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">isOperational</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">errno</span>: -<span class="number">4058</span>,</span><br><span class="line">    <span class="attr">code</span>: <span class="string">&#x27;ENOENT&#x27;</span>,</span><br><span class="line">    <span class="attr">syscall</span>: <span class="string">&#x27;open&#x27;</span>,</span><br><span class="line">    <span class="attr">path</span>: <span class="string">&#x27;C:\\Users\\lyucan\\Desktop\\pro\\newRepo\\Repositories\\myrepo\\nodejs\\promise\\data\\bd.txt&#x27;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  [OperationalError: ENOENT: no such file or directory, open <span class="string">&#x27;C:\Users\lyucan\Desktop\pro\newRepo\Repositories\myrepo\nodejs\promise\data\cd.txt&#x27;</span>] &#123;</span><br><span class="line">    <span class="attr">cause</span>: [<span class="built_in">Error</span>: ENOENT: no such file or directory, open <span class="string">&#x27;C:\Users\lyucan\Desktop\pro\newRepo\Repositories\myrepo\nodejs\promise\data\cd.txt&#x27;</span>] &#123;</span><br><span class="line">      <span class="attr">errno</span>: -<span class="number">4058</span>,</span><br><span class="line">      <span class="attr">code</span>: <span class="string">&#x27;ENOENT&#x27;</span>,</span><br><span class="line">      <span class="attr">syscall</span>: <span class="string">&#x27;open&#x27;</span>,</span><br><span class="line">      <span class="attr">path</span>: <span class="string">&#x27;C:\\Users\\lyucan\\Desktop\\pro\\newRepo\\Repositories\\myrepo\\nodejs\\promise\\data\\cd.txt&#x27;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">isOperational</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">errno</span>: -<span class="number">4058</span>,</span><br><span class="line">    <span class="attr">code</span>: <span class="string">&#x27;ENOENT&#x27;</span>,</span><br><span class="line">    <span class="attr">syscall</span>: <span class="string">&#x27;open&#x27;</span>,</span><br><span class="line">    <span class="attr">path</span>: <span class="string">&#x27;C:\\Users\\lyucan\\Desktop\\pro\\newRepo\\Repositories\\myrepo\\nodejs\\promise\\data\\cd.txt&#x27;</span></span><br><span class="line">  &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>JavaScript</category>
-      </categories>
-      <tags>
-        <tag>JavaScript</tag>
       </tags>
   </entry>
   <entry>
@@ -948,44 +792,159 @@
       </tags>
   </entry>
   <entry>
-    <title>js async/await函数</title>
-    <url>/2021/05/30/js-async-await%E5%87%BD%E6%95%B0/</url>
-    <content><![CDATA[<p><code>async</code>函数就是<code>generator</code>函数的语法糖，一般结合<code>Promise</code>使用</p>
-<p>我们可以把generator函数函数改写成async/await函数，例如</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"><span class="keyword">var</span> co = <span class="built_in">require</span>(<span class="string">&#x27;co&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> readFile = <span class="function"><span class="keyword">function</span> (<span class="params">fileName</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</span><br><span class="line">        fs.readFile(fileName, <span class="function"><span class="keyword">function</span> (<span class="params">error, data</span>) </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (error) reject(error);</span><br><span class="line">            resolve(data.toString());</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">read</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">// resolve multiple promises in parallel</span></span><br><span class="line">    <span class="keyword">var</span> a = <span class="keyword">yield</span> readFile(<span class="string">&#x27;./data/a.text&#x27;</span>)</span><br><span class="line">    <span class="keyword">var</span> b = <span class="keyword">yield</span> readFile(<span class="string">&#x27;./data/b.text&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="built_in">console</span>.log(a.toString());</span><br><span class="line">    <span class="built_in">console</span>.log(b.toString());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">co(read)</span><br></pre></td></tr></table></figure>
-<p>改写成</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> readFile = <span class="function"><span class="keyword">function</span> (<span class="params">fileName</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</span><br><span class="line">        fs.readFile(fileName, <span class="function"><span class="keyword">function</span> (<span class="params">error, data</span>) </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (error) reject(error);</span><br><span class="line">            resolve(data.toString());</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">read</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">// resolve multiple promises in parallel</span></span><br><span class="line">    <span class="keyword">var</span> a = <span class="keyword">await</span> readFile(<span class="string">&#x27;./data/a.text&#x27;</span>)</span><br><span class="line">    <span class="keyword">var</span> b = <span class="keyword">await</span> readFile(<span class="string">&#x27;./data/b.text&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="built_in">console</span>.log(a.toString());</span><br><span class="line">    <span class="built_in">console</span>.log(b.toString());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">read()</span><br></pre></td></tr></table></figure>
-<p>输出和上面的<code>generator</code>函数是一样的，但是我们对比可以发现，<code>async</code>函数只是将<code>generator</code>函数的<code>*</code>去掉了，然后在前面加了一个<code>async</code>，函数内部的<code>yield</code>替换成了<code>await</code>，其他的都没有变化</p>
-<p><code>async</code>函数的改进，体现在以下几点：</p>
-<ul>
-<li>内置执行器：我们发现是用<code>async</code>函数，我们不需要引入<code>co</code>模块，就能使用，因为<code>async</code>函数内置了执行器</li>
-<li>更好的语义：<code>async/await</code>相比<code>generator</code>的<code>yield</code>有更好的语义，<code>async</code>表示函数内部有异步操作，而<code>await</code>表示紧跟在后面的表达式需要等待结果，才能继续执行下面的代码</li>
-<li>更广的适用性：<code>co</code>模块约定，<code>yield</code>命令后面只能是<code>thunk</code>函数或 <code>Promise</code>对象，而<code>async</code>函数的<code>await</code>命令后面，可以是<code>Promise</code>对象和原始类型的值（数值、字符串和布尔值，但这时会自动转成立即<code>resolved</code>的 <code>Promise</code>对象）。</li>
-<li>返回值是<code>Promise</code>：<code>async</code>函数的返回值是<code>Promise</code>对象，这比 <code>generator</code>函数的返回值是<code>iterator</code>对象方便多了。你可以用<code>then</code>方法指定下一步的操作。</li>
+    <title>Mysql主从复制概述</title>
+    <url>/2017/04/13/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%A6%82%E8%BF%B0/</url>
+    <content><![CDATA[<h3 id="MySQL主从复制概述"><a href="#MySQL主从复制概述" class="headerlink" title="MySQL主从复制概述"></a>MySQL主从复制概述</h3><p>复制是mysql数据库提供的一种高可用、高性能的解决方案，一般用来建立大型的应用；</p>
+<p>mysql支持单向，双向，链式级联，异步复制,半同步制(mysql5.5版本之后)，复制过程中,一台服务器当主<code>master</code>，而一个或者多个服务器<code>slave</code>；</p>
+<p>复制可以是单向：<code>M --&gt; S</code>,也可以双向<code>M &lt;--&gt; M</code></p>
+<p>如设置了链式级联复制，那么从服务器本身除了充当<code>slave</code>之外，还是其下面从服务器的主服务器，结构如同<code>M --&gt; S1 --&gt; S2 --&gt; S3</code> 的复制形式</p>
+<span id="more"></span>
+
+<h4 id="单向主从复制"><a href="#单向主从复制" class="headerlink" title="单向主从复制"></a>单向主从复制</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">master  --&gt;  slave</span><br></pre></td></tr></table></figure>
+
+<h4 id="一主多从模式"><a href="#一主多从模式" class="headerlink" title="一主多从模式"></a>一主多从模式</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">        -------slave1</span><br><span class="line">        |</span><br><span class="line">master——|------slave2</span><br><span class="line">        |</span><br><span class="line">        -------slave3</span><br></pre></td></tr></table></figure>
+
+<h4 id="线性级联模式"><a href="#线性级联模式" class="headerlink" title="线性级联模式"></a>线性级联模式</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">master --&gt; slave1 --&gt; salve2 --&gt; slave3</span><br></pre></td></tr></table></figure>
+
+<h4 id="双主模式，互为主从"><a href="#双主模式，互为主从" class="headerlink" title="双主模式，互为主从"></a>双主模式，互为主从</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">master &lt;--&gt; master</span><br></pre></td></tr></table></figure>
+
+<h4 id="混用"><a href="#混用" class="headerlink" title="混用"></a>混用</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">master &lt;--&gt; master</span><br><span class="line">   |</span><br><span class="line"> slave</span><br></pre></td></tr></table></figure>
+
+<h3 id="mysql主从复制原理"><a href="#mysql主从复制原理" class="headerlink" title="mysql主从复制原理"></a>mysql主从复制原理</h3><p><img data-src="/images/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6.png" alt="mysql主从复制"></p>
+<h3 id="复制三个步骤"><a href="#复制三个步骤" class="headerlink" title="复制三个步骤"></a>复制三个步骤</h3><ol>
+<li>主服务器将数据更新记录到二进制日志中；</li>
+<li>从服务器把主服务器的二进制日志拷贝到自己的中继日志中；</li>
+<li>从服务器重做中继日志中的时间，把更新应用到自己的数据库上；</li>
+</ol>
+<h4 id="主服务器中的线程"><a href="#主服务器中的线程" class="headerlink" title="主服务器中的线程"></a>主服务器中的线程</h4><ul>
+<li><p>I/O线程</p>
+<p>接收到从库发来的请求后，负责给从库发送二进制日志；</p>
+</li>
 </ul>
-<p><code>async</code>函数的返回值是一个<code>Promise</code>对象，函数内部<code>return</code>语句返回的值，会成为<code>then</code>方法回调函数的参数。</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">fn</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">123</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fn().then(<span class="function"><span class="params">d</span> =&gt;</span> <span class="built_in">console</span>.log(d))  <span class="comment">// 123</span></span><br></pre></td></tr></table></figure>
-
-<p><strong>错误处理</strong><br>async函数的错误处理方式可以放在函数内部也可以放在函数外部</p>
-<p>放在函数内部</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="keyword">await</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">&#x27;出错了&#x27;</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125; <span class="keyword">catch</span>(e) &#123;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">await</span>(<span class="string">&#x27;hello world&#x27;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>放在函数外部</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">await</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">&#x27;出错了&#x27;</span>);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">f()</span><br><span class="line">.then(<span class="function"><span class="params">v</span> =&gt;</span> <span class="built_in">console</span>.log(v))</span><br><span class="line">.catch(<span class="function"><span class="params">e</span> =&gt;</span> <span class="built_in">console</span>.log(e))</span><br></pre></td></tr></table></figure>
-<p>如果有多个await命令，可以统一放在try…catch结构中。</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> val1 = <span class="keyword">await</span> firstStep();</span><br><span class="line">    <span class="keyword">const</span> val2 = <span class="keyword">await</span> secondStep(val1);</span><br><span class="line">    <span class="keyword">const</span> val3 = <span class="keyword">await</span> thirdStep(val1, val2);</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;Final: &#x27;</span>, val3);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">catch</span> (err) &#123;</span><br><span class="line">    <span class="built_in">console</span>.error(err);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>思考一下下面的代码为什么会按照<code>1、3、2</code>的顺序输出，那是因为执行<code>fn</code>函数，执行<code>console.log(1)</code>，然后返回一个<code>Promise</code>对象，又由于<code>Promise</code>对象的<code>then</code>属于微任务，放到微任务执行队列里面，执行下面的<code>console.log(3)</code>，后面执行栈没有代码了，然后执行微任务队列里的任务，执行<code>console.log(2)</code></p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">fn</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">2</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fn().then(<span class="function"><span class="params">d</span> =&gt;</span> <span class="built_in">console</span>.log(d))</span><br><span class="line"><span class="built_in">console</span>.log(<span class="number">3</span>)</span><br></pre></td></tr></table></figure>
-<p>输出结果</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">3</span></span><br><span class="line"><span class="number">2</span></span><br></pre></td></tr></table></figure>
-
+<h4 id="从库中的线程"><a href="#从库中的线程" class="headerlink" title="从库中的线程"></a>从库中的线程</h4><ul>
+<li>I/O线程接收主库发来的二进制日志，并将其保存在自己的中继日志中</li>
+<li>sql线程来复制中继日志中的日志</li>
+</ul>
+<h4 id="主动复制分为异步复制、半同步复制和基于GTID的复制；"><a href="#主动复制分为异步复制、半同步复制和基于GTID的复制；" class="headerlink" title="主动复制分为异步复制、半同步复制和基于GTID的复制；"></a>主动复制分为异步复制、半同步复制和基于GTID的复制；</h4><ul>
+<li>异步复制：MySQL复制默认是异步复制，<code>Master</code>将事件写入<code>binlog</code>，但并不知道<code>Slave</code>是否或何时已经接收且已处理。在异步复制的机制的情况下，如果<code>Master</code>宕机，事务在<code>Master</code>上已提交，但很可能这些事务没有传到任何的<code>Slave</code>上。假设有<code>Master-&gt;Salve</code>故障转移的机制，此时<code>Slave</code>也可能会丢失事务。`</li>
+<li>半同步复制：当<code>Slave</code>主机连接到<code>Master</code>时，能够查看其是否处于半同步复制的机制，当<code>Master</code>上开启半同步复制的功能时，至少应该有一个<code>Slave</code>开启其功能。此时，一个线程在<code>Master</code>上提交事务将受到阻塞，直到得知一个已开启半同步复制功能的<code>Slave</code>已收到此事务的所有事件，或等待超时。当一个事务的事件都已写入其<code>relay-log</code>中且已刷新到磁盘上，<code>Slave</code>才会告知已收到，如果等待超时，也就是Master没被告知已收到，此时<code>Master</code>会自动转换为异步复制的机制。当至少一个半同步的<code>Slave</code>赶上了，<code>Master</code>与其<code>Slave</code>自动转换为半同步复制的机制。半同步复制的功能要在<code>Master</code>，<code>Slave</code>都开启，半同步复制才会起作用；否则，只开启一边，它依然为异步复制</li>
+</ul>
+<p><img data-src="/images/%E5%8D%8A%E5%90%8C%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6.png" alt="半同步主从复制"></p>
+<h3 id="主从复制应用场景"><a href="#主从复制应用场景" class="headerlink" title="主从复制应用场景"></a>主从复制应用场景</h3><ul>
+<li>主从复制有利于数据库架构的健壮性，提升访问速度，易于管理；</li>
+<li>主从服务器互为备份</li>
+<li>M-S服务器架构的设置，可以大大的加强数据库架构的健壮性，当主库出现问题，可以切换到从库，从而不影响正常生产业务的进行；</li>
+<li>主从复制读写分离分担网站压力</li>
+<li>主从服务器架构通过程序(php,java）对客户端的请求实现读写分离，在从服务器上仅仅处理用户的select查询请求，降低用户查询响应时间，以及读写操作同时在主服务器带来的压力；</li>
+</ul>
+<h3 id="GTID主从复制"><a href="#GTID主从复制" class="headerlink" title="GTID主从复制"></a>GTID主从复制</h3><h4 id="GTID的概述："><a href="#GTID的概述：" class="headerlink" title="GTID的概述："></a>GTID的概述：</h4><ol>
+<li>全局事物标识：global transaction identifieds。</li>
+<li>GTID事物是全局唯一性的，且一个事务对应一个GTID。</li>
+<li>一个GTID在一个服务器上只执行一次，避免重复执行导致数据混乱或者主从不一致。</li>
+<li>GTID用来代替classic的复制方法，不在使用binlog+pos开启复制。而是使用master_auto_postion=1的方式自动匹配GTID断点进行复制。</li>
+<li>MySQL-5.6.5开始支持的，MySQL-5.6.10后开始完善。</li>
+<li>在传统的slave端，binlog是不用开启的，但是在GTID中，slave端的binlog是必须开启的，目的是记录执行过的GTID（强制）</li>
+</ol>
+<h4 id="GTID的组成部分："><a href="#GTID的组成部分：" class="headerlink" title="GTID的组成部分："></a>GTID的组成部分：</h4><ol>
+<li>前面是server_uuid：后面是一个序列号</li>
+<li>例如：server_uuid：sequence number</li>
+<li>7800a22c-95ae-11e4-983d-080027de205a:10</li>
+<li>UUID：每个mysql实例的唯一ID，由于会传递到slave，所以也可以理解为源ID。</li>
+<li>Sequence number：在每台MySQL服务器上都是从1开始自增长的序列，一个数值对应一个事务。</li>
+</ol>
+<h4 id="GTID比传统复制的优势："><a href="#GTID比传统复制的优势：" class="headerlink" title="GTID比传统复制的优势："></a>GTID比传统复制的优势：</h4><ol>
+<li>更简单的实现failover，不用以前那样在需要找log_file和log_Pos。</li>
+<li>更简单的搭建主从复制。</li>
+<li>比传统复制更加安全。</li>
+<li>GTID是连续没有空洞的，因此主从库出现数据冲突时，可以用添加空事物的方式进行跳过。</li>
+</ol>
+<h4 id="GTID的工作原理："><a href="#GTID的工作原理：" class="headerlink" title="GTID的工作原理："></a>GTID的工作原理：</h4><ol>
+<li>master更新数据时，会在事务前产生GTID，一同记录到binlog日志中。</li>
+<li>slave端的i/o 线程将变更的binlog，写入到本地的relay log中。</li>
+<li>sql线程从relay log中获取GTID，然后对比slave端的binlog是否有记录。</li>
+<li>如果有记录，说明该GTID的事务已经执行，slave会忽略。</li>
+<li>如果没有记录，slave就会从relay log中执行该GTID的事务，并记录到binlog。</li>
+<li>在解析过程中会判断是否有主键，如果没有就用二级索引，如果没有就用全部扫描。</li>
+</ol>
+<h4 id="GTID的限制："><a href="#GTID的限制：" class="headerlink" title="GTID的限制："></a>GTID的限制：</h4><ol>
+<li>不支持非事务引擎（从库报错，stopslave; start slave; 忽略）</li>
+<li>不支持create table … select 语句复制（主库直接报错）</li>
+<li>不允许在一个SQL同时更新一个事务引擎和非事务引擎的表</li>
+<li>在一个复制组中，必须要求统一开启CTID或是关闭GTID</li>
+<li>开启DTID需要重启（5.7中可能不需要）</li>
+<li>开启DTID后，就不在使用原来的传统的复制方式</li>
+<li>对于createtemporary table 和drop temporary table语句不支持</li>
+<li>不支持sql_slave_skip_counter</li>
+</ol>
 ]]></content>
+      <categories>
+        <category>Mysql</category>
+      </categories>
+      <tags>
+        <tag>Mysql</tag>
+        <tag>GTID</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>bluebird Promise库</title>
+    <url>/2021/06/03/bluebird-Promise%E5%BA%93/</url>
+    <content><![CDATA[<p>整理一些<code>Promise</code>库<code>bluebird</code>的常用api</p>
+<h3 id="Promis-promisify"><a href="#Promis-promisify" class="headerlink" title="Promis.promisify"></a>Promis.promisify</h3><p><code>promisify</code>可以帮我们吧一些常用异步方法或者库转化成<code>Promise</code>对象，这样我们就不用自己封装了；</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> <span class="built_in">Promise</span> = <span class="built_in">require</span>(<span class="string">&#x27;bluebird&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> readFile = <span class="built_in">Promise</span>.promisify(fs.readFile);</span><br><span class="line"></span><br><span class="line">readFile(<span class="string">&#x27;./data/a.txt&#x27;</span>).then(<span class="function"><span class="params">data</span> =&gt;</span> <span class="built_in">console</span>.log(data.toString()));</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>这里仅做个最简单的介绍，更多详细用法查看官网<a href="http://bluebirdjs.com/docs/features.html">Promis.promisify</a></p>
+</blockquote>
+<span id="more"></span>
+<h3 id="Promise-promisifyAll"><a href="#Promise-promisifyAll" class="headerlink" title="Promise.promisifyAll"></a>Promise.promisifyAll</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="built_in">Promise</span> = <span class="built_in">require</span>(<span class="string">&#x27;bluebird&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> fs = <span class="built_in">Promise</span>.promisifyAll(<span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>));</span><br><span class="line"></span><br><span class="line">fs.readFileAsync(<span class="string">&quot;./data/a.txt&quot;</span>).then(<span class="function"><span class="params">contents</span> =&gt;</span> &#123; <span class="comment">// 实际是readFile方法，Async只是Promise.promisifyAll为我们自动添加的后缀，下面会介绍</span></span><br><span class="line">    <span class="built_in">console</span>.log(contents);</span><br><span class="line">&#125;).catch(<span class="function"><span class="params">err</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.error(err);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>可以为包装后的函数添加后缀，以区分原始方法，默认的后缀是<code>Async</code></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="built_in">Promise</span> = <span class="built_in">require</span>(<span class="string">&#x27;bluebird&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> fs = <span class="built_in">Promise</span>.promisifyAll(<span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>), &#123;<span class="attr">suffix</span>: <span class="string">&#x27;Promise&#x27;</span>&#125;);</span><br><span class="line"></span><br><span class="line">fs.readFilePromise(<span class="string">&quot;./data/a.txt&quot;</span>, <span class="string">&quot;utf8&quot;</span>).then(<span class="function"><span class="params">contents</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(contents);</span><br><span class="line">&#125;).catch(<span class="function"><span class="params">err</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.error(err);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>更多用法查看官网<a href="http://bluebirdjs.com/docs/api/promise.promisifyall.html">Promis.promisify</a></p>
+</blockquote>
+<p><code>Promise.promisifyAll</code>可以接受数组，一次性<code>promisify</code>多个类；</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> Pool = <span class="built_in">require</span>(<span class="string">&quot;mysql/lib/Pool&quot;</span>);</span><br><span class="line"><span class="keyword">var</span> Connection = <span class="built_in">require</span>(<span class="string">&quot;mysql/lib/Connection&quot;</span>);</span><br><span class="line"><span class="built_in">Promise</span>.promisifyAll([Pool, Connection]);</span><br></pre></td></tr></table></figure>
+
+<h3 id="Cancellation"><a href="#Cancellation" class="headerlink" title="Cancellation"></a>Cancellation</h3><p>javascript中的Promise是不支持取消异步操作的，但是bluebird支持取消异步操作，这个是一个很好的特性，能够帮我们解决很多问题，比如在React中，组件挂载时请求接口，如果在接口返回之前这个组件被卸载了，React会抛出一个异常，我们就可以利用bluebird的这一特性，来帮我们处理这个问题；</p>
+<p>想要使用<code>Cancellation</code>必须配置开启，如下第二行代码，此时Promise就可以取消了，还可以定义取消的回调函数，当取消的时候，执行一些操作。</p>
+<p>注意：<code>.cancel</code>操作是同步的</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="built_in">Promise</span> = <span class="built_in">require</span>(<span class="string">&#x27;bluebird&#x27;</span>);</span><br><span class="line"><span class="built_in">Promise</span>.config(&#123;<span class="attr">cancellation</span>: <span class="literal">true</span>&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> p1 = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="params">resolve</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> resolve(<span class="string">&#x27;p1&#x27;</span>), <span class="number">3000</span>);</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 第三个参数只有当cancellation配置为true时才有</span></span><br><span class="line"><span class="keyword">let</span> p2 = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject, onCancel</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> resolve(<span class="string">&#x27;p2&#x27;</span>), <span class="number">5000</span>);</span><br><span class="line">    onCancel(<span class="function">() =&gt;</span> <span class="built_in">console</span>.log(<span class="string">&#x27;p2 canceled&#x27;</span>))</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> p3 = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="params">resolve</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> resolve(<span class="string">&#x27;p3&#x27;</span>), <span class="number">7000</span>);</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">p1.then(<span class="function"><span class="params">res</span> =&gt;</span> <span class="built_in">console</span>.log(res));</span><br><span class="line">p2.then(<span class="function"><span class="params">res</span> =&gt;</span> <span class="built_in">console</span>.log(res));</span><br><span class="line">p3.then(<span class="function"><span class="params">res</span> =&gt;</span> <span class="built_in">console</span>.log(res));</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;-----------------&#x27;</span>);</span><br><span class="line">p2.cancel();</span><br></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">----------------- // 执行栈直接输出</span><br><span class="line">p2 canceled       // 调用p2的cancel方法时输出，.cancel方法是同步的，因此会在-----后直接输出</span><br><span class="line">p1                // 等待3秒后输出</span><br><span class="line">p3                // 等待7秒后输出，注意这里不是p1三秒结束后再等待7秒，而是从一开始等待7秒，因为Promise一旦创建就立即执行了</span><br></pre></td></tr></table></figure>
+
+<p>使用已经取消了的<code>Promise</code>是会报错的<code>SubError [CancellationError]: late cancellation observer</code></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="built_in">Promise</span> = <span class="built_in">require</span>(<span class="string">&#x27;bluebird&#x27;</span>);</span><br><span class="line"><span class="built_in">Promise</span>.config(&#123;<span class="attr">cancellation</span>: <span class="literal">true</span>&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> p2 = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject, onCancel</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> resolve(<span class="string">&#x27;p2&#x27;</span>), <span class="number">5000</span>);</span><br><span class="line">    onCancel(<span class="function">() =&gt;</span> <span class="built_in">console</span>.log(<span class="string">&#x27;p2 canceled&#x27;</span>));</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">p2.cancel(); <span class="comment">// 已取消</span></span><br><span class="line"></span><br><span class="line">p2.then(<span class="function"><span class="params">res</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(res);</span><br><span class="line">&#125;).catch(<span class="function"><span class="params">err</span> =&gt;</span> <span class="built_in">console</span>.log(err));</span><br></pre></td></tr></table></figure>
+<p>结果</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">p2 canceled</span><br><span class="line">SubError [CancellationError]: late cancellation observer</span><br><span class="line">    at Promise._then (C:\Users\lyucan\Desktop\pro\newRepo\Repositories\node_modules\bluebird\js\release\promise.js:285:21)</span><br><span class="line">    at Promise.then (C:\Users\lyucan\Desktop\pro\newRepo\Repositories\node_modules\bluebird\js\release\promise.js:154:17)</span><br><span class="line">    at Object.&lt;anonymous&gt; (C:\Users\lyucan\Desktop\pro\newRepo\Repositories\myrepo</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+
+<h3 id="Promise-spread"><a href="#Promise-spread" class="headerlink" title="Promise.spread"></a>Promise.spread</h3><p><code>Promise.spread</code>可以把一个<code>Promise</code>数组进行解构，例如我们使用<code>Promise.all</code>进行多个异步操作，正常的<code>.then</code>拿到的入参就是一个数组，如果我们使用<code>Promise.spread</code>，那么我们获取到的就是数组里对应的值，而不是一个数组，结果和<code>Promise</code>对象的数组顺序一一对应，如果只传一个入参，则只获取第一个结果。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> <span class="built_in">Promise</span> = <span class="built_in">require</span>(<span class="string">&#x27;bluebird&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> readFile = <span class="built_in">Promise</span>.promisify(fs.readFile);</span><br><span class="line"></span><br><span class="line"><span class="built_in">Promise</span>.all([</span><br><span class="line">    readFile(<span class="string">&#x27;./data/a.txt&#x27;</span>),</span><br><span class="line">    readFile(<span class="string">&#x27;./data/b.txt&#x27;</span>)</span><br><span class="line">]).then(<span class="function"><span class="params">res</span> =&gt;</span> <span class="built_in">console</span>.log(res.map(<span class="function"><span class="params">str</span> =&gt;</span> str.toString())))</span><br><span class="line"></span><br><span class="line"><span class="comment">// [ &#x27;aaaaaaaaaaaaaaaaaaaaaa&#x27;, &#x27;bbbbbbbbbbbbbbbbbbbbbb&#x27; ]</span></span><br></pre></td></tr></table></figure>
+<p>使用<code>Promise.spread</code>，我们可以看到入参是数组每一项的值，而不是一整个数组</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> <span class="built_in">Promise</span> = <span class="built_in">require</span>(<span class="string">&#x27;bluebird&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> readFile = <span class="built_in">Promise</span>.promisify(fs.readFile);</span><br><span class="line"></span><br><span class="line"><span class="built_in">Promise</span>.all([</span><br><span class="line">    readFile(<span class="string">&#x27;./data/a.txt&#x27;</span>),</span><br><span class="line">    readFile(<span class="string">&#x27;./data/b.txt&#x27;</span>)</span><br><span class="line">]).spread(<span class="function">(<span class="params">res1, res2</span>) =&gt;</span> <span class="built_in">console</span>.log(res1.toString(), res2.toString()))</span><br><span class="line"></span><br><span class="line"><span class="comment">// &#x27;aaaaaaaaaaaaaaaaaaaaaa&#x27; &#x27;bbbbbbbbbbbbbbbbbbbbbb&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Promise-bind"><a href="#Promise-bind" class="headerlink" title="Promise.bind"></a>Promise.bind</h3><p><code>Promise.bind</code>可以修改当前的<code>this</code>指向</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> <span class="built_in">Promise</span> = <span class="built_in">require</span>(<span class="string">&#x27;bluebird&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> readFile = <span class="built_in">Promise</span>.promisify(fs.readFile);</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyClass</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="title">constructor</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="built_in">this</span>.fileName = <span class="string">&#x27;./data/a.txt&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="title">error</span>(<span class="params">error</span>)</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(error)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">MyClass.prototype.method = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">this</span>); <span class="comment">// 这里this指向MyClass</span></span><br><span class="line">    <span class="keyword">return</span> readFile(<span class="built_in">this</span>.fileName).bind(<span class="built_in">this</span>) <span class="comment">// 绑定this指向</span></span><br><span class="line">    .then(<span class="function">(<span class="params">contents</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(contents)</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="built_in">this</span>)   <span class="comment">// 这里this指向MyClass，如果没有上面的bind(this)，那么这里将指向全局对象</span></span><br><span class="line">    &#125;).catch(<span class="function">(<span class="params">e</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.error(e.stack); <span class="comment">// 这里this指向MyClass，，如果没有上面的bind(this)，那么这里将指向全局对象</span></span><br><span class="line">    &#125;);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> me = <span class="keyword">new</span> MyClass()</span><br><span class="line">me.method()</span><br></pre></td></tr></table></figure>
+
+<h3 id="Promise-props"><a href="#Promise-props" class="headerlink" title="Promise.props"></a>Promise.props</h3><p><code>Promise.props</code>和<code>Promise.all</code>的作用类似，都是组合<code>Promise</code>对象，最大的区别是，<code>Promise.all</code>是需要一个具有<code>iterator</code>接口的对象，例如数组，而<code>Promise.props</code>的入参是一个<code>key: [Promise]</code>对象，而结果也会是一个<code>key: [result]</code>对象，</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> <span class="built_in">Promise</span> = <span class="built_in">require</span>(<span class="string">&#x27;bluebird&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> readFile = <span class="built_in">Promise</span>.promisify(fs.readFile);</span><br><span class="line"></span><br><span class="line"><span class="built_in">Promise</span>.props(&#123;</span><br><span class="line">    <span class="attr">txtA</span>: readFile(<span class="string">&#x27;./data/a.txt&#x27;</span>),</span><br><span class="line">    <span class="attr">txtB</span>: readFile(<span class="string">&#x27;./data/b.txt&#x27;</span>),</span><br><span class="line">&#125;).then(<span class="function"><span class="params">result</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(result.txtA.toString());</span><br><span class="line">    <span class="built_in">console</span>.log(result.txtB.toString());</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// aaaaaaaaaaaaaaaaaaaaaa</span></span><br><span class="line"><span class="comment">// bbbbbbbbbbbbbbbbbbbbbb</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Promise-some"><a href="#Promise-some" class="headerlink" title="Promise.some"></a>Promise.some</h3><p><code>Promise.some</code>接收两个参数，第一个是<code>Promise</code>对象数组（不一定是数组，具有<code>iterator</code>接口就行），第二个参数是返回的个数，这个个数是在所有的<code>Promise</code>对象中，状态最快变为<code>fulfilled</code>的前几个，例如下面的代码，读取4个文件，返回最快读到的前2个；</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> <span class="built_in">Promise</span> = <span class="built_in">require</span>(<span class="string">&#x27;bluebird&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> readFile = <span class="built_in">Promise</span>.promisify(fs.readFile);</span><br><span class="line"></span><br><span class="line"><span class="built_in">Promise</span>.some([</span><br><span class="line">    readFile(<span class="string">&#x27;./data/a.txt&#x27;</span>),</span><br><span class="line">    readFile(<span class="string">&#x27;./data/b.txt&#x27;</span>),</span><br><span class="line">    readFile(<span class="string">&#x27;./data/c.txt&#x27;</span>),</span><br><span class="line">    readFile(<span class="string">&#x27;./data/d.txt&#x27;</span>),</span><br><span class="line">], <span class="number">2</span>).then(<span class="function"><span class="params">res</span> =&gt;</span> &#123;<span class="built_in">console</span>.log(res)&#125;)</span><br></pre></td></tr></table></figure>
+<p>如果成功的个数小于第二个参数指定的个数，会抛出一个异常</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">Unhandled rejection AggregateError: aggregate error</span><br><span class="line">    at SomePromiseArray._checkOutcome (C:\Users\lyucan\Desktop\pro\newRepo\Repositories\node_modules\bluebird\js\release\some.js:<span class="number">82</span>:<span class="number">17</span>)</span><br><span class="line">    at SomePromiseArray._promiseRejected (C:\Users\lyucan\Desktop\pro\newRepo\Repositories\node_modules\bluebird\js\release\some.js:<span class="number">69</span>:<span class="number">17</span>)</span><br><span class="line">    at <span class="built_in">Promise</span>._settlePromise (C:\Users\lyucan\Desktop\pro\newRepo\Repositories\node_modules\bluebird\js\release\promise.js:<span class="number">611</span>:<span class="number">26</span>)</span><br></pre></td></tr></table></figure>
+<p>我们可以直接<code>.catch</code>捕获，但是此时捕获的错误是一个<code>rejected Promise</code>的数组，具有<code>length</code>属性和一些数组的操作方法</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> <span class="built_in">Promise</span> = <span class="built_in">require</span>(<span class="string">&#x27;bluebird&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> readFile = <span class="built_in">Promise</span>.promisify(fs.readFile);</span><br><span class="line"></span><br><span class="line"><span class="built_in">Promise</span>.some([</span><br><span class="line">    readFile(<span class="string">&#x27;./data/a.txt&#x27;</span>),</span><br><span class="line">    readFile(<span class="string">&#x27;./data/bd.txt&#x27;</span>),</span><br><span class="line">    readFile(<span class="string">&#x27;./data/cd.txt&#x27;</span>),</span><br><span class="line">], <span class="number">2</span>).then(<span class="function"><span class="params">res</span> =&gt;</span> &#123;<span class="built_in">console</span>.log(res)&#125;).catch(<span class="function"><span class="params">err</span> =&gt;</span> <span class="built_in">console</span>.log(err))</span><br></pre></td></tr></table></figure>
+<p>此时<code>bd.txt</code>和<code>cd.txt</code>文件是不存在的，只有<code>a.txt</code>能读取成功，而我们定义了成功的数量是前两个，此时就会进入异常</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">SubError [AggregateError]: aggregate error</span><br><span class="line">    at SomePromiseArray._checkOutcome (C:\Users\lyucan\Desktop\pro\newRepo\Repositories\node_modules\bluebird\js\release\some.js:<span class="number">82</span>:<span class="number">17</span>)</span><br><span class="line">    ...</span><br><span class="line">    at processImmediate (internal/timers.js:<span class="number">439</span>:<span class="number">21</span>) &#123;</span><br><span class="line">  <span class="string">&#x27;0&#x27;</span>: [OperationalError: ENOENT: no such file or directory, open <span class="string">&#x27;C:\Users\lyucan\Desktop\pro\newRepo\Repositories\myrepo\nodejs\promise\data\bd.txt&#x27;</span>] &#123;</span><br><span class="line">    <span class="attr">cause</span>: [<span class="built_in">Error</span>: ENOENT: no such file or directory, open <span class="string">&#x27;C:\Users\lyucan\Desktop\pro\newRepo\Repositories\myrepo\nodejs\promise\data\bd.txt&#x27;</span>] &#123;</span><br><span class="line">      <span class="attr">errno</span>: -<span class="number">4058</span>,</span><br><span class="line">      <span class="attr">code</span>: <span class="string">&#x27;ENOENT&#x27;</span>,</span><br><span class="line">      <span class="attr">syscall</span>: <span class="string">&#x27;open&#x27;</span>,</span><br><span class="line">      <span class="attr">path</span>: <span class="string">&#x27;C:\\Users\\lyucan\\Desktop\\pro\\newRepo\\Repositories\\myrepo\\nodejs\\promise\\data\\bd.txt&#x27;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">isOperational</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">errno</span>: -<span class="number">4058</span>,</span><br><span class="line">    <span class="attr">code</span>: <span class="string">&#x27;ENOENT&#x27;</span>,</span><br><span class="line">    <span class="attr">syscall</span>: <span class="string">&#x27;open&#x27;</span>,</span><br><span class="line">    <span class="attr">path</span>: <span class="string">&#x27;C:\\Users\\lyucan\\Desktop\\pro\\newRepo\\Repositories\\myrepo\\nodejs\\promise\\data\\bd.txt&#x27;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">&#x27;1&#x27;</span>: [OperationalError: ENOENT: no such file or directory, open <span class="string">&#x27;C:\Users\lyucan\Desktop\pro\newRepo\Repositories\myrepo\nodejs\promise\data\cd.txt&#x27;</span>] &#123;</span><br><span class="line">    <span class="attr">cause</span>: [<span class="built_in">Error</span>: ENOENT: no such file or directory, open <span class="string">&#x27;C:\Users\lyucan\Desktop\pro\newRepo\Repositories\myrepo\nodejs\promise\data\cd.txt&#x27;</span>] &#123;</span><br><span class="line">      <span class="attr">errno</span>: -<span class="number">4058</span>,</span><br><span class="line">      <span class="attr">code</span>: <span class="string">&#x27;ENOENT&#x27;</span>,</span><br><span class="line">      <span class="attr">syscall</span>: <span class="string">&#x27;open&#x27;</span>,</span><br><span class="line">      <span class="attr">path</span>: <span class="string">&#x27;C:\\Users\\lyucan\\Desktop\\pro\\newRepo\\Repositories\\myrepo\\nodejs\\promise\\data\\cd.txt&#x27;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">isOperational</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">errno</span>: -<span class="number">4058</span>,</span><br><span class="line">    <span class="attr">code</span>: <span class="string">&#x27;ENOENT&#x27;</span>,</span><br><span class="line">    <span class="attr">syscall</span>: <span class="string">&#x27;open&#x27;</span>,</span><br><span class="line">    <span class="attr">path</span>: <span class="string">&#x27;C:\\Users\\lyucan\\Desktop\\pro\\newRepo\\Repositories\\myrepo\\nodejs\\promise\\data\\cd.txt&#x27;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">length</span>: <span class="number">2</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>返回的整个错误是可以调用数组方法的，例如</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> <span class="built_in">Promise</span> = <span class="built_in">require</span>(<span class="string">&#x27;bluebird&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> readFile = <span class="built_in">Promise</span>.promisify(fs.readFile);</span><br><span class="line"></span><br><span class="line"><span class="built_in">Promise</span>.some([</span><br><span class="line">    readFile(<span class="string">&#x27;./data/a.txt&#x27;</span>),</span><br><span class="line">    readFile(<span class="string">&#x27;./data/bd.txt&#x27;</span>),</span><br><span class="line">    readFile(<span class="string">&#x27;./data/cd.txt&#x27;</span>),</span><br><span class="line">], <span class="number">2</span>).then(<span class="function"><span class="params">res</span> =&gt;</span> &#123;<span class="built_in">console</span>.log(res)&#125;).catch(<span class="function"><span class="params">err</span> =&gt;</span> <span class="built_in">console</span>.log(err.map(<span class="function"><span class="params">errItem</span> =&gt;</span> errItem)))</span><br></pre></td></tr></table></figure>
+<p>结果</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">[</span><br><span class="line">  [OperationalError: ENOENT: no such file or directory, open <span class="string">&#x27;C:\Users\lyucan\Desktop\pro\newRepo\Repositories\myrepo\nodejs\promise\data\bd.txt&#x27;</span>] &#123;</span><br><span class="line">    <span class="attr">cause</span>: [<span class="built_in">Error</span>: ENOENT: no such file or directory, open <span class="string">&#x27;C:\Users\lyucan\Desktop\pro\newRepo\Repositories\myrepo\nodejs\promise\data\bd.txt&#x27;</span>] &#123;</span><br><span class="line">      <span class="attr">errno</span>: -<span class="number">4058</span>,</span><br><span class="line">      <span class="attr">code</span>: <span class="string">&#x27;ENOENT&#x27;</span>,</span><br><span class="line">      <span class="attr">syscall</span>: <span class="string">&#x27;open&#x27;</span>,</span><br><span class="line">      <span class="attr">path</span>: <span class="string">&#x27;C:\\Users\\lyucan\\Desktop\\pro\\newRepo\\Repositories\\myrepo\\nodejs\\promise\\data\\bd.txt&#x27;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">isOperational</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">errno</span>: -<span class="number">4058</span>,</span><br><span class="line">    <span class="attr">code</span>: <span class="string">&#x27;ENOENT&#x27;</span>,</span><br><span class="line">    <span class="attr">syscall</span>: <span class="string">&#x27;open&#x27;</span>,</span><br><span class="line">    <span class="attr">path</span>: <span class="string">&#x27;C:\\Users\\lyucan\\Desktop\\pro\\newRepo\\Repositories\\myrepo\\nodejs\\promise\\data\\bd.txt&#x27;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  [OperationalError: ENOENT: no such file or directory, open <span class="string">&#x27;C:\Users\lyucan\Desktop\pro\newRepo\Repositories\myrepo\nodejs\promise\data\cd.txt&#x27;</span>] &#123;</span><br><span class="line">    <span class="attr">cause</span>: [<span class="built_in">Error</span>: ENOENT: no such file or directory, open <span class="string">&#x27;C:\Users\lyucan\Desktop\pro\newRepo\Repositories\myrepo\nodejs\promise\data\cd.txt&#x27;</span>] &#123;</span><br><span class="line">      <span class="attr">errno</span>: -<span class="number">4058</span>,</span><br><span class="line">      <span class="attr">code</span>: <span class="string">&#x27;ENOENT&#x27;</span>,</span><br><span class="line">      <span class="attr">syscall</span>: <span class="string">&#x27;open&#x27;</span>,</span><br><span class="line">      <span class="attr">path</span>: <span class="string">&#x27;C:\\Users\\lyucan\\Desktop\\pro\\newRepo\\Repositories\\myrepo\\nodejs\\promise\\data\\cd.txt&#x27;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">isOperational</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">errno</span>: -<span class="number">4058</span>,</span><br><span class="line">    <span class="attr">code</span>: <span class="string">&#x27;ENOENT&#x27;</span>,</span><br><span class="line">    <span class="attr">syscall</span>: <span class="string">&#x27;open&#x27;</span>,</span><br><span class="line">    <span class="attr">path</span>: <span class="string">&#x27;C:\\Users\\lyucan\\Desktop\\pro\\newRepo\\Repositories\\myrepo\\nodejs\\promise\\data\\cd.txt&#x27;</span></span><br><span class="line">  &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>JavaScript</category>
       </categories>
       <tags>
-        <tag>ES6</tag>
+        <tag>JavaScript</tag>
       </tags>
   </entry>
   <entry>
@@ -1005,7 +964,7 @@
 </ul>
 <h4 id="for-in循环数组"><a href="#for-in循环数组" class="headerlink" title="for...in循环数组"></a><code>for...in</code>循环数组</h4><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> arr = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line">arr.__proto__.name = <span class="string">&#x27;jerry&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> i <span class="keyword">in</span> arr) &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(i)    <span class="comment">// 0, 1, 2, name</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> i <span class="keyword">in</span> <span class="built_in">Object</span>.keys(arr)) &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(i)    <span class="comment">// 0, 1, 2, name</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; arr.length; i++) &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(i)    <span class="comment">// 0, 1, 2</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
-<h3 id="for-in循环对象"><a href="#for-in循环对象" class="headerlink" title="for...in循环对象"></a><code>for...in</code>循环对象</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> obj = &#123;<span class="attr">a</span>: <span class="string">&#x27;aaa&#x27;</span>, <span class="attr">b</span>: <span class="string">&#x27;bbb&#x27;</span>, <span class="attr">c</span>: <span class="string">&#x27;ccc&#x27;</span>&#125;</span><br><span class="line">obj.__proto__.name = <span class="string">&#x27;jerry&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> i <span class="keyword">in</span> obj) &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(i)    <span class="comment">// a, b, c, name</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> i <span class="keyword">in</span> <span class="built_in">Object</span>.keys(obj)) &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(i)    <span class="comment">// a, b, c, name</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="for-in循环对象"><a href="#for-in循环对象" class="headerlink" title="for...in循环对象"></a><code>for...in</code>循环对象</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> obj = &#123;<span class="attr">a</span>: <span class="string">&#x27;aaa&#x27;</span>, <span class="attr">b</span>: <span class="string">&#x27;bbb&#x27;</span>, <span class="attr">c</span>: <span class="string">&#x27;ccc&#x27;</span>&#125;</span><br><span class="line">obj.__proto__.name = <span class="string">&#x27;jerry&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> i <span class="keyword">in</span> obj) &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(i)    <span class="comment">// a, b, c, name</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> i <span class="keyword">in</span> <span class="built_in">Object</span>.keys(obj)) &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(i)    <span class="comment">// 0, 1, 2, name</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h3 id="for-in循环字符串"><a href="#for-in循环字符串" class="headerlink" title="for...in循环字符串"></a><code>for...in</code>循环字符串</h3><blockquote>
 <p>如果<code>Object.keys()</code>传入的是一个字符串，对<code>Object.keys()</code>的结果进行<code>for...in</code>循环，不会获取原型链上的属性</p>
@@ -1163,6 +1122,45 @@
       </tags>
   </entry>
   <entry>
+    <title>js 伪数组</title>
+    <url>/2021/05/25/js-%E4%BC%AA%E6%95%B0%E7%BB%84/</url>
+    <content><![CDATA[<p>在js中，通过document的查询元素api查出来NodeList对象或者<code>arguments</code>等都会以伪数组的方式输出，例如下面的html中，通过<code>document.getElementsByTagName(&#39;li&#39;);</code>查出来的就是伪数组，伪数组和数组都具有length属性，但是伪数组不预备数组的<code>pop</code>、<code>push</code>、<code>slice</code>等方法</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ul</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span>1<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span>2<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span>3<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%84.png"></p>
+<span id="more"></span>
+
+<p>我们使用查出来的结果进行数组的操作，会报错，例如：</p>
+<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%841.png"></p>
+<p>如果我们想要正常操作该数组，则需要将伪数组转为数组，再进行操作。</p>
+<p>伪数组转数组的方式有很多种，下面介绍几种常用的</p>
+<ul>
+<li><code>Array.prototype.slice.call()</code>或者<code>[].slice.call()</code></li>
+</ul>
+<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%842.png"></p>
+<blockquote>
+<p><code>Array.prototype.slice.call()</code>和<code>[].slice.call()</code>其实是一个东西，都是调用数组原型上的slice方法</p>
+</blockquote>
+<ul>
+<li><code>Array.from()</code></li>
+</ul>
+<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%843.png"></p>
+<ul>
+<li>es6 解构赋值</li>
+</ul>
+<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%844.png"></p>
+<ul>
+<li>其他方法<br>例如使用循环，将伪数组一个个push到一个空数组里，也可以进行转化，这种比较繁琐，一般不常用</li>
+</ul>
+]]></content>
+      <categories>
+        <category>JavaScript</category>
+      </categories>
+      <tags>
+        <tag>JavaScript</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>js 事件循环（event loop）、宏任务、微任务</title>
     <url>/2021/07/07/js-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%EF%BC%88event-loop%EF%BC%89%E3%80%81%E5%AE%8F%E4%BB%BB%E5%8A%A1%E3%80%81%E5%BE%AE%E4%BB%BB%E5%8A%A1/</url>
     <content><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>Google工程师<code>Jake Archibald</code>写了一篇关于事件循环以及宏任务微任务的文章，非常经典，本文的例子都来源于改文章，有兴趣的可以去浏览原文<a href="https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/?utm_source=html5weekly">Tasks, microtasks, queues and schedules</a></p>
@@ -1223,86 +1221,44 @@
       </tags>
   </entry>
   <entry>
-    <title>js 伪数组</title>
-    <url>/2021/05/25/js-%E4%BC%AA%E6%95%B0%E7%BB%84/</url>
-    <content><![CDATA[<p>在js中，通过document的查询元素api查出来NodeList对象或者<code>arguments</code>等都会以伪数组的方式输出，例如下面的html中，通过<code>document.getElementsByTagName(&#39;li&#39;);</code>查出来的就是伪数组，伪数组和数组都具有length属性，但是伪数组不预备数组的<code>pop</code>、<code>push</code>、<code>slice</code>等方法</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ul</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span>1<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span>2<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span>3<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br></pre></td></tr></table></figure>
+    <title>js async/await函数</title>
+    <url>/2021/05/30/js-async-await%E5%87%BD%E6%95%B0/</url>
+    <content><![CDATA[<p><code>async</code>函数就是<code>generator</code>函数的语法糖，一般结合<code>Promise</code>使用</p>
+<p>我们可以把generator函数函数改写成async/await函数，例如</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"><span class="keyword">var</span> co = <span class="built_in">require</span>(<span class="string">&#x27;co&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> readFile = <span class="function"><span class="keyword">function</span> (<span class="params">fileName</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</span><br><span class="line">        fs.readFile(fileName, <span class="function"><span class="keyword">function</span> (<span class="params">error, data</span>) </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (error) reject(error);</span><br><span class="line">            resolve(data.toString());</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">read</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">// resolve multiple promises in parallel</span></span><br><span class="line">    <span class="keyword">var</span> a = <span class="keyword">yield</span> readFile(<span class="string">&#x27;./data/a.text&#x27;</span>)</span><br><span class="line">    <span class="keyword">var</span> b = <span class="keyword">yield</span> readFile(<span class="string">&#x27;./data/b.text&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="built_in">console</span>.log(a.toString());</span><br><span class="line">    <span class="built_in">console</span>.log(b.toString());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">co(read)</span><br></pre></td></tr></table></figure>
+<p>改写成</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> readFile = <span class="function"><span class="keyword">function</span> (<span class="params">fileName</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</span><br><span class="line">        fs.readFile(fileName, <span class="function"><span class="keyword">function</span> (<span class="params">error, data</span>) </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (error) reject(error);</span><br><span class="line">            resolve(data.toString());</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">read</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">// resolve multiple promises in parallel</span></span><br><span class="line">    <span class="keyword">var</span> a = <span class="keyword">await</span> readFile(<span class="string">&#x27;./data/a.text&#x27;</span>)</span><br><span class="line">    <span class="keyword">var</span> b = <span class="keyword">await</span> readFile(<span class="string">&#x27;./data/b.text&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="built_in">console</span>.log(a.toString());</span><br><span class="line">    <span class="built_in">console</span>.log(b.toString());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">read()</span><br></pre></td></tr></table></figure>
+<p>输出和上面的<code>generator</code>函数是一样的，但是我们对比可以发现，<code>async</code>函数只是将<code>generator</code>函数的<code>*</code>去掉了，然后在前面加了一个<code>async</code>，函数内部的<code>yield</code>替换成了<code>await</code>，其他的都没有变化</p>
+<p><code>async</code>函数的改进，体现在以下几点：</p>
+<ul>
+<li>内置执行器：我们发现是用<code>async</code>函数，我们不需要引入<code>co</code>模块，就能使用，因为<code>async</code>函数内置了执行器</li>
+<li>更好的语义：<code>async/await</code>相比<code>generator</code>的<code>yield</code>有更好的语义，<code>async</code>表示函数内部有异步操作，而<code>await</code>表示紧跟在后面的表达式需要等待结果，才能继续执行下面的代码</li>
+<li>更广的适用性：<code>co</code>模块约定，<code>yield</code>命令后面只能是<code>thunk</code>函数或 <code>Promise</code>对象，而<code>async</code>函数的<code>await</code>命令后面，可以是<code>Promise</code>对象和原始类型的值（数值、字符串和布尔值，但这时会自动转成立即<code>resolved</code>的 <code>Promise</code>对象）。</li>
+<li>返回值是<code>Promise</code>：<code>async</code>函数的返回值是<code>Promise</code>对象，这比 <code>generator</code>函数的返回值是<code>iterator</code>对象方便多了。你可以用<code>then</code>方法指定下一步的操作。</li>
+</ul>
+<p><code>async</code>函数的返回值是一个<code>Promise</code>对象，函数内部<code>return</code>语句返回的值，会成为<code>then</code>方法回调函数的参数。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">fn</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">123</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fn().then(<span class="function"><span class="params">d</span> =&gt;</span> <span class="built_in">console</span>.log(d))  <span class="comment">// 123</span></span><br></pre></td></tr></table></figure>
 
-<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%84.png"></p>
-<span id="more"></span>
+<p><strong>错误处理</strong><br>async函数的错误处理方式可以放在函数内部也可以放在函数外部</p>
+<p>放在函数内部</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="keyword">await</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">&#x27;出错了&#x27;</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125; <span class="keyword">catch</span>(e) &#123;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">await</span>(<span class="string">&#x27;hello world&#x27;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>我们使用查出来的结果进行数组的操作，会报错，例如：</p>
-<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%841.png"></p>
-<p>如果我们想要正常操作该数组，则需要将伪数组转为数组，再进行操作。</p>
-<p>伪数组转数组的方式有很多种，下面介绍几种常用的</p>
-<ul>
-<li><code>Array.prototype.slice.call()</code>或者<code>[].slice.call()</code></li>
-</ul>
-<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%842.png"></p>
-<blockquote>
-<p><code>Array.prototype.slice.call()</code>和<code>[].slice.call()</code>其实是一个东西，都是调用数组原型上的slice方法</p>
-</blockquote>
-<ul>
-<li><code>Array.from()</code></li>
-</ul>
-<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%843.png"></p>
-<ul>
-<li>es6 解构赋值</li>
-</ul>
-<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%844.png"></p>
-<ul>
-<li>其他方法<br>例如使用循环，将伪数组一个个push到一个空数组里，也可以进行转化，这种比较繁琐，一般不常用</li>
-</ul>
+<p>放在函数外部</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">await</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">&#x27;出错了&#x27;</span>);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">f()</span><br><span class="line">.then(<span class="function"><span class="params">v</span> =&gt;</span> <span class="built_in">console</span>.log(v))</span><br><span class="line">.catch(<span class="function"><span class="params">e</span> =&gt;</span> <span class="built_in">console</span>.log(e))</span><br></pre></td></tr></table></figure>
+<p>如果有多个await命令，可以统一放在try…catch结构中。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> val1 = <span class="keyword">await</span> firstStep();</span><br><span class="line">    <span class="keyword">const</span> val2 = <span class="keyword">await</span> secondStep(val1);</span><br><span class="line">    <span class="keyword">const</span> val3 = <span class="keyword">await</span> thirdStep(val1, val2);</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;Final: &#x27;</span>, val3);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">catch</span> (err) &#123;</span><br><span class="line">    <span class="built_in">console</span>.error(err);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>思考一下下面的代码为什么会按照<code>1、3、2</code>的顺序输出，那是因为执行<code>fn</code>函数，执行<code>console.log(1)</code>，然后返回一个<code>Promise</code>对象，又由于<code>Promise</code>对象的<code>then</code>属于微任务，放到微任务执行队列里面，执行下面的<code>console.log(3)</code>，后面执行栈没有代码了，然后执行微任务队列里的任务，执行<code>console.log(2)</code></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">fn</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">2</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fn().then(<span class="function"><span class="params">d</span> =&gt;</span> <span class="built_in">console</span>.log(d))</span><br><span class="line"><span class="built_in">console</span>.log(<span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+<p>输出结果</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">3</span></span><br><span class="line"><span class="number">2</span></span><br></pre></td></tr></table></figure>
+
 ]]></content>
       <categories>
         <category>JavaScript</category>
       </categories>
       <tags>
-        <tag>JavaScript</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>js 作用域链</title>
-    <url>/2021/05/26/js-%E4%BD%9C%E7%94%A8%E5%9F%9F%E9%93%BE/</url>
-    <content><![CDATA[<p>局部变量：在函数中通过var声明的变量。</p>
-<p>全局变量：在函数外通过var声明的变量。</p>
-<p>没有声明就使用的变量，默认为全局变量，不论这个变量在哪被使用。</p>
-<h3 id="局部作用域"><a href="#局部作用域" class="headerlink" title="局部作用域"></a>局部作用域</h3><p>在函数内部定义的变量，为局部变量，局部变量只能在该局部作用域中访问</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn1</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> username = <span class="string">&#x27;jerry&#x27;</span>;</span><br><span class="line">    <span class="built_in">console</span>.log(username);</span><br><span class="line">&#125;</span><br><span class="line">fn1()   <span class="comment">// jerry</span></span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-
-<p>此时在全局访问username，则会报错</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(username);  <span class="comment">// 报错，username未定义</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="全局作用域"><a href="#全局作用域" class="headerlink" title="全局作用域"></a>全局作用域</h3><p>函数内部和外部都可以访问该变量</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> age = <span class="number">12</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn2</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(age);</span><br><span class="line">&#125;</span><br><span class="line">fn2()     <span class="comment">// 12</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(age);  <span class="comment">// 12</span></span><br></pre></td></tr></table></figure>
-
-<p>如果在函数内部没有使用var定义变量，那么 gender = ‘male’;就是个赋值语句，会找到最近的定义的变量进行赋值（注意变量提升），如果都没找到，则为全局变量</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn3</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    gender = <span class="string">&#x27;male&#x27;</span>;</span><br><span class="line">    <span class="built_in">console</span>.log(gender);</span><br><span class="line">&#125;</span><br><span class="line">fn3();</span><br></pre></td></tr></table></figure>
-
-<p>如果上面的函数没有调用，那么在外面使用gender会报错，因为在 <code>fn3()</code> 被第一次调用之前， <code>gender</code>变量是不存在的。<code>fn3()</code> 被调用过之后，gender成为全局变量</p>
-<h3 id="多层函数嵌套"><a href="#多层函数嵌套" class="headerlink" title="多层函数嵌套"></a>多层函数嵌套</h3><p>如果内层函数没有使用var定义变量，则可以看做是赋值语句，会向上层依次找到该变量的定义语句，并赋值给它,如果向上找都没有没找到，则为全局变量</p>
-<p>这里在<code>fn5</code>函数这个作用域中没有找到<code>num</code>，则向上查找，找到<code>fn4</code>作用域中的<code>num</code>，赋值为<code>100</code>，则下面的<code>fn4里在fn5调用后的num</code>是<code>100</code></p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> num = <span class="number">1</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn4</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> num = <span class="number">10</span></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;fn4里在fn5调用前的num &#x27;</span> + num);</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">fn5</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        num = <span class="number">100</span></span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;fn5里的num &#x27;</span> + num);</span><br><span class="line">    &#125;</span><br><span class="line">    fn5()</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;fn4里在fn5调用后的num &#x27;</span> + num);</span><br><span class="line">&#125;</span><br><span class="line">fn4()</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;全局的num &#x27;</span> + num);</span><br></pre></td></tr></table></figure>
-<p>输出结果:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">fn4里在fn5调用前的num 10</span><br><span class="line">fn5里的num 100</span><br><span class="line">fn4里在fn5调用后的num 100</span><br><span class="line">全局的num 1</span><br></pre></td></tr></table></figure>
-
-<hr>
-<p>这里在<code>fn5</code>函数内部的<code>num = 100</code>后面加了一个<code>var num = 200</code>，此时由于存在变量提升，<code>num</code>定义提升到函数顶部，并初始化为<code>undefined</code>，然后赋值<code>num = 100</code>（这里赋值的是<code>fn5</code>函数内部提升的<code>num</code>），再赋值<code>num = 200</code>，因此<code>fn5里的num</code>输出200，而<code>fn4里在fn5调用后的num</code>输出10</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> num = <span class="number">1</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn4</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> num = <span class="number">10</span></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;fn4里在fn5调用前的num &#x27;</span> + num);</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">fn5</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        num = <span class="number">100</span></span><br><span class="line">        <span class="keyword">var</span> num = <span class="number">200</span></span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;fn5里的num &#x27;</span> + num);</span><br><span class="line">    &#125;</span><br><span class="line">    fn5()</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;fn4里在fn5调用后的num &#x27;</span> + num);</span><br><span class="line">&#125;</span><br><span class="line">fn4()</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;全局的num &#x27;</span> + num);</span><br></pre></td></tr></table></figure>
-<p>输出结果:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">fn4里在fn5调用前的num 10</span><br><span class="line">fn5里的num 200</span><br><span class="line">fn4里在fn5调用后的num 10</span><br><span class="line">全局的num 1</span><br></pre></td></tr></table></figure>
-
-<hr>
-<p>这里在<code>fn5</code>函数内部的<code>num = 100</code>后面加了一个<code>let num = 200</code>，此时由于存在变量提升，<code>num</code>定义提升到函数顶部，但并不会初始化为<code>undefined</code><strong>（这是由于let的变量提升和var的变量提升有差异导致的）</strong>，此时<code>num</code>提升之后，执行<code>num = 100</code>，但是由于仅仅提升了变声声明，这个时候并没有初始化为<code>undefined</code>，因此会报错<code>Uncaught ReferenceError: Cannot access &#39;num&#39; before initialization</code></p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> num = <span class="number">1</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn4</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> num = <span class="number">10</span></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;fn4里在fn5调用前的num &#x27;</span> + num);</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">fn5</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        num = <span class="number">100</span></span><br><span class="line">        <span class="keyword">let</span> num = <span class="number">200</span></span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;fn5里的num &#x27;</span> + num);</span><br><span class="line">    &#125;</span><br><span class="line">    fn5()</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;fn4里在fn5调用后的num &#x27;</span> + num);</span><br><span class="line">&#125;</span><br><span class="line">fn4()</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;全局的num &#x27;</span> + num);</span><br></pre></td></tr></table></figure>
-<p>输出结果:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">fn4里在fn5调用前的num 10</span><br><span class="line">报错: `Uncaught ReferenceError: Cannot access &#x27;num&#x27; before initialization`</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>JavaScript</category>
-      </categories>
-      <tags>
-        <tag>JavaScript</tag>
+        <tag>ES6</tag>
       </tags>
   </entry>
   <entry>
@@ -1330,33 +1286,6 @@
 
 <p>解构参数</p>
 <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn2</span>(<span class="params">...args</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(args);  <span class="comment">// [1, 2, 3, 4, 5, 6]</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> args1 = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line"><span class="keyword">let</span> args2 = [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]</span><br><span class="line">fn2(...args1, ...args2)    <span class="comment">// 参数解构</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// console.log(...[1, 2, 3]);  // 1, 2, 3</span></span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>JavaScript</category>
-      </categories>
-      <tags>
-        <tag>JavaScript</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>js 引用数据类型和值数据类型</title>
-    <url>/2021/05/26/js-%E5%BC%95%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%92%8C%E5%80%BC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</url>
-    <content><![CDATA[<p>引用数据类型：对象(Object)、数组(Array)、函数(Function)、正则(RegExp)、日期(Date)等</p>
-<p>值类型(基本类型)：字符串（String）、数字(Number)、布尔(Boolean)、对空（Null）、未定义（Undefined）、Symbol。</p>
-<p>栈内存中保存了变量标识符和指向堆内存中该对象的指针，堆内存中保存了对象的内容</p>
-<p>值数据类型存放在栈中，而引用数据类型存放在堆中，栈中存放的是对象的引用内存地址</p>
-<p>如果变量引用了同一块内存地址，修改其中一个变量的值，其他变量也会跟着修改</p>
-<span id="more"></span>
-<h3 id="对象"><a href="#对象" class="headerlink" title="对象"></a>对象</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> obj1 = obj2 = &#123; <span class="attr">name</span>: <span class="string">&#x27;jerry&#x27;</span>, <span class="attr">age</span>: <span class="number">2</span> &#125;;</span><br><span class="line">obj2[<span class="string">&#x27;age&#x27;</span>] = <span class="number">10</span>;</span><br><span class="line"><span class="built_in">console</span>.log(obj1, obj2); <span class="comment">// &#123;name: &quot;jerry&quot;, age: 10&#125; &#123;name: &quot;jerry&quot;, age: 10&#125;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> arr1 = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="keyword">let</span> arr2 = arr1;</span><br><span class="line">arr2[<span class="number">0</span>] = <span class="number">999</span>;</span><br><span class="line"><span class="built_in">console</span>.log(arr1, arr2);  <span class="comment">// [999, 2, 3]  [999, 2, 3]</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h3><p>函数在js中是一个对象，函数体是保存在函数对象的属性上的，可以使用valueOf修改函数体</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> f1 = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123; <span class="built_in">console</span>.log(<span class="string">&#x27;function&#x27;</span>); &#125;</span><br><span class="line"><span class="keyword">let</span> f2 = f1</span><br><span class="line">f2.valueOf = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123; <span class="keyword">return</span> <span class="string">&#x27;new funciton&#x27;</span> &#125;</span><br><span class="line"><span class="built_in">console</span>.log(f1.valueOf()); <span class="comment">// new funciton</span></span><br><span class="line"><span class="built_in">console</span>.log(f2.valueOf()); <span class="comment">// new funciton</span></span><br></pre></td></tr></table></figure>
-
-<p>栈内存中包括了变量的标识符和变量的值。</p>
-<p>如下所示，其实是分配了两块地址，修改其中一个变量，另一个变量不会随之修改</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> str1 = str2 = <span class="string">&#x27;hello&#x27;</span>;</span><br><span class="line">str2 = <span class="string">&#x27;world&#x27;</span>;</span><br><span class="line"><span class="built_in">console</span>.log(str1, str2);  <span class="comment">// hello world</span></span><br></pre></td></tr></table></figure>
-]]></content>
       <categories>
         <category>JavaScript</category>
       </categories>
@@ -1417,6 +1346,91 @@
       </tags>
   </entry>
   <entry>
+    <title>js 防抖和节流</title>
+    <url>/2021/06/11/js-%E9%98%B2%E6%8A%96%E5%92%8C%E8%8A%82%E6%B5%81/</url>
+    <content><![CDATA[<p><code>lodash</code>里面有封装好的现成的方法，可以直接拿来用，下面是自己的实现</p>
+<h3 id="防抖函数"><a href="#防抖函数" class="headerlink" title="防抖函数"></a>防抖函数</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* <span class="doctag">@desc   </span>函数防抖      “立即执行版本” 和 “非立即执行版本” 的组合版本</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param  </span>func         需要执行的函数</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param  </span>wait         延迟执行时间（毫秒）</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param  </span>immediate    true表示立即执行 false表示非立即执行 默认false</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">debounce</span>(<span class="params">func, wait, immediate = <span class="literal">false</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> timer;</span><br><span class="line">    <span class="comment">// 这里用到了闭包，timer本来在debounde函数执行完毕的时候就会被销毁</span></span><br><span class="line">    <span class="comment">// 但是下面return的代码中使用了timer，因此不会被销毁，被保留了下来</span></span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> (<span class="params">...args</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (timer) <span class="built_in">clearTimeout</span>(timer);</span><br><span class="line">        <span class="keyword">if</span> (immediate) &#123;</span><br><span class="line">            <span class="keyword">var</span> callNow = !timer;</span><br><span class="line">            timer = <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">                timer = <span class="literal">null</span>;</span><br><span class="line">            &#125;, wait)</span><br><span class="line">            <span class="keyword">if</span> (callNow) func.apply(<span class="built_in">this</span>, args)</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            timer = <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">                func.apply(<span class="built_in">this</span>, args)  <span class="comment">// 这里要修改this指向，否则this指向的不是时间出发对象，而是window</span></span><br><span class="line">            &#125;, wait);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<h3 id="节流函数"><a href="#节流函数" class="headerlink" title="节流函数"></a>节流函数</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* <span class="doctag">@desc  </span>函数节流   “立即执行版本” 和 “非立即执行版本” 的组合版本</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param </span>func      需要执行的函数</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param </span>wait      延迟执行毫秒数</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param </span>immediate true表示立即执行 false表示非立即执行 默认false</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">throttle</span>(<span class="params">func, wait, immediate = <span class="literal">false</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (immediate) &#123;</span><br><span class="line">        <span class="keyword">var</span> previous = <span class="number">0</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">var</span> timeout;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">let</span> args = <span class="built_in">arguments</span>;</span><br><span class="line">        <span class="keyword">if</span> (immediate) &#123;</span><br><span class="line">            <span class="keyword">let</span> now = <span class="built_in">Date</span>.now();</span><br><span class="line">            <span class="keyword">if</span> (now - previous &gt; wait) &#123;</span><br><span class="line">                func.apply(<span class="built_in">this</span>, args);</span><br><span class="line">                previous = now;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (!timeout) &#123;</span><br><span class="line">                timeout = <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">                    timeout = <span class="literal">null</span>;</span><br><span class="line">                    func.apply(<span class="built_in">this</span>, args)</span><br><span class="line">                &#125;, wait)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>JavaScript</category>
+      </categories>
+      <tags>
+        <tag>JavaScript</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>js 作用域链</title>
+    <url>/2021/05/26/js-%E4%BD%9C%E7%94%A8%E5%9F%9F%E9%93%BE/</url>
+    <content><![CDATA[<p>局部变量：在函数中通过var声明的变量。</p>
+<p>全局变量：在函数外通过var声明的变量。</p>
+<p>没有声明就使用的变量，默认为全局变量，不论这个变量在哪被使用。</p>
+<h3 id="局部作用域"><a href="#局部作用域" class="headerlink" title="局部作用域"></a>局部作用域</h3><p>在函数内部定义的变量，为局部变量，局部变量只能在该局部作用域中访问</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn1</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> username = <span class="string">&#x27;jerry&#x27;</span>;</span><br><span class="line">    <span class="built_in">console</span>.log(username);</span><br><span class="line">&#125;</span><br><span class="line">fn1()   <span class="comment">// jerry</span></span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+
+<p>此时在全局访问username，则会报错</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(username);  <span class="comment">// 报错，username未定义</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="全局作用域"><a href="#全局作用域" class="headerlink" title="全局作用域"></a>全局作用域</h3><p>函数内部和外部都可以访问该变量</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> age = <span class="number">12</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn2</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(age);</span><br><span class="line">&#125;</span><br><span class="line">fn2()     <span class="comment">// 12</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(age);  <span class="comment">// 12</span></span><br></pre></td></tr></table></figure>
+
+<p>如果在函数内部没有使用var定义变量，那么 gender = ‘male’;就是个赋值语句，会找到最近的定义的变量进行赋值（注意变量提升），如果都没找到，则为全局变量</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn3</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    gender = <span class="string">&#x27;male&#x27;</span>;</span><br><span class="line">    <span class="built_in">console</span>.log(gender);</span><br><span class="line">&#125;</span><br><span class="line">fn3();</span><br></pre></td></tr></table></figure>
+
+<p>如果上面的函数没有调用，那么在外面使用gender会报错，因为在 <code>fn3()</code> 被第一次调用之前， <code>gender</code>变量是不存在的。<code>fn3()</code> 被调用过之后，gender成为全局变量</p>
+<h3 id="多层函数嵌套"><a href="#多层函数嵌套" class="headerlink" title="多层函数嵌套"></a>多层函数嵌套</h3><p>如果内层函数没有使用var定义变量，则可以看做是赋值语句，会向上层依次找到该变量的定义语句，并赋值给它,如果向上找都没有没找到，则为全局变量</p>
+<p>这里在<code>fn5</code>函数这个作用域中没有找到<code>num</code>，则向上查找，找到<code>fn4</code>作用域中的<code>num</code>，赋值为<code>100</code>，则下面的<code>fn4里在fn5调用后的num</code>是<code>100</code></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> num = <span class="number">1</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn4</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> num = <span class="number">10</span></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;fn4里在fn5调用前的num &#x27;</span> + num);</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">fn5</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        num = <span class="number">100</span></span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;fn5里的num &#x27;</span> + num);</span><br><span class="line">    &#125;</span><br><span class="line">    fn5()</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;fn4里在fn5调用后的num &#x27;</span> + num);</span><br><span class="line">&#125;</span><br><span class="line">fn4()</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;全局的num &#x27;</span> + num);</span><br></pre></td></tr></table></figure>
+<p>输出结果:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">fn4里在fn5调用前的num 10</span><br><span class="line">fn5里的num 100</span><br><span class="line">fn4里在fn5调用后的num 100</span><br><span class="line">全局的num 1</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>这里在<code>fn5</code>函数内部的<code>num = 100</code>后面加了一个<code>var num = 200</code>，此时由于存在变量提升，<code>num</code>定义提升到函数顶部，并初始化为<code>undefined</code>，然后赋值<code>num = 100</code>（这里赋值的是<code>fn5</code>函数内部提升的<code>num</code>），再赋值<code>num = 200</code>，因此<code>fn5里的num</code>输出200，而<code>fn4里在fn5调用后的num</code>输出10</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> num = <span class="number">1</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn4</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> num = <span class="number">10</span></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;fn4里在fn5调用前的num &#x27;</span> + num);</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">fn5</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        num = <span class="number">100</span></span><br><span class="line">        <span class="keyword">var</span> num = <span class="number">200</span></span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;fn5里的num &#x27;</span> + num);</span><br><span class="line">    &#125;</span><br><span class="line">    fn5()</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;fn4里在fn5调用后的num &#x27;</span> + num);</span><br><span class="line">&#125;</span><br><span class="line">fn4()</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;全局的num &#x27;</span> + num);</span><br></pre></td></tr></table></figure>
+<p>输出结果:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">fn4里在fn5调用前的num 10</span><br><span class="line">fn5里的num 200</span><br><span class="line">fn4里在fn5调用后的num 10</span><br><span class="line">全局的num 1</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>这里在<code>fn5</code>函数内部的<code>num = 100</code>后面加了一个<code>let num = 200</code>，此时由于存在变量提升，<code>num</code>定义提升到函数顶部，但并不会初始化为<code>undefined</code><strong>（这是由于let的变量提升和var的变量提升有差异导致的）</strong>，此时<code>num</code>提升之后，执行<code>num = 100</code>，但是由于仅仅提升了变声声明，这个时候并没有初始化为<code>undefined</code>，因此会报错<code>Uncaught ReferenceError: Cannot access &#39;num&#39; before initialization</code></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> num = <span class="number">1</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn4</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> num = <span class="number">10</span></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;fn4里在fn5调用前的num &#x27;</span> + num);</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">fn5</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        num = <span class="number">100</span></span><br><span class="line">        <span class="keyword">let</span> num = <span class="number">200</span></span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;fn5里的num &#x27;</span> + num);</span><br><span class="line">    &#125;</span><br><span class="line">    fn5()</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;fn4里在fn5调用后的num &#x27;</span> + num);</span><br><span class="line">&#125;</span><br><span class="line">fn4()</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;全局的num &#x27;</span> + num);</span><br></pre></td></tr></table></figure>
+<p>输出结果:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">fn4里在fn5调用前的num 10</span><br><span class="line">报错: `Uncaught ReferenceError: Cannot access &#x27;num&#x27; before initialization`</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>JavaScript</category>
+      </categories>
+      <tags>
+        <tag>JavaScript</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>js 引用数据类型和值数据类型</title>
+    <url>/2021/05/26/js-%E5%BC%95%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%92%8C%E5%80%BC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</url>
+    <content><![CDATA[<p>引用数据类型：对象(Object)、数组(Array)、函数(Function)、正则(RegExp)、日期(Date)等</p>
+<p>值类型(基本类型)：字符串（String）、数字(Number)、布尔(Boolean)、对空（Null）、未定义（Undefined）、Symbol。</p>
+<p>栈内存中保存了变量标识符和指向堆内存中该对象的指针，堆内存中保存了对象的内容</p>
+<p>值数据类型存放在栈中，而引用数据类型存放在堆中，栈中存放的是对象的引用内存地址</p>
+<p>如果变量引用了同一块内存地址，修改其中一个变量的值，其他变量也会跟着修改</p>
+<span id="more"></span>
+<h3 id="对象"><a href="#对象" class="headerlink" title="对象"></a>对象</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> obj1 = obj2 = &#123; <span class="attr">name</span>: <span class="string">&#x27;jerry&#x27;</span>, <span class="attr">age</span>: <span class="number">2</span> &#125;;</span><br><span class="line">obj2[<span class="string">&#x27;age&#x27;</span>] = <span class="number">10</span>;</span><br><span class="line"><span class="built_in">console</span>.log(obj1, obj2); <span class="comment">// &#123;name: &quot;jerry&quot;, age: 10&#125; &#123;name: &quot;jerry&quot;, age: 10&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> arr1 = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="keyword">let</span> arr2 = arr1;</span><br><span class="line">arr2[<span class="number">0</span>] = <span class="number">999</span>;</span><br><span class="line"><span class="built_in">console</span>.log(arr1, arr2);  <span class="comment">// [999, 2, 3]  [999, 2, 3]</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h3><p>函数在js中是一个对象，函数体是保存在函数对象的属性上的，可以使用valueOf修改函数体</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> f1 = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123; <span class="built_in">console</span>.log(<span class="string">&#x27;function&#x27;</span>); &#125;</span><br><span class="line"><span class="keyword">let</span> f2 = f1</span><br><span class="line">f2.valueOf = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123; <span class="keyword">return</span> <span class="string">&#x27;new funciton&#x27;</span> &#125;</span><br><span class="line"><span class="built_in">console</span>.log(f1.valueOf()); <span class="comment">// new funciton</span></span><br><span class="line"><span class="built_in">console</span>.log(f2.valueOf()); <span class="comment">// new funciton</span></span><br></pre></td></tr></table></figure>
+
+<p>栈内存中包括了变量的标识符和变量的值。</p>
+<p>如下所示，其实是分配了两块地址，修改其中一个变量，另一个变量不会随之修改</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> str1 = str2 = <span class="string">&#x27;hello&#x27;</span>;</span><br><span class="line">str2 = <span class="string">&#x27;world&#x27;</span>;</span><br><span class="line"><span class="built_in">console</span>.log(str1, str2);  <span class="comment">// hello world</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>JavaScript</category>
+      </categories>
+      <tags>
+        <tag>JavaScript</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>js 箭头函数</title>
     <url>/2021/05/28/js-%E7%AE%AD%E5%A4%B4%E5%87%BD%E6%95%B0/</url>
     <content><![CDATA[<h3 id="箭头函数特性"><a href="#箭头函数特性" class="headerlink" title="箭头函数特性"></a>箭头函数特性</h3><ul>
@@ -1456,17 +1470,35 @@
       </tags>
   </entry>
   <entry>
-    <title>js 防抖和节流</title>
-    <url>/2021/06/11/js-%E9%98%B2%E6%8A%96%E5%92%8C%E8%8A%82%E6%B5%81/</url>
-    <content><![CDATA[<p><code>lodash</code>里面有封装好的现成的方法，可以直接拿来用，下面是自己的实现</p>
-<h3 id="防抖函数"><a href="#防抖函数" class="headerlink" title="防抖函数"></a>防抖函数</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* <span class="doctag">@desc   </span>函数防抖      “立即执行版本” 和 “非立即执行版本” 的组合版本</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param  </span>func         需要执行的函数</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param  </span>wait         延迟执行时间（毫秒）</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param  </span>immediate    true表示立即执行 false表示非立即执行 默认false</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">debounce</span>(<span class="params">func, wait, immediate = <span class="literal">false</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> timer;</span><br><span class="line">    <span class="comment">// 这里用到了闭包，timer本来在debounde函数执行完毕的时候就会被销毁</span></span><br><span class="line">    <span class="comment">// 但是下面return的代码中使用了timer，因此不会被销毁，被保留了下来</span></span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> (<span class="params">...args</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (timer) <span class="built_in">clearTimeout</span>(timer);</span><br><span class="line">        <span class="keyword">if</span> (immediate) &#123;</span><br><span class="line">            <span class="keyword">var</span> callNow = !timer;</span><br><span class="line">            timer = <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">                timer = <span class="literal">null</span>;</span><br><span class="line">            &#125;, wait)</span><br><span class="line">            <span class="keyword">if</span> (callNow) func.apply(<span class="built_in">this</span>, args)</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            timer = <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">                func.apply(<span class="built_in">this</span>, args)  <span class="comment">// 这里要修改this指向，否则this指向的不是时间出发对象，而是window</span></span><br><span class="line">            &#125;, wait);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    <title>xtrabackup备份原理</title>
+    <url>/2017/04/12/xtrabackup%E5%A4%87%E4%BB%BD%E5%8E%9F%E7%90%86/</url>
+    <content><![CDATA[<h3 id="xtrabackup备份原理"><a href="#xtrabackup备份原理" class="headerlink" title="xtrabackup备份原理"></a>xtrabackup备份原理</h3><p>流程图</p>
+<p><img data-src="/images/PXB-backup-procedure.png" alt="PXB-backup-procedure.png"></p>
 <span id="more"></span>
-<h3 id="节流函数"><a href="#节流函数" class="headerlink" title="节流函数"></a>节流函数</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* <span class="doctag">@desc  </span>函数节流   “立即执行版本” 和 “非立即执行版本” 的组合版本</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param </span>func      需要执行的函数</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param </span>wait      延迟执行毫秒数</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param </span>immediate true表示立即执行 false表示非立即执行 默认false</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">throttle</span>(<span class="params">func, wait, immediate = <span class="literal">false</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (immediate) &#123;</span><br><span class="line">        <span class="keyword">var</span> previous = <span class="number">0</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">var</span> timeout;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">let</span> args = <span class="built_in">arguments</span>;</span><br><span class="line">        <span class="keyword">if</span> (immediate) &#123;</span><br><span class="line">            <span class="keyword">let</span> now = <span class="built_in">Date</span>.now();</span><br><span class="line">            <span class="keyword">if</span> (now - previous &gt; wait) &#123;</span><br><span class="line">                func.apply(<span class="built_in">this</span>, args);</span><br><span class="line">                previous = now;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (!timeout) &#123;</span><br><span class="line">                timeout = <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">                    timeout = <span class="literal">null</span>;</span><br><span class="line">                    func.apply(<span class="built_in">this</span>, args)</span><br><span class="line">                &#125;, wait)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+<p><code>xtrabackup</code>是用来备份<code>InnoDB</code>表的，不能备份非<code>InnoDB</code>表，和<code>mysqld server</code>没有交互；</p>
+<p><code>innobackupex</code>脚本用来备份非 <code>InnoDB</code>表，同时会调用<code>xtrabackup</code>命令来备份<code>InnoDB</code>表，还会和<code>mysqld server</code>发送命令进行交互，如加读锁（FTWRL）、获取位点（SHOW SLAVE STATUS）等。</p>
+<p>简单来说，<code>innobackupex</code>在<code>xtrabackup</code>之上做了一层封装。一般情况下，我们是希望能备份<code>MyISAM</code>表的，虽然我们可能自己不用<code>MyISAM</code>表，但是<code>mysql</code>库下的系统表是 MyISAM 的，因此备份基本都通过innobackupex命令进行；另外一个原因是我们可能需要保存位点信息。</p>
+<h4 id="备份过程"><a href="#备份过程" class="headerlink" title="备份过程"></a>备份过程</h4><ol>
+<li>innobackupex 在启动后，会先 fork 一个进程，启动 xtrabackup进程，然后就等待 xtrabackup 备份完 ibd 数据文件；</li>
+<li>xtrabackup 在备份 InnoDB 相关数据时，是有2种线程的，1种是 redo 拷贝线程，负责拷贝 redo 文件，1种是 ibd 拷贝线程，负责拷贝 ibd 文件；redo 拷贝线程只有一个，在 ibd 拷贝线程之前启动，在 ibd 线程结束后结束（并不是马上结束，而是等到非innodb存储引擎表备份完再结束，这里强调的是先后顺序）。</li>
+<li>xtrabackup 进程开始执行后，先启动 redo 拷贝线程，从最新的 checkpoint 点开始顺序拷贝 redo 日志；然后再启动 ibd 数据拷贝线程，在 xtrabackup 拷贝 ibd 过程中，innobackupex 进程一直处于等待状态（等待文件被创建）。</li>
+<li>xtrabackup 拷贝完成idb后，通知 innobackupex（通过创建文件），同时自己进入等待（redo 线程仍然继续拷贝）;</li>
+<li>innobackupex 收到 xtrabackup 通知后，执行FLUSH TABLES WITH READ LOCK (FTWRL)，取得一致性位点，然后开始备份非 InnoDB 文件（包括 frm、MYD、MYI、CSV、opt、par等）。拷贝非 InnoDB 文件过程中，因为数据库处于全局只读状态，如果在业务的主库备份的话，要特别小心，非 InnoDB 表（主要是MyISAM）比较多的话整库只读时间就会比较长，这个影响一定要评估到。</li>
+<li>当 innobackupex 拷贝完所有非 InnoDB 表文件后，通知 xtrabackup（通过删文件） ，同时自己进入等待（等待另一个文件被创建）；xtrabackup 收到 innobackupex 备份完非 InnoDB 通知后，就停止 redo 拷贝线程，然后通知 innobackupex redo log 拷贝完成（通过创建文件）；</li>
+<li>innobackupex 收到 redo 备份完成通知后，就开始解锁，执行 UNLOCK TABLES；</li>
+<li>最后 innobackupex 和 xtrabackup 进程各自完成收尾工作，如资源的释放、写备份元数据信息等，innobackupex 等待 xtrabackup 子进程结束后退出。</li>
+</ol>
+<h4 id="恢复过程"><a href="#恢复过程" class="headerlink" title="恢复过程"></a>恢复过程</h4><p>如果看恢复备份集的日志，会发现和 mysqld 启动时非常相似，其实备份集的恢复就是类似 mysqld crash后，做一次 crash recover。</p>
+<p>恢复的目的是把备份集中的数据恢复到一个一致性位点，所谓一致就是指原数据库某一时间点各引擎数据的状态，比如 MyISAM 中的数据对应的是 15:00 时间点的，InnoDB 中的数据对应的是 15:20 的，这种状态的数据就是不一致的。PXB 备份集对应的一致点，就是备份时FTWRL的时间点，恢复出来的数据，就对应原数据库FTWRL时的状态。</p>
+<p>因为备份时 FTWRL 后，数据库是处于只读的，非 InnoDB 数据是在持有全局读锁情况下拷贝的，所以非 InnoDB 数据本身就对应 FTWRL 时间点；InnoDB 的 ibd 文件拷贝是在 FTWRL 前做的，拷贝出来的不同 ibd 文件最后更新时间点是不一样的，这种状态的 ibd 文件是不能直接用的，但是 redo log 是从备份开始一直持续拷贝的，最后的 redo 日志点是在持有 FTWRL 后取得的，所以最终通过 redo 应用后的 ibd 数据时间点也是和 FTWRL 一致的。</p>
+<p>所以恢复过程只涉及 InnoDB 文件的恢复，非 InnoDB 数据是不动的。备份恢复完成后，就可以把数据文件拷贝到对应的目录，然后通过mysqld来启动了。</p>
+<p>备份过程中产生的事务会被备份出来，提交了的前滚，未提交的回滚，保持数据的一致性；</p>
+]]></content>
       <categories>
-        <category>JavaScript</category>
+        <category>Mysql</category>
       </categories>
       <tags>
-        <tag>JavaScript</tag>
+        <tag>xtrabackup</tag>
       </tags>
   </entry>
   <entry>
@@ -1513,38 +1545,6 @@
       </categories>
       <tags>
         <tag>JavaScript</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>xtrabackup备份原理</title>
-    <url>/2017/04/12/xtrabackup%E5%A4%87%E4%BB%BD%E5%8E%9F%E7%90%86/</url>
-    <content><![CDATA[<h3 id="xtrabackup备份原理"><a href="#xtrabackup备份原理" class="headerlink" title="xtrabackup备份原理"></a>xtrabackup备份原理</h3><p>流程图</p>
-<p><img data-src="/images/PXB-backup-procedure.png" alt="PXB-backup-procedure.png"></p>
-<span id="more"></span>
-<p><code>xtrabackup</code>是用来备份<code>InnoDB</code>表的，不能备份非<code>InnoDB</code>表，和<code>mysqld server</code>没有交互；</p>
-<p><code>innobackupex</code>脚本用来备份非 <code>InnoDB</code>表，同时会调用<code>xtrabackup</code>命令来备份<code>InnoDB</code>表，还会和<code>mysqld server</code>发送命令进行交互，如加读锁（FTWRL）、获取位点（SHOW SLAVE STATUS）等。</p>
-<p>简单来说，<code>innobackupex</code>在<code>xtrabackup</code>之上做了一层封装。一般情况下，我们是希望能备份<code>MyISAM</code>表的，虽然我们可能自己不用<code>MyISAM</code>表，但是<code>mysql</code>库下的系统表是 MyISAM 的，因此备份基本都通过innobackupex命令进行；另外一个原因是我们可能需要保存位点信息。</p>
-<h4 id="备份过程"><a href="#备份过程" class="headerlink" title="备份过程"></a>备份过程</h4><ol>
-<li>innobackupex 在启动后，会先 fork 一个进程，启动 xtrabackup进程，然后就等待 xtrabackup 备份完 ibd 数据文件；</li>
-<li>xtrabackup 在备份 InnoDB 相关数据时，是有2种线程的，1种是 redo 拷贝线程，负责拷贝 redo 文件，1种是 ibd 拷贝线程，负责拷贝 ibd 文件；redo 拷贝线程只有一个，在 ibd 拷贝线程之前启动，在 ibd 线程结束后结束（并不是马上结束，而是等到非innodb存储引擎表备份完再结束，这里强调的是先后顺序）。</li>
-<li>xtrabackup 进程开始执行后，先启动 redo 拷贝线程，从最新的 checkpoint 点开始顺序拷贝 redo 日志；然后再启动 ibd 数据拷贝线程，在 xtrabackup 拷贝 ibd 过程中，innobackupex 进程一直处于等待状态（等待文件被创建）。</li>
-<li>xtrabackup 拷贝完成idb后，通知 innobackupex（通过创建文件），同时自己进入等待（redo 线程仍然继续拷贝）;</li>
-<li>innobackupex 收到 xtrabackup 通知后，执行FLUSH TABLES WITH READ LOCK (FTWRL)，取得一致性位点，然后开始备份非 InnoDB 文件（包括 frm、MYD、MYI、CSV、opt、par等）。拷贝非 InnoDB 文件过程中，因为数据库处于全局只读状态，如果在业务的主库备份的话，要特别小心，非 InnoDB 表（主要是MyISAM）比较多的话整库只读时间就会比较长，这个影响一定要评估到。</li>
-<li>当 innobackupex 拷贝完所有非 InnoDB 表文件后，通知 xtrabackup（通过删文件） ，同时自己进入等待（等待另一个文件被创建）；xtrabackup 收到 innobackupex 备份完非 InnoDB 通知后，就停止 redo 拷贝线程，然后通知 innobackupex redo log 拷贝完成（通过创建文件）；</li>
-<li>innobackupex 收到 redo 备份完成通知后，就开始解锁，执行 UNLOCK TABLES；</li>
-<li>最后 innobackupex 和 xtrabackup 进程各自完成收尾工作，如资源的释放、写备份元数据信息等，innobackupex 等待 xtrabackup 子进程结束后退出。</li>
-</ol>
-<h4 id="恢复过程"><a href="#恢复过程" class="headerlink" title="恢复过程"></a>恢复过程</h4><p>如果看恢复备份集的日志，会发现和 mysqld 启动时非常相似，其实备份集的恢复就是类似 mysqld crash后，做一次 crash recover。</p>
-<p>恢复的目的是把备份集中的数据恢复到一个一致性位点，所谓一致就是指原数据库某一时间点各引擎数据的状态，比如 MyISAM 中的数据对应的是 15:00 时间点的，InnoDB 中的数据对应的是 15:20 的，这种状态的数据就是不一致的。PXB 备份集对应的一致点，就是备份时FTWRL的时间点，恢复出来的数据，就对应原数据库FTWRL时的状态。</p>
-<p>因为备份时 FTWRL 后，数据库是处于只读的，非 InnoDB 数据是在持有全局读锁情况下拷贝的，所以非 InnoDB 数据本身就对应 FTWRL 时间点；InnoDB 的 ibd 文件拷贝是在 FTWRL 前做的，拷贝出来的不同 ibd 文件最后更新时间点是不一样的，这种状态的 ibd 文件是不能直接用的，但是 redo log 是从备份开始一直持续拷贝的，最后的 redo 日志点是在持有 FTWRL 后取得的，所以最终通过 redo 应用后的 ibd 数据时间点也是和 FTWRL 一致的。</p>
-<p>所以恢复过程只涉及 InnoDB 文件的恢复，非 InnoDB 数据是不动的。备份恢复完成后，就可以把数据文件拷贝到对应的目录，然后通过mysqld来启动了。</p>
-<p>备份过程中产生的事务会被备份出来，提交了的前滚，未提交的回滚，保持数据的一致性；</p>
-]]></content>
-      <categories>
-        <category>Mysql</category>
-      </categories>
-      <tags>
-        <tag>xtrabackup</tag>
       </tags>
   </entry>
   <entry>
