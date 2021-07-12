@@ -322,12 +322,11 @@
 </ul>
 <p>浏览器缓存分为强缓存和协商缓存，两者有两个比较明显的区别：</p>
 <ul>
-<li><p>强缓存在资源过期之前，不会向服务器发送网络请求，直接从本地缓存读取资源，响应码为<code>200  (from memory cache)</code>或者 <code>200  (from disk cache)</code>;</p>
-</li>
-<li><p>协商缓存会向服务器发送一次请求，服务器会根据这个请求的<code>Request Headers</code>的一些参数来判断是否命中协商缓存，如果命中，则返回<code>304</code>状态码并带上新的<code>Response Headers</code>通知浏览器从缓存中读取资源;</p>
-<span id="more"></span>
+<li>强缓存在资源过期之前，不会向服务器发送网络请求，直接从本地缓存读取资源，响应码为<code>200  (from memory cache)</code>或者 <code>200  (from disk cache)</code>;</li>
+<li>协商缓存会向服务器发送一次请求，服务器会根据这个请求的<code>Request Headers</code>的一些参数来判断是否命中协商缓存，如果命中，则返回<code>304</code>状态码并带上新的<code>Response Headers</code>通知浏览器从缓存中读取资源;<span id="more"></span></li>
+</ul>
 <h3 id="强缓存"><a href="#强缓存" class="headerlink" title="强缓存"></a>强缓存</h3><p>强缓存是根据返回头中的<code>Expires</code>（http 1.0 规范）或者<code>Cache-Control</code>（http 1.1 规范）两个字段来控制的，都是表示资源的缓存有效时间。</p>
-</li>
+<ul>
 <li><p><code>Expires</code>的值是一个<code>GMT</code>格式的时间，这个时间代表资源的过期时间，在这个时间之前请求该资源，将直接命中强缓存。但是这个时间有个缺点，它是一个绝对时间，如果本地时间被修改，则将会导致缓存失效，所以<code>Expires</code>还是有些缺陷的。</p>
 </li>
 <li><p>为了解决上述问题，http 1.1协议重新给了一个参数<code>Cache-Control</code>，这个值也是设置资源的过期时间，但是这个参数的值是一个相对时间，比如<code>cache-control: max-age=3600</code>，浏览器会根据这个相对时间结合响应头的<code>date</code>参数，得出资源的过期时间是<code>date</code>的时间加上3600秒，需要注意的是，并不是每次请求都进行计算生效时间，只有当当前请求是200，或者304的时候，才会进行计算，否则每次计算，每次都加3600秒，那资源永远都不会过期了。</p>

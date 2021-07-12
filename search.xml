@@ -144,48 +144,6 @@
       </tags>
   </entry>
   <entry>
-    <title>MySQL备份-LOAD DATA</title>
-    <url>/2017/04/18/MySQL%E5%A4%87%E4%BB%BD-LOAD-DATA/</url>
-    <content><![CDATA[<p>注意，使用load data备份恢复方式，表结构必须存在；</p>
-<p>使用<code>select ...into outfile</code>备份数据</p>
-<p>语法格式如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select 语句 into outfile BACKFILE  [OPTIONS]</span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-<p>[OPTIONS]</p>
-<ul>
-<li>fields terminated by ‘字符串’ ： 字符串分割符，默认是制表符’\t’</li>
-<li>fileds escaped by ’字符‘ ： 转义字符，默认是’\‘</li>
-<li>fileds [optionally] enclose by 字符’‘： 字段引用符，负责向字段值两端加上字段引用符。如果使用optionally 选项，则表示字符串类型上添加字段分隔符。</li>
-<li>lines starting by ‘字符串’，每条记录前添加该字段。</li>
-<li>lines terminated by ’字符串‘，每条记录后添加该字符串，默认是换行符 ‘\n’</li>
-</ul>
-<p>例如：</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test.t1 <span class="keyword">into</span> outfile <span class="string">&#x27;/data/mysql/t1_bak&#x27;</span>;</span><br><span class="line">Query OK, <span class="number">3</span> <span class="keyword">rows</span> affected (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure>
-
-<p>结果会生成在<code>/data/mysql/</code>目录下，对应的数据库目录下面。可以直接使用cat命令查看。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# cat /data/mysql/t1_bak</span><br><span class="line">1      张三   12     南京</span><br><span class="line">2      李四   21     北京</span><br><span class="line">3      王五   23     上海</span><br></pre></td></tr></table></figure>
-
-<p>恢复表数据：</p>
-<p>使用<code>load data infile...</code>快速地从一个指定格式的文本文件中读取数据到一个数据库表中。</p>
-<p>语法：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">LOAD DATA INFILE &#x27;data.txt&#x27; INTO TABLE db2.my_table;</span><br></pre></td></tr></table></figure>
-
-<p>例如：</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">delete</span> <span class="keyword">from</span> test.t1;</span><br><span class="line">Query OK, <span class="number">3</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> LOAD DATA INFILE <span class="string">&#x27;/data/mysql/t1_bak&#x27;</span> <span class="keyword">INTO</span> <span class="keyword">TABLE</span> test.t1;</span><br><span class="line">Query OK, <span class="number">3</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line">Records: <span class="number">3</span>  Deleted: <span class="number">0</span>  Skipped: <span class="number">0</span>  Warnings: <span class="number">0</span></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test.t1;</span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------+-----+--------+</span></span><br><span class="line"><span class="operator">|</span> id <span class="operator">|</span> name   <span class="operator">|</span> age <span class="operator">|</span> addr   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------+-----+--------+</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">1</span> <span class="operator">|</span> 张三   <span class="operator">|</span>  <span class="number">12</span> <span class="operator">|</span> 南京   <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">2</span> <span class="operator">|</span> 李四   <span class="operator">|</span>  <span class="number">21</span> <span class="operator">|</span> 北京   <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">3</span> <span class="operator">|</span> 王五   <span class="operator">|</span>  <span class="number">23</span> <span class="operator">|</span> 上海   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------+-----+--------+</span></span><br><span class="line"><span class="number">3</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>注意：如果导出数据的时候后面使用了分隔符，导入的时候不需要加，还是按照上面的方式导；</p>
-</blockquote>
-<p>更复杂的配置就不写了，没什么必要，还增加大脑的负担。等用到的时候，去网上查找具体的参数即可，我们并不擅长记忆这些并不常用的选项。 一句话概括这种逻辑备份的精要：怎么吃我的，怎么给我吐出来。怎么吐出来来，怎么给我装进去。选用了什么样的分割选项，导入数据的时候就需要使用对应的分割选项去导入数据。 结合我自己平时的工作内容与实践，基本上不使用这种方式导出。反而使用mysqldump 更多一点。</p>
-]]></content>
-      <categories>
-        <category>Mysql</category>
-      </categories>
-      <tags>
-        <tag>Mysql</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>MySQL通过二进制日志恢复数据</title>
     <url>/2018/04/10/MySQL%E9%80%9A%E8%BF%87%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%97%A5%E5%BF%97%E6%81%A2%E5%A4%8D%E6%95%B0%E6%8D%AE/</url>
     <content><![CDATA[<h3 id="开启二进制日志"><a href="#开启二进制日志" class="headerlink" title="开启二进制日志"></a>开启二进制日志</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# vim /etc/my.cnf</span><br><span class="line"></span><br><span class="line">[mysqld]</span><br><span class="line">server-id=1</span><br><span class="line">log-bin=mysql-bin</span><br><span class="line">sync-binlog=1</span><br><span class="line">innodb_support_xa=1</span><br><span class="line">binlog_format=statement</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# service mysqld restart</span><br><span class="line">Shutting down MySQL.. SUCCESS!</span><br><span class="line">Starting MySQL.. SUCCESS!</span><br></pre></td></tr></table></figure>
@@ -252,6 +210,91 @@
 </ul>
 <p>上面的例子可能举得不是很恰当，因为我们都知道已经丢失的数据是什么了，但是在实际情况中，我们往往不知道丢失了哪些数据，万一drop掉了整个数据库，难道要一条条去恢复吗，显然不可能，这就需要我们定时做好备份工作，一个完整的备份往往是全量备份+增量备份+二进制日志备份，在进行全量备份的时候，我们需要知道当前二进制日志的<code>position</code>号，这样就可以进行完全恢复；</p>
 <p>在进行<code>mysqldump</code>的时候，我们可以指定一个<code>-F</code>参数，在备份的时候刷新下<code>binlog</code>日志，这样新的操作都会记录到另一个新的<code>binlog</code>文件里面去，便于我们进行数据恢复，而不用费时费力去找要从哪里进行我二进制日志的恢复；</p>
+]]></content>
+      <categories>
+        <category>Mysql</category>
+      </categories>
+      <tags>
+        <tag>Mysql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Mysql-5.7 安装</title>
+    <url>/2017/04/08/Mysql-5-7-%E5%AE%89%E8%A3%85/</url>
+    <content><![CDATA[<h3 id="安装前说明"><a href="#安装前说明" class="headerlink" title="安装前说明"></a>安装前说明</h3><p>如果机器上已经有了mysql或者MariaDB，先卸载再安装；</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# rpm -e mariadb-libs-5.5.41-2.el7_0.x86_64 --nodeps</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+
+<h3 id="创建mysql用户"><a href="#创建mysql用户" class="headerlink" title="创建mysql用户"></a>创建mysql用户</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# useradd mysql</span><br></pre></td></tr></table></figure>
+
+<h3 id="下载软件包并解压授权"><a href="#下载软件包并解压授权" class="headerlink" title="下载软件包并解压授权"></a>下载软件包并解压授权</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# wget https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.21-linux-glibc2.12-x86_64.tar.gz</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# tar -xf mysql-5.7.21-linux-glibc2.12-x86_64.tar.gz -C /usr/local/</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# mv /usr/local/mysql-5.7.21-linux-glibc2.12-x86_64/ /usr/local/mysql</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# chown mysql:mysql /usr/local/mysql/</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建数据目录"><a href="#创建数据目录" class="headerlink" title="创建数据目录"></a>创建数据目录</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# mkdir /data/mysql -p</span><br><span class="line">[root@lyucan ~]# chown -R mysql:mysql /data/mysql/</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="创建my-cnf配置文件"><a href="#创建my-cnf配置文件" class="headerlink" title="创建my.cnf配置文件"></a>创建my.cnf配置文件</h3><p>mysql5.7没有默认的my_default.cnf文件，需要自己手动创建，下面这个是一个简单的模板；</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan mysql]# vim /etc/my.cnf</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[client]</span><br><span class="line">port = 3306</span><br><span class="line">socket = /tmp/mysql.sock</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[mysqld]</span><br><span class="line">character_set_server=utf8</span><br><span class="line">init_connect=&#x27;SET NAMES utf8&#x27;</span><br><span class="line">basedir=/usr/local/mysql</span><br><span class="line">datadir=/data/mysql/</span><br><span class="line">socket=/tmp/mysql.sock</span><br><span class="line">log-error=/usr/local/mysql/mysqld.err</span><br><span class="line">pid-file=/usr/local/mysql/mysqld.pid</span><br><span class="line">#不区分大小写</span><br><span class="line">lower_case_table_names = 1</span><br><span class="line">#</span><br><span class="line">sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION</span><br><span class="line">#</span><br><span class="line">max_connections=5000</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">##修改my.cnf权限</span><br><span class="line">[mysql@lyucan ~]$ chown mysql:mysql /etc/my.cnf</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="初始化数据"><a href="#初始化数据" class="headerlink" title="初始化数据"></a>初始化数据</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan bin]# /usr/local/mysql/bin/mysqld --initialize --user=mysql --basedir=/usr/local/mysql --datadir=/data/mysql</span><br><span class="line"></span><br><span class="line">#这条命令没有输出，但是会创建一个临时的root密码，在上面配置文件定义的/usr/local/mysql/mysqld.err文件中，如下所示，临时密码为 5SEAgHPPqK&lt;u</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# cat /usr/local/mysql/mysqld.err</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">2017-04-08T16:39:16.991943Z 0 [Warning] TIMESTAMP with implicit DEFAULT value is deprecated. Please use --explicit_defaults_for_timestamp server option (see documentation for more details).</span><br><span class="line">2017-04-08T16:39:17.284209Z 0 [Warning] InnoDB: New log files created, LSN=45790</span><br><span class="line">2017-04-08T16:39:17.337845Z 0 [Warning] InnoDB: Creating foreign key constraint system tables.</span><br><span class="line">2017-04-08T16:39:17.395477Z 0 [Warning] No existing UUID has been found, so we assume that this is the first time that this server has been started. Generating a new UUID: 61308035-3b4b-11e8-9bb4-da8255dea6c5.</span><br><span class="line">2017-04-08T16:39:17.396765Z 0 [Warning] Gtid table is not ready to be used. Table &#x27;mysql.gtid_executed&#x27; cannot be opened.</span><br><span class="line">2017-04-08T16:39:17.397767Z 1 [Note] A temporary password is generated for root@localhost: 5SEAgHPPqK&lt;u</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>上面的<code>root@localhost: 5SEAgHPPqK&lt;u</code>需要记住，后面需要用到</p>
+</blockquote>
+<h3 id="启动mysql"><a href="#启动mysql" class="headerlink" title="启动mysql"></a>启动mysql</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan support-files]# cd /usr/local/mysql/support-files/</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@lyucan support-files]# ./mysql.server start</span><br><span class="line">Starting MySQL. SUCCESS!</span><br></pre></td></tr></table></figure>
+
+<h3 id="连接mysql"><a href="#连接mysql" class="headerlink" title="连接mysql"></a>连接mysql</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan support-files]# cd /usr/local/mysql/bin/</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@lyucan bin]# ./mysql -uroot -p</span><br><span class="line">Enter password:                 ##这里的密码就是上面的临时root密码 5SEAgHPPqK&lt;u</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Welcome to the MySQL monitor.  Commands end with ; or \g.</span><br><span class="line">Your MySQL connection id is 3</span><br><span class="line">Server version: 5.7.21</span><br><span class="line"></span><br><span class="line">Copyright (c) 2000, 2017, Oracle and/or its affiliates. All rights reserved.</span><br><span class="line"></span><br><span class="line">Oracle is a registered trademark of Oracle Corporation and/or its</span><br><span class="line">affiliates. Other names may be trademarks of their respective</span><br><span class="line">owners.</span><br><span class="line"></span><br><span class="line">Type &#x27;help;&#x27; or &#x27;\h&#x27; for help. Type &#x27;\c&#x27; to clear the current input statement.</span><br><span class="line"></span><br><span class="line">mysql&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="修改root密码"><a href="#修改root密码" class="headerlink" title="修改root密码"></a>修改root密码</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">set</span> password<span class="operator">=</span>password(<span class="string">&#x27;root123&#x27;</span>);</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected, <span class="number">1</span> warning (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<h3 id="安装后操作"><a href="#安装后操作" class="headerlink" title="安装后操作"></a>安装后操作</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#设置开机自启动；</span><br><span class="line"></span><br><span class="line">[root@lyucan bin]# cp -a /usr/local/mysql/support-files/mysql.server /etc/init.d/mysqld</span><br><span class="line">[root@lyucan bin]# chkconfig --add mysqld</span><br><span class="line">[root@lyucan bin]# chkconfig mysqld on</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#当复制到/etc/init.d/mysqld后，可以使用service mysqld start|stop的方式启停；</span><br><span class="line"></span><br><span class="line">[root@lyucan bin]# service mysqld status</span><br><span class="line">SUCCESS! MySQL running (25732)</span><br><span class="line">[root@lyucan bin]# service mysqld stop</span><br><span class="line">Shutting down MySQL.. SUCCESS!</span><br><span class="line">[root@lyucan bin]# service mysqld start</span><br><span class="line">Starting MySQL. SUCCESS!</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#将mysql工具的命令添加到PATH环境变量里面去，使用的时候就不用使用绝对路径；</span><br><span class="line">[root@lyucan bin]# echo &quot;export PATH=$PATH:/usr/local/mysql/bin&quot; &gt;&gt; /etc/profile</span><br><span class="line">[root@lyucan bin]# source /etc/profile</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建远程连接用户"><a href="#创建远程连接用户" class="headerlink" title="创建远程连接用户"></a>创建远程连接用户</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">grant</span> <span class="keyword">all</span> privileges <span class="keyword">on</span> <span class="operator">*</span>.<span class="operator">*</span> <span class="keyword">to</span> <span class="string">&#x27;lyucan&#x27;</span>@<span class="string">&#x27;%&#x27;</span> identified <span class="keyword">by</span> <span class="string">&#x27;echo123.&#x27;</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected, <span class="number">1</span> warning (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> flush privileges;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<h3 id="远程连接检测"><a href="#远程连接检测" class="headerlink" title="远程连接检测"></a>远程连接检测</h3><p>注意放通或关掉防火墙</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# firewall-cmd --permanent --add-service=mysql</span><br><span class="line">success</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# firewall-cmd --reload</span><br><span class="line">success</span><br></pre></td></tr></table></figure>
+
+<p><img data-src="/images/mysql%E5%AE%89%E8%A3%85.png" alt="mysql安装"></p>
+]]></content>
+      <categories>
+        <category>Mysql</category>
+      </categories>
+      <tags>
+        <tag>Mysql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL备份-LOAD DATA</title>
+    <url>/2017/04/18/MySQL%E5%A4%87%E4%BB%BD-LOAD-DATA/</url>
+    <content><![CDATA[<p>注意，使用load data备份恢复方式，表结构必须存在；</p>
+<p>使用<code>select ...into outfile</code>备份数据</p>
+<p>语法格式如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select 语句 into outfile BACKFILE  [OPTIONS]</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<p>[OPTIONS]</p>
+<ul>
+<li>fields terminated by ‘字符串’ ： 字符串分割符，默认是制表符’\t’</li>
+<li>fileds escaped by ’字符‘ ： 转义字符，默认是’\‘</li>
+<li>fileds [optionally] enclose by 字符’‘： 字段引用符，负责向字段值两端加上字段引用符。如果使用optionally 选项，则表示字符串类型上添加字段分隔符。</li>
+<li>lines starting by ‘字符串’，每条记录前添加该字段。</li>
+<li>lines terminated by ’字符串‘，每条记录后添加该字符串，默认是换行符 ‘\n’</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test.t1 <span class="keyword">into</span> outfile <span class="string">&#x27;/data/mysql/t1_bak&#x27;</span>;</span><br><span class="line">Query OK, <span class="number">3</span> <span class="keyword">rows</span> affected (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure>
+
+<p>结果会生成在<code>/data/mysql/</code>目录下，对应的数据库目录下面。可以直接使用cat命令查看。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# cat /data/mysql/t1_bak</span><br><span class="line">1      张三   12     南京</span><br><span class="line">2      李四   21     北京</span><br><span class="line">3      王五   23     上海</span><br></pre></td></tr></table></figure>
+
+<p>恢复表数据：</p>
+<p>使用<code>load data infile...</code>快速地从一个指定格式的文本文件中读取数据到一个数据库表中。</p>
+<p>语法：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">LOAD DATA INFILE &#x27;data.txt&#x27; INTO TABLE db2.my_table;</span><br></pre></td></tr></table></figure>
+
+<p>例如：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">delete</span> <span class="keyword">from</span> test.t1;</span><br><span class="line">Query OK, <span class="number">3</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> LOAD DATA INFILE <span class="string">&#x27;/data/mysql/t1_bak&#x27;</span> <span class="keyword">INTO</span> <span class="keyword">TABLE</span> test.t1;</span><br><span class="line">Query OK, <span class="number">3</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line">Records: <span class="number">3</span>  Deleted: <span class="number">0</span>  Skipped: <span class="number">0</span>  Warnings: <span class="number">0</span></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test.t1;</span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------+-----+--------+</span></span><br><span class="line"><span class="operator">|</span> id <span class="operator">|</span> name   <span class="operator">|</span> age <span class="operator">|</span> addr   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------+-----+--------+</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">1</span> <span class="operator">|</span> 张三   <span class="operator">|</span>  <span class="number">12</span> <span class="operator">|</span> 南京   <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">2</span> <span class="operator">|</span> 李四   <span class="operator">|</span>  <span class="number">21</span> <span class="operator">|</span> 北京   <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">3</span> <span class="operator">|</span> 王五   <span class="operator">|</span>  <span class="number">23</span> <span class="operator">|</span> 上海   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------+-----+--------+</span></span><br><span class="line"><span class="number">3</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意：如果导出数据的时候后面使用了分隔符，导入的时候不需要加，还是按照上面的方式导；</p>
+</blockquote>
+<p>更复杂的配置就不写了，没什么必要，还增加大脑的负担。等用到的时候，去网上查找具体的参数即可，我们并不擅长记忆这些并不常用的选项。 一句话概括这种逻辑备份的精要：怎么吃我的，怎么给我吐出来。怎么吐出来来，怎么给我装进去。选用了什么样的分割选项，导入数据的时候就需要使用对应的分割选项去导入数据。 结合我自己平时的工作内容与实践，基本上不使用这种方式导出。反而使用mysqldump 更多一点。</p>
 ]]></content>
       <categories>
         <category>Mysql</category>
@@ -417,49 +460,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Mysql-5.7 安装</title>
-    <url>/2017/04/08/Mysql-5-7-%E5%AE%89%E8%A3%85/</url>
-    <content><![CDATA[<h3 id="安装前说明"><a href="#安装前说明" class="headerlink" title="安装前说明"></a>安装前说明</h3><p>如果机器上已经有了mysql或者MariaDB，先卸载再安装；</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# rpm -e mariadb-libs-5.5.41-2.el7_0.x86_64 --nodeps</span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-
-<h3 id="创建mysql用户"><a href="#创建mysql用户" class="headerlink" title="创建mysql用户"></a>创建mysql用户</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# useradd mysql</span><br></pre></td></tr></table></figure>
-
-<h3 id="下载软件包并解压授权"><a href="#下载软件包并解压授权" class="headerlink" title="下载软件包并解压授权"></a>下载软件包并解压授权</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# wget https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.21-linux-glibc2.12-x86_64.tar.gz</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# tar -xf mysql-5.7.21-linux-glibc2.12-x86_64.tar.gz -C /usr/local/</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# mv /usr/local/mysql-5.7.21-linux-glibc2.12-x86_64/ /usr/local/mysql</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# chown mysql:mysql /usr/local/mysql/</span><br></pre></td></tr></table></figure>
-
-<h3 id="创建数据目录"><a href="#创建数据目录" class="headerlink" title="创建数据目录"></a>创建数据目录</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# mkdir /data/mysql -p</span><br><span class="line">[root@lyucan ~]# chown -R mysql:mysql /data/mysql/</span><br></pre></td></tr></table></figure>
-
-
-<h3 id="创建my-cnf配置文件"><a href="#创建my-cnf配置文件" class="headerlink" title="创建my.cnf配置文件"></a>创建my.cnf配置文件</h3><p>mysql5.7没有默认的my_default.cnf文件，需要自己手动创建，下面这个是一个简单的模板；</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan mysql]# vim /etc/my.cnf</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[client]</span><br><span class="line">port = 3306</span><br><span class="line">socket = /tmp/mysql.sock</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[mysqld]</span><br><span class="line">character_set_server=utf8</span><br><span class="line">init_connect=&#x27;SET NAMES utf8&#x27;</span><br><span class="line">basedir=/usr/local/mysql</span><br><span class="line">datadir=/data/mysql/</span><br><span class="line">socket=/tmp/mysql.sock</span><br><span class="line">log-error=/usr/local/mysql/mysqld.err</span><br><span class="line">pid-file=/usr/local/mysql/mysqld.pid</span><br><span class="line">#不区分大小写</span><br><span class="line">lower_case_table_names = 1</span><br><span class="line">#</span><br><span class="line">sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION</span><br><span class="line">#</span><br><span class="line">max_connections=5000</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">##修改my.cnf权限</span><br><span class="line">[mysql@lyucan ~]$ chown mysql:mysql /etc/my.cnf</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h3 id="初始化数据"><a href="#初始化数据" class="headerlink" title="初始化数据"></a>初始化数据</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan bin]# /usr/local/mysql/bin/mysqld --initialize --user=mysql --basedir=/usr/local/mysql --datadir=/data/mysql</span><br><span class="line"></span><br><span class="line">#这条命令没有输出，但是会创建一个临时的root密码，在上面配置文件定义的/usr/local/mysql/mysqld.err文件中，如下所示，临时密码为 5SEAgHPPqK&lt;u</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# cat /usr/local/mysql/mysqld.err</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">2017-04-08T16:39:16.991943Z 0 [Warning] TIMESTAMP with implicit DEFAULT value is deprecated. Please use --explicit_defaults_for_timestamp server option (see documentation for more details).</span><br><span class="line">2017-04-08T16:39:17.284209Z 0 [Warning] InnoDB: New log files created, LSN=45790</span><br><span class="line">2017-04-08T16:39:17.337845Z 0 [Warning] InnoDB: Creating foreign key constraint system tables.</span><br><span class="line">2017-04-08T16:39:17.395477Z 0 [Warning] No existing UUID has been found, so we assume that this is the first time that this server has been started. Generating a new UUID: 61308035-3b4b-11e8-9bb4-da8255dea6c5.</span><br><span class="line">2017-04-08T16:39:17.396765Z 0 [Warning] Gtid table is not ready to be used. Table &#x27;mysql.gtid_executed&#x27; cannot be opened.</span><br><span class="line">2017-04-08T16:39:17.397767Z 1 [Note] A temporary password is generated for root@localhost: 5SEAgHPPqK&lt;u</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>上面的<code>root@localhost: 5SEAgHPPqK&lt;u</code>需要记住，后面需要用到</p>
-</blockquote>
-<h3 id="启动mysql"><a href="#启动mysql" class="headerlink" title="启动mysql"></a>启动mysql</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan support-files]# cd /usr/local/mysql/support-files/</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@lyucan support-files]# ./mysql.server start</span><br><span class="line">Starting MySQL. SUCCESS!</span><br></pre></td></tr></table></figure>
-
-<h3 id="连接mysql"><a href="#连接mysql" class="headerlink" title="连接mysql"></a>连接mysql</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan support-files]# cd /usr/local/mysql/bin/</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@lyucan bin]# ./mysql -uroot -p</span><br><span class="line">Enter password:                 ##这里的密码就是上面的临时root密码 5SEAgHPPqK&lt;u</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Welcome to the MySQL monitor.  Commands end with ; or \g.</span><br><span class="line">Your MySQL connection id is 3</span><br><span class="line">Server version: 5.7.21</span><br><span class="line"></span><br><span class="line">Copyright (c) 2000, 2017, Oracle and/or its affiliates. All rights reserved.</span><br><span class="line"></span><br><span class="line">Oracle is a registered trademark of Oracle Corporation and/or its</span><br><span class="line">affiliates. Other names may be trademarks of their respective</span><br><span class="line">owners.</span><br><span class="line"></span><br><span class="line">Type &#x27;help;&#x27; or &#x27;\h&#x27; for help. Type &#x27;\c&#x27; to clear the current input statement.</span><br><span class="line"></span><br><span class="line">mysql&gt;</span><br></pre></td></tr></table></figure>
-
-<h3 id="修改root密码"><a href="#修改root密码" class="headerlink" title="修改root密码"></a>修改root密码</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">set</span> password<span class="operator">=</span>password(<span class="string">&#x27;root123&#x27;</span>);</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected, <span class="number">1</span> warning (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
-
-<h3 id="安装后操作"><a href="#安装后操作" class="headerlink" title="安装后操作"></a>安装后操作</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#设置开机自启动；</span><br><span class="line"></span><br><span class="line">[root@lyucan bin]# cp -a /usr/local/mysql/support-files/mysql.server /etc/init.d/mysqld</span><br><span class="line">[root@lyucan bin]# chkconfig --add mysqld</span><br><span class="line">[root@lyucan bin]# chkconfig mysqld on</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#当复制到/etc/init.d/mysqld后，可以使用service mysqld start|stop的方式启停；</span><br><span class="line"></span><br><span class="line">[root@lyucan bin]# service mysqld status</span><br><span class="line">SUCCESS! MySQL running (25732)</span><br><span class="line">[root@lyucan bin]# service mysqld stop</span><br><span class="line">Shutting down MySQL.. SUCCESS!</span><br><span class="line">[root@lyucan bin]# service mysqld start</span><br><span class="line">Starting MySQL. SUCCESS!</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#将mysql工具的命令添加到PATH环境变量里面去，使用的时候就不用使用绝对路径；</span><br><span class="line">[root@lyucan bin]# echo &quot;export PATH=$PATH:/usr/local/mysql/bin&quot; &gt;&gt; /etc/profile</span><br><span class="line">[root@lyucan bin]# source /etc/profile</span><br></pre></td></tr></table></figure>
-
-<h3 id="创建远程连接用户"><a href="#创建远程连接用户" class="headerlink" title="创建远程连接用户"></a>创建远程连接用户</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">grant</span> <span class="keyword">all</span> privileges <span class="keyword">on</span> <span class="operator">*</span>.<span class="operator">*</span> <span class="keyword">to</span> <span class="string">&#x27;lyucan&#x27;</span>@<span class="string">&#x27;%&#x27;</span> identified <span class="keyword">by</span> <span class="string">&#x27;echo123.&#x27;</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected, <span class="number">1</span> warning (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> flush privileges;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
-
-<h3 id="远程连接检测"><a href="#远程连接检测" class="headerlink" title="远程连接检测"></a>远程连接检测</h3><p>注意放通或关掉防火墙</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# firewall-cmd --permanent --add-service=mysql</span><br><span class="line">success</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# firewall-cmd --reload</span><br><span class="line">success</span><br></pre></td></tr></table></figure>
-
-<p><img data-src="/images/mysql%E5%AE%89%E8%A3%85.png" alt="mysql安装"></p>
-]]></content>
-      <categories>
-        <category>Mysql</category>
-      </categories>
-      <tags>
-        <tag>Mysql</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Mysql主从复制-异步主从复制</title>
     <url>/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%BC%82%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/</url>
     <content><![CDATA[<h3 id="环境介绍"><a href="#环境介绍" class="headerlink" title="环境介绍"></a>环境介绍</h3><table>
@@ -511,6 +511,47 @@
       </categories>
       <tags>
         <tag>Mysql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Mysql备份</title>
+    <url>/2017/04/18/Mysql%E5%A4%87%E4%BB%BD/</url>
+    <content><![CDATA[<p>备份的方法可以分为：</p>
+<h3 id="Hot-backup-热备"><a href="#Hot-backup-热备" class="headerlink" title="Hot backup(热备)"></a>Hot backup(热备)</h3><p>Hot backup是指在数据库运行中直接备份，对正在运行的数据库没有任何影响</p>
+<h3 id="Cold-backup（冷备）"><a href="#Cold-backup（冷备）" class="headerlink" title="Cold backup（冷备）"></a>Cold backup（冷备）</h3><p>Cold backup是指在数据库停止的情况下进行备份，只需要拷贝相关的数据库物理文件</p>
+<h4 id="优点："><a href="#优点：" class="headerlink" title="优点："></a>优点：</h4><ul>
+<li>备份简单，只要拷贝相关文件即可</li>
+<li>备份文件易于在不用操作系统，不同mysql版本上进行恢复</li>
+<li>恢复简单，速度快，不需要执行sql语句和重建索引</li>
+</ul>
+<h4 id="缺点："><a href="#缺点：" class="headerlink" title="缺点："></a>缺点：</h4><ul>
+<li>冷备的文件通常比逻辑文件大很<span id="more"></span>
+<h3 id="Warm-backup（温备）"><a href="#Warm-backup（温备）" class="headerlink" title="Warm backup（温备）"></a>Warm backup（温备）</h3>Warm backup备份同样是在数据库运行时进行，但是会对当前数据库操作有所影响</li>
+</ul>
+<h3 id="按照备份后文件的内容来分："><a href="#按照备份后文件的内容来分：" class="headerlink" title="按照备份后文件的内容来分："></a>按照备份后文件的内容来分：</h3><ol>
+<li><p>逻辑备份<br>在mysql数据库中，逻辑备份是指备份后的文件内容是可读的，通常是文本文件，内容一般是sql语句，或者是表内的实际数据，如mysqldump和select * into outfile的方法，这类方法的好处是可以看到导出文件的内容，一般适用于数据库的升级，迁移等工作，但是恢复所需要的时间往往较长。</p>
+</li>
+<li><p>裸文件备份<br>裸文件备份是指拷贝数据库的物理文件（xtrabackup），数据库既可以处于运行状态，也可以处于停止状态，这类备份的恢复时间往往比逻辑备份短很多。</p>
+</li>
+</ol>
+<h3 id="按照备份数据库的内容来分："><a href="#按照备份数据库的内容来分：" class="headerlink" title="按照备份数据库的内容来分："></a>按照备份数据库的内容来分：</h3><ol>
+<li><p>完全备份<br>完全备份是指对数据库进行一个完整的备份；</p>
+</li>
+<li><p>增量备份<br>增量备份是指在上次的完全备份基础上，对更新的数据进行备份；</p>
+</li>
+<li><p>日志备份<br>日志备份主要是指对mysql数据库二进制日志的备份，通过对一个完全备份进行二进制日志的重做来完成数据库的point-in-time恢复工作，Mysql数据库复制的原理就是异步实时进行二进制日志重做；</p>
+</li>
+</ol>
+<blockquote>
+<p>mysqldump和load data的备份方式都是逻辑备份<br>xtarbackup是物理备份</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>Mysql</category>
+      </categories>
+      <tags>
+        <tag>mysqldump</tag>
+        <tag>xtarbackup</tag>
       </tags>
   </entry>
   <entry>
@@ -693,93 +734,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Mysql备份</title>
-    <url>/2017/04/18/Mysql%E5%A4%87%E4%BB%BD/</url>
-    <content><![CDATA[<p>备份的方法可以分为：</p>
-<h3 id="Hot-backup-热备"><a href="#Hot-backup-热备" class="headerlink" title="Hot backup(热备)"></a>Hot backup(热备)</h3><p>Hot backup是指在数据库运行中直接备份，对正在运行的数据库没有任何影响</p>
-<h3 id="Cold-backup（冷备）"><a href="#Cold-backup（冷备）" class="headerlink" title="Cold backup（冷备）"></a>Cold backup（冷备）</h3><p>Cold backup是指在数据库停止的情况下进行备份，只需要拷贝相关的数据库物理文件</p>
-<h4 id="优点："><a href="#优点：" class="headerlink" title="优点："></a>优点：</h4><ul>
-<li>备份简单，只要拷贝相关文件即可</li>
-<li>备份文件易于在不用操作系统，不同mysql版本上进行恢复</li>
-<li>恢复简单，速度快，不需要执行sql语句和重建索引</li>
-</ul>
-<h4 id="缺点："><a href="#缺点：" class="headerlink" title="缺点："></a>缺点：</h4><ul>
-<li>冷备的文件通常比逻辑文件大很<span id="more"></span>
-<h3 id="Warm-backup（温备）"><a href="#Warm-backup（温备）" class="headerlink" title="Warm backup（温备）"></a>Warm backup（温备）</h3>Warm backup备份同样是在数据库运行时进行，但是会对当前数据库操作有所影响</li>
-</ul>
-<h3 id="按照备份后文件的内容来分："><a href="#按照备份后文件的内容来分：" class="headerlink" title="按照备份后文件的内容来分："></a>按照备份后文件的内容来分：</h3><ol>
-<li><p>逻辑备份<br>在mysql数据库中，逻辑备份是指备份后的文件内容是可读的，通常是文本文件，内容一般是sql语句，或者是表内的实际数据，如mysqldump和select * into outfile的方法，这类方法的好处是可以看到导出文件的内容，一般适用于数据库的升级，迁移等工作，但是恢复所需要的时间往往较长。</p>
-</li>
-<li><p>裸文件备份<br>裸文件备份是指拷贝数据库的物理文件（xtrabackup），数据库既可以处于运行状态，也可以处于停止状态，这类备份的恢复时间往往比逻辑备份短很多。</p>
-</li>
-</ol>
-<h3 id="按照备份数据库的内容来分："><a href="#按照备份数据库的内容来分：" class="headerlink" title="按照备份数据库的内容来分："></a>按照备份数据库的内容来分：</h3><ol>
-<li><p>完全备份<br>完全备份是指对数据库进行一个完整的备份；</p>
-</li>
-<li><p>增量备份<br>增量备份是指在上次的完全备份基础上，对更新的数据进行备份；</p>
-</li>
-<li><p>日志备份<br>日志备份主要是指对mysql数据库二进制日志的备份，通过对一个完全备份进行二进制日志的重做来完成数据库的point-in-time恢复工作，Mysql数据库复制的原理就是异步实时进行二进制日志重做；</p>
-</li>
-</ol>
-<blockquote>
-<p>mysqldump和load data的备份方式都是逻辑备份<br>xtarbackup是物理备份</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>Mysql</category>
-      </categories>
-      <tags>
-        <tag>mysqldump</tag>
-        <tag>xtarbackup</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Mysql存储引擎类型</title>
-    <url>/2017/04/17/Mysql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%B1%BB%E5%9E%8B/</url>
-    <content><![CDATA[<h3 id="innodb"><a href="#innodb" class="headerlink" title="innodb"></a>innodb</h3><ol>
-<li>支持事务，面向在线事务处理（OLTP）方面的应用，支持行锁（锁粒度），支持外键；</li>
-<li>通过多版本并发控制MVCC来获得高并发性，并且实现了sql标准的4种隔离级别（默认为<code>repeatable read</code>可重复读）；</li>
-<li>提供插入缓冲（insert buffer），二次写（double write），自适应哈斯索引（ahi），预读（read ahead）；</li>
-<li>对表中数据的存储，innodb采用clustered。每张表的存储按逐渐的顺序存放，如果没有显示的为飚定义主键，innodb会为每一张行生成一个6字节的rowid，作为主键</li>
-</ol>
-<ul>
-<li>.ibd innodb数据文件，索引也存在里面，既缓存数据，也缓存索引</li>
-<li>.frm 表结构文件<span id="more"></span>
-<h3 id="myisam"><a href="#myisam" class="headerlink" title="myisam"></a>myisam</h3></li>
-</ul>
-<ol>
-<li>不支持事务，表锁（锁粒度）、全文索引，对OLAP在线分析处理，操作速度快；</li>
-<li>myisam存储引擎表由MYD和MYI组成，MYD存放数据文件，MYI存放索引文件；</li>
-<li>从mysql5.0开始，mysql默认支持256T单表数据</li>
-<li>对于myisam存储引擎表，mysql数据库只缓存其索引文件，数据文件的缓存交由硝唑系统本身来完成，区别在于使用LRU算法缓存数据的大部分数据库；</li>
-</ol>
-<ul>
-<li>select count(*) 查询 myisam快 innodb慢</li>
-<li>myisam有个计数器，直接读取计数器的数据</li>
-<li>innodb需要全表扫描</li>
-</ul>
-<h3 id="memory"><a href="#memory" class="headerlink" title="memory"></a>memory</h3><ol>
-<li>数据放在内存中，数据库重启或掉电，表中的数据将丢失</li>
-<li>只支持表锁，速度非常快，哈希索引，并发性能差</li>
-<li>不支持text和blob列类型，一般用于创建临时表</li>
-</ol>
-<h3 id="archive"><a href="#archive" class="headerlink" title="archive"></a>archive</h3><ol>
-<li>只支持insert和select操作</li>
-<li>使用zlib算法将数据行（row）进行压缩后存储，压缩比可达1:10</li>
-<li>适合存储归档数据，如日志信息</li>
-</ol>
-<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><p>还有其他存储引擎，比如：</p>
-<p>Merge、CSV、Sphinx、infobright、Federated、NDB等</p>
-<p><img data-src="/images/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E6%AF%94%E8%BE%83.png"></p>
-]]></content>
-      <categories>
-        <category>Mysql</category>
-      </categories>
-      <tags>
-        <tag>Mysql</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>bluebird Promise库</title>
     <url>/2021/06/03/bluebird-Promise%E5%BA%93/</url>
     <content><![CDATA[<p>整理一些<code>Promise</code>库<code>bluebird</code>的常用api</p>
@@ -945,6 +899,52 @@
       </categories>
       <tags>
         <tag>JavaScript</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Mysql存储引擎类型</title>
+    <url>/2017/04/17/Mysql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%B1%BB%E5%9E%8B/</url>
+    <content><![CDATA[<h3 id="innodb"><a href="#innodb" class="headerlink" title="innodb"></a>innodb</h3><ol>
+<li>支持事务，面向在线事务处理（OLTP）方面的应用，支持行锁（锁粒度），支持外键；</li>
+<li>通过多版本并发控制MVCC来获得高并发性，并且实现了sql标准的4种隔离级别（默认为<code>repeatable read</code>可重复读）；</li>
+<li>提供插入缓冲（insert buffer），二次写（double write），自适应哈斯索引（ahi），预读（read ahead）；</li>
+<li>对表中数据的存储，innodb采用clustered。每张表的存储按逐渐的顺序存放，如果没有显示的为飚定义主键，innodb会为每一张行生成一个6字节的rowid，作为主键</li>
+</ol>
+<ul>
+<li>.ibd innodb数据文件，索引也存在里面，既缓存数据，也缓存索引</li>
+<li>.frm 表结构文件<span id="more"></span>
+<h3 id="myisam"><a href="#myisam" class="headerlink" title="myisam"></a>myisam</h3></li>
+</ul>
+<ol>
+<li>不支持事务，表锁（锁粒度）、全文索引，对OLAP在线分析处理，操作速度快；</li>
+<li>myisam存储引擎表由MYD和MYI组成，MYD存放数据文件，MYI存放索引文件；</li>
+<li>从mysql5.0开始，mysql默认支持256T单表数据</li>
+<li>对于myisam存储引擎表，mysql数据库只缓存其索引文件，数据文件的缓存交由硝唑系统本身来完成，区别在于使用LRU算法缓存数据的大部分数据库；</li>
+</ol>
+<ul>
+<li>select count(*) 查询 myisam快 innodb慢</li>
+<li>myisam有个计数器，直接读取计数器的数据</li>
+<li>innodb需要全表扫描</li>
+</ul>
+<h3 id="memory"><a href="#memory" class="headerlink" title="memory"></a>memory</h3><ol>
+<li>数据放在内存中，数据库重启或掉电，表中的数据将丢失</li>
+<li>只支持表锁，速度非常快，哈希索引，并发性能差</li>
+<li>不支持text和blob列类型，一般用于创建临时表</li>
+</ol>
+<h3 id="archive"><a href="#archive" class="headerlink" title="archive"></a>archive</h3><ol>
+<li>只支持insert和select操作</li>
+<li>使用zlib算法将数据行（row）进行压缩后存储，压缩比可达1:10</li>
+<li>适合存储归档数据，如日志信息</li>
+</ol>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><p>还有其他存储引擎，比如：</p>
+<p>Merge、CSV、Sphinx、infobright、Federated、NDB等</p>
+<p><img data-src="/images/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E6%AF%94%E8%BE%83.png"></p>
+]]></content>
+      <categories>
+        <category>Mysql</category>
+      </categories>
+      <tags>
+        <tag>Mysql</tag>
       </tags>
   </entry>
   <entry>
@@ -1117,52 +1117,6 @@
       </tags>
   </entry>
   <entry>
-    <title>js this指向问题以及改变this指向的三种方法（call/apply/bind）</title>
-    <url>/2021/06/08/js-this%E6%8C%87%E5%90%91%E9%97%AE%E9%A2%98%E4%BB%A5%E5%8F%8A%E6%94%B9%E5%8F%98this%E6%8C%87%E5%90%91%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%88call-apply-bind%EF%BC%89/</url>
-    <content><![CDATA[<p>在<code>JavaScript</code>中，<code>this</code>指向是一个很令人头疼的一个东西，由于<code>JavaScript</code>可以运行在浏览器环境中，也可以运行在<code>node</code>环境中，两者的<code>this</code>指向有着不同的特性，<code>this</code>指向问题往往会令你的代码朝着意想不到的方向运行，因此<code>JavaScript</code>也提供了几种修改<code>this</code>指向的方法，我们一一说明。</p>
-<h3 id="浏览器环境中this的指向"><a href="#浏览器环境中this的指向" class="headerlink" title="浏览器环境中this的指向"></a>浏览器环境中<code>this</code>的指向</h3><p>下面先介绍在浏览器环境中<code>this</code>的指向问题；</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;zh-CN&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;viewport&quot;</span> <span class="attr">content</span>=<span class="string">&quot;width=device-width, initial-scale=1.0&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>Document<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript">        <span class="comment">// 全局模式下，this指向window</span></span></span><br><span class="line"><span class="javascript">        <span class="built_in">console</span>.log(<span class="built_in">this</span>);</span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript">        <span class="comment">// 全局变量是设置在window上的，因此下面的写法是一样的</span></span></span><br><span class="line"><span class="javascript">        a = <span class="number">10</span>;                     <span class="comment">// window.a = 10</span></span></span><br><span class="line"><span class="javascript">        <span class="built_in">this</span>.b = <span class="number">10</span>;</span></span><br><span class="line"><span class="javascript">        <span class="built_in">console</span>.log(a === b);       <span class="comment">// true</span></span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript">        <span class="function"><span class="keyword">function</span> <span class="title">fn1</span>(<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">            <span class="built_in">console</span>.log(<span class="built_in">this</span>);</span></span><br><span class="line"><span class="javascript">        &#125;</span></span><br><span class="line"><span class="javascript">        fn1();              <span class="comment">// this指向window</span></span></span><br><span class="line"><span class="javascript">        <span class="built_in">window</span>.fn1();       <span class="comment">// this还是指向window</span></span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript">        <span class="keyword">var</span> obj = &#123;</span></span><br><span class="line"><span class="javascript">            <span class="attr">c</span>: <span class="number">10</span>,</span></span><br><span class="line"><span class="javascript">            <span class="attr">fn2</span>: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">                <span class="built_in">console</span>.log(<span class="built_in">this</span>);</span></span><br><span class="line"><span class="javascript">            &#125;</span></span><br><span class="line"><span class="javascript">        &#125;</span></span><br><span class="line"><span class="javascript">        obj.fn2()           <span class="comment">// this指向obj</span></span></span><br><span class="line"><span class="javascript">        <span class="built_in">window</span>.obj.fn2()    <span class="comment">// this指向obj</span></span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript">        <span class="keyword">var</span> obj2 = &#123;</span></span><br><span class="line"><span class="javascript">            <span class="attr">d</span>: <span class="number">10</span>,</span></span><br><span class="line"><span class="javascript">            <span class="attr">e</span>: &#123;</span></span><br><span class="line"><span class="javascript">                <span class="attr">f</span>: <span class="number">10</span>,</span></span><br><span class="line"><span class="javascript">                <span class="attr">fn3</span>: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">                    <span class="built_in">console</span>.log(<span class="built_in">this</span>);</span></span><br><span class="line"><span class="javascript">                &#125;</span></span><br><span class="line"><span class="javascript">            &#125;</span></span><br><span class="line"><span class="javascript">        &#125;</span></span><br><span class="line"><span class="javascript">        <span class="built_in">window</span>.obj2.e.fn3()     <span class="comment">// this指向e</span></span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript">        <span class="keyword">let</span> fn4 = <span class="built_in">window</span>.obj2.e.fn3;</span></span><br><span class="line"><span class="javascript">        fn4()                   <span class="comment">// this指向window</span></span></span><br><span class="line"><span class="javascript">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>总结：</p>
-<ul>
-<li><code>this</code>在定义的时候不会指定，只有在函数调用的时候才会指定</li>
-<li><code>this</code>指向的是在调用函数时最近的调用者<span id="more"></span>
-<h3 id="node环境中this的指向"><a href="#node环境中this的指向" class="headerlink" title="node环境中this的指向"></a><code>node</code>环境中<code>this</code>的指向</h3>而在<code>node</code>环境中，<code>this</code>的指向和浏览器中有着较大出入；<br>在全局打印<code>this</code>，这里的<code>this</code>是一个空对象<code>&#123;&#125;</code><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="built_in">this</span>); <span class="comment">// &#123;&#125;</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-<p>在浏览器环境中，这里的结果是<code>true</code>，但是在<code>node</code>环境中，会报错，因为变量<code>b</code>是定义在this上的，而<code>this</code>指向的是一个空对象，而<code>a === b</code>中的变量<code>b</code>是根本没有定义的</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">a = <span class="number">10</span>;</span><br><span class="line"><span class="built_in">this</span>.b = <span class="number">10</span>;</span><br><span class="line"><span class="built_in">console</span>.log(a === b); <span class="comment">// ReferenceError: b is not defined</span></span><br></pre></td></tr></table></figure>
-
-<p>有趣的是，在函数中，this指向的又不是空对象，而是<code>global</code>对象，指向函数<code>fn1</code>的调用者<code>global</code></p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"> <span class="function"><span class="keyword">function</span> <span class="title">fn1</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">this</span>);</span><br><span class="line">&#125;</span><br><span class="line">fn1(); <span class="comment">// Object [global] &#123;...&#125;</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">    <span class="attr">c</span>: <span class="number">10</span>,</span><br><span class="line">    <span class="attr">fn2</span>: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="built_in">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">obj.fn2() <span class="comment">// &#123; c: 10, fn2: [Function: fn2] &#125; =&gt; 指向obj</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> obj2 = &#123;</span><br><span class="line">    <span class="attr">d</span>: <span class="number">10</span>,</span><br><span class="line">    <span class="attr">e</span>: &#123;</span><br><span class="line">        <span class="attr">f</span>: <span class="number">10</span>,</span><br><span class="line">        <span class="attr">fn3</span>: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="built_in">this</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">obj2.e.fn3() <span class="comment">// &#123; f: 10, fn3: [Function: fn3] &#125; =&gt; 指向e</span></span><br></pre></td></tr></table></figure>
-<p>总结：</p>
-<ul>
-<li><code>node</code>环境中直接打印的<code>this</code>指向空对象，浏览器环境直接打印<code>this</code>指向<code>window</code></li>
-<li><code>this</code>指向和浏览器环境中是一样的，只是区别在于，浏览器环境全局是<code>window</code>，而<code>node</code>环境全局是<code>global</code></li>
-</ul>
-<h3 id="改变this指向的三种方法；"><a href="#改变this指向的三种方法；" class="headerlink" title="改变this指向的三种方法；"></a>改变<code>this</code>指向的三种方法；</h3><h4 id="call"><a href="#call" class="headerlink" title="call"></a>call</h4><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fun1</span>(<span class="params">a, b, c</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">this</span>);</span><br><span class="line">    <span class="built_in">console</span>.log(a + b + c);</span><br><span class="line">&#125;</span><br><span class="line">obj = &#123; <span class="attr">name</span>: <span class="string">&#x27;jerry&#x27;</span>, <span class="attr">age</span>: <span class="number">18</span> &#125;;</span><br><span class="line"></span><br><span class="line">fun1() <span class="comment">// 这里函数里的this指向window对象</span></span><br><span class="line"></span><br><span class="line">fun1.call(obj, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>); <span class="comment">// 这里函数中的this指向obj，而不是fun1</span></span><br></pre></td></tr></table></figure>
-<h4 id="apply"><a href="#apply" class="headerlink" title="apply"></a>apply</h4><p><code>apply</code>和<code>call</code>的区别是<code>apply</code>传递的参数需要使用数组，而<code>call</code>直接传就行了</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"> <span class="function"><span class="keyword">function</span> <span class="title">fun2</span>(<span class="params">a, b, c</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">this</span>);</span><br><span class="line">    <span class="built_in">console</span>.log(a + b + c);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fun2.apply(obj, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br></pre></td></tr></table></figure>
-<h4 id="bind"><a href="#bind" class="headerlink" title="bind"></a>bind</h4><p><code>bind</code>区别是<code>bind</code>只会改变<code>this</code>指向，并不会执行函数，而<code>call</code>和<code>apply</code>不仅改变<code>this</code>指向，并且会执行函数</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"> <span class="function"><span class="keyword">function</span> <span class="title">fun3</span>(<span class="params">a, b, c</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">this</span>);</span><br><span class="line">    <span class="built_in">console</span>.log(a + b + c);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fun3.bind(obj, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>); <span class="comment">// 并不会执行fun3</span></span><br></pre></td></tr></table></figure>
-
-<p>需要特别注意的是，bind方法并不会直接去更改函数的this指向，而是返回一个新的修改了this指向的函数，如果要调用，则需要使用其他变量接收或者直接调用</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"> <span class="function"><span class="keyword">function</span> <span class="title">fun3</span>(<span class="params">a, b, c</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">this</span>);</span><br><span class="line">    <span class="built_in">console</span>.log(a + b + c);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fun3.bind(obj, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>); <span class="comment">// 并不会执行fun3</span></span><br><span class="line"></span><br><span class="line">fun3() <span class="comment">// 这里的this指向并没有发生改变</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果想要调用，用变量接收</span></span><br><span class="line"><span class="keyword">let</span> newFun3 = fun3.bind(obj, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);</span><br><span class="line">newFun3()</span><br><span class="line"></span><br><span class="line"><span class="comment">// 或者直接调用</span></span><br><span class="line">fun3.bind(obj, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)()</span><br></pre></td></tr></table></figure>
-
-<h3 id="一个bind方法的小例子"><a href="#一个bind方法的小例子" class="headerlink" title="一个bind方法的小例子"></a>一个bind方法的小例子</h3><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;zh-CN&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;viewport&quot;</span> <span class="attr">content</span>=<span class="string">&quot;width=device-width, initial-scale=1.0&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>Document<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">button</span>&gt;</span>获取验证码<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript">        <span class="comment">// 注意这里，如果不加bind(this)，那么定时器里面的this指向的是window</span></span></span><br><span class="line"><span class="javascript">        <span class="comment">// 这里加了bind(this)，那么定时器里面的this就指向了btn事件源，从而可以使用this来操作btn</span></span></span><br><span class="line"><span class="javascript">        <span class="keyword">let</span> btn = <span class="built_in">document</span>.querySelector(<span class="string">&#x27;button&#x27;</span>);</span></span><br><span class="line"><span class="javascript">        btn.onclick = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">            <span class="keyword">let</span> time = <span class="number">10</span>;</span></span><br><span class="line"><span class="javascript">            <span class="built_in">this</span>.disabled = <span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">            <span class="built_in">this</span>.innerText = <span class="string">`重新获取(<span class="subst">$&#123;time&#125;</span>)`</span></span></span><br><span class="line"><span class="javascript">            <span class="built_in">this</span>.timer = <span class="built_in">setInterval</span>(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">                time -= <span class="number">1</span>;</span></span><br><span class="line"><span class="javascript">                <span class="built_in">this</span>.innerText = <span class="string">`重新获取(<span class="subst">$&#123;time&#125;</span>)`</span></span></span><br><span class="line"><span class="javascript">                <span class="keyword">if</span> (time == <span class="number">0</span>) &#123;</span></span><br><span class="line"><span class="javascript">                    <span class="built_in">this</span>.disabled = <span class="literal">false</span>;</span></span><br><span class="line"><span class="javascript">                    <span class="built_in">this</span>.innerText = <span class="string">`获取验证码`</span></span></span><br><span class="line"><span class="javascript">                    <span class="built_in">clearInterval</span>(<span class="built_in">this</span>.timer)</span></span><br><span class="line"><span class="javascript">                &#125;</span></span><br><span class="line"><span class="javascript">            &#125;.bind(<span class="built_in">this</span>), <span class="number">1000</span>)</span></span><br><span class="line"><span class="javascript">        &#125;</span></span><br><span class="line"><span class="javascript">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p><img data-src="/images/bind.gif"></p>
-]]></content>
-      <categories>
-        <category>JavaScript</category>
-      </categories>
-      <tags>
-        <tag>JavaScript</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>js 事件循环（event loop）、宏任务、微任务</title>
     <url>/2021/07/07/js-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%EF%BC%88event-loop%EF%BC%89%E3%80%81%E5%AE%8F%E4%BB%BB%E5%8A%A1%E3%80%81%E5%BE%AE%E4%BB%BB%E5%8A%A1/</url>
     <content><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>Google工程师<code>Jake Archibald</code>写了一篇关于事件循环以及宏任务微任务的文章，非常经典，本文的例子都来源于改文章，有兴趣的可以去浏览原文<a href="https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/?utm_source=html5weekly">Tasks, microtasks, queues and schedules</a></p>
@@ -1294,6 +1248,52 @@
       </tags>
   </entry>
   <entry>
+    <title>js this指向问题以及改变this指向的三种方法（call/apply/bind）</title>
+    <url>/2021/06/08/js-this%E6%8C%87%E5%90%91%E9%97%AE%E9%A2%98%E4%BB%A5%E5%8F%8A%E6%94%B9%E5%8F%98this%E6%8C%87%E5%90%91%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%88call-apply-bind%EF%BC%89/</url>
+    <content><![CDATA[<p>在<code>JavaScript</code>中，<code>this</code>指向是一个很令人头疼的一个东西，由于<code>JavaScript</code>可以运行在浏览器环境中，也可以运行在<code>node</code>环境中，两者的<code>this</code>指向有着不同的特性，<code>this</code>指向问题往往会令你的代码朝着意想不到的方向运行，因此<code>JavaScript</code>也提供了几种修改<code>this</code>指向的方法，我们一一说明。</p>
+<h3 id="浏览器环境中this的指向"><a href="#浏览器环境中this的指向" class="headerlink" title="浏览器环境中this的指向"></a>浏览器环境中<code>this</code>的指向</h3><p>下面先介绍在浏览器环境中<code>this</code>的指向问题；</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;zh-CN&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;viewport&quot;</span> <span class="attr">content</span>=<span class="string">&quot;width=device-width, initial-scale=1.0&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>Document<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript">        <span class="comment">// 全局模式下，this指向window</span></span></span><br><span class="line"><span class="javascript">        <span class="built_in">console</span>.log(<span class="built_in">this</span>);</span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript">        <span class="comment">// 全局变量是设置在window上的，因此下面的写法是一样的</span></span></span><br><span class="line"><span class="javascript">        a = <span class="number">10</span>;                     <span class="comment">// window.a = 10</span></span></span><br><span class="line"><span class="javascript">        <span class="built_in">this</span>.b = <span class="number">10</span>;</span></span><br><span class="line"><span class="javascript">        <span class="built_in">console</span>.log(a === b);       <span class="comment">// true</span></span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript">        <span class="function"><span class="keyword">function</span> <span class="title">fn1</span>(<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">            <span class="built_in">console</span>.log(<span class="built_in">this</span>);</span></span><br><span class="line"><span class="javascript">        &#125;</span></span><br><span class="line"><span class="javascript">        fn1();              <span class="comment">// this指向window</span></span></span><br><span class="line"><span class="javascript">        <span class="built_in">window</span>.fn1();       <span class="comment">// this还是指向window</span></span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript">        <span class="keyword">var</span> obj = &#123;</span></span><br><span class="line"><span class="javascript">            <span class="attr">c</span>: <span class="number">10</span>,</span></span><br><span class="line"><span class="javascript">            <span class="attr">fn2</span>: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">                <span class="built_in">console</span>.log(<span class="built_in">this</span>);</span></span><br><span class="line"><span class="javascript">            &#125;</span></span><br><span class="line"><span class="javascript">        &#125;</span></span><br><span class="line"><span class="javascript">        obj.fn2()           <span class="comment">// this指向obj</span></span></span><br><span class="line"><span class="javascript">        <span class="built_in">window</span>.obj.fn2()    <span class="comment">// this指向obj</span></span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript">        <span class="keyword">var</span> obj2 = &#123;</span></span><br><span class="line"><span class="javascript">            <span class="attr">d</span>: <span class="number">10</span>,</span></span><br><span class="line"><span class="javascript">            <span class="attr">e</span>: &#123;</span></span><br><span class="line"><span class="javascript">                <span class="attr">f</span>: <span class="number">10</span>,</span></span><br><span class="line"><span class="javascript">                <span class="attr">fn3</span>: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">                    <span class="built_in">console</span>.log(<span class="built_in">this</span>);</span></span><br><span class="line"><span class="javascript">                &#125;</span></span><br><span class="line"><span class="javascript">            &#125;</span></span><br><span class="line"><span class="javascript">        &#125;</span></span><br><span class="line"><span class="javascript">        <span class="built_in">window</span>.obj2.e.fn3()     <span class="comment">// this指向e</span></span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript">        <span class="keyword">let</span> fn4 = <span class="built_in">window</span>.obj2.e.fn3;</span></span><br><span class="line"><span class="javascript">        fn4()                   <span class="comment">// this指向window</span></span></span><br><span class="line"><span class="javascript">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>总结：</p>
+<ul>
+<li><code>this</code>在定义的时候不会指定，只有在函数调用的时候才会指定</li>
+<li><code>this</code>指向的是在调用函数时最近的调用者<span id="more"></span>
+<h3 id="node环境中this的指向"><a href="#node环境中this的指向" class="headerlink" title="node环境中this的指向"></a><code>node</code>环境中<code>this</code>的指向</h3>而在<code>node</code>环境中，<code>this</code>的指向和浏览器中有着较大出入；<br>在全局打印<code>this</code>，这里的<code>this</code>是一个空对象<code>&#123;&#125;</code><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="built_in">this</span>); <span class="comment">// &#123;&#125;</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>在浏览器环境中，这里的结果是<code>true</code>，但是在<code>node</code>环境中，会报错，因为变量<code>b</code>是定义在this上的，而<code>this</code>指向的是一个空对象，而<code>a === b</code>中的变量<code>b</code>是根本没有定义的</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">a = <span class="number">10</span>;</span><br><span class="line"><span class="built_in">this</span>.b = <span class="number">10</span>;</span><br><span class="line"><span class="built_in">console</span>.log(a === b); <span class="comment">// ReferenceError: b is not defined</span></span><br></pre></td></tr></table></figure>
+
+<p>有趣的是，在函数中，this指向的又不是空对象，而是<code>global</code>对象，指向函数<code>fn1</code>的调用者<code>global</code></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"> <span class="function"><span class="keyword">function</span> <span class="title">fn1</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">this</span>);</span><br><span class="line">&#125;</span><br><span class="line">fn1(); <span class="comment">// Object [global] &#123;...&#125;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">    <span class="attr">c</span>: <span class="number">10</span>,</span><br><span class="line">    <span class="attr">fn2</span>: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="built_in">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">obj.fn2() <span class="comment">// &#123; c: 10, fn2: [Function: fn2] &#125; =&gt; 指向obj</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> obj2 = &#123;</span><br><span class="line">    <span class="attr">d</span>: <span class="number">10</span>,</span><br><span class="line">    <span class="attr">e</span>: &#123;</span><br><span class="line">        <span class="attr">f</span>: <span class="number">10</span>,</span><br><span class="line">        <span class="attr">fn3</span>: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="built_in">this</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">obj2.e.fn3() <span class="comment">// &#123; f: 10, fn3: [Function: fn3] &#125; =&gt; 指向e</span></span><br></pre></td></tr></table></figure>
+<p>总结：</p>
+<ul>
+<li><code>node</code>环境中直接打印的<code>this</code>指向空对象，浏览器环境直接打印<code>this</code>指向<code>window</code></li>
+<li><code>this</code>指向和浏览器环境中是一样的，只是区别在于，浏览器环境全局是<code>window</code>，而<code>node</code>环境全局是<code>global</code></li>
+</ul>
+<h3 id="改变this指向的三种方法；"><a href="#改变this指向的三种方法；" class="headerlink" title="改变this指向的三种方法；"></a>改变<code>this</code>指向的三种方法；</h3><h4 id="call"><a href="#call" class="headerlink" title="call"></a>call</h4><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fun1</span>(<span class="params">a, b, c</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">this</span>);</span><br><span class="line">    <span class="built_in">console</span>.log(a + b + c);</span><br><span class="line">&#125;</span><br><span class="line">obj = &#123; <span class="attr">name</span>: <span class="string">&#x27;jerry&#x27;</span>, <span class="attr">age</span>: <span class="number">18</span> &#125;;</span><br><span class="line"></span><br><span class="line">fun1() <span class="comment">// 这里函数里的this指向window对象</span></span><br><span class="line"></span><br><span class="line">fun1.call(obj, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>); <span class="comment">// 这里函数中的this指向obj，而不是fun1</span></span><br></pre></td></tr></table></figure>
+<h4 id="apply"><a href="#apply" class="headerlink" title="apply"></a>apply</h4><p><code>apply</code>和<code>call</code>的区别是<code>apply</code>传递的参数需要使用数组，而<code>call</code>直接传就行了</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"> <span class="function"><span class="keyword">function</span> <span class="title">fun2</span>(<span class="params">a, b, c</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">this</span>);</span><br><span class="line">    <span class="built_in">console</span>.log(a + b + c);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fun2.apply(obj, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br></pre></td></tr></table></figure>
+<h4 id="bind"><a href="#bind" class="headerlink" title="bind"></a>bind</h4><p><code>bind</code>区别是<code>bind</code>只会改变<code>this</code>指向，并不会执行函数，而<code>call</code>和<code>apply</code>不仅改变<code>this</code>指向，并且会执行函数</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"> <span class="function"><span class="keyword">function</span> <span class="title">fun3</span>(<span class="params">a, b, c</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">this</span>);</span><br><span class="line">    <span class="built_in">console</span>.log(a + b + c);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fun3.bind(obj, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>); <span class="comment">// 并不会执行fun3</span></span><br></pre></td></tr></table></figure>
+
+<p>需要特别注意的是，bind方法并不会直接去更改函数的this指向，而是返回一个新的修改了this指向的函数，如果要调用，则需要使用其他变量接收或者直接调用</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"> <span class="function"><span class="keyword">function</span> <span class="title">fun3</span>(<span class="params">a, b, c</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">this</span>);</span><br><span class="line">    <span class="built_in">console</span>.log(a + b + c);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fun3.bind(obj, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>); <span class="comment">// 并不会执行fun3</span></span><br><span class="line"></span><br><span class="line">fun3() <span class="comment">// 这里的this指向并没有发生改变</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果想要调用，用变量接收</span></span><br><span class="line"><span class="keyword">let</span> newFun3 = fun3.bind(obj, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);</span><br><span class="line">newFun3()</span><br><span class="line"></span><br><span class="line"><span class="comment">// 或者直接调用</span></span><br><span class="line">fun3.bind(obj, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)()</span><br></pre></td></tr></table></figure>
+
+<h3 id="一个bind方法的小例子"><a href="#一个bind方法的小例子" class="headerlink" title="一个bind方法的小例子"></a>一个bind方法的小例子</h3><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;zh-CN&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;viewport&quot;</span> <span class="attr">content</span>=<span class="string">&quot;width=device-width, initial-scale=1.0&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>Document<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">button</span>&gt;</span>获取验证码<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript">        <span class="comment">// 注意这里，如果不加bind(this)，那么定时器里面的this指向的是window</span></span></span><br><span class="line"><span class="javascript">        <span class="comment">// 这里加了bind(this)，那么定时器里面的this就指向了btn事件源，从而可以使用this来操作btn</span></span></span><br><span class="line"><span class="javascript">        <span class="keyword">let</span> btn = <span class="built_in">document</span>.querySelector(<span class="string">&#x27;button&#x27;</span>);</span></span><br><span class="line"><span class="javascript">        btn.onclick = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">            <span class="keyword">let</span> time = <span class="number">10</span>;</span></span><br><span class="line"><span class="javascript">            <span class="built_in">this</span>.disabled = <span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">            <span class="built_in">this</span>.innerText = <span class="string">`重新获取(<span class="subst">$&#123;time&#125;</span>)`</span></span></span><br><span class="line"><span class="javascript">            <span class="built_in">this</span>.timer = <span class="built_in">setInterval</span>(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">                time -= <span class="number">1</span>;</span></span><br><span class="line"><span class="javascript">                <span class="built_in">this</span>.innerText = <span class="string">`重新获取(<span class="subst">$&#123;time&#125;</span>)`</span></span></span><br><span class="line"><span class="javascript">                <span class="keyword">if</span> (time == <span class="number">0</span>) &#123;</span></span><br><span class="line"><span class="javascript">                    <span class="built_in">this</span>.disabled = <span class="literal">false</span>;</span></span><br><span class="line"><span class="javascript">                    <span class="built_in">this</span>.innerText = <span class="string">`获取验证码`</span></span></span><br><span class="line"><span class="javascript">                    <span class="built_in">clearInterval</span>(<span class="built_in">this</span>.timer)</span></span><br><span class="line"><span class="javascript">                &#125;</span></span><br><span class="line"><span class="javascript">            &#125;.bind(<span class="built_in">this</span>), <span class="number">1000</span>)</span></span><br><span class="line"><span class="javascript">        &#125;</span></span><br><span class="line"><span class="javascript">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><img data-src="/images/bind.gif"></p>
+]]></content>
+      <categories>
+        <category>JavaScript</category>
+      </categories>
+      <tags>
+        <tag>JavaScript</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>js 作用域链</title>
     <url>/2021/05/26/js-%E4%BD%9C%E7%94%A8%E5%9F%9F%E9%93%BE/</url>
     <content><![CDATA[<p>局部变量：在函数中通过var声明的变量。</p>
@@ -1390,33 +1390,6 @@
       </tags>
   </entry>
   <entry>
-    <title>js 引用数据类型和值数据类型</title>
-    <url>/2021/05/26/js-%E5%BC%95%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%92%8C%E5%80%BC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</url>
-    <content><![CDATA[<p>引用数据类型：对象(Object)、数组(Array)、函数(Function)、正则(RegExp)、日期(Date)等</p>
-<p>值类型(基本类型)：字符串（String）、数字(Number)、布尔(Boolean)、对空（Null）、未定义（Undefined）、Symbol。</p>
-<p>栈内存中保存了变量标识符和指向堆内存中该对象的指针，堆内存中保存了对象的内容</p>
-<p>值数据类型存放在栈中，而引用数据类型存放在堆中，栈中存放的是对象的引用内存地址</p>
-<p>如果变量引用了同一块内存地址，修改其中一个变量的值，其他变量也会跟着修改</p>
-<span id="more"></span>
-<h3 id="对象"><a href="#对象" class="headerlink" title="对象"></a>对象</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> obj1 = obj2 = &#123; <span class="attr">name</span>: <span class="string">&#x27;jerry&#x27;</span>, <span class="attr">age</span>: <span class="number">2</span> &#125;;</span><br><span class="line">obj2[<span class="string">&#x27;age&#x27;</span>] = <span class="number">10</span>;</span><br><span class="line"><span class="built_in">console</span>.log(obj1, obj2); <span class="comment">// &#123;name: &quot;jerry&quot;, age: 10&#125; &#123;name: &quot;jerry&quot;, age: 10&#125;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> arr1 = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="keyword">let</span> arr2 = arr1;</span><br><span class="line">arr2[<span class="number">0</span>] = <span class="number">999</span>;</span><br><span class="line"><span class="built_in">console</span>.log(arr1, arr2);  <span class="comment">// [999, 2, 3]  [999, 2, 3]</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h3><p>函数在js中是一个对象，函数体是保存在函数对象的属性上的，可以使用valueOf修改函数体</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> f1 = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123; <span class="built_in">console</span>.log(<span class="string">&#x27;function&#x27;</span>); &#125;</span><br><span class="line"><span class="keyword">let</span> f2 = f1</span><br><span class="line">f2.valueOf = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123; <span class="keyword">return</span> <span class="string">&#x27;new funciton&#x27;</span> &#125;</span><br><span class="line"><span class="built_in">console</span>.log(f1.valueOf()); <span class="comment">// new funciton</span></span><br><span class="line"><span class="built_in">console</span>.log(f2.valueOf()); <span class="comment">// new funciton</span></span><br></pre></td></tr></table></figure>
-
-<p>栈内存中包括了变量的标识符和变量的值。</p>
-<p>如下所示，其实是分配了两块地址，修改其中一个变量，另一个变量不会随之修改</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> str1 = str2 = <span class="string">&#x27;hello&#x27;</span>;</span><br><span class="line">str2 = <span class="string">&#x27;world&#x27;</span>;</span><br><span class="line"><span class="built_in">console</span>.log(str1, str2);  <span class="comment">// hello world</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>JavaScript</category>
-      </categories>
-      <tags>
-        <tag>JavaScript</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>js 箭头函数</title>
     <url>/2021/05/28/js-%E7%AE%AD%E5%A4%B4%E5%87%BD%E6%95%B0/</url>
     <content><![CDATA[<h3 id="箭头函数特性"><a href="#箭头函数特性" class="headerlink" title="箭头函数特性"></a>箭头函数特性</h3><ul>
@@ -1456,6 +1429,79 @@
       </tags>
   </entry>
   <entry>
+    <title>js 引用数据类型和值数据类型</title>
+    <url>/2021/05/26/js-%E5%BC%95%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%92%8C%E5%80%BC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</url>
+    <content><![CDATA[<p>引用数据类型：对象(Object)、数组(Array)、函数(Function)、正则(RegExp)、日期(Date)等</p>
+<p>值类型(基本类型)：字符串（String）、数字(Number)、布尔(Boolean)、对空（Null）、未定义（Undefined）、Symbol。</p>
+<p>栈内存中保存了变量标识符和指向堆内存中该对象的指针，堆内存中保存了对象的内容</p>
+<p>值数据类型存放在栈中，而引用数据类型存放在堆中，栈中存放的是对象的引用内存地址</p>
+<p>如果变量引用了同一块内存地址，修改其中一个变量的值，其他变量也会跟着修改</p>
+<span id="more"></span>
+<h3 id="对象"><a href="#对象" class="headerlink" title="对象"></a>对象</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> obj1 = obj2 = &#123; <span class="attr">name</span>: <span class="string">&#x27;jerry&#x27;</span>, <span class="attr">age</span>: <span class="number">2</span> &#125;;</span><br><span class="line">obj2[<span class="string">&#x27;age&#x27;</span>] = <span class="number">10</span>;</span><br><span class="line"><span class="built_in">console</span>.log(obj1, obj2); <span class="comment">// &#123;name: &quot;jerry&quot;, age: 10&#125; &#123;name: &quot;jerry&quot;, age: 10&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> arr1 = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="keyword">let</span> arr2 = arr1;</span><br><span class="line">arr2[<span class="number">0</span>] = <span class="number">999</span>;</span><br><span class="line"><span class="built_in">console</span>.log(arr1, arr2);  <span class="comment">// [999, 2, 3]  [999, 2, 3]</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h3><p>函数在js中是一个对象，函数体是保存在函数对象的属性上的，可以使用valueOf修改函数体</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> f1 = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123; <span class="built_in">console</span>.log(<span class="string">&#x27;function&#x27;</span>); &#125;</span><br><span class="line"><span class="keyword">let</span> f2 = f1</span><br><span class="line">f2.valueOf = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123; <span class="keyword">return</span> <span class="string">&#x27;new funciton&#x27;</span> &#125;</span><br><span class="line"><span class="built_in">console</span>.log(f1.valueOf()); <span class="comment">// new funciton</span></span><br><span class="line"><span class="built_in">console</span>.log(f2.valueOf()); <span class="comment">// new funciton</span></span><br></pre></td></tr></table></figure>
+
+<p>栈内存中包括了变量的标识符和变量的值。</p>
+<p>如下所示，其实是分配了两块地址，修改其中一个变量，另一个变量不会随之修改</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> str1 = str2 = <span class="string">&#x27;hello&#x27;</span>;</span><br><span class="line">str2 = <span class="string">&#x27;world&#x27;</span>;</span><br><span class="line"><span class="built_in">console</span>.log(str1, str2);  <span class="comment">// hello world</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>JavaScript</category>
+      </categories>
+      <tags>
+        <tag>JavaScript</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>var、let、const声明过程</title>
+    <url>/2021/05/26/var%E3%80%81let%E3%80%81const%E5%A3%B0%E6%98%8E%E8%BF%87%E7%A8%8B/</url>
+    <content><![CDATA[<p>先抛出结论：<br>js使用<code>var</code>、<code>let</code>、<code>const</code>声明变量的时候，会有两个步骤，一个是提升变量声明，一个是初始化（初始化为undefined）。</p>
+<ul>
+<li><code>var</code> 会提升变量的申明和初始化</li>
+<li><code>let</code> 会提升变量申明，但不会提升初始化</li>
+<li><code>const</code> 和 <code>let</code> 一样，但是<code>const</code>不能像<code>var</code>、<code>let</code>那样使用<code>var a</code>、<code>let b</code>这样初始化，只能<code>const c = 1</code>这种同时申明并初始化</li>
+</ul>
+<span id="more"></span>
+<h3 id="var"><a href="#var" class="headerlink" title="var"></a>var</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">  <span class="keyword">var</span> x = <span class="number">1</span>;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">结果：undefined</span><br><span class="line">结果：1</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">  <span class="keyword">var</span> x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">结果：undefined</span><br></pre></td></tr></table></figure>
+
+<p>从结果不难看出，<code>var</code>的声明被提升了，并初始化为了<code>undefined</code>，然后再将<code>1</code>赋值给<code>x</code></p>
+<h3 id="let"><a href="#let" class="headerlink" title="let"></a>let</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">  <span class="keyword">let</span> x = <span class="number">1</span>;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Uncaught ReferenceError: Cannot access &#x27;x&#x27; before initialization</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">  <span class="keyword">let</span> x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Uncaught ReferenceError: Cannot access &#x27;x&#x27; before initialization</span><br></pre></td></tr></table></figure>
+<p>从结果可以看出，<code>let</code>和<code>var</code>结果不一样，正是因为<code>let</code>仅仅提升了变量的声明，并不会提升初始化，所以这里在<code>let</code>之前访问<code>x</code>会报错，在初始化之前无法访问<code>x</code>,这里有一个官方叫法，叫暂存死区（<code>temporal dead zone</code>）</p>
+<h3 id="const"><a href="#const" class="headerlink" title="const"></a>const</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">  <span class="keyword">const</span> x = <span class="number">1</span>;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Uncaught ReferenceError: Cannot access &#x27;x&#x27; before initialization</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">  <span class="keyword">const</span> x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Uncaught SyntaxError: Missing initializer in const declaration</span><br></pre></td></tr></table></figure>
+<p>从结果可以看出，<code>const</code>和<code>let</code>都有暂存死区问题，但是报错信息不同，<code>const</code>在声明的同时必须赋值；</p>
+<h3 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h3><p>在浏览器环境中，<code>var</code>定义的<strong>全局变量</strong>都属于<code>window</code>对象，而let定义的<strong>全局变量</strong>，部署于<code>window</code>对象</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> attr1 = <span class="string">&#x27;tom&#x27;</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">window</span>.attr1); <span class="comment">// tom</span></span><br></pre></td></tr></table></figure>
+
+<p>在浏览器环境中，let定义的全局变量，不属于window对象</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> attr2 = <span class="string">&#x27;jerry&#x27;</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">window</span>.attr2); <span class="comment">// undefined</span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>JavaScript</category>
+      </categories>
+      <tags>
+        <tag>JavaScript</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>js 防抖和节流</title>
     <url>/2021/06/11/js-%E9%98%B2%E6%8A%96%E5%92%8C%E8%8A%82%E6%B5%81/</url>
     <content><![CDATA[<p><code>lodash</code>里面有封装好的现成的方法，可以直接拿来用，下面是自己的实现</p>
@@ -1467,38 +1513,6 @@
       </categories>
       <tags>
         <tag>JavaScript</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>xtrabackup备份原理</title>
-    <url>/2017/04/12/xtrabackup%E5%A4%87%E4%BB%BD%E5%8E%9F%E7%90%86/</url>
-    <content><![CDATA[<h3 id="xtrabackup备份原理"><a href="#xtrabackup备份原理" class="headerlink" title="xtrabackup备份原理"></a>xtrabackup备份原理</h3><p>流程图</p>
-<p><img data-src="/images/PXB-backup-procedure.png" alt="PXB-backup-procedure.png"></p>
-<span id="more"></span>
-<p><code>xtrabackup</code>是用来备份<code>InnoDB</code>表的，不能备份非<code>InnoDB</code>表，和<code>mysqld server</code>没有交互；</p>
-<p><code>innobackupex</code>脚本用来备份非 <code>InnoDB</code>表，同时会调用<code>xtrabackup</code>命令来备份<code>InnoDB</code>表，还会和<code>mysqld server</code>发送命令进行交互，如加读锁（FTWRL）、获取位点（SHOW SLAVE STATUS）等。</p>
-<p>简单来说，<code>innobackupex</code>在<code>xtrabackup</code>之上做了一层封装。一般情况下，我们是希望能备份<code>MyISAM</code>表的，虽然我们可能自己不用<code>MyISAM</code>表，但是<code>mysql</code>库下的系统表是 MyISAM 的，因此备份基本都通过innobackupex命令进行；另外一个原因是我们可能需要保存位点信息。</p>
-<h4 id="备份过程"><a href="#备份过程" class="headerlink" title="备份过程"></a>备份过程</h4><ol>
-<li>innobackupex 在启动后，会先 fork 一个进程，启动 xtrabackup进程，然后就等待 xtrabackup 备份完 ibd 数据文件；</li>
-<li>xtrabackup 在备份 InnoDB 相关数据时，是有2种线程的，1种是 redo 拷贝线程，负责拷贝 redo 文件，1种是 ibd 拷贝线程，负责拷贝 ibd 文件；redo 拷贝线程只有一个，在 ibd 拷贝线程之前启动，在 ibd 线程结束后结束（并不是马上结束，而是等到非innodb存储引擎表备份完再结束，这里强调的是先后顺序）。</li>
-<li>xtrabackup 进程开始执行后，先启动 redo 拷贝线程，从最新的 checkpoint 点开始顺序拷贝 redo 日志；然后再启动 ibd 数据拷贝线程，在 xtrabackup 拷贝 ibd 过程中，innobackupex 进程一直处于等待状态（等待文件被创建）。</li>
-<li>xtrabackup 拷贝完成idb后，通知 innobackupex（通过创建文件），同时自己进入等待（redo 线程仍然继续拷贝）;</li>
-<li>innobackupex 收到 xtrabackup 通知后，执行FLUSH TABLES WITH READ LOCK (FTWRL)，取得一致性位点，然后开始备份非 InnoDB 文件（包括 frm、MYD、MYI、CSV、opt、par等）。拷贝非 InnoDB 文件过程中，因为数据库处于全局只读状态，如果在业务的主库备份的话，要特别小心，非 InnoDB 表（主要是MyISAM）比较多的话整库只读时间就会比较长，这个影响一定要评估到。</li>
-<li>当 innobackupex 拷贝完所有非 InnoDB 表文件后，通知 xtrabackup（通过删文件） ，同时自己进入等待（等待另一个文件被创建）；xtrabackup 收到 innobackupex 备份完非 InnoDB 通知后，就停止 redo 拷贝线程，然后通知 innobackupex redo log 拷贝完成（通过创建文件）；</li>
-<li>innobackupex 收到 redo 备份完成通知后，就开始解锁，执行 UNLOCK TABLES；</li>
-<li>最后 innobackupex 和 xtrabackup 进程各自完成收尾工作，如资源的释放、写备份元数据信息等，innobackupex 等待 xtrabackup 子进程结束后退出。</li>
-</ol>
-<h4 id="恢复过程"><a href="#恢复过程" class="headerlink" title="恢复过程"></a>恢复过程</h4><p>如果看恢复备份集的日志，会发现和 mysqld 启动时非常相似，其实备份集的恢复就是类似 mysqld crash后，做一次 crash recover。</p>
-<p>恢复的目的是把备份集中的数据恢复到一个一致性位点，所谓一致就是指原数据库某一时间点各引擎数据的状态，比如 MyISAM 中的数据对应的是 15:00 时间点的，InnoDB 中的数据对应的是 15:20 的，这种状态的数据就是不一致的。PXB 备份集对应的一致点，就是备份时FTWRL的时间点，恢复出来的数据，就对应原数据库FTWRL时的状态。</p>
-<p>因为备份时 FTWRL 后，数据库是处于只读的，非 InnoDB 数据是在持有全局读锁情况下拷贝的，所以非 InnoDB 数据本身就对应 FTWRL 时间点；InnoDB 的 ibd 文件拷贝是在 FTWRL 前做的，拷贝出来的不同 ibd 文件最后更新时间点是不一样的，这种状态的 ibd 文件是不能直接用的，但是 redo log 是从备份开始一直持续拷贝的，最后的 redo 日志点是在持有 FTWRL 后取得的，所以最终通过 redo 应用后的 ibd 数据时间点也是和 FTWRL 一致的。</p>
-<p>所以恢复过程只涉及 InnoDB 文件的恢复，非 InnoDB 数据是不动的。备份恢复完成后，就可以把数据文件拷贝到对应的目录，然后通过mysqld来启动了。</p>
-<p>备份过程中产生的事务会被备份出来，提交了的前滚，未提交的回滚，保持数据的一致性；</p>
-]]></content>
-      <categories>
-        <category>Mysql</category>
-      </categories>
-      <tags>
-        <tag>xtrabackup</tag>
       </tags>
   </entry>
   <entry>
@@ -1553,52 +1567,6 @@
       </categories>
       <tags>
         <tag>xtrabackup</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>var、let、const声明过程</title>
-    <url>/2021/05/26/var%E3%80%81let%E3%80%81const%E5%A3%B0%E6%98%8E%E8%BF%87%E7%A8%8B/</url>
-    <content><![CDATA[<p>先抛出结论：<br>js使用<code>var</code>、<code>let</code>、<code>const</code>声明变量的时候，会有两个步骤，一个是提升变量声明，一个是初始化（初始化为undefined）。</p>
-<ul>
-<li><code>var</code> 会提升变量的申明和初始化</li>
-<li><code>let</code> 会提升变量申明，但不会提升初始化</li>
-<li><code>const</code> 和 <code>let</code> 一样，但是<code>const</code>不能像<code>var</code>、<code>let</code>那样使用<code>var a</code>、<code>let b</code>这样初始化，只能<code>const c = 1</code>这种同时申明并初始化</li>
-</ul>
-<span id="more"></span>
-<h3 id="var"><a href="#var" class="headerlink" title="var"></a>var</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">  <span class="keyword">var</span> x = <span class="number">1</span>;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>输出结果：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">结果：undefined</span><br><span class="line">结果：1</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">  <span class="keyword">var</span> x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>输出结果：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">结果：undefined</span><br></pre></td></tr></table></figure>
-
-<p>从结果不难看出，<code>var</code>的声明被提升了，并初始化为了<code>undefined</code>，然后再将<code>1</code>赋值给<code>x</code></p>
-<h3 id="let"><a href="#let" class="headerlink" title="let"></a>let</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">  <span class="keyword">let</span> x = <span class="number">1</span>;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>输出结果：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Uncaught ReferenceError: Cannot access &#x27;x&#x27; before initialization</span><br></pre></td></tr></table></figure>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">  <span class="keyword">let</span> x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>输出结果：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Uncaught ReferenceError: Cannot access &#x27;x&#x27; before initialization</span><br></pre></td></tr></table></figure>
-<p>从结果可以看出，<code>let</code>和<code>var</code>结果不一样，正是因为<code>let</code>仅仅提升了变量的声明，并不会提升初始化，所以这里在<code>let</code>之前访问<code>x</code>会报错，在初始化之前无法访问<code>x</code>,这里有一个官方叫法，叫暂存死区（<code>temporal dead zone</code>）</p>
-<h3 id="const"><a href="#const" class="headerlink" title="const"></a>const</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">  <span class="keyword">const</span> x = <span class="number">1</span>;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>输出结果：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Uncaught ReferenceError: Cannot access &#x27;x&#x27; before initialization</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">  <span class="keyword">const</span> x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>输出结果：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Uncaught SyntaxError: Missing initializer in const declaration</span><br></pre></td></tr></table></figure>
-<p>从结果可以看出，<code>const</code>和<code>let</code>都有暂存死区问题，但是报错信息不同，<code>const</code>在声明的同时必须赋值；</p>
-<h3 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h3><p>在浏览器环境中，<code>var</code>定义的<strong>全局变量</strong>都属于<code>window</code>对象，而let定义的<strong>全局变量</strong>，部署于<code>window</code>对象</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> attr1 = <span class="string">&#x27;tom&#x27;</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">window</span>.attr1); <span class="comment">// tom</span></span><br></pre></td></tr></table></figure>
-
-<p>在浏览器环境中，let定义的全局变量，不属于window对象</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> attr2 = <span class="string">&#x27;jerry&#x27;</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">window</span>.attr2); <span class="comment">// undefined</span></span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>JavaScript</category>
-      </categories>
-      <tags>
-        <tag>JavaScript</tag>
       </tags>
   </entry>
   <entry>
@@ -1678,6 +1646,38 @@
       </categories>
       <tags>
         <tag>vue</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>xtrabackup备份原理</title>
+    <url>/2017/04/12/xtrabackup%E5%A4%87%E4%BB%BD%E5%8E%9F%E7%90%86/</url>
+    <content><![CDATA[<h3 id="xtrabackup备份原理"><a href="#xtrabackup备份原理" class="headerlink" title="xtrabackup备份原理"></a>xtrabackup备份原理</h3><p>流程图</p>
+<p><img data-src="/images/PXB-backup-procedure.png" alt="PXB-backup-procedure.png"></p>
+<span id="more"></span>
+<p><code>xtrabackup</code>是用来备份<code>InnoDB</code>表的，不能备份非<code>InnoDB</code>表，和<code>mysqld server</code>没有交互；</p>
+<p><code>innobackupex</code>脚本用来备份非 <code>InnoDB</code>表，同时会调用<code>xtrabackup</code>命令来备份<code>InnoDB</code>表，还会和<code>mysqld server</code>发送命令进行交互，如加读锁（FTWRL）、获取位点（SHOW SLAVE STATUS）等。</p>
+<p>简单来说，<code>innobackupex</code>在<code>xtrabackup</code>之上做了一层封装。一般情况下，我们是希望能备份<code>MyISAM</code>表的，虽然我们可能自己不用<code>MyISAM</code>表，但是<code>mysql</code>库下的系统表是 MyISAM 的，因此备份基本都通过innobackupex命令进行；另外一个原因是我们可能需要保存位点信息。</p>
+<h4 id="备份过程"><a href="#备份过程" class="headerlink" title="备份过程"></a>备份过程</h4><ol>
+<li>innobackupex 在启动后，会先 fork 一个进程，启动 xtrabackup进程，然后就等待 xtrabackup 备份完 ibd 数据文件；</li>
+<li>xtrabackup 在备份 InnoDB 相关数据时，是有2种线程的，1种是 redo 拷贝线程，负责拷贝 redo 文件，1种是 ibd 拷贝线程，负责拷贝 ibd 文件；redo 拷贝线程只有一个，在 ibd 拷贝线程之前启动，在 ibd 线程结束后结束（并不是马上结束，而是等到非innodb存储引擎表备份完再结束，这里强调的是先后顺序）。</li>
+<li>xtrabackup 进程开始执行后，先启动 redo 拷贝线程，从最新的 checkpoint 点开始顺序拷贝 redo 日志；然后再启动 ibd 数据拷贝线程，在 xtrabackup 拷贝 ibd 过程中，innobackupex 进程一直处于等待状态（等待文件被创建）。</li>
+<li>xtrabackup 拷贝完成idb后，通知 innobackupex（通过创建文件），同时自己进入等待（redo 线程仍然继续拷贝）;</li>
+<li>innobackupex 收到 xtrabackup 通知后，执行FLUSH TABLES WITH READ LOCK (FTWRL)，取得一致性位点，然后开始备份非 InnoDB 文件（包括 frm、MYD、MYI、CSV、opt、par等）。拷贝非 InnoDB 文件过程中，因为数据库处于全局只读状态，如果在业务的主库备份的话，要特别小心，非 InnoDB 表（主要是MyISAM）比较多的话整库只读时间就会比较长，这个影响一定要评估到。</li>
+<li>当 innobackupex 拷贝完所有非 InnoDB 表文件后，通知 xtrabackup（通过删文件） ，同时自己进入等待（等待另一个文件被创建）；xtrabackup 收到 innobackupex 备份完非 InnoDB 通知后，就停止 redo 拷贝线程，然后通知 innobackupex redo log 拷贝完成（通过创建文件）；</li>
+<li>innobackupex 收到 redo 备份完成通知后，就开始解锁，执行 UNLOCK TABLES；</li>
+<li>最后 innobackupex 和 xtrabackup 进程各自完成收尾工作，如资源的释放、写备份元数据信息等，innobackupex 等待 xtrabackup 子进程结束后退出。</li>
+</ol>
+<h4 id="恢复过程"><a href="#恢复过程" class="headerlink" title="恢复过程"></a>恢复过程</h4><p>如果看恢复备份集的日志，会发现和 mysqld 启动时非常相似，其实备份集的恢复就是类似 mysqld crash后，做一次 crash recover。</p>
+<p>恢复的目的是把备份集中的数据恢复到一个一致性位点，所谓一致就是指原数据库某一时间点各引擎数据的状态，比如 MyISAM 中的数据对应的是 15:00 时间点的，InnoDB 中的数据对应的是 15:20 的，这种状态的数据就是不一致的。PXB 备份集对应的一致点，就是备份时FTWRL的时间点，恢复出来的数据，就对应原数据库FTWRL时的状态。</p>
+<p>因为备份时 FTWRL 后，数据库是处于只读的，非 InnoDB 数据是在持有全局读锁情况下拷贝的，所以非 InnoDB 数据本身就对应 FTWRL 时间点；InnoDB 的 ibd 文件拷贝是在 FTWRL 前做的，拷贝出来的不同 ibd 文件最后更新时间点是不一样的，这种状态的 ibd 文件是不能直接用的，但是 redo log 是从备份开始一直持续拷贝的，最后的 redo 日志点是在持有 FTWRL 后取得的，所以最终通过 redo 应用后的 ibd 数据时间点也是和 FTWRL 一致的。</p>
+<p>所以恢复过程只涉及 InnoDB 文件的恢复，非 InnoDB 数据是不动的。备份恢复完成后，就可以把数据文件拷贝到对应的目录，然后通过mysqld来启动了。</p>
+<p>备份过程中产生的事务会被备份出来，提交了的前滚，未提交的回滚，保持数据的一致性；</p>
+]]></content>
+      <categories>
+        <category>Mysql</category>
+      </categories>
+      <tags>
+        <tag>xtrabackup</tag>
       </tags>
   </entry>
   <entry>
@@ -1982,52 +1982,6 @@
       </tags>
   </entry>
   <entry>
-    <title>浏览器的强缓存和协商缓存</title>
-    <url>/2021/07/09/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E5%BC%BA%E7%BC%93%E5%AD%98%E5%92%8C%E5%8D%8F%E5%95%86%E7%BC%93%E5%AD%98/</url>
-    <content><![CDATA[<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>在前端工程化中，前端代码打包之后的生成的静态资源就要发布到静态服务器上，这时候就要做对这些静态资源做一些运维配置，其中，<code>gzip</code>和设置缓存是必不可少的。这两项是最直接影响到网站性能和用户体验的。</p>
-<p>浏览器缓存主要有以下几个优点：</p>
-<ul>
-<li>减少重复数据请求，避免通过网络再次加载资源，节省流量。</li>
-<li>降低服务器的压力，提升网站性能。</li>
-<li>加快客户端加载网页的速度， 提升用户体验。</li>
-</ul>
-<p>浏览器缓存分为强缓存和协商缓存，两者有两个比较明显的区别：</p>
-<ul>
-<li><p>强缓存在资源过期之前，不会向服务器发送网络请求，直接从本地缓存读取资源，响应码为<code>200  (from memory cache)</code>或者 <code>200  (from disk cache)</code>;</p>
-</li>
-<li><p>协商缓存会向服务器发送一次请求，服务器会根据这个请求的<code>Request Headers</code>的一些参数来判断是否命中协商缓存，如果命中，则返回<code>304</code>状态码并带上新的<code>Response Headers</code>通知浏览器从缓存中读取资源;</p>
-<span id="more"></span>
-<h3 id="强缓存"><a href="#强缓存" class="headerlink" title="强缓存"></a>强缓存</h3><p>强缓存是根据返回头中的<code>Expires</code>（http 1.0 规范）或者<code>Cache-Control</code>（http 1.1 规范）两个字段来控制的，都是表示资源的缓存有效时间。</p>
-</li>
-<li><p><code>Expires</code>的值是一个<code>GMT</code>格式的时间，这个时间代表资源的过期时间，在这个时间之前请求该资源，将直接命中强缓存。但是这个时间有个缺点，它是一个绝对时间，如果本地时间被修改，则将会导致缓存失效，所以<code>Expires</code>还是有些缺陷的。</p>
-</li>
-<li><p>为了解决上述问题，http 1.1协议重新给了一个参数<code>Cache-Control</code>，这个值也是设置资源的过期时间，但是这个参数的值是一个相对时间，比如<code>cache-control: max-age=3600</code>，浏览器会根据这个相对时间结合响应头的<code>date</code>参数，得出资源的过期时间是<code>date</code>的时间加上3600秒，需要注意的是，并不是每次请求都进行计算生效时间，只有当当前请求是200，或者304的时候，才会进行计算，否则每次计算，每次都加3600秒，那资源永远都不会过期了。</p>
-<p><code>Cache-Control</code>还有一些其他的值可以设置</p>
-<ol>
-<li><code>no-cache</code>：不使用强缓存，直接使用协商缓存。</li>
-<li><code>no-store</code>：直接禁止浏览器缓存数据，每次请求资源都会向服务器要完整的资源， 类似于 <code>network</code> 中的 <code>disabled cache</code>。</li>
-<li><code>public</code>：可以被所有用户缓存，包括终端用户和 cdn 等中间件代理服务器。</li>
-<li><code>private</code>：只能被终端用户的浏览器缓存。</li>
-</ol>
-</li>
-</ul>
-<p>如果 <code>Cache-Control</code> 与 <code>Expires</code> 同时存在的话， <code>Cache-Control</code> 的优先级高于 <code>Expires</code></p>
-<h3 id="协商缓存"><a href="#协商缓存" class="headerlink" title="协商缓存"></a>协商缓存</h3><p>协商缓存是由服务器来确定缓存资源是否可用。 主要涉及到两对属性字段，都是成对出现的，即第一次请求的响应头带上某个字, <code>last-modified</code> 或者 <code>etag</code>，则后续请求则会带上对应的请求字段 <code>if-modified-since</code>或者 <code>if-none-match</code>，若响应头没有 <code>last-modified</code> 或者 <code>etag</code> 字段，则请求头也不会有对应的字段。</p>
-<ul>
-<li><p><code>last-modified/if-modified-since</code>，值是<code>GMT</code>格式的时间字符串， <code>last-modified</code> 标记最后文件修改时间， 下一次请求时，请求头中会带上的 <code>if-modified-since</code> 值就是 <code>last-modified</code> ，告诉服务器我本地缓存的文件最后修改的时间，在服务器上根据文件的最后修改时间判断资源是否有变化， 如果文件没有变更则返回 <code>304 Not Modified</code> ，请求不会返回资源内容，浏览器直接使用本地缓存。如果有变化，则返回<code>200</code>，返回最新的资源。</p>
-</li>
-<li><p><code>etag/if-none-match</code>， 值是由服务器为每一个资源生成的唯一标识串，只要资源有变化就这个值就会改变。服务器根据文件本身算出一个唯一值并通过 <code>etag</code>字段返回给浏览器。当下次请求时，浏览器会将上次接收到的<code>etag</code>值赋给 <code>if-none-match</code> 字段，服务器通过比较两者是否一致来判定文件内容是否被改变。</p>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>前端</category>
-      </categories>
-      <tags>
-        <tag>前端</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>浏览器的重排与重绘</title>
     <url>/2021/07/05/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E9%87%8D%E6%8E%92%E4%B8%8E%E9%87%8D%E7%BB%98/</url>
     <content><![CDATA[<h3 id="浏览器渲染原理"><a href="#浏览器渲染原理" class="headerlink" title="浏览器渲染原理"></a>浏览器渲染原理</h3><p>重排和重绘是浏览器运行过程中一个很重要的特性，页面的动画，结构变化都会涉及到重排与重绘，重排与重绘也是影响前端页面性能的一个很重要的因素，如果页面存在大量的重排与重绘，页面会显得非常“卡”，影响用户体验。</p>
@@ -2099,6 +2053,51 @@
 <li>如果需要创建多个<code>DOM</code>节点，可以使用<code>DocumentFragment</code>创建完后一次性的加入<code>document</code>；</li>
 <li>尽量不要使用<code>table</code>布局。</li>
 <li>制作动画时，尽量使用 <code>CSS3</code> 的 <code>transform</code>，因为 <code>transform</code> 属性不会改变元素的布局（更详细的知识可以参考：<a href="https://juejin.cn/post/6844903502678867981">详谈层合成composite</a> ）</li>
+</ul>
+]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
+      <tags>
+        <tag>前端</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>浏览器的强缓存和协商缓存</title>
+    <url>/2021/07/09/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E5%BC%BA%E7%BC%93%E5%AD%98%E5%92%8C%E5%8D%8F%E5%95%86%E7%BC%93%E5%AD%98/</url>
+    <content><![CDATA[<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>在前端工程化中，前端代码打包之后的生成的静态资源就要发布到静态服务器上，这时候就要做对这些静态资源做一些运维配置，其中，<code>gzip</code>和设置缓存是必不可少的。这两项是最直接影响到网站性能和用户体验的。</p>
+<p>浏览器缓存主要有以下几个优点：</p>
+<ul>
+<li>减少重复数据请求，避免通过网络再次加载资源，节省流量。</li>
+<li>降低服务器的压力，提升网站性能。</li>
+<li>加快客户端加载网页的速度， 提升用户体验。</li>
+</ul>
+<p>浏览器缓存分为强缓存和协商缓存，两者有两个比较明显的区别：</p>
+<ul>
+<li>强缓存在资源过期之前，不会向服务器发送网络请求，直接从本地缓存读取资源，响应码为<code>200  (from memory cache)</code>或者 <code>200  (from disk cache)</code>;</li>
+<li>协商缓存会向服务器发送一次请求，服务器会根据这个请求的<code>Request Headers</code>的一些参数来判断是否命中协商缓存，如果命中，则返回<code>304</code>状态码并带上新的<code>Response Headers</code>通知浏览器从缓存中读取资源;<span id="more"></span></li>
+</ul>
+<h3 id="强缓存"><a href="#强缓存" class="headerlink" title="强缓存"></a>强缓存</h3><p>强缓存是根据返回头中的<code>Expires</code>（http 1.0 规范）或者<code>Cache-Control</code>（http 1.1 规范）两个字段来控制的，都是表示资源的缓存有效时间。</p>
+<ul>
+<li><p><code>Expires</code>的值是一个<code>GMT</code>格式的时间，这个时间代表资源的过期时间，在这个时间之前请求该资源，将直接命中强缓存。但是这个时间有个缺点，它是一个绝对时间，如果本地时间被修改，则将会导致缓存失效，所以<code>Expires</code>还是有些缺陷的。</p>
+</li>
+<li><p>为了解决上述问题，http 1.1协议重新给了一个参数<code>Cache-Control</code>，这个值也是设置资源的过期时间，但是这个参数的值是一个相对时间，比如<code>cache-control: max-age=3600</code>，浏览器会根据这个相对时间结合响应头的<code>date</code>参数，得出资源的过期时间是<code>date</code>的时间加上3600秒，需要注意的是，并不是每次请求都进行计算生效时间，只有当当前请求是200，或者304的时候，才会进行计算，否则每次计算，每次都加3600秒，那资源永远都不会过期了。</p>
+<p><code>Cache-Control</code>还有一些其他的值可以设置</p>
+<ol>
+<li><code>no-cache</code>：不使用强缓存，直接使用协商缓存。</li>
+<li><code>no-store</code>：直接禁止浏览器缓存数据，每次请求资源都会向服务器要完整的资源， 类似于 <code>network</code> 中的 <code>disabled cache</code>。</li>
+<li><code>public</code>：可以被所有用户缓存，包括终端用户和 cdn 等中间件代理服务器。</li>
+<li><code>private</code>：只能被终端用户的浏览器缓存。</li>
+</ol>
+</li>
+</ul>
+<p>如果 <code>Cache-Control</code> 与 <code>Expires</code> 同时存在的话， <code>Cache-Control</code> 的优先级高于 <code>Expires</code></p>
+<h3 id="协商缓存"><a href="#协商缓存" class="headerlink" title="协商缓存"></a>协商缓存</h3><p>协商缓存是由服务器来确定缓存资源是否可用。 主要涉及到两对属性字段，都是成对出现的，即第一次请求的响应头带上某个字, <code>last-modified</code> 或者 <code>etag</code>，则后续请求则会带上对应的请求字段 <code>if-modified-since</code>或者 <code>if-none-match</code>，若响应头没有 <code>last-modified</code> 或者 <code>etag</code> 字段，则请求头也不会有对应的字段。</p>
+<ul>
+<li><p><code>last-modified/if-modified-since</code>，值是<code>GMT</code>格式的时间字符串， <code>last-modified</code> 标记最后文件修改时间， 下一次请求时，请求头中会带上的 <code>if-modified-since</code> 值就是 <code>last-modified</code> ，告诉服务器我本地缓存的文件最后修改的时间，在服务器上根据文件的最后修改时间判断资源是否有变化， 如果文件没有变更则返回 <code>304 Not Modified</code> ，请求不会返回资源内容，浏览器直接使用本地缓存。如果有变化，则返回<code>200</code>，返回最新的资源。</p>
+</li>
+<li><p><code>etag/if-none-match</code>， 值是由服务器为每一个资源生成的唯一标识串，只要资源有变化就这个值就会改变。服务器根据文件本身算出一个唯一值并通过 <code>etag</code>字段返回给浏览器。当下次请求时，浏览器会将上次接收到的<code>etag</code>值赋给 <code>if-none-match</code> 字段，服务器通过比较两者是否一致来判定文件内容是否被改变。</p>
+</li>
 </ul>
 ]]></content>
       <categories>

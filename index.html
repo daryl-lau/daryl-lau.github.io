@@ -317,9 +317,8 @@
 </ul>
 <p>浏览器缓存分为强缓存和协商缓存，两者有两个比较明显的区别：</p>
 <ul>
-<li><p>强缓存在资源过期之前，不会向服务器发送网络请求，直接从本地缓存读取资源，响应码为<code>200  (from memory cache)</code>或者 <code>200  (from disk cache)</code>;</p>
-</li>
-<li><p>协商缓存会向服务器发送一次请求，服务器会根据这个请求的<code>Request Headers</code>的一些参数来判断是否命中协商缓存，如果命中，则返回<code>304</code>状态码并带上新的<code>Response Headers</code>通知浏览器从缓存中读取资源;</p>
+<li>强缓存在资源过期之前，不会向服务器发送网络请求，直接从本地缓存读取资源，响应码为<code>200  (from memory cache)</code>或者 <code>200  (from disk cache)</code>;</li>
+<li>协商缓存会向服务器发送一次请求，服务器会根据这个请求的<code>Request Headers</code>的一些参数来判断是否命中协商缓存，如果命中，则返回<code>304</code>状态码并带上新的<code>Response Headers</code>通知浏览器从缓存中读取资源;
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2021/07/09/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E5%BC%BA%E7%BC%93%E5%AD%98%E5%92%8C%E5%8D%8F%E5%95%86%E7%BC%93%E5%AD%98/#more" rel="contents">
