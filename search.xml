@@ -1,6 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>MySQL备份-LOAD DATA</title>
+    <url>/2017/04/18/MySQL%E5%A4%87%E4%BB%BD-LOAD-DATA/</url>
+    <content><![CDATA[<p>注意，使用load data备份恢复方式，表结构必须存在；</p>
+<p>使用<code>select ...into outfile</code>备份数据</p>
+<p>语法格式如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select 语句 into outfile BACKFILE  [OPTIONS]</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<p>[OPTIONS]</p>
+<ul>
+<li>fields terminated by ‘字符串’ ： 字符串分割符，默认是制表符’\t’</li>
+<li>fileds escaped by ’字符‘ ： 转义字符，默认是’\‘</li>
+<li>fileds [optionally] enclose by 字符’‘： 字段引用符，负责向字段值两端加上字段引用符。如果使用optionally 选项，则表示字符串类型上添加字段分隔符。</li>
+<li>lines starting by ‘字符串’，每条记录前添加该字段。</li>
+<li>lines terminated by ’字符串‘，每条记录后添加该字符串，默认是换行符 ‘\n’</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test.t1 <span class="keyword">into</span> outfile <span class="string">&#x27;/data/mysql/t1_bak&#x27;</span>;</span><br><span class="line">Query OK, <span class="number">3</span> <span class="keyword">rows</span> affected (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure>
+
+<p>结果会生成在<code>/data/mysql/</code>目录下，对应的数据库目录下面。可以直接使用cat命令查看。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# cat /data/mysql/t1_bak</span><br><span class="line">1      张三   12     南京</span><br><span class="line">2      李四   21     北京</span><br><span class="line">3      王五   23     上海</span><br></pre></td></tr></table></figure>
+
+<p>恢复表数据：</p>
+<p>使用<code>load data infile...</code>快速地从一个指定格式的文本文件中读取数据到一个数据库表中。</p>
+<p>语法：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">LOAD DATA INFILE &#x27;data.txt&#x27; INTO TABLE db2.my_table;</span><br></pre></td></tr></table></figure>
+
+<p>例如：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">delete</span> <span class="keyword">from</span> test.t1;</span><br><span class="line">Query OK, <span class="number">3</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> LOAD DATA INFILE <span class="string">&#x27;/data/mysql/t1_bak&#x27;</span> <span class="keyword">INTO</span> <span class="keyword">TABLE</span> test.t1;</span><br><span class="line">Query OK, <span class="number">3</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line">Records: <span class="number">3</span>  Deleted: <span class="number">0</span>  Skipped: <span class="number">0</span>  Warnings: <span class="number">0</span></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test.t1;</span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------+-----+--------+</span></span><br><span class="line"><span class="operator">|</span> id <span class="operator">|</span> name   <span class="operator">|</span> age <span class="operator">|</span> addr   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------+-----+--------+</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">1</span> <span class="operator">|</span> 张三   <span class="operator">|</span>  <span class="number">12</span> <span class="operator">|</span> 南京   <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">2</span> <span class="operator">|</span> 李四   <span class="operator">|</span>  <span class="number">21</span> <span class="operator">|</span> 北京   <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">3</span> <span class="operator">|</span> 王五   <span class="operator">|</span>  <span class="number">23</span> <span class="operator">|</span> 上海   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------+-----+--------+</span></span><br><span class="line"><span class="number">3</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意：如果导出数据的时候后面使用了分隔符，导入的时候不需要加，还是按照上面的方式导；</p>
+</blockquote>
+<p>更复杂的配置就不写了，没什么必要，还增加大脑的负担。等用到的时候，去网上查找具体的参数即可，我们并不擅长记忆这些并不常用的选项。 一句话概括这种逻辑备份的精要：怎么吃我的，怎么给我吐出来。怎么吐出来来，怎么给我装进去。选用了什么样的分割选项，导入数据的时候就需要使用对应的分割选项去导入数据。 结合我自己平时的工作内容与实践，基本上不使用这种方式导出。反而使用mysqldump 更多一点。</p>
+]]></content>
+      <categories>
+        <category>Mysql</category>
+      </categories>
+      <tags>
+        <tag>Mysql</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>InnoDB Redo Flush及脏页刷新机制深入分析</title>
     <url>/2017/04/16/InnoDB-Redo-Flush%E5%8F%8A%E8%84%8F%E9%A1%B5%E5%88%B7%E6%96%B0%E6%9C%BA%E5%88%B6%E6%B7%B1%E5%85%A5%E5%88%86%E6%9E%90/</url>
     <content><![CDATA[<h4 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h4><p>我们知道InnoDB采用<code>Write Ahead Log</code>策略来防止宕机数据丢失，即事务提交时，先写重做日志，再修改内存数据页，这样就产生了脏页。既然有重做日志保证数据持久性，查询时也可以直接从缓冲池页中取数据，那为什么还要刷新脏页到磁盘呢？如果重做日志可以无限增大，同时缓冲池足够大，能够缓存所有数据，那么是不需要将缓冲池中的脏页刷新到磁盘。但是，通常会有以下几个问题：</p>
@@ -141,48 +183,6 @@
       </categories>
       <tags>
         <tag>InnoDB</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>MySQL备份-LOAD DATA</title>
-    <url>/2017/04/18/MySQL%E5%A4%87%E4%BB%BD-LOAD-DATA/</url>
-    <content><![CDATA[<p>注意，使用load data备份恢复方式，表结构必须存在；</p>
-<p>使用<code>select ...into outfile</code>备份数据</p>
-<p>语法格式如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select 语句 into outfile BACKFILE  [OPTIONS]</span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-<p>[OPTIONS]</p>
-<ul>
-<li>fields terminated by ‘字符串’ ： 字符串分割符，默认是制表符’\t’</li>
-<li>fileds escaped by ’字符‘ ： 转义字符，默认是’\‘</li>
-<li>fileds [optionally] enclose by 字符’‘： 字段引用符，负责向字段值两端加上字段引用符。如果使用optionally 选项，则表示字符串类型上添加字段分隔符。</li>
-<li>lines starting by ‘字符串’，每条记录前添加该字段。</li>
-<li>lines terminated by ’字符串‘，每条记录后添加该字符串，默认是换行符 ‘\n’</li>
-</ul>
-<p>例如：</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test.t1 <span class="keyword">into</span> outfile <span class="string">&#x27;/data/mysql/t1_bak&#x27;</span>;</span><br><span class="line">Query OK, <span class="number">3</span> <span class="keyword">rows</span> affected (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure>
-
-<p>结果会生成在<code>/data/mysql/</code>目录下，对应的数据库目录下面。可以直接使用cat命令查看。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# cat /data/mysql/t1_bak</span><br><span class="line">1      张三   12     南京</span><br><span class="line">2      李四   21     北京</span><br><span class="line">3      王五   23     上海</span><br></pre></td></tr></table></figure>
-
-<p>恢复表数据：</p>
-<p>使用<code>load data infile...</code>快速地从一个指定格式的文本文件中读取数据到一个数据库表中。</p>
-<p>语法：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">LOAD DATA INFILE &#x27;data.txt&#x27; INTO TABLE db2.my_table;</span><br></pre></td></tr></table></figure>
-
-<p>例如：</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">delete</span> <span class="keyword">from</span> test.t1;</span><br><span class="line">Query OK, <span class="number">3</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> LOAD DATA INFILE <span class="string">&#x27;/data/mysql/t1_bak&#x27;</span> <span class="keyword">INTO</span> <span class="keyword">TABLE</span> test.t1;</span><br><span class="line">Query OK, <span class="number">3</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line">Records: <span class="number">3</span>  Deleted: <span class="number">0</span>  Skipped: <span class="number">0</span>  Warnings: <span class="number">0</span></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test.t1;</span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------+-----+--------+</span></span><br><span class="line"><span class="operator">|</span> id <span class="operator">|</span> name   <span class="operator">|</span> age <span class="operator">|</span> addr   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------+-----+--------+</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">1</span> <span class="operator">|</span> 张三   <span class="operator">|</span>  <span class="number">12</span> <span class="operator">|</span> 南京   <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">2</span> <span class="operator">|</span> 李四   <span class="operator">|</span>  <span class="number">21</span> <span class="operator">|</span> 北京   <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">3</span> <span class="operator">|</span> 王五   <span class="operator">|</span>  <span class="number">23</span> <span class="operator">|</span> 上海   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----+--------+-----+--------+</span></span><br><span class="line"><span class="number">3</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>注意：如果导出数据的时候后面使用了分隔符，导入的时候不需要加，还是按照上面的方式导；</p>
-</blockquote>
-<p>更复杂的配置就不写了，没什么必要，还增加大脑的负担。等用到的时候，去网上查找具体的参数即可，我们并不擅长记忆这些并不常用的选项。 一句话概括这种逻辑备份的精要：怎么吃我的，怎么给我吐出来。怎么吐出来来，怎么给我装进去。选用了什么样的分割选项，导入数据的时候就需要使用对应的分割选项去导入数据。 结合我自己平时的工作内容与实践，基本上不使用这种方式导出。反而使用mysqldump 更多一点。</p>
-]]></content>
-      <categories>
-        <category>Mysql</category>
-      </categories>
-      <tags>
-        <tag>Mysql</tag>
       </tags>
   </entry>
   <entry>
@@ -460,60 +460,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Mysql主从复制-异步主从复制</title>
-    <url>/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%BC%82%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/</url>
-    <content><![CDATA[<h3 id="环境介绍"><a href="#环境介绍" class="headerlink" title="环境介绍"></a>环境介绍</h3><table>
-<thead>
-<tr>
-<th>角色</th>
-<th>ip</th>
-<th></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>master</td>
-<td>10.10.10.100</td>
-<td>存在一个test库，里面有张t1表</td>
-</tr>
-<tr>
-<td>slave</td>
-<td>10.10.10.101</td>
-<td>空库</td>
-</tr>
-</tbody></table>
-<h3 id="修改配置文件"><a href="#修改配置文件" class="headerlink" title="修改配置文件"></a>修改配置文件</h3><ul>
-<li>master<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># master</span><br><span class="line">[mysqld]</span><br><span class="line">server-id=1003306                     ##server-id要唯一，最好以ip地址和端口号命名</span><br><span class="line">log-bin=mysql-bin                     ##开启二进制日志，必须要</span><br><span class="line">sync-binlog=1                         ##日志刷新模式，按需修改</span><br><span class="line">binlog_format=row                     ##日志格式最好用row，statement可能会有数据丢失</span><br></pre></td></tr></table></figure>
-<span id="more"></span></li>
-<li>slave<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># slave</span><br><span class="line">[mysqld]</span><br><span class="line">server-id=1013306                    ##server-id必须唯一</span><br><span class="line">log-bin=mysql-bin                    ##一般来说从库不需要开启binlog，如果有特殊需要，如级联方式的复制，需要开启</span><br><span class="line">sync-binlog=1</span><br><span class="line">binlog_format=row</span><br><span class="line">log_slave_updates=1                  ##控制slave是否把master的binlog写入自己的binlog中，级联方式需要开启</span><br><span class="line">relay-log=mysql-relay-bin            ##中继日志，不写则以主机名命名，建议写上</span><br><span class="line">read-only=1                          ##设置从库只读，避免数据不一致的发生</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h3 id="导出master上的数据，导入到slave中"><a href="#导出master上的数据，导入到slave中" class="headerlink" title="导出master上的数据，导入到slave中"></a>导出master上的数据，导入到slave中</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># master</span><br><span class="line">[root@mysql-master-1003306 ~]# mysqldump -uroot -p --single-transaction -A --master-data=2 &gt; all.sql</span><br><span class="line"></span><br><span class="line">## --master-data=2 表示在备份文件中记录当前备份的二进制日志文件和position号</span><br><span class="line">-- CHANGE MASTER TO MASTER_LOG_FILE=&#x27;mysql-bin.000007&#x27;, MASTER_LOG_POS=1744;  ##记下这一行，后面会用到</span><br><span class="line"></span><br><span class="line">[root@mysql-master-1003306 ~]# scp all.sql 10.10.10.101:/root               #将备份文件拷贝到从库</span><br></pre></td></tr></table></figure>
-
-<h3 id="从库导入数据"><a href="#从库导入数据" class="headerlink" title="从库导入数据"></a>从库导入数据</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># slave</span><br><span class="line">[root@mysql-slave-1013306 ~]# mysql -uroot -p &lt; all.sql              ##导入数据</span><br><span class="line">Enter password:</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>导出数据也可以使用<code>xtrabackup</code>来进行，<code>xtrabackup</code>导出后也可以查到日志文件和<code>position</code>号，基于那里进行复制也可以；</p>
-</blockquote>
-<h3 id="在master上创建复制账号"><a href="#在master上创建复制账号" class="headerlink" title="在master上创建复制账号"></a>在master上创建复制账号</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"># master</span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">grant</span> replication slave <span class="keyword">on</span> <span class="operator">*</span>.<span class="operator">*</span> <span class="keyword">to</span> <span class="string">&#x27;repl&#x27;</span>@<span class="string">&#x27;10.10.10.%&#x27;</span> identified <span class="keyword">by</span> <span class="string">&#x27;echo123.&#x27;</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected, <span class="number">1</span> warning (<span class="number">0.06</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> flush privileges;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure>
-
-<h3 id="在slave上开启复制"><a href="#在slave上开启复制" class="headerlink" title="在slave上开启复制"></a>在slave上开启复制</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"># slave</span><br><span class="line">mysql<span class="operator">&gt;</span> change master <span class="keyword">to</span> master_host<span class="operator">=</span><span class="string">&#x27;10.10.10.100&#x27;</span>,master_user<span class="operator">=</span><span class="string">&#x27;repl&#x27;</span>,master_password<span class="operator">=</span><span class="string">&#x27;echo123.&#x27;</span>,master_port<span class="operator">=</span><span class="number">3306</span>,master_log_file<span class="operator">=</span><span class="string">&#x27;mysql-bin.000007&#x27;</span>,master_log_pos<span class="operator">=</span><span class="number">1744</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected, <span class="number">2</span> warnings (<span class="number">0.08</span> sec)</span><br><span class="line"></span><br><span class="line">## master_log_file<span class="operator">=</span><span class="string">&#x27;mysql-bin.000007&#x27;</span>,master_log_pos<span class="operator">=</span><span class="number">1744</span> 指定二进制日志号和position号，从库将从这里开始进行复制</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">start</span> slave;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.10</span> sec)</span><br></pre></td></tr></table></figure>
-
-<h3 id="查看主从状态"><a href="#查看主从状态" class="headerlink" title="查看主从状态"></a>查看主从状态</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># slave</span><br><span class="line">mysql&gt; show slave status\G;</span><br><span class="line">*************************** 1. row ***************************</span><br><span class="line">               Slave_IO_State: Waiting for master to send event</span><br><span class="line">                  Master_Host: 10.10.10.100</span><br><span class="line">                  Master_User: repl</span><br><span class="line">                  Master_Port: 3306</span><br><span class="line">                Connect_Retry: 60</span><br><span class="line">              Master_Log_File: mysql-bin.000008</span><br><span class="line">          Read_Master_Log_Pos: 1365</span><br><span class="line">               Relay_Log_File: mysql-relay-bin.000003</span><br><span class="line">                Relay_Log_Pos: 1578</span><br><span class="line">        Relay_Master_Log_File: mysql-bin.000008</span><br><span class="line">             Slave_IO_Running: Yes                       ##yes表示正常</span><br><span class="line">            Slave_SQL_Running: Yes                       ##yes表示正常</span><br><span class="line">              Replicate_Do_DB:</span><br><span class="line">          Replicate_Ignore_DB:</span><br><span class="line">           Replicate_Do_Table:</span><br><span class="line">       Replicate_Ignore_Table:</span><br><span class="line">      Replicate_Wild_Do_Table:</span><br><span class="line">  Replicate_Wild_Ignore_Table:</span><br><span class="line">                   Last_Errno: 0</span><br><span class="line">                   Last_Error:</span><br><span class="line">                 Skip_Counter: 0</span><br><span class="line">          Exec_Master_Log_Pos: 1365</span><br><span class="line">              Relay_Log_Space: 1951</span><br><span class="line">              Until_Condition: None</span><br><span class="line">               Until_Log_File:</span><br><span class="line">                Until_Log_Pos: 0</span><br><span class="line">           Master_SSL_Allowed: No</span><br><span class="line">           Master_SSL_CA_File:</span><br><span class="line">           Master_SSL_CA_Path:</span><br><span class="line">              Master_SSL_Cert:</span><br><span class="line">            Master_SSL_Cipher:</span><br><span class="line">               Master_SSL_Key:</span><br><span class="line">        Seconds_Behind_Master: 0</span><br><span class="line">Master_SSL_Verify_Server_Cert: No</span><br><span class="line">                Last_IO_Errno: 0</span><br><span class="line">                Last_IO_Error:</span><br><span class="line">               Last_SQL_Errno: 0</span><br><span class="line">               Last_SQL_Error:</span><br><span class="line">  Replicate_Ignore_Server_Ids:</span><br><span class="line">             Master_Server_Id: 1003306</span><br><span class="line">                  Master_UUID: 91daaeb1-3eab-11e8-bbc1-000c29ffc6cd</span><br><span class="line">             Master_Info_File: /data/mysql/master.info</span><br><span class="line">                    SQL_Delay: 0</span><br><span class="line">          SQL_Remaining_Delay: NULL</span><br><span class="line">      Slave_SQL_Running_State: Slave has read all relay log; waiting for more updates</span><br><span class="line">           Master_Retry_Count: 86400</span><br><span class="line">                  Master_Bind:</span><br><span class="line">      Last_IO_Error_Timestamp:</span><br><span class="line">     Last_SQL_Error_Timestamp:</span><br><span class="line">               Master_SSL_Crl:</span><br><span class="line">           Master_SSL_Crlpath:</span><br><span class="line">           Retrieved_Gtid_Set:</span><br><span class="line">            Executed_Gtid_Set:</span><br><span class="line">                Auto_Position: 0</span><br><span class="line">         Replicate_Rewrite_DB:</span><br><span class="line">                 Channel_Name:</span><br><span class="line">           Master_TLS_Version:</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
-
-<h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><h4 id="在主库上插入数据"><a href="#在主库上插入数据" class="headerlink" title="在主库上插入数据"></a>在主库上插入数据</h4><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> t1;</span><br><span class="line"><span class="operator">+</span><span class="comment">------+</span></span><br><span class="line"><span class="operator">|</span> id   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------+</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">1</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">2</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">3</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">4</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">5</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">6</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">7</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">8</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------+</span></span><br><span class="line"><span class="number">8</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">insert</span> <span class="keyword">into</span> t1 <span class="keyword">values</span> (<span class="number">9</span>);</span><br><span class="line">Query OK, <span class="number">1</span> <span class="type">row</span> affected (<span class="number">0.03</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">insert</span> <span class="keyword">into</span> t1 <span class="keyword">values</span> (<span class="number">10</span>);</span><br><span class="line">Query OK, <span class="number">1</span> <span class="type">row</span> affected (<span class="number">0.02</span> sec)</span><br></pre></td></tr></table></figure>
-
-<h4 id="在从库上查看"><a href="#在从库上查看" class="headerlink" title="在从库上查看"></a>在从库上查看</h4><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> t1;</span><br><span class="line"><span class="operator">+</span><span class="comment">------+</span></span><br><span class="line"><span class="operator">|</span> id   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------+</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">1</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">2</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">3</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">4</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">5</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">6</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">7</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">8</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">9</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>   <span class="number">10</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------+</span></span><br><span class="line"><span class="number">10</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>使用<code>reset slave all</code>可以清空主从配置；</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>Mysql</category>
-      </categories>
-      <tags>
-        <tag>Mysql</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Mysql主从复制概述</title>
     <url>/2017/04/13/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%A6%82%E8%BF%B0/</url>
     <content><![CDATA[<h3 id="MySQL主从复制概述"><a href="#MySQL主从复制概述" class="headerlink" title="MySQL主从复制概述"></a>MySQL主从复制概述</h3><p>复制是mysql数据库提供的一种高可用、高性能的解决方案，一般用来建立大型的应用；</p>
@@ -605,6 +551,60 @@
       <tags>
         <tag>Mysql</tag>
         <tag>GTID</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Mysql主从复制-异步主从复制</title>
+    <url>/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%BC%82%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/</url>
+    <content><![CDATA[<h3 id="环境介绍"><a href="#环境介绍" class="headerlink" title="环境介绍"></a>环境介绍</h3><table>
+<thead>
+<tr>
+<th>角色</th>
+<th>ip</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>master</td>
+<td>10.10.10.100</td>
+<td>存在一个test库，里面有张t1表</td>
+</tr>
+<tr>
+<td>slave</td>
+<td>10.10.10.101</td>
+<td>空库</td>
+</tr>
+</tbody></table>
+<h3 id="修改配置文件"><a href="#修改配置文件" class="headerlink" title="修改配置文件"></a>修改配置文件</h3><ul>
+<li>master<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># master</span><br><span class="line">[mysqld]</span><br><span class="line">server-id=1003306                     ##server-id要唯一，最好以ip地址和端口号命名</span><br><span class="line">log-bin=mysql-bin                     ##开启二进制日志，必须要</span><br><span class="line">sync-binlog=1                         ##日志刷新模式，按需修改</span><br><span class="line">binlog_format=row                     ##日志格式最好用row，statement可能会有数据丢失</span><br></pre></td></tr></table></figure>
+<span id="more"></span></li>
+<li>slave<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># slave</span><br><span class="line">[mysqld]</span><br><span class="line">server-id=1013306                    ##server-id必须唯一</span><br><span class="line">log-bin=mysql-bin                    ##一般来说从库不需要开启binlog，如果有特殊需要，如级联方式的复制，需要开启</span><br><span class="line">sync-binlog=1</span><br><span class="line">binlog_format=row</span><br><span class="line">log_slave_updates=1                  ##控制slave是否把master的binlog写入自己的binlog中，级联方式需要开启</span><br><span class="line">relay-log=mysql-relay-bin            ##中继日志，不写则以主机名命名，建议写上</span><br><span class="line">read-only=1                          ##设置从库只读，避免数据不一致的发生</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="导出master上的数据，导入到slave中"><a href="#导出master上的数据，导入到slave中" class="headerlink" title="导出master上的数据，导入到slave中"></a>导出master上的数据，导入到slave中</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># master</span><br><span class="line">[root@mysql-master-1003306 ~]# mysqldump -uroot -p --single-transaction -A --master-data=2 &gt; all.sql</span><br><span class="line"></span><br><span class="line">## --master-data=2 表示在备份文件中记录当前备份的二进制日志文件和position号</span><br><span class="line">-- CHANGE MASTER TO MASTER_LOG_FILE=&#x27;mysql-bin.000007&#x27;, MASTER_LOG_POS=1744;  ##记下这一行，后面会用到</span><br><span class="line"></span><br><span class="line">[root@mysql-master-1003306 ~]# scp all.sql 10.10.10.101:/root               #将备份文件拷贝到从库</span><br></pre></td></tr></table></figure>
+
+<h3 id="从库导入数据"><a href="#从库导入数据" class="headerlink" title="从库导入数据"></a>从库导入数据</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># slave</span><br><span class="line">[root@mysql-slave-1013306 ~]# mysql -uroot -p &lt; all.sql              ##导入数据</span><br><span class="line">Enter password:</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>导出数据也可以使用<code>xtrabackup</code>来进行，<code>xtrabackup</code>导出后也可以查到日志文件和<code>position</code>号，基于那里进行复制也可以；</p>
+</blockquote>
+<h3 id="在master上创建复制账号"><a href="#在master上创建复制账号" class="headerlink" title="在master上创建复制账号"></a>在master上创建复制账号</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"># master</span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">grant</span> replication slave <span class="keyword">on</span> <span class="operator">*</span>.<span class="operator">*</span> <span class="keyword">to</span> <span class="string">&#x27;repl&#x27;</span>@<span class="string">&#x27;10.10.10.%&#x27;</span> identified <span class="keyword">by</span> <span class="string">&#x27;echo123.&#x27;</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected, <span class="number">1</span> warning (<span class="number">0.06</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> flush privileges;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure>
+
+<h3 id="在slave上开启复制"><a href="#在slave上开启复制" class="headerlink" title="在slave上开启复制"></a>在slave上开启复制</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"># slave</span><br><span class="line">mysql<span class="operator">&gt;</span> change master <span class="keyword">to</span> master_host<span class="operator">=</span><span class="string">&#x27;10.10.10.100&#x27;</span>,master_user<span class="operator">=</span><span class="string">&#x27;repl&#x27;</span>,master_password<span class="operator">=</span><span class="string">&#x27;echo123.&#x27;</span>,master_port<span class="operator">=</span><span class="number">3306</span>,master_log_file<span class="operator">=</span><span class="string">&#x27;mysql-bin.000007&#x27;</span>,master_log_pos<span class="operator">=</span><span class="number">1744</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected, <span class="number">2</span> warnings (<span class="number">0.08</span> sec)</span><br><span class="line"></span><br><span class="line">## master_log_file<span class="operator">=</span><span class="string">&#x27;mysql-bin.000007&#x27;</span>,master_log_pos<span class="operator">=</span><span class="number">1744</span> 指定二进制日志号和position号，从库将从这里开始进行复制</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">start</span> slave;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.10</span> sec)</span><br></pre></td></tr></table></figure>
+
+<h3 id="查看主从状态"><a href="#查看主从状态" class="headerlink" title="查看主从状态"></a>查看主从状态</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># slave</span><br><span class="line">mysql&gt; show slave status\G;</span><br><span class="line">*************************** 1. row ***************************</span><br><span class="line">               Slave_IO_State: Waiting for master to send event</span><br><span class="line">                  Master_Host: 10.10.10.100</span><br><span class="line">                  Master_User: repl</span><br><span class="line">                  Master_Port: 3306</span><br><span class="line">                Connect_Retry: 60</span><br><span class="line">              Master_Log_File: mysql-bin.000008</span><br><span class="line">          Read_Master_Log_Pos: 1365</span><br><span class="line">               Relay_Log_File: mysql-relay-bin.000003</span><br><span class="line">                Relay_Log_Pos: 1578</span><br><span class="line">        Relay_Master_Log_File: mysql-bin.000008</span><br><span class="line">             Slave_IO_Running: Yes                       ##yes表示正常</span><br><span class="line">            Slave_SQL_Running: Yes                       ##yes表示正常</span><br><span class="line">              Replicate_Do_DB:</span><br><span class="line">          Replicate_Ignore_DB:</span><br><span class="line">           Replicate_Do_Table:</span><br><span class="line">       Replicate_Ignore_Table:</span><br><span class="line">      Replicate_Wild_Do_Table:</span><br><span class="line">  Replicate_Wild_Ignore_Table:</span><br><span class="line">                   Last_Errno: 0</span><br><span class="line">                   Last_Error:</span><br><span class="line">                 Skip_Counter: 0</span><br><span class="line">          Exec_Master_Log_Pos: 1365</span><br><span class="line">              Relay_Log_Space: 1951</span><br><span class="line">              Until_Condition: None</span><br><span class="line">               Until_Log_File:</span><br><span class="line">                Until_Log_Pos: 0</span><br><span class="line">           Master_SSL_Allowed: No</span><br><span class="line">           Master_SSL_CA_File:</span><br><span class="line">           Master_SSL_CA_Path:</span><br><span class="line">              Master_SSL_Cert:</span><br><span class="line">            Master_SSL_Cipher:</span><br><span class="line">               Master_SSL_Key:</span><br><span class="line">        Seconds_Behind_Master: 0</span><br><span class="line">Master_SSL_Verify_Server_Cert: No</span><br><span class="line">                Last_IO_Errno: 0</span><br><span class="line">                Last_IO_Error:</span><br><span class="line">               Last_SQL_Errno: 0</span><br><span class="line">               Last_SQL_Error:</span><br><span class="line">  Replicate_Ignore_Server_Ids:</span><br><span class="line">             Master_Server_Id: 1003306</span><br><span class="line">                  Master_UUID: 91daaeb1-3eab-11e8-bbc1-000c29ffc6cd</span><br><span class="line">             Master_Info_File: /data/mysql/master.info</span><br><span class="line">                    SQL_Delay: 0</span><br><span class="line">          SQL_Remaining_Delay: NULL</span><br><span class="line">      Slave_SQL_Running_State: Slave has read all relay log; waiting for more updates</span><br><span class="line">           Master_Retry_Count: 86400</span><br><span class="line">                  Master_Bind:</span><br><span class="line">      Last_IO_Error_Timestamp:</span><br><span class="line">     Last_SQL_Error_Timestamp:</span><br><span class="line">               Master_SSL_Crl:</span><br><span class="line">           Master_SSL_Crlpath:</span><br><span class="line">           Retrieved_Gtid_Set:</span><br><span class="line">            Executed_Gtid_Set:</span><br><span class="line">                Auto_Position: 0</span><br><span class="line">         Replicate_Rewrite_DB:</span><br><span class="line">                 Channel_Name:</span><br><span class="line">           Master_TLS_Version:</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><h4 id="在主库上插入数据"><a href="#在主库上插入数据" class="headerlink" title="在主库上插入数据"></a>在主库上插入数据</h4><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> t1;</span><br><span class="line"><span class="operator">+</span><span class="comment">------+</span></span><br><span class="line"><span class="operator">|</span> id   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------+</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">1</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">2</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">3</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">4</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">5</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">6</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">7</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">8</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------+</span></span><br><span class="line"><span class="number">8</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">insert</span> <span class="keyword">into</span> t1 <span class="keyword">values</span> (<span class="number">9</span>);</span><br><span class="line">Query OK, <span class="number">1</span> <span class="type">row</span> affected (<span class="number">0.03</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">insert</span> <span class="keyword">into</span> t1 <span class="keyword">values</span> (<span class="number">10</span>);</span><br><span class="line">Query OK, <span class="number">1</span> <span class="type">row</span> affected (<span class="number">0.02</span> sec)</span><br></pre></td></tr></table></figure>
+
+<h4 id="在从库上查看"><a href="#在从库上查看" class="headerlink" title="在从库上查看"></a>在从库上查看</h4><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> t1;</span><br><span class="line"><span class="operator">+</span><span class="comment">------+</span></span><br><span class="line"><span class="operator">|</span> id   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------+</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">1</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">2</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">3</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">4</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">5</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">6</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">7</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">8</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>    <span class="number">9</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>   <span class="number">10</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------+</span></span><br><span class="line"><span class="number">10</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>使用<code>reset slave all</code>可以清空主从配置；</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>Mysql</category>
+      </categories>
+      <tags>
+        <tag>Mysql</tag>
       </tags>
   </entry>
   <entry>
@@ -948,6 +948,47 @@
       </tags>
   </entry>
   <entry>
+    <title>js async/await函数</title>
+    <url>/2021/05/30/js-async-await%E5%87%BD%E6%95%B0/</url>
+    <content><![CDATA[<p><code>async</code>函数就是<code>generator</code>函数的语法糖，一般结合<code>Promise</code>使用</p>
+<p>我们可以把generator函数函数改写成async/await函数，例如</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"><span class="keyword">var</span> co = <span class="built_in">require</span>(<span class="string">&#x27;co&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> readFile = <span class="function"><span class="keyword">function</span> (<span class="params">fileName</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</span><br><span class="line">        fs.readFile(fileName, <span class="function"><span class="keyword">function</span> (<span class="params">error, data</span>) </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (error) reject(error);</span><br><span class="line">            resolve(data.toString());</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">read</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">// resolve multiple promises in parallel</span></span><br><span class="line">    <span class="keyword">var</span> a = <span class="keyword">yield</span> readFile(<span class="string">&#x27;./data/a.text&#x27;</span>)</span><br><span class="line">    <span class="keyword">var</span> b = <span class="keyword">yield</span> readFile(<span class="string">&#x27;./data/b.text&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="built_in">console</span>.log(a.toString());</span><br><span class="line">    <span class="built_in">console</span>.log(b.toString());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">co(read)</span><br></pre></td></tr></table></figure>
+<p>改写成</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> readFile = <span class="function"><span class="keyword">function</span> (<span class="params">fileName</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</span><br><span class="line">        fs.readFile(fileName, <span class="function"><span class="keyword">function</span> (<span class="params">error, data</span>) </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (error) reject(error);</span><br><span class="line">            resolve(data.toString());</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">read</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">// resolve multiple promises in parallel</span></span><br><span class="line">    <span class="keyword">var</span> a = <span class="keyword">await</span> readFile(<span class="string">&#x27;./data/a.text&#x27;</span>)</span><br><span class="line">    <span class="keyword">var</span> b = <span class="keyword">await</span> readFile(<span class="string">&#x27;./data/b.text&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="built_in">console</span>.log(a.toString());</span><br><span class="line">    <span class="built_in">console</span>.log(b.toString());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">read()</span><br></pre></td></tr></table></figure>
+<p>输出和上面的<code>generator</code>函数是一样的，但是我们对比可以发现，<code>async</code>函数只是将<code>generator</code>函数的<code>*</code>去掉了，然后在前面加了一个<code>async</code>，函数内部的<code>yield</code>替换成了<code>await</code>，其他的都没有变化</p>
+<p><code>async</code>函数的改进，体现在以下几点：</p>
+<ul>
+<li>内置执行器：我们发现是用<code>async</code>函数，我们不需要引入<code>co</code>模块，就能使用，因为<code>async</code>函数内置了执行器</li>
+<li>更好的语义：<code>async/await</code>相比<code>generator</code>的<code>yield</code>有更好的语义，<code>async</code>表示函数内部有异步操作，而<code>await</code>表示紧跟在后面的表达式需要等待结果，才能继续执行下面的代码</li>
+<li>更广的适用性：<code>co</code>模块约定，<code>yield</code>命令后面只能是<code>thunk</code>函数或 <code>Promise</code>对象，而<code>async</code>函数的<code>await</code>命令后面，可以是<code>Promise</code>对象和原始类型的值（数值、字符串和布尔值，但这时会自动转成立即<code>resolved</code>的 <code>Promise</code>对象）。</li>
+<li>返回值是<code>Promise</code>：<code>async</code>函数的返回值是<code>Promise</code>对象，这比 <code>generator</code>函数的返回值是<code>iterator</code>对象方便多了。你可以用<code>then</code>方法指定下一步的操作。</li>
+</ul>
+<p><code>async</code>函数的返回值是一个<code>Promise</code>对象，函数内部<code>return</code>语句返回的值，会成为<code>then</code>方法回调函数的参数。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">fn</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">123</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fn().then(<span class="function"><span class="params">d</span> =&gt;</span> <span class="built_in">console</span>.log(d))  <span class="comment">// 123</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>错误处理</strong><br>async函数的错误处理方式可以放在函数内部也可以放在函数外部</p>
+<p>放在函数内部</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="keyword">await</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">&#x27;出错了&#x27;</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125; <span class="keyword">catch</span>(e) &#123;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">await</span>(<span class="string">&#x27;hello world&#x27;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>放在函数外部</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">await</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">&#x27;出错了&#x27;</span>);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">f()</span><br><span class="line">.then(<span class="function"><span class="params">v</span> =&gt;</span> <span class="built_in">console</span>.log(v))</span><br><span class="line">.catch(<span class="function"><span class="params">e</span> =&gt;</span> <span class="built_in">console</span>.log(e))</span><br></pre></td></tr></table></figure>
+<p>如果有多个await命令，可以统一放在try…catch结构中。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> val1 = <span class="keyword">await</span> firstStep();</span><br><span class="line">    <span class="keyword">const</span> val2 = <span class="keyword">await</span> secondStep(val1);</span><br><span class="line">    <span class="keyword">const</span> val3 = <span class="keyword">await</span> thirdStep(val1, val2);</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;Final: &#x27;</span>, val3);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">catch</span> (err) &#123;</span><br><span class="line">    <span class="built_in">console</span>.error(err);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>思考一下下面的代码为什么会按照<code>1、3、2</code>的顺序输出，那是因为执行<code>fn</code>函数，执行<code>console.log(1)</code>，然后返回一个<code>Promise</code>对象，又由于<code>Promise</code>对象的<code>then</code>属于微任务，放到微任务执行队列里面，执行下面的<code>console.log(3)</code>，后面执行栈没有代码了，然后执行微任务队列里的任务，执行<code>console.log(2)</code></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">fn</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">2</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fn().then(<span class="function"><span class="params">d</span> =&gt;</span> <span class="built_in">console</span>.log(d))</span><br><span class="line"><span class="built_in">console</span>.log(<span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+<p>输出结果</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">3</span></span><br><span class="line"><span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>JavaScript</category>
+      </categories>
+      <tags>
+        <tag>ES6</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>js for...in循环和for...of循环</title>
     <url>/2021/06/11/js-for-in%E5%BE%AA%E7%8E%AF%E5%92%8Cfor-of%E5%BE%AA%E7%8E%AF/</url>
     <content><![CDATA[<p><code>for...in</code>循环和<code>for...of</code>循环结合ES6新增的方法<code>Object.keys()</code>/<code>Object.values()</code>/<code>Object.entries()</code>，可以以自己想要的方式遍历对象，两者结合使用非常nice</p>
@@ -997,47 +1038,6 @@
       </categories>
       <tags>
         <tag>JavaScript</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>js async/await函数</title>
-    <url>/2021/05/30/js-async-await%E5%87%BD%E6%95%B0/</url>
-    <content><![CDATA[<p><code>async</code>函数就是<code>generator</code>函数的语法糖，一般结合<code>Promise</code>使用</p>
-<p>我们可以把generator函数函数改写成async/await函数，例如</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"><span class="keyword">var</span> co = <span class="built_in">require</span>(<span class="string">&#x27;co&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> readFile = <span class="function"><span class="keyword">function</span> (<span class="params">fileName</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</span><br><span class="line">        fs.readFile(fileName, <span class="function"><span class="keyword">function</span> (<span class="params">error, data</span>) </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (error) reject(error);</span><br><span class="line">            resolve(data.toString());</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">read</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">// resolve multiple promises in parallel</span></span><br><span class="line">    <span class="keyword">var</span> a = <span class="keyword">yield</span> readFile(<span class="string">&#x27;./data/a.text&#x27;</span>)</span><br><span class="line">    <span class="keyword">var</span> b = <span class="keyword">yield</span> readFile(<span class="string">&#x27;./data/b.text&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="built_in">console</span>.log(a.toString());</span><br><span class="line">    <span class="built_in">console</span>.log(b.toString());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">co(read)</span><br></pre></td></tr></table></figure>
-<p>改写成</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> readFile = <span class="function"><span class="keyword">function</span> (<span class="params">fileName</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</span><br><span class="line">        fs.readFile(fileName, <span class="function"><span class="keyword">function</span> (<span class="params">error, data</span>) </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (error) reject(error);</span><br><span class="line">            resolve(data.toString());</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">read</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">// resolve multiple promises in parallel</span></span><br><span class="line">    <span class="keyword">var</span> a = <span class="keyword">await</span> readFile(<span class="string">&#x27;./data/a.text&#x27;</span>)</span><br><span class="line">    <span class="keyword">var</span> b = <span class="keyword">await</span> readFile(<span class="string">&#x27;./data/b.text&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="built_in">console</span>.log(a.toString());</span><br><span class="line">    <span class="built_in">console</span>.log(b.toString());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">read()</span><br></pre></td></tr></table></figure>
-<p>输出和上面的<code>generator</code>函数是一样的，但是我们对比可以发现，<code>async</code>函数只是将<code>generator</code>函数的<code>*</code>去掉了，然后在前面加了一个<code>async</code>，函数内部的<code>yield</code>替换成了<code>await</code>，其他的都没有变化</p>
-<p><code>async</code>函数的改进，体现在以下几点：</p>
-<ul>
-<li>内置执行器：我们发现是用<code>async</code>函数，我们不需要引入<code>co</code>模块，就能使用，因为<code>async</code>函数内置了执行器</li>
-<li>更好的语义：<code>async/await</code>相比<code>generator</code>的<code>yield</code>有更好的语义，<code>async</code>表示函数内部有异步操作，而<code>await</code>表示紧跟在后面的表达式需要等待结果，才能继续执行下面的代码</li>
-<li>更广的适用性：<code>co</code>模块约定，<code>yield</code>命令后面只能是<code>thunk</code>函数或 <code>Promise</code>对象，而<code>async</code>函数的<code>await</code>命令后面，可以是<code>Promise</code>对象和原始类型的值（数值、字符串和布尔值，但这时会自动转成立即<code>resolved</code>的 <code>Promise</code>对象）。</li>
-<li>返回值是<code>Promise</code>：<code>async</code>函数的返回值是<code>Promise</code>对象，这比 <code>generator</code>函数的返回值是<code>iterator</code>对象方便多了。你可以用<code>then</code>方法指定下一步的操作。</li>
-</ul>
-<p><code>async</code>函数的返回值是一个<code>Promise</code>对象，函数内部<code>return</code>语句返回的值，会成为<code>then</code>方法回调函数的参数。</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">fn</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">123</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fn().then(<span class="function"><span class="params">d</span> =&gt;</span> <span class="built_in">console</span>.log(d))  <span class="comment">// 123</span></span><br></pre></td></tr></table></figure>
-
-<p><strong>错误处理</strong><br>async函数的错误处理方式可以放在函数内部也可以放在函数外部</p>
-<p>放在函数内部</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="keyword">await</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">&#x27;出错了&#x27;</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125; <span class="keyword">catch</span>(e) &#123;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">await</span>(<span class="string">&#x27;hello world&#x27;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>放在函数外部</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">await</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">&#x27;出错了&#x27;</span>);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">f()</span><br><span class="line">.then(<span class="function"><span class="params">v</span> =&gt;</span> <span class="built_in">console</span>.log(v))</span><br><span class="line">.catch(<span class="function"><span class="params">e</span> =&gt;</span> <span class="built_in">console</span>.log(e))</span><br></pre></td></tr></table></figure>
-<p>如果有多个await命令，可以统一放在try…catch结构中。</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> val1 = <span class="keyword">await</span> firstStep();</span><br><span class="line">    <span class="keyword">const</span> val2 = <span class="keyword">await</span> secondStep(val1);</span><br><span class="line">    <span class="keyword">const</span> val3 = <span class="keyword">await</span> thirdStep(val1, val2);</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;Final: &#x27;</span>, val3);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">catch</span> (err) &#123;</span><br><span class="line">    <span class="built_in">console</span>.error(err);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>思考一下下面的代码为什么会按照<code>1、3、2</code>的顺序输出，那是因为执行<code>fn</code>函数，执行<code>console.log(1)</code>，然后返回一个<code>Promise</code>对象，又由于<code>Promise</code>对象的<code>then</code>属于微任务，放到微任务执行队列里面，执行下面的<code>console.log(3)</code>，后面执行栈没有代码了，然后执行微任务队列里的任务，执行<code>console.log(2)</code></p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">fn</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">2</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fn().then(<span class="function"><span class="params">d</span> =&gt;</span> <span class="built_in">console</span>.log(d))</span><br><span class="line"><span class="built_in">console</span>.log(<span class="number">3</span>)</span><br></pre></td></tr></table></figure>
-<p>输出结果</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">3</span></span><br><span class="line"><span class="number">2</span></span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>JavaScript</category>
-      </categories>
-      <tags>
-        <tag>ES6</tag>
       </tags>
   </entry>
   <entry>
@@ -1163,45 +1163,6 @@
       </tags>
   </entry>
   <entry>
-    <title>js 伪数组</title>
-    <url>/2021/05/25/js-%E4%BC%AA%E6%95%B0%E7%BB%84/</url>
-    <content><![CDATA[<p>在js中，通过document的查询元素api查出来NodeList对象或者<code>arguments</code>等都会以伪数组的方式输出，例如下面的html中，通过<code>document.getElementsByTagName(&#39;li&#39;);</code>查出来的就是伪数组，伪数组和数组都具有length属性，但是伪数组不预备数组的<code>pop</code>、<code>push</code>、<code>slice</code>等方法</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ul</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span>1<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span>2<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span>3<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%84.png"></p>
-<span id="more"></span>
-
-<p>我们使用查出来的结果进行数组的操作，会报错，例如：</p>
-<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%841.png"></p>
-<p>如果我们想要正常操作该数组，则需要将伪数组转为数组，再进行操作。</p>
-<p>伪数组转数组的方式有很多种，下面介绍几种常用的</p>
-<ul>
-<li><code>Array.prototype.slice.call()</code>或者<code>[].slice.call()</code></li>
-</ul>
-<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%842.png"></p>
-<blockquote>
-<p><code>Array.prototype.slice.call()</code>和<code>[].slice.call()</code>其实是一个东西，都是调用数组原型上的slice方法</p>
-</blockquote>
-<ul>
-<li><code>Array.from()</code></li>
-</ul>
-<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%843.png"></p>
-<ul>
-<li>es6 解构赋值</li>
-</ul>
-<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%844.png"></p>
-<ul>
-<li>其他方法<br>例如使用循环，将伪数组一个个push到一个空数组里，也可以进行转化，这种比较繁琐，一般不常用</li>
-</ul>
-]]></content>
-      <categories>
-        <category>JavaScript</category>
-      </categories>
-      <tags>
-        <tag>JavaScript</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>js 事件循环（event loop）、宏任务、微任务</title>
     <url>/2021/07/07/js-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%EF%BC%88event-loop%EF%BC%89%E3%80%81%E5%AE%8F%E4%BB%BB%E5%8A%A1%E3%80%81%E5%BE%AE%E4%BB%BB%E5%8A%A1/</url>
     <content><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>Google工程师<code>Jake Archibald</code>写了一篇关于事件循环以及宏任务微任务的文章，非常经典，本文的例子都来源于改文章，有兴趣的可以去浏览原文<a href="https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/?utm_source=html5weekly">Tasks, microtasks, queues and schedules</a></p>
@@ -1262,6 +1223,45 @@
       </tags>
   </entry>
   <entry>
+    <title>js 伪数组</title>
+    <url>/2021/05/25/js-%E4%BC%AA%E6%95%B0%E7%BB%84/</url>
+    <content><![CDATA[<p>在js中，通过document的查询元素api查出来NodeList对象或者<code>arguments</code>等都会以伪数组的方式输出，例如下面的html中，通过<code>document.getElementsByTagName(&#39;li&#39;);</code>查出来的就是伪数组，伪数组和数组都具有length属性，但是伪数组不预备数组的<code>pop</code>、<code>push</code>、<code>slice</code>等方法</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ul</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span>1<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span>2<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span>3<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%84.png"></p>
+<span id="more"></span>
+
+<p>我们使用查出来的结果进行数组的操作，会报错，例如：</p>
+<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%841.png"></p>
+<p>如果我们想要正常操作该数组，则需要将伪数组转为数组，再进行操作。</p>
+<p>伪数组转数组的方式有很多种，下面介绍几种常用的</p>
+<ul>
+<li><code>Array.prototype.slice.call()</code>或者<code>[].slice.call()</code></li>
+</ul>
+<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%842.png"></p>
+<blockquote>
+<p><code>Array.prototype.slice.call()</code>和<code>[].slice.call()</code>其实是一个东西，都是调用数组原型上的slice方法</p>
+</blockquote>
+<ul>
+<li><code>Array.from()</code></li>
+</ul>
+<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%843.png"></p>
+<ul>
+<li>es6 解构赋值</li>
+</ul>
+<p><img data-src="/images/%E4%BC%AA%E6%95%B0%E7%BB%844.png"></p>
+<ul>
+<li>其他方法<br>例如使用循环，将伪数组一个个push到一个空数组里，也可以进行转化，这种比较繁琐，一般不常用</li>
+</ul>
+]]></content>
+      <categories>
+        <category>JavaScript</category>
+      </categories>
+      <tags>
+        <tag>JavaScript</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>js 作用域链</title>
     <url>/2021/05/26/js-%E4%BD%9C%E7%94%A8%E5%9F%9F%E9%93%BE/</url>
     <content><![CDATA[<p>局部变量：在函数中通过var声明的变量。</p>
@@ -1298,6 +1298,38 @@
 <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> num = <span class="number">1</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn4</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> num = <span class="number">10</span></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;fn4里在fn5调用前的num &#x27;</span> + num);</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">fn5</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        num = <span class="number">100</span></span><br><span class="line">        <span class="keyword">let</span> num = <span class="number">200</span></span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;fn5里的num &#x27;</span> + num);</span><br><span class="line">    &#125;</span><br><span class="line">    fn5()</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;fn4里在fn5调用后的num &#x27;</span> + num);</span><br><span class="line">&#125;</span><br><span class="line">fn4()</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;全局的num &#x27;</span> + num);</span><br></pre></td></tr></table></figure>
 <p>输出结果:</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">fn4里在fn5调用前的num 10</span><br><span class="line">报错: `Uncaught ReferenceError: Cannot access &#x27;num&#x27; before initialization`</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>JavaScript</category>
+      </categories>
+      <tags>
+        <tag>JavaScript</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>js 函数参数以及内置参数arguments</title>
+    <url>/2021/06/11/js-%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E4%BB%A5%E5%8F%8A%E5%86%85%E7%BD%AE%E5%8F%82%E6%95%B0arguments/</url>
+    <content><![CDATA[<h3 id="普通传参"><a href="#普通传参" class="headerlink" title="普通传参"></a>普通传参</h3><ul>
+<li><code>ES5</code>中如果函数在调用时如果未提供隐式参数（实参），参数会默认设置为<code>undefined</code></li>
+<li>实参比形参多的时候，多出来的直接被忽略<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getSum</span>(<span class="params">a, b, c</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(a + b + c);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> res1 = getSum(<span class="number">1</span>, <span class="number">2</span>)         <span class="comment">// NaN，形参c没有赋值，为undefined，结果是 1 + 2 + undefined ,NaN</span></span><br><span class="line"><span class="keyword">let</span> res2 = getSum(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>)   <span class="comment">// 实参比形参多的时候，多出来的直接被忽略</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="默认参数"><a href="#默认参数" class="headerlink" title="默认参数"></a>默认参数</h3><p>默认参数，<code>ES5</code>中不值吃形参直接定义默认参数，需要自己再函数体中自己判断</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn1</span>(<span class="params">x, y</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (y === <span class="literal">undefined</span>) &#123;</span><br><span class="line">        y = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 或者</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn2</span>(<span class="params">x, y</span>) </span>&#123;</span><br><span class="line">    y = y || <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在<code>ES6</code>中，可以在形参中直接设置默认参数；</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">sumAll</span>(<span class="params">a, b = <span class="number">10</span></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(a + b);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">sumAll(<span class="number">2</span>, <span class="number">2</span>);       <span class="comment">// 输出4，此时a = 2，b = 10</span></span><br><span class="line">sumAll(<span class="number">2</span>);          <span class="comment">// 输出12，此时a = 2，b = 10（取默认值）；</span></span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+
+<h3 id="arguments"><a href="#arguments" class="headerlink" title="arguments"></a>arguments</h3><p><code>JavaScript</code> 函数有个内置的对象<code>arguments</code>对象。<code>argument</code> 对象包含了函数调用的参数数组。<code>arguments</code>是一个伪数组，具有数组特性的<code>arguments</code>对象</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn3</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">arguments</span>);   <span class="comment">// Arguments(3) [1, 2, 3, callee: ƒ, Symbol(Symbol.iterator): ƒ]</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; <span class="built_in">arguments</span>.length; i++) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="built_in">arguments</span>[i]);   <span class="comment">// 1, 2, 3</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">fn3(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+
+<p>通过这种方式你可以很方便的找到最大的一个参数的值。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">findMax</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> i, max = <span class="built_in">arguments</span>[<span class="number">0</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">arguments</span>.length &lt; <span class="number">2</span>) <span class="keyword">return</span> max;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="built_in">arguments</span>.length; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">arguments</span>[i] &gt; max) &#123;</span><br><span class="line">            max = <span class="built_in">arguments</span>[i];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> max;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> res = findMax(<span class="number">1</span>, <span class="number">123</span>, <span class="number">500</span>, <span class="number">115</span>, <span class="number">44</span>, <span class="number">88</span>);</span><br><span class="line"><span class="built_in">console</span>.log(res); <span class="comment">// 500</span></span><br></pre></td></tr></table></figure>
+<p><code>arguments</code>是一个伪数组，只有一个<code>length</code>属性，不能使用数组的一些方法，使用<code>Array.prototype.slice.call()</code>方法可以把伪数组对象变成一个真正的数组(注意此方法转换的对象必须要有<code>length</code>属性)</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log([].slice.call(<span class="built_in">arguments</span>));</span><br><span class="line">&#125;</span><br><span class="line">fn(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+<p>如果在参数中传递<code>...args</code>，表示剩余参数，保存在一个数组里面，如果有像下面的形式，那么将会把第一个参数给到<code>x</code>，其他的再保存在<code>args</code>数组里面</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn1</span>(<span class="params">x, ...args</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(x);     <span class="comment">// 1</span></span><br><span class="line">    <span class="built_in">console</span>.log(args);  <span class="comment">// [2, 3]</span></span><br><span class="line">&#125;</span><br><span class="line">fn1(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+
+<p>解构参数</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn2</span>(<span class="params">...args</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(args);  <span class="comment">// [1, 2, 3, 4, 5, 6]</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> args1 = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line"><span class="keyword">let</span> args2 = [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]</span><br><span class="line">fn2(...args1, ...args2)    <span class="comment">// 参数解构</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// console.log(...[1, 2, 3]);  // 1, 2, 3</span></span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>JavaScript</category>
       </categories>
@@ -1358,77 +1390,6 @@
       </tags>
   </entry>
   <entry>
-    <title>js 函数参数以及内置参数arguments</title>
-    <url>/2021/06/11/js-%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E4%BB%A5%E5%8F%8A%E5%86%85%E7%BD%AE%E5%8F%82%E6%95%B0arguments/</url>
-    <content><![CDATA[<h3 id="普通传参"><a href="#普通传参" class="headerlink" title="普通传参"></a>普通传参</h3><ul>
-<li><code>ES5</code>中如果函数在调用时如果未提供隐式参数（实参），参数会默认设置为<code>undefined</code></li>
-<li>实参比形参多的时候，多出来的直接被忽略<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getSum</span>(<span class="params">a, b, c</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(a + b + c);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> res1 = getSum(<span class="number">1</span>, <span class="number">2</span>)         <span class="comment">// NaN，形参c没有赋值，为undefined，结果是 1 + 2 + undefined ,NaN</span></span><br><span class="line"><span class="keyword">let</span> res2 = getSum(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>)   <span class="comment">// 实参比形参多的时候，多出来的直接被忽略</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-<h3 id="默认参数"><a href="#默认参数" class="headerlink" title="默认参数"></a>默认参数</h3><p>默认参数，<code>ES5</code>中不值吃形参直接定义默认参数，需要自己再函数体中自己判断</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn1</span>(<span class="params">x, y</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (y === <span class="literal">undefined</span>) &#123;</span><br><span class="line">        y = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 或者</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn2</span>(<span class="params">x, y</span>) </span>&#123;</span><br><span class="line">    y = y || <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在<code>ES6</code>中，可以在形参中直接设置默认参数；</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">sumAll</span>(<span class="params">a, b = <span class="number">10</span></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(a + b);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">sumAll(<span class="number">2</span>, <span class="number">2</span>);       <span class="comment">// 输出4，此时a = 2，b = 10</span></span><br><span class="line">sumAll(<span class="number">2</span>);          <span class="comment">// 输出12，此时a = 2，b = 10（取默认值）；</span></span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-
-<h3 id="arguments"><a href="#arguments" class="headerlink" title="arguments"></a>arguments</h3><p><code>JavaScript</code> 函数有个内置的对象<code>arguments</code>对象。<code>argument</code> 对象包含了函数调用的参数数组。<code>arguments</code>是一个伪数组，具有数组特性的<code>arguments</code>对象</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn3</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">arguments</span>);   <span class="comment">// Arguments(3) [1, 2, 3, callee: ƒ, Symbol(Symbol.iterator): ƒ]</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; <span class="built_in">arguments</span>.length; i++) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="built_in">arguments</span>[i]);   <span class="comment">// 1, 2, 3</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">fn3(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
-
-<p>通过这种方式你可以很方便的找到最大的一个参数的值。</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">findMax</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> i, max = <span class="built_in">arguments</span>[<span class="number">0</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">arguments</span>.length &lt; <span class="number">2</span>) <span class="keyword">return</span> max;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="built_in">arguments</span>.length; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">arguments</span>[i] &gt; max) &#123;</span><br><span class="line">            max = <span class="built_in">arguments</span>[i];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> max;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> res = findMax(<span class="number">1</span>, <span class="number">123</span>, <span class="number">500</span>, <span class="number">115</span>, <span class="number">44</span>, <span class="number">88</span>);</span><br><span class="line"><span class="built_in">console</span>.log(res); <span class="comment">// 500</span></span><br></pre></td></tr></table></figure>
-<p><code>arguments</code>是一个伪数组，只有一个<code>length</code>属性，不能使用数组的一些方法，使用<code>Array.prototype.slice.call()</code>方法可以把伪数组对象变成一个真正的数组(注意此方法转换的对象必须要有<code>length</code>属性)</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log([].slice.call(<span class="built_in">arguments</span>));</span><br><span class="line">&#125;</span><br><span class="line">fn(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
-<p>如果在参数中传递<code>...args</code>，表示剩余参数，保存在一个数组里面，如果有像下面的形式，那么将会把第一个参数给到<code>x</code>，其他的再保存在<code>args</code>数组里面</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn1</span>(<span class="params">x, ...args</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(x);     <span class="comment">// 1</span></span><br><span class="line">    <span class="built_in">console</span>.log(args);  <span class="comment">// [2, 3]</span></span><br><span class="line">&#125;</span><br><span class="line">fn1(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
-
-<p>解构参数</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn2</span>(<span class="params">...args</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(args);  <span class="comment">// [1, 2, 3, 4, 5, 6]</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> args1 = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line"><span class="keyword">let</span> args2 = [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]</span><br><span class="line">fn2(...args1, ...args2)    <span class="comment">// 参数解构</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// console.log(...[1, 2, 3]);  // 1, 2, 3</span></span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>JavaScript</category>
-      </categories>
-      <tags>
-        <tag>JavaScript</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>js 箭头函数</title>
-    <url>/2021/05/28/js-%E7%AE%AD%E5%A4%B4%E5%87%BD%E6%95%B0/</url>
-    <content><![CDATA[<h3 id="箭头函数特性"><a href="#箭头函数特性" class="headerlink" title="箭头函数特性"></a>箭头函数特性</h3><ul>
-<li>不能使用<code>new</code>关键字，不能用作构造函数</li>
-<li>箭头函数不能用作<code>generator</code>函数</li>
-<li>箭头函数内部没有内置的<code>arguments</code>参数，通过剩余参数获取</li>
-<li><code>this</code>指向的不是调用者，而是指向箭头函数所在作用域的环境上下文，箭头函数一旦声明，则<code>this</code>的指向就固定了，不会变<span id="more"></span></li>
-</ul>
-<p>我们先来看看面试中常问到的箭头函数中的<code>this</code>指向问题</p>
-<p>下面的代码中，箭头函数<code>say</code>作为属性，放在<code>obj</code>对象中</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> obj = &#123;</span><br><span class="line">    <span class="attr">username</span>: <span class="string">&#x27;jerry&#x27;</span>,</span><br><span class="line">    <span class="attr">say</span>: <span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;this指向：&#x27;</span>, <span class="built_in">this</span>);</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;username&#x27;</span>, <span class="built_in">this</span>.username);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>调用<code>say</code>方法，看看函数输出，并看看<code>this</code>指向哪里</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">obj.say(); </span><br><span class="line"><span class="comment">// this指向： window</span></span><br><span class="line"><span class="comment">// username undefined</span></span><br></pre></td></tr></table></figure>
-<p>结果<code>this</code>指向的是<code>window</code>，而不是指向<code>obj</code>，这是因为箭头函数的特殊性，箭头函数所处在的作用域是<code>obj</code>，而<code>obj</code>所存在的环境上下文是<code>window</code>，因此<code>obj</code>内部的<code>this</code>指向<code>window</code>，而此时打印<code>this.username</code>，输出的是<code>window</code>上的<code>username</code>，如果<code>window</code>上有<code>username</code>，则打印相应的值，否则打印<code>undefined</code>;</p>
-<p>再来看另外一个例子</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> obj2 = &#123;</span><br><span class="line">  <span class="attr">username</span>: <span class="string">&#x27;tom&#x27;</span>,</span><br><span class="line">  <span class="attr">say</span>: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;this指向：&#x27;</span>, <span class="built_in">this</span>);</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;username：&#x27;</span>, <span class="built_in">this</span>.username);</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>调用结果</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="built_in">this</span>指向： &#123;<span class="attr">username</span>: <span class="string">&quot;tom&quot;</span>, <span class="attr">say</span>: ƒ&#125;</span><br><span class="line">username： tom</span><br></pre></td></tr></table></figure>
-<p>结果<code>this</code>指向的<code>obj2</code>对象，此时箭头函数所在的作用是函数<code>say</code>的作用域，而<code>say</code>函数的上下文是在<code>obj2</code>里，因此<code>this</code>指向的是<code>obj2</code>，打印的<code>username</code>是<code>obj2</code>对象的<code>username</code>，即<code>tom</code></p>
-<p>总结：</p>
-<ul>
-<li>箭头函数的<code>this</code>不是由调用者决定，而是在生成的时候就绑定了，在任何地方调用都不会改变箭头函数里的<code>this</code>指向</li>
-<li>箭头函数的this指向的是该箭头函数创建时的作用域的父级上下文环境</li>
-</ul>
-<p>箭头函数其他的一些特性：</p>
-<ul>
-<li>箭头函数不能用作构造函数，不能使用 <code>new</code> 关键字</li>
-<li>箭头函数不能用作<code>generator</code>函数</li>
-<li>箭头函数中没有<code>arguments</code>对象，可以使用<code>...args</code>获取参数</li>
-</ul>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> fun1 = <span class="function">(<span class="params">...args</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(args);      <span class="comment">// [1, 2, [3, 4], &#123;num: 5&#125;]</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="built_in">arguments</span>); <span class="comment">// 报错：arguments is not defined</span></span><br><span class="line">&#125;</span><br><span class="line">fun1(<span class="number">1</span>, <span class="number">2</span>, [<span class="number">3</span>, <span class="number">4</span>], &#123;<span class="attr">num</span>: <span class="number">5</span>&#125;)</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>JavaScript</category>
-      </categories>
-      <tags>
-        <tag>JavaScript</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>js 引用数据类型和值数据类型</title>
     <url>/2021/05/26/js-%E5%BC%95%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%92%8C%E5%80%BC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</url>
     <content><![CDATA[<p>引用数据类型：对象(Object)、数组(Array)、函数(Function)、正则(RegExp)、日期(Date)等</p>
@@ -1467,6 +1428,60 @@
       </categories>
       <tags>
         <tag>JavaScript</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>xtrabackup备份实操</title>
+    <url>/2017/04/12/xtrabackup%E5%A4%87%E4%BB%BD%E5%AE%9E%E6%93%8D/</url>
+    <content><![CDATA[<h3 id="xtrabackup备份实操"><a href="#xtrabackup备份实操" class="headerlink" title="xtrabackup备份实操"></a>xtrabackup备份实操</h3><p>下载安装xtrabackup</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# wget https://www.percona.com/downloads/XtraBackup/Percona-XtraBackup-2.4.5/binary/tarball/percona-xtrabackup-2.4.5-Linux-x86_64.tar.gz</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# tar -xf percona-xtrabackup-2.4.5-Linux-x86_64.tar.gz</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# mv percona-xtrabackup-2.4.5-Linux-x86_64 percona-xtrabackup</span><br><span class="line"></span><br><span class="line">#无需编译，可直接使用</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<p>创建备份用户</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">create</span> <span class="keyword">user</span> pxb@<span class="string">&#x27;localhost&#x27;</span> identified <span class="keyword">by</span> <span class="string">&#x27;echo123.&#x27;</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span>  <span class="keyword">grant</span> reload,process,lock tables,replication client <span class="keyword">on</span> <span class="operator">*</span>.<span class="operator">*</span> <span class="keyword">to</span> pxb<span class="variable">@localhost</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<p>创建备份存放目录</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# mkdir -p /data/xtrabackup</span><br></pre></td></tr></table></figure>
+
+<h4 id="全量备份与恢复"><a href="#全量备份与恢复" class="headerlink" title="全量备份与恢复"></a>全量备份与恢复</h4><p>全量备份</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# cd percona-xtrabackup/</span><br><span class="line">[root@lyucan percona-xtrabackup]# ./bin/innobackupex --defaults-file=/etc/my.cnf --user=pxb --password=echo123. --socket=/tmp/mysql.sock --no-timestamp /data/xtrabackup/all-20180410-bak</span><br><span class="line"></span><br><span class="line">......</span><br><span class="line"></span><br><span class="line">180410 23:11:42 Executing FLUSH NO_WRITE_TO_BINLOG ENGINE LOGS...</span><br><span class="line">xtrabackup: The latest check point (for incremental): &#x27;1475999660&#x27;</span><br><span class="line">xtrabackup: Stopping log copying thread.</span><br><span class="line">.180410 23:11:42 &gt;&gt; log scanned up to (1475999669)</span><br><span class="line"></span><br><span class="line">180410 23:11:42 Executing UNLOCK TABLES</span><br><span class="line">180410 23:11:42 All tables unlocked</span><br><span class="line">180410 23:11:42 [00] Copying ib_buffer_pool to /data/xtrabackup/all-20180410-bak/ib_buffer_pool</span><br><span class="line">180410 23:11:42 [00]        ...done</span><br><span class="line">180410 23:11:42 Backup created in directory &#x27;/data/xtrabackup/all-20180410-bak&#x27;</span><br><span class="line">MySQL binlog position: filename &#x27;mysql-bin.000004&#x27;, position &#x27;8623&#x27;</span><br><span class="line">180410 23:11:42 [00] Writing backup-my.cnf</span><br><span class="line">180410 23:11:42 [00]        ...done</span><br><span class="line">180410 23:11:42 [00] Writing xtrabackup_info</span><br><span class="line">180410 23:11:42 [00]        ...done</span><br><span class="line">xtrabackup: Transaction log of lsn (1475999660) to (1475999669) was copied.</span><br><span class="line">180410 23:11:42 completed OK!</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>查看备份文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan all-20180410-bak]# cd /data/xtrabackup/all-20180410-bak/</span><br><span class="line">[root@lyucan all-20180410-bak]# ll</span><br><span class="line">total 77876</span><br><span class="line">-rw-r-----. 1 root root      425 Apr 10 23:11 backup-my.cnf</span><br><span class="line">drwxr-x---. 2 root root       49 Apr 10 23:11 dbtest</span><br><span class="line">-rw-r-----. 1 root root      503 Apr 10 23:11 ib_buffer_pool</span><br><span class="line">-rw-r-----. 1 root root 79691776 Apr 10 23:11 ibdata1</span><br><span class="line">drwxr-x---. 2 root root     4096 Apr 10 23:11 mysql</span><br><span class="line">drwxr-x---. 2 root root     8192 Apr 10 23:11 performance_schema</span><br><span class="line">drwxr-x---. 2 root root     8192 Apr 10 23:11 sys</span><br><span class="line">drwxr-x---. 2 root root       45 Apr 10 23:11 test</span><br><span class="line">-rw-r-----. 1 root root       22 Apr 10 23:11 xtrabackup_binlog_info</span><br><span class="line">-rw-r-----. 1 root root      119 Apr 10 23:11 xtrabackup_checkpoints</span><br><span class="line">-rw-r-----. 1 root root      560 Apr 10 23:11 xtrabackup_info</span><br><span class="line">-rw-r-----. 1 root root     2560 Apr 10 23:11 xtrabackup_logfile</span><br></pre></td></tr></table></figure>
+
+<p>xtrabackup_binlog_info 文件记录了备份完成时binlog的position；</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan all-20180410-bak]# cat xtrabackup_binlog_info</span><br><span class="line">mysql-bin.000004     8623</span><br></pre></td></tr></table></figure>
+
+<p><code>xtrabackup_checkpoints</code>记录了备份的起始lsn号和最后的lsn号</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan all-20180410-bak]# cat xtrabackup_checkpoints</span><br><span class="line">backup_type = full-backuped             ##full-backuped表示全备</span><br><span class="line">from_lsn = 0                            ##全备lsn号一定是从0开始</span><br><span class="line">to_lsn = 1475999660</span><br><span class="line">last_lsn = 1475999669</span><br><span class="line">compact = 0</span><br><span class="line">recover_binlog_info = 0</span><br></pre></td></tr></table></figure>
+
+<p><code>xtrabackup_info</code>记录了备份的信息，时间，命令，版本等；</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan all-20180410-bak]# cat xtrabackup_info</span><br><span class="line">uuid = 79f03ea9-3cd1-11e8-bf94-da8255dea6c5</span><br><span class="line">name =</span><br><span class="line">tool_name = innobackupex</span><br><span class="line">tool_command = --defaults-file=/etc/my.cnf --user=pxb --password=... --socket=/tmp/mysql.sock --no-timestamp /data/xtrabackup/all-20180410-bak</span><br><span class="line">tool_version = 2.4.5</span><br><span class="line">ibbackup_version = 2.4.5</span><br><span class="line">server_version = 5.7.21-log</span><br><span class="line">start_time = 2018-04-10 23:11:39</span><br><span class="line">end_time = 2018-04-10 23:11:42</span><br><span class="line">lock_time = 0</span><br><span class="line">binlog_pos = filename &#x27;mysql-bin.000004&#x27;, position &#x27;8623&#x27;</span><br><span class="line">innodb_from_lsn = 0</span><br><span class="line">innodb_to_lsn = 1475999660</span><br><span class="line">partial = N</span><br><span class="line">incremental = N</span><br><span class="line">format = file</span><br><span class="line">compact = N</span><br><span class="line">compressed = N</span><br><span class="line">encrypted = N</span><br></pre></td></tr></table></figure>
+
+<p>全量恢复</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan percona-xtrabackup]# ./bin/innobackupex --defaults-file=/etc/my.cnf --user=pxb --password=echo123. --socket=/tmp/mysql.sock --apply-log  /data/xtrabackup/all-20180410-bak</span><br><span class="line"></span><br><span class="line">......</span><br><span class="line">InnoDB: Starting crash recovery.</span><br><span class="line">InnoDB: xtrabackup: Last MySQL binlog file position 8129, file name mysql-bin.000004</span><br><span class="line">InnoDB: Removed temporary tablespace data file: &quot;ibtmp1&quot;</span><br><span class="line">InnoDB: Creating shared tablespace for temporary tables</span><br><span class="line">InnoDB: Setting file &#x27;./ibtmp1&#x27; size to 12 MB. Physically writing the file full; Please wait ...</span><br><span class="line">InnoDB: File &#x27;./ibtmp1&#x27; size is now 12 MB.</span><br><span class="line">InnoDB: 96 redo rollback segment(s) found. 1 redo rollback segment(s) are active.</span><br><span class="line">InnoDB: 32 non-redo rollback segment(s) are active.</span><br><span class="line">InnoDB: 5.7.13 started; log sequence number 1475999765</span><br><span class="line">xtrabackup: starting shutdown with innodb_fast_shutdown = 1</span><br><span class="line">InnoDB: FTS optimize thread exiting.</span><br><span class="line">InnoDB: Starting shutdown...</span><br><span class="line">InnoDB: Shutdown completed; log sequence number 1475999793</span><br><span class="line">180410 23:36:27 completed OK!</span><br></pre></td></tr></table></figure>
+
+<p>这一步的<code>--apply-log</code>的作用是将备份的事务进行前滚（redo）或回滚（undo），将已提交的前滚，未提交的回滚，达到数据的一致性；这个一致性的时间点就是备份过程中FTWRL锁表的时间点。</p>
+<p>应用备份库</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#停掉当前库</span><br><span class="line">[root@lyucan xtrabackup]# service mysqld stop</span><br><span class="line">Shutting down MySQL.... SUCCESS!</span><br><span class="line"></span><br><span class="line">#将当前库重命名</span><br><span class="line">[root@lyucan data]# mv /data/mysql/  /data/mysql_bak_20180410</span><br><span class="line"></span><br><span class="line">#将备份库重命名为mysql</span><br><span class="line">[root@lyucan data]# mv /data/xtrabackup/all-20180410-bak/  /data/mysql</span><br><span class="line"></span><br><span class="line">#修改权限</span><br><span class="line">[root@lyucan data]# chown mysql:mysql -R /data/mysql/</span><br><span class="line"></span><br><span class="line">#启动数据库</span><br><span class="line">[root@lyucan data]# service mysqld start</span><br><span class="line">Starting MySQL.. SUCCESS!</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>要完全恢复数据库，还要结合二进制日志进行恢复；</p>
+<h4 id="增量备份与恢复"><a href="#增量备份与恢复" class="headerlink" title="增量备份与恢复"></a>增量备份与恢复</h4><p>增量备份</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#首先进行一次全备</span><br><span class="line">[root@lyucan percona-xtrabackup]# ./bin/innobackupex --defaults-file=/etc/my.cnf --user=pxb --password=echo123. --socket=/tmp/mysql.sock --no-timestamp /data/xtrabackup/all-20180410-bak</span><br><span class="line"></span><br><span class="line">#进行一次增备，基于第一次的全备</span><br><span class="line">[root@lyucan percona-xtrabackup]# ./bin/innobackupex --defaults-file=/etc/my.cnf --no-timestamp --user=pxb --password=echo123. --socket=/tmp/mysql.sock --incremental --incremental-basedir=/data/xtrabackup/all-20180410-bak  /data/xtrabackup/incremental-20180411-bak</span><br><span class="line"></span><br><span class="line">--incremental：表示是增备</span><br><span class="line">--incremental-basedir：基于哪个备份进行增备</span><br><span class="line"></span><br><span class="line">#再进行一次增备，基于第二次的增备</span><br><span class="line">[root@lyucan percona-xtrabackup]# ./bin/innobackupex --defaults-file=/etc/my.cnf --no-timestamp --user=pxb --password=echo123. --socket=/tmp/mysql.sock --incremental --incremental-basedir=/data/xtrabackup/incremental-20180411-bak  /data/xtrabackup/incremental-20180412-bak</span><br></pre></td></tr></table></figure>
+<p>查看三次的备份文件</p>
+<p>checkpoint</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan xtrabackup]# cat /data/xtrabackup/all-20180410-bak/xtrabackup_checkpoints</span><br><span class="line">backup_type = full-backuped             ##全备</span><br><span class="line">from_lsn = 0</span><br><span class="line">to_lsn = 1476007364</span><br><span class="line">last_lsn = 1476007373</span><br><span class="line">compact = 0</span><br><span class="line">recover_binlog_info = 0</span><br><span class="line"></span><br><span class="line">[root@lyucan xtrabackup]# cat /data/xtrabackup/incremental-20180411-bak/xtrabackup_checkpoints</span><br><span class="line">backup_type = incremental               ##增备</span><br><span class="line">from_lsn = 1476007364</span><br><span class="line">to_lsn = 1476011232</span><br><span class="line">last_lsn = 1476011241</span><br><span class="line">compact = 0</span><br><span class="line">recover_binlog_info = 0</span><br><span class="line"></span><br><span class="line">[root@lyucan xtrabackup]# cat /data/xtrabackup/incremental-20180412-bak/xtrabackup_checkpoints</span><br><span class="line">backup_type = incremental              ##增备</span><br><span class="line">from_lsn = 1476011232</span><br><span class="line">to_lsn = 1476015084</span><br><span class="line">last_lsn = 1476015093</span><br><span class="line">compact = 0</span><br><span class="line">recover_binlog_info = 0</span><br><span class="line"></span><br><span class="line">##可以看到lsn号都是连续的</span><br><span class="line"></span><br><span class="line">binlog_info</span><br><span class="line">[root@lyucan xtrabackup]# cat /data/xtrabackup/all-20180410-bak/xtrabackup_binlog_info</span><br><span class="line">mysql-bin.000005     479</span><br><span class="line">[root@lyucan xtrabackup]# cat /data/xtrabackup/incremental-20180411-bak/xtrabackup_binlog_info</span><br><span class="line">mysql-bin.000005     645</span><br><span class="line">[root@lyucan xtrabackup]# cat /data/xtrabackup/incremental-20180412-bak/xtrabackup_binlog_info</span><br><span class="line">mysql-bin.000005     811</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>增备恢复</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">##恢复第一个全备，加上--redo-only，表示只进行前滚</span><br><span class="line">[root@lyucan percona-xtrabackup]# ./bin/innobackupex --defaults-file=/etc/my.cnf --user=pxb --password=echo123. --socket=/tmp/mysql.sock --apply-log --redo-only  /data/xtrabackup/all-20180410-bak</span><br><span class="line"></span><br><span class="line">##将20180411增量备份加到全量备份上，使用--incremental-dir= 来指定增量备份</span><br><span class="line">[root@lyucan percona-xtrabackup]# ./bin/innobackupex --defaults-file=/etc/my.cnf --user=pxb --password=echo123. --socket=/tmp/mysql.sock --apply-log --redo-only  /data/xtrabackup/all-20180410-bak  --incremental-dir=/data/xtrabackup/incremental-20180411-bak</span><br><span class="line"></span><br><span class="line">##将20180412增量备份加到全量备份上，使用--incremental-dir= 来指定增量备份</span><br><span class="line">[root@lyucan percona-xtrabackup]# ./bin/innobackupex --defaults-file=/etc/my.cnf --user=pxb --password=echo123. --socket=/tmp/mysql.sock --apply-log --redo-only  /data/xtrabackup/all-20180410-bak  --incremental-dir=/data/xtrabackup/incremental-20180412-bak</span><br><span class="line"></span><br><span class="line">##将所有增量备份加到全备上后，再进行全备的恢复，回归到全量备份，此时没有--redo-only；</span><br><span class="line">[root@lyucan percona-xtrabackup]# ./bin/innobackupex --defaults-file=/etc/my.cnf --user=pxb --password=echo123. --socket=/tmp/mysql.sock --apply-log  /data/xtrabackup/all-20180410-bak</span><br></pre></td></tr></table></figure>
+<p>应用备份库</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#停掉当前库</span><br><span class="line">[root@lyucan xtrabackup]# service mysqld stop</span><br><span class="line">Shutting down MySQL.... SUCCESS!</span><br><span class="line"></span><br><span class="line">#将当前库重命名</span><br><span class="line">[root@lyucan data]# mv /data/mysql/  /data/mysql_bak_20180410</span><br><span class="line"></span><br><span class="line">#将备份库重命名为mysql</span><br><span class="line">[root@lyucan data]# mv /data/xtrabackup/all-20180410-bak/  /data/mysql</span><br><span class="line"></span><br><span class="line">#修改权限</span><br><span class="line">[root@lyucan data]# chown mysql:mysql -R /data/mysql/</span><br><span class="line"></span><br><span class="line">#启动数据库</span><br><span class="line">[root@lyucan data]# service mysqld start</span><br><span class="line">Starting MySQL.. SUCCESS!</span><br></pre></td></tr></table></figure>
+<p><strong>还是那句话，如果要进行完全数据恢复，还需要结合二进制日志进行数据恢复；</strong></p>
+<p><strong>很简单，根据备份里面记录的xtrabackup_binlog_info，进行原库二进制日志的恢复；</strong></p>
+]]></content>
+      <categories>
+        <category>Mysql</category>
+      </categories>
+      <tags>
+        <tag>xtrabackup</tag>
       </tags>
   </entry>
   <entry>
@@ -1516,6 +1531,45 @@
       </tags>
   </entry>
   <entry>
+    <title>js 箭头函数</title>
+    <url>/2021/05/28/js-%E7%AE%AD%E5%A4%B4%E5%87%BD%E6%95%B0/</url>
+    <content><![CDATA[<h3 id="箭头函数特性"><a href="#箭头函数特性" class="headerlink" title="箭头函数特性"></a>箭头函数特性</h3><ul>
+<li>不能使用<code>new</code>关键字，不能用作构造函数</li>
+<li>箭头函数不能用作<code>generator</code>函数</li>
+<li>箭头函数内部没有内置的<code>arguments</code>参数，通过剩余参数获取</li>
+<li><code>this</code>指向的不是调用者，而是指向箭头函数所在作用域的环境上下文，箭头函数一旦声明，则<code>this</code>的指向就固定了，不会变<span id="more"></span></li>
+</ul>
+<p>我们先来看看面试中常问到的箭头函数中的<code>this</code>指向问题</p>
+<p>下面的代码中，箭头函数<code>say</code>作为属性，放在<code>obj</code>对象中</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> obj = &#123;</span><br><span class="line">    <span class="attr">username</span>: <span class="string">&#x27;jerry&#x27;</span>,</span><br><span class="line">    <span class="attr">say</span>: <span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;this指向：&#x27;</span>, <span class="built_in">this</span>);</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;username&#x27;</span>, <span class="built_in">this</span>.username);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>调用<code>say</code>方法，看看函数输出，并看看<code>this</code>指向哪里</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">obj.say(); </span><br><span class="line"><span class="comment">// this指向： window</span></span><br><span class="line"><span class="comment">// username undefined</span></span><br></pre></td></tr></table></figure>
+<p>结果<code>this</code>指向的是<code>window</code>，而不是指向<code>obj</code>，这是因为箭头函数的特殊性，箭头函数所处在的作用域是<code>obj</code>，而<code>obj</code>所存在的环境上下文是<code>window</code>，因此<code>obj</code>内部的<code>this</code>指向<code>window</code>，而此时打印<code>this.username</code>，输出的是<code>window</code>上的<code>username</code>，如果<code>window</code>上有<code>username</code>，则打印相应的值，否则打印<code>undefined</code>;</p>
+<p>再来看另外一个例子</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> obj2 = &#123;</span><br><span class="line">  <span class="attr">username</span>: <span class="string">&#x27;tom&#x27;</span>,</span><br><span class="line">  <span class="attr">say</span>: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;this指向：&#x27;</span>, <span class="built_in">this</span>);</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;username：&#x27;</span>, <span class="built_in">this</span>.username);</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>调用结果</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="built_in">this</span>指向： &#123;<span class="attr">username</span>: <span class="string">&quot;tom&quot;</span>, <span class="attr">say</span>: ƒ&#125;</span><br><span class="line">username： tom</span><br></pre></td></tr></table></figure>
+<p>结果<code>this</code>指向的<code>obj2</code>对象，此时箭头函数所在的作用是函数<code>say</code>的作用域，而<code>say</code>函数的上下文是在<code>obj2</code>里，因此<code>this</code>指向的是<code>obj2</code>，打印的<code>username</code>是<code>obj2</code>对象的<code>username</code>，即<code>tom</code></p>
+<p>总结：</p>
+<ul>
+<li>箭头函数的<code>this</code>不是由调用者决定，而是在生成的时候就绑定了，在任何地方调用都不会改变箭头函数里的<code>this</code>指向</li>
+<li>箭头函数的this指向的是该箭头函数创建时的作用域的父级上下文环境</li>
+</ul>
+<p>箭头函数其他的一些特性：</p>
+<ul>
+<li>箭头函数不能用作构造函数，不能使用 <code>new</code> 关键字</li>
+<li>箭头函数不能用作<code>generator</code>函数</li>
+<li>箭头函数中没有<code>arguments</code>对象，可以使用<code>...args</code>获取参数</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> fun1 = <span class="function">(<span class="params">...args</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(args);      <span class="comment">// [1, 2, [3, 4], &#123;num: 5&#125;]</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="built_in">arguments</span>); <span class="comment">// 报错：arguments is not defined</span></span><br><span class="line">&#125;</span><br><span class="line">fun1(<span class="number">1</span>, <span class="number">2</span>, [<span class="number">3</span>, <span class="number">4</span>], &#123;<span class="attr">num</span>: <span class="number">5</span>&#125;)</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>JavaScript</category>
+      </categories>
+      <tags>
+        <tag>JavaScript</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>xtrabackup备份原理</title>
     <url>/2017/04/12/xtrabackup%E5%A4%87%E4%BB%BD%E5%8E%9F%E7%90%86/</url>
     <content><![CDATA[<h3 id="xtrabackup备份原理"><a href="#xtrabackup备份原理" class="headerlink" title="xtrabackup备份原理"></a>xtrabackup备份原理</h3><p>流程图</p>
@@ -1539,60 +1593,6 @@
 <p>因为备份时 FTWRL 后，数据库是处于只读的，非 InnoDB 数据是在持有全局读锁情况下拷贝的，所以非 InnoDB 数据本身就对应 FTWRL 时间点；InnoDB 的 ibd 文件拷贝是在 FTWRL 前做的，拷贝出来的不同 ibd 文件最后更新时间点是不一样的，这种状态的 ibd 文件是不能直接用的，但是 redo log 是从备份开始一直持续拷贝的，最后的 redo 日志点是在持有 FTWRL 后取得的，所以最终通过 redo 应用后的 ibd 数据时间点也是和 FTWRL 一致的。</p>
 <p>所以恢复过程只涉及 InnoDB 文件的恢复，非 InnoDB 数据是不动的。备份恢复完成后，就可以把数据文件拷贝到对应的目录，然后通过mysqld来启动了。</p>
 <p>备份过程中产生的事务会被备份出来，提交了的前滚，未提交的回滚，保持数据的一致性；</p>
-]]></content>
-      <categories>
-        <category>Mysql</category>
-      </categories>
-      <tags>
-        <tag>xtrabackup</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>xtrabackup备份实操</title>
-    <url>/2017/04/12/xtrabackup%E5%A4%87%E4%BB%BD%E5%AE%9E%E6%93%8D/</url>
-    <content><![CDATA[<h3 id="xtrabackup备份实操"><a href="#xtrabackup备份实操" class="headerlink" title="xtrabackup备份实操"></a>xtrabackup备份实操</h3><p>下载安装xtrabackup</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# wget https://www.percona.com/downloads/XtraBackup/Percona-XtraBackup-2.4.5/binary/tarball/percona-xtrabackup-2.4.5-Linux-x86_64.tar.gz</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# tar -xf percona-xtrabackup-2.4.5-Linux-x86_64.tar.gz</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# mv percona-xtrabackup-2.4.5-Linux-x86_64 percona-xtrabackup</span><br><span class="line"></span><br><span class="line">#无需编译，可直接使用</span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-<p>创建备份用户</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">create</span> <span class="keyword">user</span> pxb@<span class="string">&#x27;localhost&#x27;</span> identified <span class="keyword">by</span> <span class="string">&#x27;echo123.&#x27;</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span>  <span class="keyword">grant</span> reload,process,lock tables,replication client <span class="keyword">on</span> <span class="operator">*</span>.<span class="operator">*</span> <span class="keyword">to</span> pxb<span class="variable">@localhost</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
-
-<p>创建备份存放目录</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# mkdir -p /data/xtrabackup</span><br></pre></td></tr></table></figure>
-
-<h4 id="全量备份与恢复"><a href="#全量备份与恢复" class="headerlink" title="全量备份与恢复"></a>全量备份与恢复</h4><p>全量备份</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan ~]# cd percona-xtrabackup/</span><br><span class="line">[root@lyucan percona-xtrabackup]# ./bin/innobackupex --defaults-file=/etc/my.cnf --user=pxb --password=echo123. --socket=/tmp/mysql.sock --no-timestamp /data/xtrabackup/all-20180410-bak</span><br><span class="line"></span><br><span class="line">......</span><br><span class="line"></span><br><span class="line">180410 23:11:42 Executing FLUSH NO_WRITE_TO_BINLOG ENGINE LOGS...</span><br><span class="line">xtrabackup: The latest check point (for incremental): &#x27;1475999660&#x27;</span><br><span class="line">xtrabackup: Stopping log copying thread.</span><br><span class="line">.180410 23:11:42 &gt;&gt; log scanned up to (1475999669)</span><br><span class="line"></span><br><span class="line">180410 23:11:42 Executing UNLOCK TABLES</span><br><span class="line">180410 23:11:42 All tables unlocked</span><br><span class="line">180410 23:11:42 [00] Copying ib_buffer_pool to /data/xtrabackup/all-20180410-bak/ib_buffer_pool</span><br><span class="line">180410 23:11:42 [00]        ...done</span><br><span class="line">180410 23:11:42 Backup created in directory &#x27;/data/xtrabackup/all-20180410-bak&#x27;</span><br><span class="line">MySQL binlog position: filename &#x27;mysql-bin.000004&#x27;, position &#x27;8623&#x27;</span><br><span class="line">180410 23:11:42 [00] Writing backup-my.cnf</span><br><span class="line">180410 23:11:42 [00]        ...done</span><br><span class="line">180410 23:11:42 [00] Writing xtrabackup_info</span><br><span class="line">180410 23:11:42 [00]        ...done</span><br><span class="line">xtrabackup: Transaction log of lsn (1475999660) to (1475999669) was copied.</span><br><span class="line">180410 23:11:42 completed OK!</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>查看备份文件</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan all-20180410-bak]# cd /data/xtrabackup/all-20180410-bak/</span><br><span class="line">[root@lyucan all-20180410-bak]# ll</span><br><span class="line">total 77876</span><br><span class="line">-rw-r-----. 1 root root      425 Apr 10 23:11 backup-my.cnf</span><br><span class="line">drwxr-x---. 2 root root       49 Apr 10 23:11 dbtest</span><br><span class="line">-rw-r-----. 1 root root      503 Apr 10 23:11 ib_buffer_pool</span><br><span class="line">-rw-r-----. 1 root root 79691776 Apr 10 23:11 ibdata1</span><br><span class="line">drwxr-x---. 2 root root     4096 Apr 10 23:11 mysql</span><br><span class="line">drwxr-x---. 2 root root     8192 Apr 10 23:11 performance_schema</span><br><span class="line">drwxr-x---. 2 root root     8192 Apr 10 23:11 sys</span><br><span class="line">drwxr-x---. 2 root root       45 Apr 10 23:11 test</span><br><span class="line">-rw-r-----. 1 root root       22 Apr 10 23:11 xtrabackup_binlog_info</span><br><span class="line">-rw-r-----. 1 root root      119 Apr 10 23:11 xtrabackup_checkpoints</span><br><span class="line">-rw-r-----. 1 root root      560 Apr 10 23:11 xtrabackup_info</span><br><span class="line">-rw-r-----. 1 root root     2560 Apr 10 23:11 xtrabackup_logfile</span><br></pre></td></tr></table></figure>
-
-<p>xtrabackup_binlog_info 文件记录了备份完成时binlog的position；</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan all-20180410-bak]# cat xtrabackup_binlog_info</span><br><span class="line">mysql-bin.000004     8623</span><br></pre></td></tr></table></figure>
-
-<p><code>xtrabackup_checkpoints</code>记录了备份的起始lsn号和最后的lsn号</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan all-20180410-bak]# cat xtrabackup_checkpoints</span><br><span class="line">backup_type = full-backuped             ##full-backuped表示全备</span><br><span class="line">from_lsn = 0                            ##全备lsn号一定是从0开始</span><br><span class="line">to_lsn = 1475999660</span><br><span class="line">last_lsn = 1475999669</span><br><span class="line">compact = 0</span><br><span class="line">recover_binlog_info = 0</span><br></pre></td></tr></table></figure>
-
-<p><code>xtrabackup_info</code>记录了备份的信息，时间，命令，版本等；</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan all-20180410-bak]# cat xtrabackup_info</span><br><span class="line">uuid = 79f03ea9-3cd1-11e8-bf94-da8255dea6c5</span><br><span class="line">name =</span><br><span class="line">tool_name = innobackupex</span><br><span class="line">tool_command = --defaults-file=/etc/my.cnf --user=pxb --password=... --socket=/tmp/mysql.sock --no-timestamp /data/xtrabackup/all-20180410-bak</span><br><span class="line">tool_version = 2.4.5</span><br><span class="line">ibbackup_version = 2.4.5</span><br><span class="line">server_version = 5.7.21-log</span><br><span class="line">start_time = 2018-04-10 23:11:39</span><br><span class="line">end_time = 2018-04-10 23:11:42</span><br><span class="line">lock_time = 0</span><br><span class="line">binlog_pos = filename &#x27;mysql-bin.000004&#x27;, position &#x27;8623&#x27;</span><br><span class="line">innodb_from_lsn = 0</span><br><span class="line">innodb_to_lsn = 1475999660</span><br><span class="line">partial = N</span><br><span class="line">incremental = N</span><br><span class="line">format = file</span><br><span class="line">compact = N</span><br><span class="line">compressed = N</span><br><span class="line">encrypted = N</span><br></pre></td></tr></table></figure>
-
-<p>全量恢复</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan percona-xtrabackup]# ./bin/innobackupex --defaults-file=/etc/my.cnf --user=pxb --password=echo123. --socket=/tmp/mysql.sock --apply-log  /data/xtrabackup/all-20180410-bak</span><br><span class="line"></span><br><span class="line">......</span><br><span class="line">InnoDB: Starting crash recovery.</span><br><span class="line">InnoDB: xtrabackup: Last MySQL binlog file position 8129, file name mysql-bin.000004</span><br><span class="line">InnoDB: Removed temporary tablespace data file: &quot;ibtmp1&quot;</span><br><span class="line">InnoDB: Creating shared tablespace for temporary tables</span><br><span class="line">InnoDB: Setting file &#x27;./ibtmp1&#x27; size to 12 MB. Physically writing the file full; Please wait ...</span><br><span class="line">InnoDB: File &#x27;./ibtmp1&#x27; size is now 12 MB.</span><br><span class="line">InnoDB: 96 redo rollback segment(s) found. 1 redo rollback segment(s) are active.</span><br><span class="line">InnoDB: 32 non-redo rollback segment(s) are active.</span><br><span class="line">InnoDB: 5.7.13 started; log sequence number 1475999765</span><br><span class="line">xtrabackup: starting shutdown with innodb_fast_shutdown = 1</span><br><span class="line">InnoDB: FTS optimize thread exiting.</span><br><span class="line">InnoDB: Starting shutdown...</span><br><span class="line">InnoDB: Shutdown completed; log sequence number 1475999793</span><br><span class="line">180410 23:36:27 completed OK!</span><br></pre></td></tr></table></figure>
-
-<p>这一步的<code>--apply-log</code>的作用是将备份的事务进行前滚（redo）或回滚（undo），将已提交的前滚，未提交的回滚，达到数据的一致性；这个一致性的时间点就是备份过程中FTWRL锁表的时间点。</p>
-<p>应用备份库</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#停掉当前库</span><br><span class="line">[root@lyucan xtrabackup]# service mysqld stop</span><br><span class="line">Shutting down MySQL.... SUCCESS!</span><br><span class="line"></span><br><span class="line">#将当前库重命名</span><br><span class="line">[root@lyucan data]# mv /data/mysql/  /data/mysql_bak_20180410</span><br><span class="line"></span><br><span class="line">#将备份库重命名为mysql</span><br><span class="line">[root@lyucan data]# mv /data/xtrabackup/all-20180410-bak/  /data/mysql</span><br><span class="line"></span><br><span class="line">#修改权限</span><br><span class="line">[root@lyucan data]# chown mysql:mysql -R /data/mysql/</span><br><span class="line"></span><br><span class="line">#启动数据库</span><br><span class="line">[root@lyucan data]# service mysqld start</span><br><span class="line">Starting MySQL.. SUCCESS!</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>要完全恢复数据库，还要结合二进制日志进行恢复；</p>
-<h4 id="增量备份与恢复"><a href="#增量备份与恢复" class="headerlink" title="增量备份与恢复"></a>增量备份与恢复</h4><p>增量备份</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#首先进行一次全备</span><br><span class="line">[root@lyucan percona-xtrabackup]# ./bin/innobackupex --defaults-file=/etc/my.cnf --user=pxb --password=echo123. --socket=/tmp/mysql.sock --no-timestamp /data/xtrabackup/all-20180410-bak</span><br><span class="line"></span><br><span class="line">#进行一次增备，基于第一次的全备</span><br><span class="line">[root@lyucan percona-xtrabackup]# ./bin/innobackupex --defaults-file=/etc/my.cnf --no-timestamp --user=pxb --password=echo123. --socket=/tmp/mysql.sock --incremental --incremental-basedir=/data/xtrabackup/all-20180410-bak  /data/xtrabackup/incremental-20180411-bak</span><br><span class="line"></span><br><span class="line">--incremental：表示是增备</span><br><span class="line">--incremental-basedir：基于哪个备份进行增备</span><br><span class="line"></span><br><span class="line">#再进行一次增备，基于第二次的增备</span><br><span class="line">[root@lyucan percona-xtrabackup]# ./bin/innobackupex --defaults-file=/etc/my.cnf --no-timestamp --user=pxb --password=echo123. --socket=/tmp/mysql.sock --incremental --incremental-basedir=/data/xtrabackup/incremental-20180411-bak  /data/xtrabackup/incremental-20180412-bak</span><br></pre></td></tr></table></figure>
-<p>查看三次的备份文件</p>
-<p>checkpoint</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@lyucan xtrabackup]# cat /data/xtrabackup/all-20180410-bak/xtrabackup_checkpoints</span><br><span class="line">backup_type = full-backuped             ##全备</span><br><span class="line">from_lsn = 0</span><br><span class="line">to_lsn = 1476007364</span><br><span class="line">last_lsn = 1476007373</span><br><span class="line">compact = 0</span><br><span class="line">recover_binlog_info = 0</span><br><span class="line"></span><br><span class="line">[root@lyucan xtrabackup]# cat /data/xtrabackup/incremental-20180411-bak/xtrabackup_checkpoints</span><br><span class="line">backup_type = incremental               ##增备</span><br><span class="line">from_lsn = 1476007364</span><br><span class="line">to_lsn = 1476011232</span><br><span class="line">last_lsn = 1476011241</span><br><span class="line">compact = 0</span><br><span class="line">recover_binlog_info = 0</span><br><span class="line"></span><br><span class="line">[root@lyucan xtrabackup]# cat /data/xtrabackup/incremental-20180412-bak/xtrabackup_checkpoints</span><br><span class="line">backup_type = incremental              ##增备</span><br><span class="line">from_lsn = 1476011232</span><br><span class="line">to_lsn = 1476015084</span><br><span class="line">last_lsn = 1476015093</span><br><span class="line">compact = 0</span><br><span class="line">recover_binlog_info = 0</span><br><span class="line"></span><br><span class="line">##可以看到lsn号都是连续的</span><br><span class="line"></span><br><span class="line">binlog_info</span><br><span class="line">[root@lyucan xtrabackup]# cat /data/xtrabackup/all-20180410-bak/xtrabackup_binlog_info</span><br><span class="line">mysql-bin.000005     479</span><br><span class="line">[root@lyucan xtrabackup]# cat /data/xtrabackup/incremental-20180411-bak/xtrabackup_binlog_info</span><br><span class="line">mysql-bin.000005     645</span><br><span class="line">[root@lyucan xtrabackup]# cat /data/xtrabackup/incremental-20180412-bak/xtrabackup_binlog_info</span><br><span class="line">mysql-bin.000005     811</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>增备恢复</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">##恢复第一个全备，加上--redo-only，表示只进行前滚</span><br><span class="line">[root@lyucan percona-xtrabackup]# ./bin/innobackupex --defaults-file=/etc/my.cnf --user=pxb --password=echo123. --socket=/tmp/mysql.sock --apply-log --redo-only  /data/xtrabackup/all-20180410-bak</span><br><span class="line"></span><br><span class="line">##将20180411增量备份加到全量备份上，使用--incremental-dir= 来指定增量备份</span><br><span class="line">[root@lyucan percona-xtrabackup]# ./bin/innobackupex --defaults-file=/etc/my.cnf --user=pxb --password=echo123. --socket=/tmp/mysql.sock --apply-log --redo-only  /data/xtrabackup/all-20180410-bak  --incremental-dir=/data/xtrabackup/incremental-20180411-bak</span><br><span class="line"></span><br><span class="line">##将20180412增量备份加到全量备份上，使用--incremental-dir= 来指定增量备份</span><br><span class="line">[root@lyucan percona-xtrabackup]# ./bin/innobackupex --defaults-file=/etc/my.cnf --user=pxb --password=echo123. --socket=/tmp/mysql.sock --apply-log --redo-only  /data/xtrabackup/all-20180410-bak  --incremental-dir=/data/xtrabackup/incremental-20180412-bak</span><br><span class="line"></span><br><span class="line">##将所有增量备份加到全备上后，再进行全备的恢复，回归到全量备份，此时没有--redo-only；</span><br><span class="line">[root@lyucan percona-xtrabackup]# ./bin/innobackupex --defaults-file=/etc/my.cnf --user=pxb --password=echo123. --socket=/tmp/mysql.sock --apply-log  /data/xtrabackup/all-20180410-bak</span><br></pre></td></tr></table></figure>
-<p>应用备份库</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#停掉当前库</span><br><span class="line">[root@lyucan xtrabackup]# service mysqld stop</span><br><span class="line">Shutting down MySQL.... SUCCESS!</span><br><span class="line"></span><br><span class="line">#将当前库重命名</span><br><span class="line">[root@lyucan data]# mv /data/mysql/  /data/mysql_bak_20180410</span><br><span class="line"></span><br><span class="line">#将备份库重命名为mysql</span><br><span class="line">[root@lyucan data]# mv /data/xtrabackup/all-20180410-bak/  /data/mysql</span><br><span class="line"></span><br><span class="line">#修改权限</span><br><span class="line">[root@lyucan data]# chown mysql:mysql -R /data/mysql/</span><br><span class="line"></span><br><span class="line">#启动数据库</span><br><span class="line">[root@lyucan data]# service mysqld start</span><br><span class="line">Starting MySQL.. SUCCESS!</span><br></pre></td></tr></table></figure>
-<p><strong>还是那句话，如果要进行完全数据恢复，还需要结合二进制日志进行数据恢复；</strong></p>
-<p><strong>很简单，根据备份里面记录的xtrabackup_binlog_info，进行原库二进制日志的恢复；</strong></p>
 ]]></content>
       <categories>
         <category>Mysql</category>
@@ -1678,93 +1678,6 @@
       </categories>
       <tags>
         <tag>vue</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>浏览器的强缓存和协商缓存</title>
-    <url>/2021/07/09/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E5%BC%BA%E7%BC%93%E5%AD%98%E5%92%8C%E5%8D%8F%E5%95%86%E7%BC%93%E5%AD%98/</url>
-    <content><![CDATA[<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>在前端工程化中，前端代码打包之后的生成的静态资源就要发布到静态服务器上，这时候就要做对这些静态资源做一些运维配置，其中，<code>gzip</code>和设置缓存是必不可少的。这两项是最直接影响到网站性能和用户体验的。</p>
-<p>浏览器缓存主要有以下几个优点：</p>
-<ul>
-<li>减少重复数据请求，避免通过网络再次加载资源，节省流量。</li>
-<li>降低服务器的压力，提升网站性能。</li>
-<li>加快客户端加载网页的速度， 提升用户体验。</li>
-</ul>
-<p>浏览器缓存分为强缓存和协商缓存，两者有两个比较明显的区别：</p>
-<ul>
-<li>强缓存在资源过期之前，不会向服务器发送网络请求，直接从本地缓存读取资源，响应码为<code>200  (from memory cache)</code>或者 <code>200  (from disk cache)</code>;</li>
-<li>协商缓存会向服务器发送一次请求，服务器会根据这个请求的<code>Request Headers</code>的一些参数来判断是否命中协商缓存，如果命中，则返回<code>304</code>状态码并带上新的<code>Response Headers</code>通知浏览器从缓存中读取资源;<span id="more"></span></li>
-</ul>
-<h3 id="强缓存"><a href="#强缓存" class="headerlink" title="强缓存"></a>强缓存</h3><p>强缓存是根据返回头中的<code>expires</code>（http 1.0 规范）或者<code>Cache-Control</code>（http 1.1 规范）两个字段来控制的，都是表示资源的缓存有效时间。</p>
-<ul>
-<li><p><code>expires</code>的值是一个<code>GMT</code>格式的时间，这个时间代表资源的过期时间，在这个时间之前请求该资源，将直接命中强缓存。但是这个时间有个缺点，它是一个绝对时间，如果本地时间被修改，则将会导致缓存失效，所以<code>expires</code>还是有些缺陷的。</p>
-</li>
-<li><p>为了解决上述问题，http 1.1协议重新给了一个参数<code>Cache-Control</code>，这个值也是设置资源的过期时间，但是这个参数的值是一个相对时间，比如<code>cache-control: max-age=3600</code>，浏览器会根据这个相对时间结合响应头的<code>date</code>参数，得出资源的过期时间是<code>date</code>的时间加上3600秒，需要注意的是，并不是每次请求都进行计算生效时间，只有当当前请求是200，或者304的时候，才会进行计算，否则每次计算，每次都加3600秒，那资源永远都不会过期了。</p>
-<p><code>Cache-Control</code>还有一些其他的值可以设置</p>
-<ol>
-<li><code>no-cache</code>：不使用强缓存，直接使用协商缓存。</li>
-<li><code>no-store</code>：直接禁止浏览器缓存数据，每次请求资源都会向服务器要完整的资源， 类似于 <code>network</code> 中的 <code>disabled cache</code>。</li>
-<li><code>public</code>：可以被所有用户缓存，包括终端用户和 cdn 等中间件代理服务器。</li>
-<li><code>private</code>：只能被终端用户的浏览器缓存。</li>
-</ol>
-</li>
-</ul>
-<p>如果 <code>Cache-Control</code> 与 <code>expires</code> 同时存在的话， <code>Cache-Control</code> 的优先级高于 <code>expires</code></p>
-<h3 id="协商缓存"><a href="#协商缓存" class="headerlink" title="协商缓存"></a>协商缓存</h3><p>协商缓存是由服务器来确定缓存资源是否可用。 主要涉及到两对属性字段，都是成对出现的，即第一次请求的响应头带上某个字, <code>last-modified</code> 或者 <code>etag</code>，则后续请求则会带上对应的请求字段 <code>if-modified-since</code>或者 <code>if-none-match</code>，若响应头没有 <code>last-modified</code> 或者 <code>etag</code> 字段，则请求头也不会有对应的字段。</p>
-<ul>
-<li><p><code>last-modified/if-modified-since</code>，值是<code>GMT</code>格式的时间字符串， <code>last-modified</code> 标记最后文件修改时间， 下一次请求时，请求头中会带上的 <code>if-modified-since</code> 值就是 <code>last-modified</code> ，告诉服务器我本地缓存的文件最后修改的时间，在服务器上根据文件的最后修改时间判断资源是否有变化， 如果文件没有变更则返回 <code>304 Not Modified</code> ，请求不会返回资源内容，浏览器直接使用本地缓存。如果有变化，则返回<code>200</code>，返回最新的资源。</p>
-</li>
-<li><p><code>etag/if-none-match</code>， 值是由服务器为每一个资源生成的唯一标识串，只要资源有变化就这个值就会改变。服务器根据文件本身算出一个唯一值并通过 <code>etag</code>字段返回给浏览器。当下次请求时，浏览器会将上次接收到的<code>etag</code>值赋给 <code>if-none-match</code> 字段，服务器通过比较两者是否一致来判定文件内容是否被改变。</p>
-</li>
-</ul>
-<p><code>etag</code>的优先级比<code>last-modified</code>要高，先判断资源是否有更新</p>
-<h3 id="请求流程"><a href="#请求流程" class="headerlink" title="请求流程"></a>请求流程</h3><p>浏览器在第一次请求后缓存资源，再次请求时，会进行下面两个步骤：</p>
-<ul>
-<li>浏览器会获取该缓存资源的 header 中的信息，根据 <code>Response Headers</code> 中的 <code>expires</code> 和 <code>cache-control</code> 来判断是否命中强缓存，如果命中则直接从缓存中获取资源。</li>
-<li>如果没有命中强缓存，浏览器就会发送请求到服务器，这次请求会带上 <code>IF-Modified-Since</code> 或者 <code>IF-None-Match</code>, 它们的值分别是第一次请求返回 <code>Last-Modified</code> 或者 <code>Etag</code>，由服务器来对比这一对字段来判断是否命中。如果命中，则服务器返回 304 状态码，并且不会返回资源内容，浏览器会直接从缓存获取；否则服务器最终会返回资源的实际内容，并更新 header 中的相关缓存字段。</li>
-</ul>
-<p><img data-src="/images/%E7%BC%93%E5%AD%98%E8%AF%B7%E6%B1%82%E6%B5%81%E7%A8%8B.png"></p>
-<p>我们通过几个例子来实际看看会是什么效果，注意，设置缓存可以通过代理服务器设置，也可以直接使用代码设置，这里我们为了方便，直接使用<code>nginx</code>进行设置，<code>nginx</code>设置请求头需要<code>ngx_http_headers_module</code>模块支持，通过<code>yum</code>安装的<code>nginx</code>默认不支持此模块，需要另行编译安装；</p>
-<blockquote>
-<p>下面的例子，我们设置缓存事件都设置为30s，只是为了看效果，实际上不可能设置这么短的时间</p>
-</blockquote>
-<ol>
-<li><p>设置<code>expires</code></p>
-<figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="attribute">location</span> <span class="regexp">~* \.(js|css)$</span> &#123;</span><br><span class="line">  <span class="attribute">expires</span> <span class="number">30s</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>第一次请求直接返回200，可以看到虽然我们仅仅设置了<code>expires</code>，但是响应头中也会带上<code>cache-control</code>。<code>expires</code>是一个绝对时间，该时间由<code>date</code>的时间加上设置的<code>30s</code>；<br><img data-src="/images/expires1.png"><br>在过期时间内重复请求，都会命中强缓存，直接从浏览器本地读取资源<br><img data-src="/images/expires2.png"><br>如果超过了过期时间，则不会命中强缓存，走协商缓存，返回304（因为资源没有发生变化），同时我们可以看到，<code>date</code>和<code>expires</code>都更新了，重新计算缓存过期时间<br><img data-src="/images/expires3.png"></p>
-</li>
-<li><p>设置<code>cache-control: max-age=30</code></p>
-<figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="attribute">location</span> <span class="regexp">~* \.(js|css)$</span> &#123;</span><br><span class="line">  <span class="attribute">add_header</span> Cache-Control max-age=<span class="number">30</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>设置了<code>cache-control</code>，此时可以看到响应头中已经不存在<code>expires</code>了，其他的请求行为和设置<code>expires</code>行为一样，这里不贴图了。<br><img data-src="/images/cache_control1.png"></p>
-</li>
-<li><p>设置<code>cache-control: no-cache</code>，不使用强缓存，使用协商缓存</p>
-<figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="attribute">location</span> <span class="regexp">~* \.(js|css)$</span> &#123;</span><br><span class="line">  <span class="attribute">add_header</span> Cache-Control <span class="literal">no</span>-cache;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>第一次请求直接返回200，并设置<code>cache-control</code>为<code>no-cache</code><br><img data-src="/images/cache_control2.png"><br>因为不使用强缓存，直接使用协商缓存，则之后每次都会返回304（因为资源没有发生变化）<br>注意每次请求都会讲上次响应头里的<code>etag</code>值（通过<code>if-none-match</code>请求头）和<code>last-modified</code>（通过<code>if-modified-since</code>请求头）发送给服务端<br><img data-src="/images/cache_control3.png"></p>
-</li>
-<li><p>使用协商缓存，资源发生了改变（<code>etag</code>会发生变化）<br>如果不使用强缓存，并且资源没有发生变化，则之后的每次请求都会返回304，但是如果我们的资源发生了变化，此时会将上次<code>etag</code>值（通过<code>if-none-match</code>请求头发送给服务器）和服务器上的最新资源<code>etag</code>值进行比较，发现资源更新了，则返回响应码200，并返回最新的资源。<br>资源没有发生变化，多次请求返回304，<code>etag</code>值为<code>60ede052-5dd</code><br><img data-src="/images/cache_control3.png"><br>修改<code>config.js</code>文件，更新资源，此时<code>etag</code>值会发生变化，此时<code>etag</code>值为<code>60ede48c-5eb</code>，响应码为200，请求了最新的资源。<br><img data-src="/images/cache_control4.png"></p>
-</li>
-<li><p>使用协商缓存，资源没有改变，但是文件时间戳更新了（<code>last-modified</code>会发生变化）<br>我们先将<code>config.js</code>文件还原，避免混淆；<br>我们先看看当前文件的最后修改时间是多少，我们通过<code>linux</code>的<code>stat</code>命令查看，时间是<code>2021-07-14 03:17:06.109141809 +0800</code>，注意是<code>UTC</code>时间。<br><img data-src="/images/cache_control5.png"><br>多次请求，返回304，注意此时<code>last-modified</code>时间为<code>Tue, 13 Jul 2021 19:17:06 GMT</code>，<code>GMT</code>格式，加8个小时，正好是上面的<code>UTC</code>时间<br><img data-src="/images/cache_control6.png"><br>此时我们更新一下时间戳，通过<code>linux</code>的<code>touch</code>命令，更新<code>config.js</code>文件的时间戳（修改时间也会被修改），此时修改时间为<code>2021-07-14 03:25:30.121617196 +0800</code><br><img data-src="/images/cache_control7.png"><br>再次请求资源，响应头中的<code>last-modified</code>时间正好是我们更新时间戳后的时间，而上次的<code>last-modified</code>时间通过请求头中的<code>if-modified-since</code>传递给后端（注意<code>GMT</code>和<code>UTC</code>时间转换），发现两者时间不一致，响应码为200，请求了最新的资源。<br><img data-src="/images/cache_control8.png"></p>
-</li>
-</ol>
-<h3 id="etag拓展"><a href="#etag拓展" class="headerlink" title="etag拓展"></a><code>etag</code>拓展</h3><p>HTTP1.1 中<code>etag</code>的出现主要是为了解决几个<code>last-modified</code>比较难解决的问题：</p>
-<ul>
-<li>一些文件也许会周期性的更改，但是内容并不改变(仅仅改变的修改时间)，这个时候我们并不希望客户端认为这个文件被修改了，而重新请求；</li>
-<li>某些文件修改非常频繁，比如在秒以下的时间内进行修改，(比方说1s内修改了N次)，<code>if-modified-since</code>能检查到的粒度是秒级的，使用<code>etag</code>就能够保证这种需求下客户端在1秒内能刷新 N 次 cache。</li>
-<li>某些服务器不能精确的得到文件的最后修改时间。</li>
-</ul>
-<p><code>etag</code>计算方式</p>
-<p><code>etag</code>计算方式并没有明确规定，只要能标识文件唯一性就行了，但是对于大量的http请求，计算<code>etag</code>不能有太高的消耗，否则对响应速度以及服务器的运算能力都会有影响</p>
-<p><code>etag</code>默认格式是<code>xxxxxxxx-xxx</code>，http默认计算<code>etag</code>的方式是通过文件的<code>last-modified</code>和<code>content-length</code>值的十六进制数标识的，形如<code>$&#123;last-modified&#125;-$&#123;content-length&#125;</code></p>
-<p>对于以下<code>config.js</code>文件<br><img data-src="/images/cache_control9.png"></p>
-<p>计算通过js该文件的<code>etag</code>值</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="string">`<span class="subst">$&#123;(<span class="keyword">new</span> <span class="built_in">Date</span>(<span class="string">&#x27;Tue, 13 Jul 2021 19:25:30 GMT&#x27;</span>).getTime() / <span class="number">1000</span>).toString(<span class="string">&#x27;16&#x27;</span>)&#125;</span>-<span class="subst">$&#123;<span class="built_in">Number</span>(<span class="number">1501</span>).toString(<span class="string">&#x27;16&#x27;</span>)&#125;</span>`</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 60ede8aa-5dd</span></span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>前端</category>
-      </categories>
-      <tags>
-        <tag>前端</tag>
       </tags>
   </entry>
   <entry>
@@ -2141,6 +2054,83 @@
 <li>尽量不要使用<code>table</code>布局。</li>
 <li>制作动画时，尽量使用 <code>CSS3</code> 的 <code>transform</code>，因为 <code>transform</code> 属性不会改变元素的布局（更详细的知识可以参考：<a href="https://juejin.cn/post/6844903502678867981">详谈层合成composite</a> ）</li>
 </ul>
+]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
+      <tags>
+        <tag>前端</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>浏览器的强缓存和协商缓存</title>
+    <url>/2021/07/09/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E5%BC%BA%E7%BC%93%E5%AD%98%E5%92%8C%E5%8D%8F%E5%95%86%E7%BC%93%E5%AD%98/</url>
+    <content><![CDATA[<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>在前端工程化中，前端代码打包之后的生成的静态资源就要发布到静态服务器上，这时候就要做对这些静态资源做一些运维配置，其中，<code>gzip</code>和设置缓存是必不可少的。这两项是最直接影响到网站性能和用户体验的。</p>
+<p>浏览器缓存主要有以下几个优点：</p>
+<ul>
+<li>减少重复数据请求，避免通过网络再次加载资源，节省流量。</li>
+<li>降低服务器的压力，提升网站性能。</li>
+<li>加快客户端加载网页的速度， 提升用户体验。</li>
+</ul>
+<p>浏览器缓存分为强缓存和协商缓存，两者有两个比较明显的区别：</p>
+<ul>
+<li>强缓存在资源过期之前，不会向服务器发送网络请求，直接从本地缓存读取资源，响应码为<code>200  (from memory cache)</code>或者 <code>200  (from disk cache)</code>;</li>
+<li>协商缓存会向服务器发送一次请求，服务器会根据这个请求的<code>Request Headers</code>的一些参数来判断是否命中协商缓存，如果命中，则返回<code>304</code>状态码并带上新的<code>Response Headers</code>通知浏览器从缓存中读取资源;<span id="more"></span></li>
+</ul>
+<h3 id="强缓存"><a href="#强缓存" class="headerlink" title="强缓存"></a>强缓存</h3><p>强缓存是根据返回头中的<code>expires</code>（http 1.0 规范）或者<code>Cache-Control</code>（http 1.1 规范）两个字段来控制的，都是表示资源的缓存有效时间。</p>
+<ul>
+<li><p><code>expires</code>的值是一个<code>GMT</code>格式的时间，这个时间代表资源的过期时间，在这个时间之前请求该资源，将直接命中强缓存。但是这个时间有个缺点，它是一个绝对时间，如果本地时间被修改，则将会导致缓存失效，所以<code>expires</code>还是有些缺陷的。</p>
+</li>
+<li><p>为了解决上述问题，http 1.1协议重新给了一个参数<code>Cache-Control</code>，这个值也是设置资源的过期时间，但是这个参数的值是一个相对时间，比如<code>cache-control: max-age=3600</code>，浏览器会根据这个相对时间结合响应头的<code>date</code>参数，得出资源的过期时间是<code>date</code>的时间加上3600秒，需要注意的是，并不是每次请求都进行计算生效时间，只有当当前请求是200，或者304的时候，才会进行计算，否则每次计算，每次都加3600秒，那资源永远都不会过期了。</p>
+<p><code>Cache-Control</code>还有一些其他的值可以设置</p>
+<ol>
+<li><code>no-cache</code>：不使用强缓存，直接使用协商缓存。</li>
+<li><code>no-store</code>：直接禁止浏览器缓存数据，每次请求资源都会向服务器要完整的资源， 类似于 <code>network</code> 中的 <code>disabled cache</code>。</li>
+<li><code>public</code>：可以被所有用户缓存，包括终端用户和 cdn 等中间件代理服务器。</li>
+<li><code>private</code>：只能被终端用户的浏览器缓存。</li>
+</ol>
+</li>
+</ul>
+<p>如果 <code>Cache-Control</code> 与 <code>expires</code> 同时存在的话， <code>Cache-Control</code> 的优先级高于 <code>expires</code></p>
+<h3 id="协商缓存"><a href="#协商缓存" class="headerlink" title="协商缓存"></a>协商缓存</h3><p>协商缓存是由服务器来确定缓存资源是否可用。 主要涉及到两对属性字段，都是成对出现的，即第一次请求的响应头带上某个字, <code>last-modified</code> 或者 <code>etag</code>，则后续请求则会带上对应的请求字段 <code>if-modified-since</code>或者 <code>if-none-match</code>，若响应头没有 <code>last-modified</code> 或者 <code>etag</code> 字段，则请求头也不会有对应的字段。</p>
+<ul>
+<li><p><code>last-modified/if-modified-since</code>，值是<code>GMT</code>格式的时间字符串， <code>last-modified</code> 标记最后文件修改时间， 下一次请求时，请求头中会带上的 <code>if-modified-since</code> 值就是 <code>last-modified</code> ，告诉服务器我本地缓存的文件最后修改的时间，在服务器上根据文件的最后修改时间判断资源是否有变化， 如果文件没有变更则返回 <code>304 Not Modified</code> ，请求不会返回资源内容，浏览器直接使用本地缓存。如果有变化，则返回<code>200</code>，返回最新的资源。</p>
+</li>
+<li><p><code>etag/if-none-match</code>， 值是由服务器为每一个资源生成的唯一标识串，只要资源有变化就这个值就会改变。服务器根据文件本身算出一个唯一值并通过 <code>etag</code>字段返回给浏览器。当下次请求时，浏览器会将上次接收到的<code>etag</code>值赋给 <code>if-none-match</code> 字段，服务器通过比较两者是否一致来判定文件内容是否被改变。</p>
+</li>
+</ul>
+<p><code>etag</code>的优先级比<code>last-modified</code>要高，先判断资源是否有更新</p>
+<h3 id="请求流程"><a href="#请求流程" class="headerlink" title="请求流程"></a>请求流程</h3><p>浏览器在第一次请求后缓存资源，再次请求时，会进行下面两个步骤：</p>
+<ul>
+<li>浏览器会获取该缓存资源的 header 中的信息，根据 <code>Response Headers</code> 中的 <code>expires</code> 和 <code>cache-control</code> 来判断是否命中强缓存，如果命中则直接从缓存中获取资源。</li>
+<li>如果没有命中强缓存，浏览器就会发送请求到服务器，这次请求会带上 <code>IF-Modified-Since</code> 或者 <code>IF-None-Match</code>, 它们的值分别是第一次请求返回 <code>Last-Modified</code> 或者 <code>Etag</code>，由服务器来对比这一对字段来判断是否命中。如果命中，则服务器返回 304 状态码，并且不会返回资源内容，浏览器会直接从缓存获取；否则服务器最终会返回资源的实际内容，并更新 header 中的相关缓存字段。</li>
+</ul>
+<p><img data-src="/images/%E7%BC%93%E5%AD%98%E8%AF%B7%E6%B1%82%E6%B5%81%E7%A8%8B.png"></p>
+<p>我们通过几个例子来实际看看会是什么效果，注意，设置缓存可以通过代理服务器设置，也可以直接使用代码设置，这里我们为了方便，直接使用<code>nginx</code>进行设置，<code>nginx</code>设置请求头需要<code>ngx_http_headers_module</code>模块支持，通过<code>yum</code>安装的<code>nginx</code>默认不支持此模块，需要另行编译安装；</p>
+<blockquote>
+<p>下面的例子，我们设置缓存事件都设置为30s，只是为了看效果，实际上不可能设置这么短的时间</p>
+</blockquote>
+<h4 id="设置expires"><a href="#设置expires" class="headerlink" title="设置expires"></a>设置<code>expires</code></h4><figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="attribute">location</span> <span class="regexp">~* \.(js|css)$</span> &#123;</span><br><span class="line">  <span class="attribute">expires</span> <span class="number">30s</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>第一次请求直接返回200，可以看到虽然我们仅仅设置了<code>expires</code>，但是响应头中也会带上<code>cache-control</code>。<code>expires</code>是一个绝对时间，该时间由<code>date</code>的时间加上设置的<code>30s</code>；<br><img data-src="/images/expires1.png"><br>在过期时间内重复请求，都会命中强缓存，直接从浏览器本地读取资源<br><img data-src="/images/expires2.png"><br>如果超过了过期时间，则不会命中强缓存，走协商缓存，返回304（因为资源没有发生变化），同时我们可以看到，<code>date</code>和<code>expires</code>都更新了，重新计算缓存过期时间<br><img data-src="/images/expires3.png"></p>
+<h4 id="设置cache-control-max-age-30"><a href="#设置cache-control-max-age-30" class="headerlink" title="设置cache-control: max-age=30"></a>设置<code>cache-control: max-age=30</code></h4><figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="attribute">location</span> <span class="regexp">~* \.(js|css)$</span> &#123;</span><br><span class="line">  <span class="attribute">add_header</span> Cache-Control max-age=<span class="number">30</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>设置了<code>cache-control</code>，此时可以看到响应头中已经不存在<code>expires</code>了，其他的请求行为和设置<code>expires</code>行为一样，这里不贴图了。<br><img data-src="/images/cache_control1.png"></p>
+<h4 id="设置cache-control-no-cache，不使用强缓存，使用协商缓存"><a href="#设置cache-control-no-cache，不使用强缓存，使用协商缓存" class="headerlink" title="设置cache-control: no-cache，不使用强缓存，使用协商缓存"></a>设置<code>cache-control: no-cache</code>，不使用强缓存，使用协商缓存</h4><figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="attribute">location</span> <span class="regexp">~* \.(js|css)$</span> &#123;</span><br><span class="line">  <span class="attribute">add_header</span> Cache-Control <span class="literal">no</span>-cache;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>第一次请求直接返回200，并设置<code>cache-control</code>为<code>no-cache</code><br><img data-src="/images/cache_control2.png"><br>因为不使用强缓存，直接使用协商缓存，则之后每次都会返回304（因为资源没有发生变化）<br>注意每次请求都会讲上次响应头里的<code>etag</code>值（通过<code>if-none-match</code>请求头）和<code>last-modified</code>（通过<code>if-modified-since</code>请求头）发送给服务端<br><img data-src="/images/cache_control3.png"></p>
+<h4 id="使用协商缓存，资源发生了改变（etag会发生变化）"><a href="#使用协商缓存，资源发生了改变（etag会发生变化）" class="headerlink" title="使用协商缓存，资源发生了改变（etag会发生变化）"></a>使用协商缓存，资源发生了改变（<code>etag</code>会发生变化）</h4><p>如果不使用强缓存，并且资源没有发生变化，则之后的每次请求都会返回304，但是如果我们的资源发生了变化，此时会将上次<code>etag</code>值（通过<code>if-none-match</code>请求头发送给服务器）和服务器上的最新资源<code>etag</code>值进行比较，发现资源更新了，则返回响应码200，并返回最新的资源。<br>资源没有发生变化，多次请求返回304，<code>etag</code>值为<code>60ede052-5dd</code><br><img data-src="/images/cache_control3.png"><br>修改<code>config.js</code>文件，更新资源，此时<code>etag</code>值会发生变化，此时<code>etag</code>值为<code>60ede48c-5eb</code>，响应码为200，请求了最新的资源。<br><img data-src="/images/cache_control4.png"></p>
+<h4 id="使用协商缓存，资源没有改变，但是文件时间戳更新了（last-modified会发生变化）"><a href="#使用协商缓存，资源没有改变，但是文件时间戳更新了（last-modified会发生变化）" class="headerlink" title="使用协商缓存，资源没有改变，但是文件时间戳更新了（last-modified会发生变化）"></a>使用协商缓存，资源没有改变，但是文件时间戳更新了（<code>last-modified</code>会发生变化）</h4><p>我们先将<code>config.js</code>文件还原，避免混淆；<br>我们先看看当前文件的最后修改时间是多少，我们通过<code>linux</code>的<code>stat</code>命令查看，时间是<code>2021-07-14 03:17:06.109141809 +0800</code>，注意是<code>UTC</code>时间。<br><img data-src="/images/cache_control5.png"><br>多次请求，返回304，注意此时<code>last-modified</code>时间为<code>Tue, 13 Jul 2021 19:17:06 GMT</code>，<code>GMT</code>格式，加8个小时，正好是上面的<code>UTC</code>时间<br><img data-src="/images/cache_control6.png"><br>此时我们更新一下时间戳，通过<code>linux</code>的<code>touch</code>命令，更新<code>config.js</code>文件的时间戳（修改时间也会被修改），此时修改时间为<code>2021-07-14 03:25:30.121617196 +0800</code><br><img data-src="/images/cache_control7.png"><br>再次请求资源，响应头中的<code>last-modified</code>时间正好是我们更新时间戳后的时间，而上次的<code>last-modified</code>时间通过请求头中的<code>if-modified-since</code>传递给后端（注意<code>GMT</code>和<code>UTC</code>时间转换），发现两者时间不一致，响应码为200，请求了最新的资源。<br><img data-src="/images/cache_control8.png"></p>
+<h3 id="etag拓展"><a href="#etag拓展" class="headerlink" title="etag拓展"></a><code>etag</code>拓展</h3><p>HTTP1.1 中<code>etag</code>的出现主要是为了解决几个<code>last-modified</code>比较难解决的问题：</p>
+<ul>
+<li>一些文件也许会周期性的更改，但是内容并不改变(仅仅改变的修改时间)，这个时候我们并不希望客户端认为这个文件被修改了，而重新请求；</li>
+<li>某些文件修改非常频繁，比如在秒以下的时间内进行修改，(比方说1s内修改了N次)，<code>if-modified-since</code>能检查到的粒度是秒级的，使用<code>etag</code>就能够保证这种需求下客户端在1秒内能刷新 N 次 cache。</li>
+<li>某些服务器不能精确的得到文件的最后修改时间。</li>
+</ul>
+<p><code>etag</code>计算方式</p>
+<p><code>etag</code>计算方式并没有明确规定，只要能标识文件唯一性就行了，但是对于大量的http请求，计算<code>etag</code>不能有太高的消耗，否则对响应速度以及服务器的运算能力都会有影响</p>
+<p><code>etag</code>默认格式是<code>xxxxxxxx-xxx</code>，http默认计算<code>etag</code>的方式是通过文件的<code>last-modified</code>和<code>content-length</code>值的十六进制数标识的，形如<code>$&#123;last-modified&#125;-$&#123;content-length&#125;</code></p>
+<p>对于以下<code>config.js</code>文件<br><img data-src="/images/cache_control9.png"></p>
+<p>通过js计算该文件的<code>etag</code>值</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="string">`<span class="subst">$&#123;(<span class="keyword">new</span> <span class="built_in">Date</span>(<span class="string">&#x27;Tue, 13 Jul 2021 19:25:30 GMT&#x27;</span>).getTime() / <span class="number">1000</span>).toString(<span class="string">&#x27;16&#x27;</span>)&#125;</span>-<span class="subst">$&#123;<span class="built_in">Number</span>(<span class="number">1501</span>).toString(<span class="string">&#x27;16&#x27;</span>)&#125;</span>`</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 60ede8aa-5dd</span></span><br></pre></td></tr></table></figure>
+
 ]]></content>
       <categories>
         <category>前端</category>
