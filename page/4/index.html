@@ -253,7 +253,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2017/04/17/Mysql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%B1%BB%E5%9E%8B/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2017/04/17/Mysql%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -266,7 +266,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2017/04/17/Mysql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%B1%BB%E5%9E%8B/" class="post-title-link" itemprop="url">Mysql存储引擎类型</a>
+          <a href="/2017/04/17/Mysql%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/" class="post-title-link" itemprop="url">Mysql体系结构</a>
         </h2>
 
         <div class="post-meta-container">
@@ -295,7 +295,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>760</span>
+      <span>2.4k</span>
     </span>
 
   
@@ -308,18 +308,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h3 id="innodb"><a href="#innodb" class="headerlink" title="innodb"></a>innodb</h3><ol>
-<li>支持事务，面向在线事务处理（OLTP）方面的应用，支持行锁（锁粒度），支持外键；</li>
-<li>通过多版本并发控制MVCC来获得高并发性，并且实现了sql标准的4种隔离级别（默认为<code>repeatable read</code>可重复读）；</li>
-<li>提供插入缓冲（insert buffer），二次写（double write），自适应哈斯索引（ahi），预读（read ahead）；</li>
-<li>对表中数据的存储，innodb采用clustered。每张表的存储按逐渐的顺序存放，如果没有显示的为飚定义主键，innodb会为每一张行生成一个6字节的rowid，作为主键</li>
-</ol>
-<ul>
-<li>.ibd innodb数据文件，索引也存在里面，既缓存数据，也缓存索引</li>
-<li>.frm 表结构文件
+          <p><img src="/images/mysql%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84.png"></p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2017/04/17/Mysql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%B1%BB%E5%9E%8B/#more" rel="contents">
+              <a class="btn" href="/2017/04/17/Mysql%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
