@@ -37,6 +37,7 @@
 <meta property="og:image" content="http://example.com/images/cors5.png">
 <meta property="og:image" content="http://example.com/images/cors6.gif">
 <meta property="og:image" content="http://example.com/images/cors7.gif">
+<meta property="og:image" content="http://example.com/images/cors8.gif">
 <meta property="article:published_time" content="2021-07-21T16:31:16.000Z">
 <meta property="article:modified_time" content="2021-07-21T16:31:16.000Z">
 <meta property="article:author" content="小白">
@@ -309,7 +310,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.3k</span>
+      <span>3.4k</span>
     </span>
 
   
@@ -425,7 +426,40 @@
 <p><img data-src="/images/cors7.gif"></p>
 </li>
 </ul>
-<h5 id="非简单请求"><a href="#非简单请求" class="headerlink" title="非简单请求"></a>非简单请求</h5><h4 id="vue跨域配置"><a href="#vue跨域配置" class="headerlink" title="vue跨域配置"></a>vue跨域配置</h4><h4 id="react跨域配置"><a href="#react跨域配置" class="headerlink" title="react跨域配置"></a>react跨域配置</h4>
+<h5 id="非简单请求"><a href="#非简单请求" class="headerlink" title="非简单请求"></a>非简单请求</h5><p>非简单请求是那种对服务器有特殊要求的请求，比如请求方法是<code>PUT</code>或<code>DELETE</code>，或者<code>Content-Type</code>字段的类型是<code>application/json</code>。</p>
+<p>非简单请求的<code>CORS</code>请求，会在正式通信之前，增加一次<code>HTTP</code>查询请求，称为”预检”请求（<code>preflight</code>）。</p>
+<p>浏览器先询问服务器，当前网页所在的域名是否在服务器的许可名单之中，以及可以使用哪些<code>HTTP</code>动词和头信息字段。只有得到肯定答复，浏览器才会发出正式的<code>XMLHttpRequest</code>请求，否则就报错。</p>
+<p>我们来模拟一个非简单请求，在请求头中加入一个自定义字段<code>Authorization</code></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;en&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">button</span> <span class="attr">id</span>=<span class="string">&quot;btn_get&quot;</span>&gt;</span>get<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript">    <span class="comment">// 直接fetch请求</span></span></span><br><span class="line"><span class="javascript">    <span class="keyword">let</span> btn_get = <span class="built_in">document</span>.getElementById(<span class="string">&#x27;btn_get&#x27;</span>);</span></span><br><span class="line"><span class="javascript">    btn_get.addEventListener(<span class="string">&quot;click&quot;</span>, <span class="function">() =&gt;</span> &#123;</span></span><br><span class="line"><span class="javascript">        fetch(<span class="string">&#x27;http://localhost:8080/api/user&#x27;</span>,</span></span><br><span class="line"><span class="javascript">        &#123;</span></span><br><span class="line"><span class="javascript">            <span class="attr">headers</span>: &#123;</span></span><br><span class="line"><span class="javascript">                <span class="string">&#x27;Authorization&#x27;</span>: <span class="string">&#x27;some token&#x27;</span></span></span><br><span class="line"><span class="javascript">            &#125;</span></span><br><span class="line"><span class="javascript">        &#125;</span></span><br><span class="line"><span class="javascript">        )</span></span><br><span class="line"><span class="javascript">            .then(<span class="function"><span class="params">response</span> =&gt;</span> &#123;</span></span><br><span class="line"><span class="javascript">                <span class="keyword">return</span> response.json();</span></span><br><span class="line"><span class="javascript">            &#125;)</span></span><br><span class="line"><span class="javascript">            <span class="comment">// 请求的数据</span></span></span><br><span class="line"><span class="javascript">            .then(<span class="function"><span class="params">data</span> =&gt;</span> &#123;</span></span><br><span class="line"><span class="javascript">                <span class="built_in">console</span>.log(data);</span></span><br><span class="line"><span class="javascript">            &#125;).catch(<span class="function"><span class="params">err</span> =&gt;</span> <span class="built_in">console</span>.log(err));</span></span><br><span class="line"><span class="javascript">    &#125;);</span></span><br><span class="line"><span class="javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><img data-src="/images/cors8.gif"></p>
+<p>预检请求用的请求方法是<code>OPTIONS</code>，表示这个请求是用来询问的。头信息里面，关键字段是<code>Origin</code>，表示请求来自哪个源。</p>
+<p>除了<code>Origin</code>字段，”预检”请求的头信息包括两个特殊字段。</p>
+<ul>
+<li><p>Access-Control-Request-Method</p>
+<p>该字段是必须的，用来列出浏览器的<code>CORS</code>请求会用到哪些<code>HTTP</code>方法，上例是<code>GET</code>。</p>
+</li>
+<li><p>Access-Control-Request-Headers</p>
+<p>该字段是一个逗号分隔的字符串，指定浏览器<code>CORS</code>请求会额外发送的头信息字段，上例是<code>authorization</code>。</p>
+</li>
+</ul>
+<p>预检请求也是一个真实的请求，我们后端需要对其进行处理，否则就会出现<code>404</code>错误（如上图），对于预检请求的响应，关键的是<code>Access-Control-Allow-Origin</code>字段，表示哪些源可以请求数据，如果在预检请求里面没有指定这个资源，而仅在需要的请求中指定，则也会发生跨域问题；例如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> koa = <span class="built_in">require</span>(<span class="string">&#x27;koa&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> Router = <span class="built_in">require</span>(<span class="string">&#x27;koa-router&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> server = <span class="keyword">new</span> koa();</span><br><span class="line"><span class="keyword">let</span> router = <span class="keyword">new</span> Router();</span><br><span class="line"></span><br><span class="line">server.listen(<span class="number">8080</span>);</span><br><span class="line">server.use(router.routes());</span><br><span class="line"></span><br><span class="line">router.get(<span class="string">&#x27;/api/user&#x27;</span>, <span class="keyword">async</span> (ctx, next) =&gt; &#123;</span><br><span class="line">    ctx.set(<span class="string">&quot;Access-Control-Allow-Origin&quot;</span>, <span class="string">&quot;*&quot;</span>);</span><br><span class="line">    ctx.body = &#123;<span class="attr">username</span>: <span class="string">&#x27;daryl&#x27;</span>, <span class="attr">age</span>: <span class="number">18</span>&#125;;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">router.options(<span class="string">&#x27;*&#x27;</span>, <span class="keyword">async</span> (ctx, next) =&gt; &#123;</span><br><span class="line">    <span class="comment">// 如果预检请求这里没有指定Access-Control-Allow-Origin，而仅在上面设置了，也会发生跨域问题</span></span><br><span class="line">    ctx.set(<span class="string">&quot;Access-Control-Allow-Origin&quot;</span>, <span class="string">&quot;*&quot;</span>);</span><br><span class="line">    ctx.set(<span class="string">&quot;Access-Control-Allow-Methods&quot;</span>, <span class="string">&quot;OPTIONS, GET, PUT, POST, DELETE&quot;</span>);</span><br><span class="line">    ctx.set(<span class="string">&quot;Access-Control-Allow-Headers&quot;</span>, <span class="string">&quot;authorization&quot;</span>);</span><br><span class="line">    ctx.set(<span class="string">&quot;Access-Control-Max-Age&quot;</span>, <span class="string">&quot;1728000&quot;</span>);</span><br><span class="line">    ctx.body = <span class="string">&#x27;ok&#x27;</span>;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>还有一些其他的相关字段：</p>
+<ul>
+<li><p>Access-Control-Allow-Methods</p>
+<p>该字段必需，它的值是逗号分隔的一个字符串，表明服务器支持的所有跨域请求的方法。注意，返回的是所有支持的方法，而不单是浏览器请求的那个方法。这是为了避免多次”预检”请求。</p>
+</li>
+<li><p>Access-Control-Allow-Headers</p>
+<p>如果浏览器请求包括<code>Access-Control-Request-Headers</code>字段，则<code>Access-Control-Allow-Headers</code>字段是必需的。它也是一个逗号分隔的字符串，表明服务器支持的所有头信息字段，不限于浏览器在”预检”中请求的字段。</p>
+</li>
+<li><p>Access-Control-Max-Age</p>
+<p>该字段可选，用来指定本次预检请求的有效期，单位为秒。上面结果中，有效期是20天（1728000秒），即允许缓存该条回应1728000秒（即20天），在此期间，不用发出另一条预检请求。</p>
+</li>
+<li><p>Access-Control-Allow-Credentials</p>
+<p>该字段与简单请求时的含义相同</p>
+</li>
+</ul>
+<h4 id="vue跨域配置"><a href="#vue跨域配置" class="headerlink" title="vue跨域配置"></a>vue跨域配置</h4><h4 id="react跨域配置"><a href="#react跨域配置" class="headerlink" title="react跨域配置"></a>react跨域配置</h4>
     </div>
 
     
