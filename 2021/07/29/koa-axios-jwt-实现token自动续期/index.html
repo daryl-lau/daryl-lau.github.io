@@ -322,7 +322,7 @@
 <h3 id="Json-web-token-JWT"><a href="#Json-web-token-JWT" class="headerlink" title="Json web token (JWT)"></a>Json web token (JWT)</h3><p><code>Json web token (JWT)</code>, 是为了在网络应用环境间传递声明而执行的一种基于<code>JSON</code>的开放标准<code>(RFC 7519)</code>，该<code>token</code>被设计为紧凑且安全的，特别适用于分布式站点的单点登录（SSO）场景。<code>JWT</code>的声明一般被用来在身份提供者和服务提供者间传递被认证的用户身份信息，以便于从资源服务器获取资源，也可以增加一些额外的其它业务逻辑所必须的声明信息，该token也可直接被用于认证，也可被加密。</p>
 <p>一个完整的<code>JWT</code>长这样</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJhaWh1emkiLCJhZG1pbiI6dHJ1ZSwiYWdlIjoxOCwiaWF0IjoxNjI3NTU4MjU3LCJleHAiOjE2Mjc1NTg4NTd9.FmiN7MoQm8uzGAFXXNve6z3r94JRVFGmCcKWVQyz2T9o-0ovhFRC1eQ6xgFX8AKFMSqMIBs8Yd_rDSXNFqBgQkxkBQEHqQlv4-BjhvxA3W1FpclUtqQfSQx9mWeWDN79RPOV7ayTZ-8e9hDJVqB3hoFZsWddHxens1IKbSEQylZrgEGNJVGbeN2sTNyHvXQoxUzft5E3k2odp5lnS-Fl0dwkrwsBEvQ81cNQio24d4VINBDCcF6nOBii6mEMA9VLBj4j1PDT2BEBgZlCbrvHbsuYCQUljvsHInkRrnySzc4DwiIxzrKEapr8raD--MHH0Iz78__hJrqCZTAxve-iaA</span><br></pre></td></tr></table></figure>
-
+<span id="more"></span>
 <p>包括三段信息，通过<code>.</code>分隔，第一部分我们称它为头部（<code>header</code>),第二部分我们称其为载荷（<code>payload</code>, 类似于飞机上承载的物品)，第三部分是签名（<code>signature</code>）.</p>
 <h4 id="header"><a href="#header" class="headerlink" title="header"></a>header</h4><p>jwt的头部承载两部分信息：</p>
 <ul>

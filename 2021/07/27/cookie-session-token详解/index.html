@@ -320,6 +320,7 @@
     <div class="post-body" itemprop="articleBody">
         <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p><code>cookie</code>、<code>session</code> 和 <code>token</code>是前端开发中很重要的概念，很多朋友并不真正了解这三者有什么区别，或者这三者到底是个什么的东西，面试的时候也只能模模糊糊的说一点，不能很清晰的讲明白，这里我们就这三个东西讨论下，彻底搞懂。</p>
 <h3 id="产生的背景"><a href="#产生的背景" class="headerlink" title="产生的背景"></a>产生的背景</h3><p>众所周知，<code>http</code>协议本身是一个无连接的协议，<code>web</code>早期只是用来浏览文档，不需要交互，每次<code>http</code>请求都是一个全新的请求，服务端并不关心到底是谁在访问，但是随着交互式<code>web</code>应用的发展，我们必须要识别客户端到底是谁，否则根本无法进行交互，比如商城应用，后端服务必须要知道是谁在买东西，每个客户端要区分开，这时候就需要客户端要和服务端能够进行数据的相互传递，有时还需要在不同的域名下实现数据共享，<code>cookie</code>就是用来解决这一问题的。</p>
+<span id="more"></span>
 <h3 id="cookie"><a href="#cookie" class="headerlink" title="cookie"></a>cookie</h3><p><code>cookie</code>是一个真实存在的东西，保存在客户端浏览器中，当一个请求发起后，后端如果想要设置<code>cookie</code>，则在响应头中添加一个<code>Set-Cookie</code>字段，浏览器识别到此响应头，就把里面的数据存放到浏览器本地，当下次再次请求的时候，将该<code>cookie</code>放到请求头中，发送给后端，实现前后端的交互。<br><img data-src="/images/cookie.png"></p>
 <p>cookie是有大小和数量限制的，根据浏览器的不同这个有所差异；</p>
 <p>Set-Cookie响应头类似于<code>Set-Cookie: username=daryl; path=/; expires=Thu, 26 Aug 2021 16:37:43 GMT; domain=localhost; samesite=none; secure; httponly</code></p>
@@ -370,10 +371,10 @@
   <div class="popular-posts-header">相关文章</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\07\09\浏览器的强缓存和协商缓存\" rel="bookmark">浏览器的强缓存和协商缓存</a></div>
+      <div class="popular-posts-title"><a href="\2021\07\05\浏览器的重排与重绘\" rel="bookmark">浏览器的重排与重绘</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\07\05\浏览器的重排与重绘\" rel="bookmark">浏览器的重排与重绘</a></div>
+      <div class="popular-posts-title"><a href="\2021\07\09\浏览器的强缓存和协商缓存\" rel="bookmark">浏览器的强缓存和协商缓存</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2021\07\22\跨域资源共享-CORS\" rel="bookmark">跨域资源共享(CORS)</a></div>
