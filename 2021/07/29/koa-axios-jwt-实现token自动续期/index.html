@@ -22,25 +22,32 @@
   <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js" integrity="sha256-a5YRB27CcBwBFcT5EF/f3E4vzIqyHrSR878nseNYw64=" crossorigin="anonymous"></script>
 
 <script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;example.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Mist&quot;,&quot;version&quot;:&quot;8.4.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;left&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:true,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;manual&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:true,&quot;lazyload&quot;:true,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:true,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;},&quot;path&quot;:&quot;&#x2F;search.xml&quot;,&quot;localsearch&quot;:{&quot;enable&quot;:true,&quot;trigger&quot;:&quot;auto&quot;,&quot;top_n_per_article&quot;:1,&quot;unescape&quot;:false,&quot;preload&quot;:false}}</script>
-<meta name="description" content="走得很慢，但从未放弃。">
-<meta property="og:type" content="website">
-<meta property="og:title" content="老白">
-<meta property="og:url" content="http://example.com/index.html">
+<meta name="description" content="深入理解token这篇文章详细讲解了token的作用及优势，这篇文章我们通过jwt和koa来简单实现一个自动续期token。 首先来看看JWT Json web token (JWT)Json web token (JWT), 是为了在网络应用环境间传递声明而执行的一种基于JSON的开放标准(RFC 7519)，该token被设计为紧凑且安全的，特别适用于分布式站点的单点登录（SSO）场景。JWT">
+<meta property="og:type" content="article">
+<meta property="og:title" content="koa + axios + jwt  实现token自动续期">
+<meta property="og:url" content="http://example.com/2021/07/29/koa-axios-jwt-%E5%AE%9E%E7%8E%B0token%E8%87%AA%E5%8A%A8%E7%BB%AD%E6%9C%9F/index.html">
 <meta property="og:site_name" content="老白">
-<meta property="og:description" content="走得很慢，但从未放弃。">
+<meta property="og:description" content="深入理解token这篇文章详细讲解了token的作用及优势，这篇文章我们通过jwt和koa来简单实现一个自动续期token。 首先来看看JWT Json web token (JWT)Json web token (JWT), 是为了在网络应用环境间传递声明而执行的一种基于JSON的开放标准(RFC 7519)，该token被设计为紧凑且安全的，特别适用于分布式站点的单点登录（SSO）场景。JWT">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/refreshToken.gif">
+<meta property="article:published_time" content="2021-07-29T11:23:45.000Z">
+<meta property="article:modified_time" content="2021-07-29T11:23:45.000Z">
 <meta property="article:author" content="老白">
+<meta property="article:tag" content="token">
+<meta property="article:tag" content="jwt">
+<meta property="article:tag" content="koa">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/refreshToken.gif">
 
 
-<link rel="canonical" href="http://example.com/">
+<link rel="canonical" href="http://example.com/2021/07/29/koa-axios-jwt-%E5%AE%9E%E7%8E%B0token%E8%87%AA%E5%8A%A8%E7%BB%AD%E6%9C%9F/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:true,&quot;isPost&quot;:false,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:&quot;&quot;,&quot;permalink&quot;:&quot;&quot;,&quot;path&quot;:&quot;index.html&quot;,&quot;title&quot;:&quot;&quot;}</script>
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;2021&#x2F;07&#x2F;29&#x2F;koa-axios-jwt-%E5%AE%9E%E7%8E%B0token%E8%87%AA%E5%8A%A8%E7%BB%AD%E6%9C%9F&#x2F;&quot;,&quot;path&quot;:&quot;2021&#x2F;07&#x2F;29&#x2F;koa-axios-jwt-实现token自动续期&#x2F;&quot;,&quot;title&quot;:&quot;koa + axios + jwt  实现token自动续期&quot;}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
-<title>老白</title><script src="/js/config.js"></script>
+<title>koa + axios + jwt  实现token自动续期 | 老白</title><script src="/js/config.js"></script>
   
 
 
@@ -133,7 +140,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -146,6 +153,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Json-web-token-JWT"><span class="nav-text">Json web token (JWT)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#header"><span class="nav-text">header</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#payload"><span class="nav-text">payload</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#signature"><span class="nav-text">signature</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JWT%E7%9A%84%E7%AD%BE%E5%8F%91%E4%B8%8E%E9%AA%8C%E7%AD%BE"><span class="nav-text">JWT的签发与验签</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#koa-jwt%E5%AE%9E%E7%8E%B0token%E7%BB%AD%E6%9C%9F"><span class="nav-text">koa-jwt实现token续期</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#axios%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E7%BB%AD%E6%9C%9F"><span class="nav-text">axios实现自动续期</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -243,16 +251,17 @@
 </noscript>
 
 
-      <div class="main-inner index posts-expand">
+      <div class="main-inner post posts-expand">
 
-    
+
+  
 
 
 <div class="post-block">
   
   
 
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/07/29/koa-axios-jwt-%E5%AE%9E%E7%8E%B0token%E8%87%AA%E5%8A%A8%E7%BB%AD%E6%9C%9F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -265,9 +274,9 @@
       <meta itemprop="name" content="老白">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/29/koa-axios-jwt-%E5%AE%9E%E7%8E%B0token%E8%87%AA%E5%8A%A8%E7%BB%AD%E6%9C%9F/" class="post-title-link" itemprop="url">koa + axios + jwt  实现token自动续期</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          koa + axios + jwt  实现token自动续期
+        </h1>
 
         <div class="post-meta-container">
           <div class="post-meta">
@@ -308,7 +317,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p><a href="">深入理解token</a>这篇文章详细讲解了token的作用及优势，这篇文章我们通过jwt和koa来简单实现一个自动续期token。</p>
+        <p><a href="">深入理解token</a>这篇文章详细讲解了token的作用及优势，这篇文章我们通过jwt和koa来简单实现一个自动续期token。</p>
 <p>首先来看看JWT</p>
 <h3 id="Json-web-token-JWT"><a href="#Json-web-token-JWT" class="headerlink" title="Json web token (JWT)"></a>Json web token (JWT)</h3><p><code>Json web token (JWT)</code>, 是为了在网络应用环境间传递声明而执行的一种基于<code>JSON</code>的开放标准<code>(RFC 7519)</code>，该<code>token</code>被设计为紧凑且安全的，特别适用于分布式站点的单点登录（SSO）场景。<code>JWT</code>的声明一般被用来在身份提供者和服务提供者间传递被认证的用户身份信息，以便于从资源服务器获取资源，也可以增加一些额外的其它业务逻辑所必须的声明信息，该token也可直接被用于认证，也可被加密。</p>
 <p>一个完整的<code>JWT</code>长这样</p>
@@ -357,594 +366,58 @@
 <p>查看效果：</p>
 <p>可以看到，多个请求<code>401</code>，只会去调用一次<code>refreshToken</code>接口，并且当续期接口成功返回后，之前失败的<code>401</code>请求也会重新请求，当续期接口的<code>token</code>也过期后，会返回<code>402</code>，让用户重新登录；<br><img data-src="/images/refreshToken.gif"></p>
 
-      
     </div>
 
     
     
     
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\07\27\cookie-session-token详解\" rel="bookmark">cookie session token详解</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\07\28\深入理解token\" rel="bookmark">【转载】深入理解token</a></div>
+    </li>
+  </ul>
+
 
     <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
+          
 
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/07/28/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3token/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="老白">
-      <meta itemprop="description" content="走得很慢，但从未放弃。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="老白">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/28/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3token/" class="post-title-link" itemprop="url">【转载】深入理解token</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-07-28 02:17:40" itemprop="dateCreated datePublished" datetime="2021-07-28T02:17:40+08:00">2021-07-28</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">前端</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>3.7k</span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>转载自<a target="_blank" rel="noopener" href="https://my.oschina.net/jamesfancy/blog/1613994">深入理解token</a></p>
-<h3 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h3><p><code>Token</code> 是在服务端产生的。如果前端使用<code>用户名/密码</code>向服务端请求认证，服务端认证成功，那么在服务端会返回 <code>Token</code> 给前端。前端可以在每次请求的时候带上 <code>Token</code> 证明自己的合法地位</p>
-<p>不久前，我在在前后端分离实践中提到了基于 <code>Token</code> 的认证，现在我们稍稍深入一些。</p>
-<p>通常情况下，我们在讨论某个技术的时候，都是从问题开始。那么第一个问题：</p>
-<h3 id="为什么要用-Token？"><a href="#为什么要用-Token？" class="headerlink" title="为什么要用 Token？"></a>为什么要用 Token？</h3><p>而要回答这个问题很简单——因为它能解决问题！</p>
-<p>可以解决哪些问题呢？</p>
-<ol>
-<li><code>Token</code> 完全由应用管理，所以它可以避开同源策略</li>
-<li><code>Token</code> 可以避免 <code>CSRF</code> 攻击(<a target="_blank" rel="noopener" href="http://dwz.cn/7joLzx">http://dwz.cn/7joLzx</a>)</li>
-<li><code>Token</code> 可以是无状态的，可以在多个服务间共享</li>
-</ol>
-<p><code>Token</code> 是在服务端产生的。如果前端使用<code>用户名/密码</code>向服务端请求认证，服务端认证成功，那么在服务端会返回 <code>Token</code> 给前端。前端可以在每次请求的时候带上 <code>Token</code> 证明自己的合法地位。如果这个 <code>Token</code> 在服务端持久化（比如存入数据库），那它就是一个永久的身份令牌。</p>
-<p>于是，又一个问题产生了：需要为 <code>Token</code> 设置有效期吗？</p>
-<h3 id="需要设置有效期吗？"><a href="#需要设置有效期吗？" class="headerlink" title="需要设置有效期吗？"></a>需要设置有效期吗？</h3><p>对于这个问题，我们不妨先看两个例子。一个例子是登录密码，一般要求定期改变密码，以防止泄漏，所以密码是有有效期的；另一个例子是安全证书。<code>SSL</code> 安全证书都有有效期，目的是为了解决吊销的问题，对于这个问题的详细情况，来看看<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/20803288">知乎的回答</a>。所以无论是从安全的角度考虑，还是从吊销的角度考虑，<code>Token</code> 都需要设有效期。</p>
-<p>那么有效期多长合适呢？</p>
-<p>只能说，根据系统的安全需要，尽可能的短，但也不能短得离谱——想像一下手机的自动熄屏时间，如果设置为 10 秒钟无操作自动熄屏，再次点亮需要输入密码，会不会疯？如果你觉得不会，那就亲自试一试，设置成可以设置的最短时间，坚持一周就好（不排除有人适应这个时间，毕竟手机厂商也是有用户体验研究的）。</p>
-<p>然后新问题产生了，如果用户在正常操作的过程中，<code>Token</code> 过期失效了，要求用户重新登录……用户体验岂不是很糟糕？</p>
-<p>为了解决在操作过程不能让用户感到 <code>Token</code> 失效这个问题，有一种方案是在服务器端保存 <code>Token</code> 状态，用户每次操作都会自动刷新（推迟） <code>Token</code> 的过期时间（<code>Session</code> 就是采用这种策略来保持用户登录状态的）。然而仍然存在这样一个问题，在前后端分离、单页 App 这些情况下，每秒种可能发起很多次请求，每次都去刷新过期时间会产生非常大的代价。如果 <code>Token</code> 的过期时间被持久化到数据库或文件，代价就更大了。所以通常为了提升效率，减少消耗，会把 <code>Token</code> 的过期时保存在缓存或者内存中。</p>
-<p>还有另一种方案，使用 <code>Refresh Token</code>，它可以避免频繁的读写操作。这种方案中，服务端不需要刷新 <code>Token</code> 的过期时间，一旦 <code>Token</code> 过期，就反馈给前端，前端使用 <code>Refresh Token</code> 申请一个全新 <code>Token</code> 继续使用。这种方案中，服务端只需要在客户端请求更新 <code>Token</code> 的时候对 <code>Refresh Token</code> 的有效性进行一次检查，大大减少了更新有效期的操作，也就避免了频繁读写。当然 <code>Refresh Token</code> 也是有有效期的，但是这个有效期就可以长一点了，比如，以天为单位的时间。</p>
-<h3 id="时序图表示"><a href="#时序图表示" class="headerlink" title="时序图表示"></a>时序图表示</h3><p>使用 <code>Token</code> 和 <code>Refresh Token</code> 的时序图如下：</p>
-<p>1）登录<br><img data-src="/images/token.jpg"></p>
-<p>2）业务请求<br><img data-src="/images/token2.jpg"></p>
-<p>3）Token 过期，刷新 Token<br><img data-src="/images/token3.jpg"></p>
-<p>上面的时序图中并未提到 <code>Refresh Token</code> 过期怎么办。不过很显然，<code>Refresh Token</code> 既然已经过期，就该要求用户重新登录了。</p>
-<p>当然还可以把这个机制设计得更复杂一些，比如，<code>Refresh Token</code> 每次使用的时候，都更新它的过期时间，直到与它的创建时间相比，已经超过了非常长的一段时间（比如三个月），这等于是在相当长一段时间内允许 <code>Refresh Token</code> 自动续期。</p>
-<p>到目前为止，<code>Token</code> 都是有状态的，即在服务端需要保存并记录相关属性。那说好的无状态呢，怎么实现？</p>
-<h3 id="无状态-Token"><a href="#无状态-Token" class="headerlink" title="无状态 Token"></a>无状态 Token</h3><p>如果我们把所有状态信息都附加在 <code>Token</code> 上，服务器就可以不保存。但是服务端仍然需要认证 <code>Token</code> 有效。不过只要服务端能确认是自己签发的 <code>Token</code>，而且其信息未被改动过，那就可以认为 <code>Token</code> 有效——“签名”可以作此保证。平时常说的签名都存在一方签发，另一方验证的情况，所以要使用非对称加密算法。但是在这里，签发和验证都是同一方，所以对称加密算法就能达到要求，而对称算法比非对称算法要快得多（可达数十倍差距）。</p>
-<p>更进一步思考，对称加密算法除了加密，还带有还原加密内容的功能，而这一功能在对 <code>Token</code> 签名时并无必要——既然不需要解密，摘要（散列）算法就会更快。可以指定密码的散列算法，自然是 <code>HMAC</code>。</p>
-<p>上面说了这么多，还需要自己去实现吗？不用！<code>JWT</code> 已经定义了详细的规范，而且有各种语言的若干实现。</p>
-<p>不过在使用无状态 <code>Token</code> 的时候在服务端会有一些变化，服务端虽然不保存有效的 <code>Token</code> 了，却需要保存未到期却已注销的 <code>Token</code>。如果一个 <code>Token</code> 未到期就被用户主动注销，那么服务器需要保存这个被注销的 <code>Token</code>，以便下次收到使用这个仍在有效期内的 <code>Token</code> 时判其无效。有没有感到一点沮丧？</p>
-<p>在前端可控的情况下（比如前端和服务端在同一个项目组内），可以协商：前端一但注销成功，就丢掉本地保存（比如保存在内存、<code>LocalStorage</code> 等）的 <code>Token</code> 和 <code>Refresh Token</code>。基于这样的约定，服务器就可以假设收到的 <code>Token</code> 一定是没注销的（因为注销之后前端就不会再使用了）。</p>
-<p>如果前端不可控的情况，仍然可以进行上面的假设，但是这种情况下，需要尽量缩短 <code>Token</code> 的有效期，而且必须在用户主动注销的情况下让 <code>Refresh Token</code> 无效。这个操作存在一定的安全漏洞，因为用户会认为已经注销了，实际上在较短的一段时间内并没有注销。如果应用设计中，这点漏洞并不会造成什么损失，那采用这种策略就是可行的。</p>
-<p>在使用无状态 <code>Token</code> 的时候，有两点需要注意：</p>
-<ol>
-<li><code>Refresh Token</code> 有效时间较长，所以它应该在服务器端有状态，以增强安全性，确保用户注销时可控</li>
-<li>应该考虑使用二次认证来增强敏感操作的安全性</li>
-</ol>
-<p>到此，关于 <code>Token</code> 的话题似乎差不多了——然而并没有，上面说的只是认证服务和业务服务集成在一起的情况，如果是分离的情况呢？</p>
-<h3 id="分离认证服务"><a href="#分离认证服务" class="headerlink" title="分离认证服务"></a>分离认证服务</h3><p>当 <code>Token</code> 无状态之后，单点登录就变得容易了。前端拿到一个有效的 <code>Token</code>，它就可以在任何同一体系的服务上认证通过——只要它们使用同样的密钥和算法来认证 <code>Token</code> 的有效性。就样这样：<br><img data-src="/images/token4.jpg"></p>
-<p>当然，如果 <code>Token</code> 过期了，前端仍然需要去认证服务更新 <code>Token</code>：<br><img data-src="/images/token5.jpg"></p>
-<h3 id="不受信的业务服务器"><a href="#不受信的业务服务器" class="headerlink" title="不受信的业务服务器"></a>不受信的业务服务器</h3><p>遇到不受信的业务服务器时，很容易想到的办法是使用不同的密钥。认证服务器使用密钥1签发，业务服务器使用密钥2验证——这是典型非对称加密签名的应用场景。认证服务器自己使用私钥对 <code>Token</code> 签名，公开公钥。信任这个认证服务器的业务服务器保存公钥，用于验证签名。幸好，<code>JWT</code> 不仅可以使用 <code>HMAC</code> 签名，也可以使用 <code>RSA</code>（一种非对称加密算法）签名。</p>
-<p>不过，当业务服务器已经不受信任的时候，多个业务服务器之间使用相同的 <code>Token</code> 对用户来说是不安全的。因为任何一个服务器拿到 <code>Token</code> 都可以仿冒用户去另一个服务器处理业务……悲剧随时可能发生。</p>
-<p>为了防止这种情况发生，就需要在认证服务器产生 <code>Token</code> 的时候，把使用该 <code>Token</code> 的业务服务器的信息记录在 <code>Token</code> 中，这样当另一个业务服务器拿到这个 <code>Token</code> 的时候，发现它并不是自己应该验证的 <code>Token</code>，就可以直接拒绝。</p>
-<p>现在，认证服务器不信任业务服务器，业务服务器相互也不信任，但前端是信任这些服务器的——如果前端不信任，就不会拿 <code>Token</code> 去请求验证。那么为什么会信任？可能是因为这些是同一家公司或者同一个项目中提供的若干服务构成的服务体系。</p>
-<p>但是，前端信任不代表用户信任。如果 <code>Token</code> 不没有携带用户隐私（比如姓名），那么用户不会关心信任问题。但如果 <code>Token</code> 含有用户隐私的时候，用户得关心信任问题了。这时候认证服务就不得不再啰嗦一些，当用户请求 <code>Token</code> 的时候，问上一句，你真的要授权给某某某业务服务吗？而这个“某某某”，用户怎么知道它是不是真的“某某某”呢？用户当然不知道，甚至认证服务也不知道，因为公钥已经公开了，任何一个业务都可以声明自己是“某某某”。</p>
-<p>为了得到用户的信任，认证服务就不得不帮助用户来甄别业务服务。所以，认证服器决定不公开公钥，而是要求业务服务先申请注册并通过审核。只有通过审核的业务服务器才能得到认证服务为它创建的，仅供它使用的公钥。如果该业务服务泄漏公钥带来风险，由该业务服务自行承担。现在认证服务可以清楚的告诉用户，“某某某”服务是什么了。如果用户还是不够信任，认证服务甚至可以问，某某某业务服务需要请求  A、B、C 三项个人数据，其中 A 是必须的，不然它不工作，是否允许授权？如果你授权，我就把你授权的几项数据加密放在 <code>Token</code> 中……</p>
-<p>废话了这么多，有没有似曾相识……对了，这类似开放式 <code>API</code> 的认证过程。开发式 <code>API</code> 多采用 <code>OAuth</code> 认证，而关于 <code>OAuth</code> 的探讨资源非常丰富，这里就不深究了。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/07/27/cookie-session-token%E8%AF%A6%E8%A7%A3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="老白">
-      <meta itemprop="description" content="走得很慢，但从未放弃。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="老白">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/27/cookie-session-token%E8%AF%A6%E8%A7%A3/" class="post-title-link" itemprop="url">cookie session token详解</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-07-27 01:58:03" itemprop="dateCreated datePublished" datetime="2021-07-27T01:58:03+08:00">2021-07-27</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">前端</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>2.5k</span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p><code>cookie</code>、<code>session</code> 和 <code>token</code>是前端开发中很重要的概念，很多朋友并不真正了解这三者有什么区别，或者这三者到底是个什么的东西，面试的时候也只能模模糊糊的说一点，不能很清晰的讲明白，这里我们就这三个东西讨论下，彻底搞懂。</p>
-<h3 id="产生的背景"><a href="#产生的背景" class="headerlink" title="产生的背景"></a>产生的背景</h3><p>众所周知，<code>http</code>协议本身是一个无连接的协议，<code>web</code>早期只是用来浏览文档，不需要交互，每次<code>http</code>请求都是一个全新的请求，服务端并不关心到底是谁在访问，但是随着交互式<code>web</code>应用的发展，我们必须要识别客户端到底是谁，否则根本无法进行交互，比如商城应用，后端服务必须要知道是谁在买东西，每个客户端要区分开，这时候就需要客户端要和服务端能够进行数据的相互传递，有时还需要在不同的域名下实现数据共享，<code>cookie</code>就是用来解决这一问题的。</p>
-<h3 id="cookie"><a href="#cookie" class="headerlink" title="cookie"></a>cookie</h3><p><code>cookie</code>是一个真实存在的东西，保存在客户端浏览器中，当一个请求发起后，后端如果想要设置<code>cookie</code>，则在响应头中添加一个<code>Set-Cookie</code>字段，浏览器识别到此响应头，就把里面的数据存放到浏览器本地，当下次再次请求的时候，将该<code>cookie</code>放到请求头中，发送给后端，实现前后端的交互。<br><img data-src="/images/cookie.png"></p>
-<p>cookie是有大小和数量限制的，根据浏览器的不同这个有所差异；</p>
-<p>Set-Cookie响应头类似于<code>Set-Cookie: username=daryl; path=/; expires=Thu, 26 Aug 2021 16:37:43 GMT; domain=localhost; samesite=none; secure; httponly</code></p>
-<p>这个值是后端设置的，可选的属性有以下几种</p>
+<div class="post-copyright">
 <ul>
-<li><p>maxAge</p>
-<p>用来告诉浏览器此<code>cookie</code>多久过期（单位是毫秒），而不是一个固定的时间点。正常情况下，max-age的优先级高于expires。</p>
-</li>
-<li><p>expires</p>
-<p>失效时间，表示cookie何时应该被删除的时间戳(也就是，何时应该停止向服务器发送这个cookie)。如果不设置这个时间戳，浏览器会在页面关闭时即将删除所有cookie；不过也可以自己设置删除时间。这个值是GMT时间格式，如果客户端和服务器端时间不一致，使用expires就会存在偏差。</p>
-</li>
-<li><p>path</p>
-<p>表示这个cookie影响到的路径，浏览器跟会根据这项配置，向指定域中匹配的路径发送cookie。</p>
-</li>
-<li><p>domain</p>
-<p>cookie对于哪个域是有效的。所有向该域发送的请求中都会包含这个cookie信息。这个值可以包含子域(如：<code>yq.aliyun.com</code>)，也可以不包含它(如：<code>.aliyun.com</code>，则对于<code>aliyun.com</code>的所有子域都有效).</p>
-</li>
-<li><p>secure</p>
-<p>安全标志，指定后，只有在使用SSL链接时候才能发送到服务器，如果是http链接则不会传递该信息。就算设置了secure 属性也并不代表他人不能看到你机器本地保存的 cookie 信息，所以不要把重要信息放cookie就对了服务器端设置</p>
-</li>
-<li><p>secureProxy?: boolean | undefined;</p>
-<p>“secureProxy” option is deprecated; use “secure” option, provide “secure” to constructor if needed</p>
-</li>
-<li><p>httpOnly?: boolean | undefined;</p>
-<p>a boolean indicating whether the cookie is only to be sent over HTTP(S),<br>and not made available to client JavaScript (true by default).</p>
-</li>
-<li><p>sameSite?: ‘strict’ | ‘lax’ | ‘none’ | boolean | undefined;</p>
-<p>a boolean or string indicating whether the cookie is a “same site” cookie (false by default).<br>This can be set to ‘strict’, ‘lax’, or true (which maps to ‘strict’).</p>
-</li>
-<li><p>signed</p>
-<p>是否对cookie进行签名（默认为false），如果设置为true，还将发送附加的另一个同名的后缀是.sig的cookie ，值类似于<code>Set-Cookie: username.sig=yuJIW4DxsPvY4BoKAP2YMpH5p5k; path=/; expires=Thu, 26 Aug 2021 16:37:43 GMT; domain=localhost; samesite=none; secure; httponly</code>，此签名密钥用于在下次收到cookie时检测篡改。</p>
-</li>
-<li><p>overwrite</p>
-<p>是否覆盖以前的设置同名cookies（默认为false）</p>
-</li>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>老白
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://example.com/2021/07/29/koa-axios-jwt-%E5%AE%9E%E7%8E%B0token%E8%87%AA%E5%8A%A8%E7%BB%AD%E6%9C%9F/" title="koa + axios + jwt  实现token自动续期">http://example.com/2021/07/29/koa-axios-jwt-实现token自动续期/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
 </ul>
-<h3 id="session"><a href="#session" class="headerlink" title="session"></a>session</h3><p><code>session</code>实际上是一个概念，即会话；<code>session</code>的实现有很多方式，最常见的是基于<code>cookie</code>的方式，后端生成一个<code>session</code>，有一个唯一的<code>session id</code>，标识唯一性，然后把这个<code>session id</code>通过<code>cookie</code>发送给客户端，客户端保存起来，下次请求的时候再携带包含<code>session id</code>值的<code>cookie</code>发送给后端，后端拿到后再去通过<code>session id</code>值查找对应的<code>session</code>；所以<code>session</code>实际上是保存在后端的，而发送给客户端的只是一个<code>session id</code>。</p>
-<p><code>session</code>这种方式的弊端在于服务器必须要保存<code>session</code>，无论是保存在文件里还是数据库里，都是一个很大的开销，并且一旦用户量过于庞大，<code>session</code>也会非常庞大，做负载均衡的话如果请求负载到了不同的机器，会造成<code>session</code>失效。</p>
-<h3 id="token"><a href="#token" class="headerlink" title="token"></a>token</h3><p><code>token</code>这种方案现在已经被广泛应用了，相比于<code>cookie + session</code>的实现方式，<code>token</code>不需要保存在服务器上，而是将数据签名，然后发送给客户端（可以通过<code>cookie</code>也可以通过其他方式），下次请求的时候再校验<code>token</code>的合法性，如果合法，则响应成功，如果不合法，则响应失败，这种方式就是用计算资源来节省空间资源，好处是我们不需要关心<code>token</code>的存储，而只需要扩展机器增加算力即可。</p>
-<p>详细的token解决方案，可以阅读<a target="_blank" rel="noopener" href="https://www.baihuzi.com/2021/07/28/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3token/">深入理解token</a></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
 </div>
 
+          <div class="post-tags">
+              <a href="/tags/token/" rel="tag"><i class="fa fa-tag"></i> token</a>
+              <a href="/tags/jwt/" rel="tag"><i class="fa fa-tag"></i> jwt</a>
+              <a href="/tags/koa/" rel="tag"><i class="fa fa-tag"></i> koa</a>
+          </div>
 
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/07/26/%E8%B7%A8%E5%9F%9F%E8%AE%BE%E7%BD%AEcookie/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="老白">
-      <meta itemprop="description" content="走得很慢，但从未放弃。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="老白">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/26/%E8%B7%A8%E5%9F%9F%E8%AE%BE%E7%BD%AEcookie/" class="post-title-link" itemprop="url">跨域设置cookie</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-07-26 22:18:36" itemprop="dateCreated datePublished" datetime="2021-07-26T22:18:36+08:00">2021-07-26</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">前端</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>2k</span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>我们先从一个问题来引入接下来的内容，先看下以下代码</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> koa = <span class="built_in">require</span>(<span class="string">&#x27;koa&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> Router = <span class="built_in">require</span>(<span class="string">&#x27;koa-router&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> server = <span class="keyword">new</span> koa();</span><br><span class="line"><span class="keyword">let</span> router = <span class="keyword">new</span> Router();</span><br><span class="line">server.listen(<span class="number">8080</span>);</span><br><span class="line">server.use(router.routes());</span><br><span class="line"></span><br><span class="line"><span class="comment">// cookie循环秘钥</span></span><br><span class="line">server.keys = [</span><br><span class="line">    <span class="string">&#x27;sdf7as9d8f7asd7f9sdfa9s&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;sdfasd6fgjhgjgdgjsfgsf5&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;nk54h3k2klj78kh89kh5kh3&#x27;</span>,</span><br><span class="line">];</span><br><span class="line"></span><br><span class="line">router.get(<span class="string">&#x27;/api/user&#x27;</span>, <span class="keyword">async</span> (ctx, next) =&gt; &#123;</span><br><span class="line">    ctx.set(<span class="string">&quot;Access-Control-Allow-Origin&quot;</span>, <span class="string">&quot;*&quot;</span>);</span><br><span class="line">    ctx.cookies.set(<span class="string">&#x27;username&#x27;</span>, <span class="string">&#x27;daryl&#x27;</span>, &#123;</span><br><span class="line">        <span class="attr">signed</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">maxAge</span>: <span class="number">86400</span> * <span class="number">30</span>,</span><br><span class="line">    &#125;)</span><br><span class="line">    ctx.body = &#123;<span class="attr">username</span>: <span class="string">&#x27;daryl&#x27;</span>, <span class="attr">age</span>: <span class="number">18</span>&#125;;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<p>我们开启了一个服务器，当请求<code>/api/user</code>接口的时候，我们设置跨域，并且设置了一个<code>cookie</code>，<code>key</code>为<code>username</code>，<code>value</code>为<code>daryl</code></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/07/26/%E8%B7%A8%E5%9F%9F%E8%AE%BE%E7%BD%AEcookie/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
-    </div>
 
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/07/22/%E8%B7%A8%E5%9F%9F%E8%B5%84%E6%BA%90%E5%85%B1%E4%BA%AB-CORS/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="老白">
-      <meta itemprop="description" content="走得很慢，但从未放弃。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="老白">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/22/%E8%B7%A8%E5%9F%9F%E8%B5%84%E6%BA%90%E5%85%B1%E4%BA%AB-CORS/" class="post-title-link" itemprop="url">跨域资源共享(CORS)</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-07-22 00:31:16" itemprop="dateCreated datePublished" datetime="2021-07-22T00:31:16+08:00">2021-07-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">前端</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>3.8k</span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>跨域是前端开发中常见的一个问题，其本身跟http协议没有关系，而是浏览器的一种安全机制，称之为同源策略；</p>
-<p>同源策略指的是当前网站和需要访问的目标网站的<code>协议</code>、<code>域名</code>、<code>端口</code>都要相同，其中主要有一个不相同，就会产生跨域问题；</p>
-<table>
-<thead>
-<tr>
-<th>当前url</th>
-<th>目标url</th>
-<th>是否跨域</th>
-<th>原因</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><a target="_blank" rel="noopener" href="http://www.test.com/">http://www.test.com</a></td>
-<td><a target="_blank" rel="noopener" href="http://www.test.com/index.html">http://www.test.com/index.html</a></td>
-<td>否</td>
-<td>同源（协议、域名、端口相同）</td>
-</tr>
-<tr>
-<td><a target="_blank" rel="noopener" href="http://www.test.com/">http://www.test.com</a></td>
-<td><a target="_blank" rel="noopener" href="https://www.test.com/index.html">https://www.test.com/index.html</a></td>
-<td>是</td>
-<td>协议不同（http/https），不只是这两种协议、如本地的file协议，websocket的ws协议等都算</td>
-</tr>
-<tr>
-<td><a target="_blank" rel="noopener" href="http://www.test.com/">http://www.test.com</a></td>
-<td><a target="_blank" rel="noopener" href="http://www.test1.com/index.html">http://www.test1.com/index.html</a></td>
-<td>是</td>
-<td>主域名不同（test/test1）</td>
-</tr>
-<tr>
-<td><a target="_blank" rel="noopener" href="http://www.test.com/">http://www.test.com</a></td>
-<td><a target="_blank" rel="noopener" href="http://mail.test.com/index.html">http://mail.test.com/index.html</a></td>
-<td>是</td>
-<td>子域名不同（www/mail）</td>
-</tr>
-<tr>
-<td><a target="_blank" rel="noopener" href="http://www.test.com:8000/">http://www.test.com:8000</a></td>
-<td><a target="_blank" rel="noopener" href="http://www.test.com:8080/index.html">http://www.test.com:8080/index.html</a></td>
-<td>是</td>
-<td>端口不同（8000/8080）</td>
-</tr>
-</tbody></table>
-<h3 id="跨域会造成的问题"><a href="#跨域会造成的问题" class="headerlink" title="跨域会造成的问题"></a>跨域会造成的问题</h3><p>跨域会造成很多问题，比如</p>
-<ul>
-<li>无法读取非同源网页的 <code>Cookie</code>、<code>LocalStorage</code> 和 <code>IndexedDB</code></li>
-<li>无法接触非同源网页的 <code>DOM</code></li>
-<li>无法向非同源地址发送 <code>AJAX</code> 请求</li>
-</ul>
-<p>对于现在前后端分离的开发模式，我们最常见的跨域问题就是当请求后端接口时候发生的。如果遇到以下错误，就是发生了跨域问题，我们通过<code>fetch</code>，去请求后端接口（<code>http://localhost.com/api/user</code>），由于当前url是本地的，协议是<code>file</code>协议，就会发生跨域问题<br><img src="/images/cors.png"></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/07/22/%E8%B7%A8%E5%9F%9F%E8%B5%84%E6%BA%90%E5%85%B1%E4%BA%AB-CORS/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/07/28/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3token/" rel="prev" title="【转载】深入理解token">
+                  <i class="fa fa-chevron-left"></i> 【转载】深入理解token
+                </a>
             </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/07/09/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E5%BC%BA%E7%BC%93%E5%AD%98%E5%92%8C%E5%8D%8F%E5%95%86%E7%BC%93%E5%AD%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="老白">
-      <meta itemprop="description" content="走得很慢，但从未放弃。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="老白">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/09/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E5%BC%BA%E7%BC%93%E5%AD%98%E5%92%8C%E5%8D%8F%E5%95%86%E7%BC%93%E5%AD%98/" class="post-title-link" itemprop="url">浏览器的强缓存和协商缓存</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-07-09 02:07:51" itemprop="dateCreated datePublished" datetime="2021-07-09T02:07:51+08:00">2021-07-09</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">前端</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>3.9k</span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>在前端工程化中，前端代码打包之后的生成的静态资源就要发布到静态服务器上，这时候就要做对这些静态资源做一些运维配置，其中，<code>gzip</code>和设置缓存是必不可少的。这两项是最直接影响到网站性能和用户体验的。</p>
-<p>浏览器缓存主要有以下几个优点：</p>
-<ul>
-<li>减少重复数据请求，避免通过网络再次加载资源，节省流量。</li>
-<li>降低服务器的压力，提升网站性能。</li>
-<li>加快客户端加载网页的速度， 提升用户体验。</li>
-</ul>
-<p>浏览器缓存分为强缓存和协商缓存，两者有两个比较明显的区别：</p>
-<ul>
-<li>强缓存在资源过期之前，不会向服务器发送网络请求，直接从本地缓存读取资源，响应码为<code>200  (from memory cache)</code>或者 <code>200  (from disk cache)</code>;</li>
-<li>协商缓存会向服务器发送一次请求，服务器会根据这个请求的<code>Request Headers</code>的一些参数来判断是否命中协商缓存，如果命中，则返回<code>304</code>状态码并带上新的<code>Response Headers</code>通知浏览器从缓存中读取资源;
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/07/09/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E5%BC%BA%E7%BC%93%E5%AD%98%E5%92%8C%E5%8D%8F%E5%95%86%E7%BC%93%E5%AD%98/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
+            <div class="post-nav-item">
             </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
+          </div>
     </footer>
   </article>
 </div>
@@ -952,390 +425,7 @@
 
 
 
-    
 
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/07/07/js-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%EF%BC%88event-loop%EF%BC%89%E3%80%81%E5%AE%8F%E4%BB%BB%E5%8A%A1%E3%80%81%E5%BE%AE%E4%BB%BB%E5%8A%A1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="老白">
-      <meta itemprop="description" content="走得很慢，但从未放弃。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="老白">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/07/js-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%EF%BC%88event-loop%EF%BC%89%E3%80%81%E5%AE%8F%E4%BB%BB%E5%8A%A1%E3%80%81%E5%BE%AE%E4%BB%BB%E5%8A%A1/" class="post-title-link" itemprop="url">js 事件循环（event loop）、宏任务、微任务</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-07-07 23:41:36" itemprop="dateCreated datePublished" datetime="2021-07-07T23:41:36+08:00">2021-07-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/JavaScript/" itemprop="url" rel="index"><span itemprop="name">JavaScript</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>1.9k</span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>Google工程师<code>Jake Archibald</code>写了一篇关于事件循环以及宏任务微任务的文章，非常经典，本文的例子都来源于改文章，有兴趣的可以去浏览原文<a target="_blank" rel="noopener" href="https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/?utm_source=html5weekly">Tasks, microtasks, queues and schedules</a></p>
-<p>在该文中也提供了<code>Philip Roberts</code>在youtube上的一个关于事件循环的视频<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=8aGhZQkoFbQ">What the heck is the event loop anyway?</a>（需要梯子），视频里讲的非常好，有兴趣可以看下。</p>
-<h3 id="事件循环的基本概念"><a href="#事件循环的基本概念" class="headerlink" title="事件循环的基本概念"></a>事件循环的基本概念</h3><ul>
-<li><code>JavaScript</code>是单线程的，同时只能执行一个代码片段。如果存在耗时的异步操作，则会被阻塞（<code>blocking</code>）.</li>
-<li><code>JavaScript</code>代码的执行过程中，除了依靠函数调用栈来搞定函数的执行顺序外，还依靠任务队列(<code>task queue</code>)来搞定另外一些代码的执行，例如<code>setTimeout</code>，<code>AJAX(XHR)</code>等，这些都是<code>Web API</code>，由浏览器提供，不存在于<code>V8引擎</code>内。</li>
-<li>任务队列又分为<code>macro-task</code>（宏任务）与<code>micro-task</code>（微任务），在最新标准中，它们被分别称为<code>task</code>与<code>jobs</code>。<strong>微任务在一次事件循环中，总是先于宏任务执行</strong></li>
-<li>一个线程中，事件循环是唯一的，但是任务队列里的任务可以拥有多个。</li>
-<li><code>macro-task</code>大概包括：<code>script</code>(整体代码), <code>setTimeout</code>, <code>setInterval</code>, <code>setImmediate</code>, <code>I/O</code>, <code>UI rendering</code>。</li>
-<li><code>micro-task</code>大概包括: <code>process.nextTick</code>, <code>Promise</code>的<code>then catch finally</code>, <code>Object.observe</code>(已废弃), <code>MutationObserver</code>(<code>html5</code>新特性)</li>
-<li><code>setTimeout/Promise</code>等我们称之为任务源。而进入任务队列的是他们指定的具体执行任务。</li>
-<li><code>Promise</code>的实例化会在主执行栈中执行
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/07/07/js-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%EF%BC%88event-loop%EF%BC%89%E3%80%81%E5%AE%8F%E4%BB%BB%E5%8A%A1%E3%80%81%E5%BE%AE%E4%BB%BB%E5%8A%A1/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/07/05/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E9%87%8D%E6%8E%92%E4%B8%8E%E9%87%8D%E7%BB%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="老白">
-      <meta itemprop="description" content="走得很慢，但从未放弃。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="老白">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/05/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E9%87%8D%E6%8E%92%E4%B8%8E%E9%87%8D%E7%BB%98/" class="post-title-link" itemprop="url">浏览器的重排与重绘</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-07-05 22:55:13" itemprop="dateCreated datePublished" datetime="2021-07-05T22:55:13+08:00">2021-07-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">前端</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>2.4k</span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h3 id="浏览器渲染原理"><a href="#浏览器渲染原理" class="headerlink" title="浏览器渲染原理"></a>浏览器渲染原理</h3><p>重排和重绘是浏览器运行过程中一个很重要的特性，页面的动画，结构变化都会涉及到重排与重绘，重排与重绘也是影响前端页面性能的一个很重要的因素，如果页面存在大量的重排与重绘，页面会显得非常“卡”，影响用户体验。</p>
-<p>说道重排与重绘，首先要了解浏览器的渲染原理，浏览器渲染展示页面的过程，大致分为以下几步：</p>
-<ul>
-<li>解析<code>HTML</code>结构（<code>HTML Parser</code>），构建<code>DOM树</code>（<code>DOM Tree</code>）</li>
-<li>解析<code>CSS</code>（<code>CSS Parser</code>），构建<code>CSS规则树</code>（<code>Style Rules</code>）</li>
-<li>将<code>DOM树</code>与<code>CSS规则树</code>合并，构建<code>渲染树</code>（<code>Rendering Tree</code>）</li>
-<li>布局（<code>Layout</code>）和绘制（<code>Paint</code>）</li>
-<li>如果在渲染过程中发生了结构变化或者样式变化，则会进行重排（<code>reflow</code>）和重绘（<code>repaint</code>）</li>
-</ul>
-<blockquote>
-<p>重排（<code>reflow</code>）也称为回流</p>
-</blockquote>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/07/05/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E9%87%8D%E6%8E%92%E4%B8%8E%E9%87%8D%E7%BB%98/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/30/js-%E5%8E%9F%E5%9E%8B%E3%80%81%E5%8E%9F%E5%9E%8B%E9%93%BE%E3%80%81%E7%BB%A7%E6%89%BF/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="老白">
-      <meta itemprop="description" content="走得很慢，但从未放弃。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="老白">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/06/30/js-%E5%8E%9F%E5%9E%8B%E3%80%81%E5%8E%9F%E5%9E%8B%E9%93%BE%E3%80%81%E7%BB%A7%E6%89%BF/" class="post-title-link" itemprop="url">js 原型、原型链、继承</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-06-30 23:41:51" itemprop="dateCreated datePublished" datetime="2021-06-30T23:41:51+08:00">2021-06-30</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/JavaScript/" itemprop="url" rel="index"><span itemprop="name">JavaScript</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>1k</span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>在<code>JavaScript</code>中，原型也是一个对象，通过原型可以实现对象的属性继承，JavaScript的对象中都包含了一个<code>[[Prototype]]</code>内部属性，这个属性所对应的就是该对象的原型。<br><code>[[Prototype]]</code>作为对象的内部属性，是不能被直接访问的。所以为了方便查看一个对象的原型，Firefox和Chrome中提供了<code>__proto__</code>这个非标准（不是所有浏览器都支持）的访问器（ECMA引入了标准对象原型访问器<code>Object.getPrototype(object)</code>）。在<code>JavaScript</code>的原型对象中，还包含一个<code>constructor</code>属性，这个属性对应创建所有指向该原型的实例的构造函数</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/06/30/js-%E5%8E%9F%E5%9E%8B%E3%80%81%E5%8E%9F%E5%9E%8B%E9%93%BE%E3%80%81%E7%BB%A7%E6%89%BF/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/11/js-ES6%E6%96%B0%E5%A2%9E%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8BSet-Map-Symbol/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="老白">
-      <meta itemprop="description" content="走得很慢，但从未放弃。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="老白">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/06/11/js-ES6%E6%96%B0%E5%A2%9E%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8BSet-Map-Symbol/" class="post-title-link" itemprop="url">js ES6新增数据类型Set/Map/Symbol</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-06-11 01:22:41" itemprop="dateCreated datePublished" datetime="2021-06-11T01:22:41+08:00">2021-06-11</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/JavaScript/" itemprop="url" rel="index"><span itemprop="name">JavaScript</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>2.1k</span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><a target="_blank" rel="noopener" href="https://es6.ruanyifeng.com/#docs/set-map">本文参考阮一峰ES6基础教程</a></p>
-<h3 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h3><p><code>ES6</code> 提供了新的数据结构 <code>Set</code>。它类似于数组，但是成员的值都是唯一的，没有重复的值。</p>
-<p><code>Set</code>本身是一个构造函数，用来生成 <code>Set</code> 数据结构。</p>
-<p><code>Set</code>函数可以接受一个数组（或者具有 <code>iterable</code> 接口的其他数据结构）作为参数，用来初始化</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 例一</span></span><br><span class="line"><span class="keyword">const</span> set = <span class="keyword">new</span> <span class="built_in">Set</span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">4</span>]);</span><br><span class="line">[...set]</span><br><span class="line"><span class="comment">// [1, 2, 3, 4]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 例二</span></span><br><span class="line"><span class="keyword">const</span> items = <span class="keyword">new</span> <span class="built_in">Set</span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">5</span>]);</span><br><span class="line">items.size <span class="comment">// 5</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 例三</span></span><br><span class="line"><span class="keyword">const</span> set = <span class="keyword">new</span> <span class="built_in">Set</span>(<span class="built_in">document</span>.querySelectorAll(<span class="string">&#x27;div&#x27;</span>));</span><br><span class="line">set.size <span class="comment">// 56</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 类似于</span></span><br><span class="line"><span class="keyword">const</span> set = <span class="keyword">new</span> <span class="built_in">Set</span>();</span><br><span class="line"><span class="built_in">document</span></span><br><span class="line"> .querySelectorAll(<span class="string">&#x27;div&#x27;</span>)</span><br><span class="line"> .forEach(<span class="function"><span class="params">div</span> =&gt;</span> set.add(div));</span><br><span class="line">set.size <span class="comment">// 56</span></span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/06/11/js-ES6%E6%96%B0%E5%A2%9E%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8BSet-Map-Symbol/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
-  </nav>
 <script src="/js/comments.js"></script>
 </div>
     </main>
