@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon-128x128.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css" integrity="sha256-no0c5ccDODBwp+9hSmV5VvPpKwHCpbVzXHexIkupM6U=" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js" integrity="sha256-a5YRB27CcBwBFcT5EF/f3E4vzIqyHrSR878nseNYw64=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;www.baihuzi.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Mist&quot;,&quot;version&quot;:&quot;8.4.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;left&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:true,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;manual&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:true,&quot;lazyload&quot;:true,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:true,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;},&quot;path&quot;:&quot;&#x2F;search.xml&quot;,&quot;localsearch&quot;:{&quot;enable&quot;:true,&quot;trigger&quot;:&quot;auto&quot;,&quot;top_n_per_article&quot;:1,&quot;unescape&quot;:false,&quot;preload&quot;:false}}</script>
+<meta name="description" content="ACID特性事务是数据库区别于文件系统的重要特性之一,事务会把数据库从一种一致状态转换为另一种一致状态.在数据库提交工作时，可以确保其要么所有修改都已经保存，要么所有修改都不保存。 Innodb存储引擎中的事务完全符合ACID的特性：  原子性（atomicity）：原子性是指整个数据库事务是不可分割的工作单位.只有使事务中所有的数据库操作执行都成功，才算整个事务成功.如果事务中任何一个sql语句">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据库事务">
+<meta property="og:url" content="https://www.baihuzi.com/2017/05/30/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%8B%E5%8A%A1/index.html">
+<meta property="og:site_name" content="老白">
+<meta property="og:description" content="ACID特性事务是数据库区别于文件系统的重要特性之一,事务会把数据库从一种一致状态转换为另一种一致状态.在数据库提交工作时，可以确保其要么所有修改都已经保存，要么所有修改都不保存。 Innodb存储引擎中的事务完全符合ACID的特性：  原子性（atomicity）：原子性是指整个数据库事务是不可分割的工作单位.只有使事务中所有的数据库操作执行都成功，才算整个事务成功.如果事务中任何一个sql语句">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.baihuzi.com/images/%E4%BA%8B%E5%8A%A1.png">
+<meta property="article:published_time" content="2017-05-29T16:00:00.000Z">
+<meta property="article:modified_time" content="2017-05-29T16:00:00.000Z">
+<meta property="article:author" content="老白">
+<meta property="article:tag" content="Innodb">
+<meta property="article:tag" content="ACID">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.baihuzi.com/images/%E4%BA%8B%E5%8A%A1.png">
+
+
+<link rel="canonical" href="https://www.baihuzi.com/2017/05/30/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%8B%E5%8A%A1/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;https:&#x2F;&#x2F;www.baihuzi.com&#x2F;2017&#x2F;05&#x2F;30&#x2F;%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%8B%E5%8A%A1&#x2F;&quot;,&quot;path&quot;:&quot;2017&#x2F;05&#x2F;30&#x2F;数据库事务&#x2F;&quot;,&quot;title&quot;:&quot;数据库事务&quot;}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
+<title>数据库事务 | 老白</title><script src="/js/config.js"></script>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="container">
+    <div class="headband"></div>
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">&nbsp;&nbsp;&nbsp;&nbsp;老白&nbsp;&nbsp;&nbsp;&nbsp;</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时间线</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#ACID%E7%89%B9%E6%80%A7"><span class="nav-text">ACID特性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB"><span class="nav-text">隔离级别</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB"><span class="nav-text">设置隔离级别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5"><span class="nav-text">事务控制语句</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9A%90%E5%BC%8F%E6%8F%90%E4%BA%A4%E7%9A%84sql%E8%AF%AD%E5%8F%A5"><span class="nav-text">隐式提交的sql语句</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Redo-log"><span class="nav-text">Redo log</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Undo-log"><span class="nav-text">Undo log</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#innodb%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E4%B8%AD%E7%9A%84%E9%94%81"><span class="nav-text">innodb存储引擎中的锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%94%81%E7%9A%84%E7%AE%97%E6%B3%95"><span class="nav-text">锁的算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E8%87%B4%E6%80%A7%E9%9D%9E%E9%94%81%E5%AE%9A%E8%AF%BB"><span class="nav-text">一致性非锁定读</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E8%87%B4%E6%80%A7%E9%94%81%E5%AE%9A%E8%AF%BB"><span class="nav-text">一致性锁定读</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="nav-text">测试</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#repeatable-read"><span class="nav-text">repeatable-read</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#read-committed%EF%BC%88%E5%B9%BB%E8%AF%BB%EF%BC%89"><span class="nav-text">read-committed（幻读）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#read-uncommitted%EF%BC%88%E8%84%8F%E8%AF%BB%EF%BC%89"><span class="nav-text">read-uncommitted（脏读）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%96%E9%94%AE%E9%94%81"><span class="nav-text">外键锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E5%92%8C%E9%94%81%E6%9C%80%E9%87%8D%E8%A6%81%E7%9A%84%E4%B8%89%E5%BC%A0%E8%A1%A8"><span class="nav-text">事务和锁最重要的三张表</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="老白"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">老白</p>
+  <div class="site-description" itemprop="description">走得很慢，但从未放弃。</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yourname" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://es6.ruanyifeng.com/" title="https:&#x2F;&#x2F;es6.ruanyifeng.com&#x2F;" rel="noopener" target="_blank">阮一峰ES6教程</a>
+        </li>
+    </ul>
+  </div>
+
+  <div class="links-of-recent-posts animated">
+    <div class="links-of-recent-posts-title">
+      <i class="fa fa-history fa-fw"></i>
+      最近文章
+    </div>
+    <ul class="links-of-recent-posts-list">
+        <li class="links-of-recent-posts-item">
+          <a href="/2021/08/03/Vue-%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%B8%B8%E5%B8%B8%E4%BB%A4%E4%BA%BA%E5%BF%BD%E8%A7%86%E7%9A%84%E9%87%8D%E8%A6%81%E7%9F%A5%E8%AF%86%E7%82%B9/" title="2021&#x2F;08&#x2F;03&#x2F;Vue-中一些常常令人忽视的重要知识点&#x2F;">Vue 中一些常常令人忽视的重要知识点</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2021/08/03/Vue-%E7%88%B6%E5%AD%90%E7%BB%84%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E9%92%A9%E5%AD%90%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/" title="2021&#x2F;08&#x2F;03&#x2F;Vue-父子组件生命周期钩子执行顺序&#x2F;">Vue 父子组件生命周期钩子执行顺序</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2021/07/29/koa-axios-jwt-%E5%AE%9E%E7%8E%B0token%E8%87%AA%E5%8A%A8%E7%BB%AD%E6%9C%9F/" title="2021&#x2F;07&#x2F;29&#x2F;koa-axios-jwt-实现token自动续期&#x2F;">koa + axios + jwt  实现token自动续期</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2021/07/28/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3token/" title="2021&#x2F;07&#x2F;28&#x2F;深入理解token&#x2F;">【转载】深入理解token</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2021/07/27/cookie-session-token%E8%AF%A6%E8%A7%A3/" title="2021&#x2F;07&#x2F;27&#x2F;cookie-session-token详解&#x2F;">cookie session token详解</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.baihuzi.com/2017/05/30/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%8B%E5%8A%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="老白">
+      <meta itemprop="description" content="走得很慢，但从未放弃。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="老白">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          数据库事务
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2017-05-30 00:00:00" itemprop="dateCreated datePublished" datetime="2017-05-30T00:00:00+08:00">2017-05-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Mysql/" itemprop="url" rel="index"><span itemprop="name">Mysql</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.8k</span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="ACID特性"><a href="#ACID特性" class="headerlink" title="ACID特性"></a>ACID特性</h3><p>事务是数据库区别于文件系统的重要特性之一,事务会把数据库从一种一致状态转换为另一种一致状态.在数据库提交工作时，可以确保其要么所有修改都已经保存，要么所有修改都不保存。</p>
+<p>Innodb存储引擎中的事务完全符合ACID的特性：</p>
+<ol>
+<li>原子性（atomicity）：原子性是指整个数据库事务是不可分割的工作单位.只有使事务中所有的数据库操作执行都成功，才算整个事务成功.如果事务中任何一个sql语句执行失败，那么已经执行成功的sql语句也必须撤销,数据库状态应该退回到执行事务前的状态.</li>
+<li>一致性（consistency）：一致性是指事务将数据库从一种状态转变为下一种一致的状态，在事务开始之前和事务结束以后，数据库的完整性约束没有被破坏.</li>
+<li>隔离性（isolation）：一个事务的影响在该事务提交前对其他事务都不可见</li>
+<li>持久性（durability）：事务一旦提交，其结果就是永久性.<span id="more"></span></li>
+</ol>
+<h3 id="隔离级别"><a href="#隔离级别" class="headerlink" title="隔离级别"></a>隔离级别</h3><p>Sql标准定义的四个隔离级别：</p>
+<ol>
+<li>未提交读（Read uncommitted）</li>
+<li>提交读（Read committed）</li>
+<li>可重复读（Repeatable read）</li>
+<li>串行化（Serializable）</li>
+</ol>
+<blockquote>
+<p>mysql默认为<code>repeatable read</code><br>oracle默认为<code>read committed</code></p>
+</blockquote>
+<h4 id="设置隔离级别"><a href="#设置隔离级别" class="headerlink" title="设置隔离级别"></a>设置隔离级别</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SET</span> [<span class="keyword">GLOBAL</span><span class="operator">|</span>SESSION] TRANSACTION ISOLATION LEVEL</span><br><span class="line">&#123;</span><br><span class="line">  READ UNCOMMITTED</span><br><span class="line">  <span class="operator">|</span> READ COMMITTED</span><br><span class="line">  <span class="operator">|</span> REPEATABLE READ</span><br><span class="line">  <span class="operator">|</span> SERIALIZABLE</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="事务控制语句"><a href="#事务控制语句" class="headerlink" title="事务控制语句"></a>事务控制语句</h4><p>Mysql命令行的默认设置下，事务都是自动提交的,即执行sql语句后就会马上执行<code>commit</code>操作.因此开始一个事务，必须使用<code>begin</code>,<code>start transaction</code>,或者执行<code>set autocommit=0</code>,以禁用当前会话的自动提交；</p>
+<ul>
+<li>Start transaction | begin：显示地开启一个事务</li>
+<li>Commit：提交事务，并使得已对数据库做的所有修改成为永久性</li>
+<li>Rollback：回滚事务，撤销正在进行的所有未提交的修改</li>
+</ul>
+<h4 id="隐式提交的sql语句"><a href="#隐式提交的sql语句" class="headerlink" title="隐式提交的sql语句"></a>隐式提交的sql语句</h4><p>某些Sql语句会产生一个隐式的提交操作,即执行完这些语句后，会有一个隐式的commit操作；<br><img data-src="/images/%E4%BA%8B%E5%8A%A1.png" alt="事务"></p>
+<blockquote>
+<p>注意：Truncate table 语句是DDL，虽然和delete整张表的结果一样，但它不能被回滚</p>
+</blockquote>
+<h4 id="Redo-log"><a href="#Redo-log" class="headerlink" title="Redo log"></a>Redo log</h4><p>在innodb存储引擎中，事务日志通过重做（redo）日志文件和innodb存储引擎的日志缓冲来实现，当开始一个事务时，会记录该事务的一个lSN;当事务执行时，会往innodb存储引擎的日志缓冲里插入事务日志;当事务提交时，必须将innodb存储引擎的日志缓冲写入磁盘,也就是写数据前，需要先写日志.称为预写日志方式（WAL）；</p>
+<p>Innodb存储引擎通过预写日志的方式，来保证事务的完整性.这意味着磁盘上存储的数据页和内存缓冲池中的页是不同步的,对于内存缓冲池中页的修改，先是写入重做日志文件，然后再写入磁盘，是一种异步方式.；</p>
+<ul>
+<li>Log sequence number 表示当前的LSN</li>
+<li>Log flushed up to 表示刷新到重做日志文件的LSN</li>
+<li>Last checkpoint at表示刷新到磁盘的lSN</li>
+<li>Pages flushed up to 刷新事务和提交后的LSN（新添加的参数）</li>
+</ul>
+<h4 id="Undo-log"><a href="#Undo-log" class="headerlink" title="Undo log"></a>Undo log</h4><p>重做日志记录了事务的行为，可以很好地通过其进行重做，但是事务有时还需要撤销，这时就需要<code>undo</code>，<code>undo</code>与<code>redo</code>正好相反，对于数据库进行修改时，数据库不但产生<code>redo</code>，而且还会产生一定量的<code>undo</code>，即使你执行的事务或语句由于某种原因失败了，或者如果你用一条<code>rollback</code>语句请求回滚,就可以利用这些<code>undo</code>信息将数据回滚到修改之前的样子。与<code>redo</code>不同的是，<code>redo</code>存放在重做日志文件中，<code>undo</code>存放在数据库内部的一个特殊段中，<code>undo segment</code>。<code>undo</code>段位于共享表空间内;</p>
+<h3 id="innodb存储引擎中的锁"><a href="#innodb存储引擎中的锁" class="headerlink" title="innodb存储引擎中的锁"></a>innodb存储引擎中的锁</h3><p>锁的类型</p>
+<ul>
+<li>共享锁（S） ： 允许事务读一行数据</li>
+<li>排他锁(X) ： 允许事务删除或更新一条数据</li>
+<li>意向共享锁（IS）： 事务想要获取一张表中某几行的共享锁</li>
+<li>意向排他锁（IX）： 事务想要获取一张表中某几行的排他锁</li>
+</ul>
+<p>兼容性（Y：兼容，N：不兼容）</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>S</th>
+<th>X</th>
+<th>IS</th>
+<th>IX</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>S</td>
+<td>Y</td>
+<td>N</td>
+<td>Y</td>
+<td>N</td>
+</tr>
+<tr>
+<td>X</td>
+<td>N</td>
+<td>N</td>
+<td>N</td>
+<td>N</td>
+</tr>
+<tr>
+<td>IS</td>
+<td>Y</td>
+<td>N</td>
+<td>Y</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>IX</td>
+<td>N</td>
+<td>N</td>
+<td>Y</td>
+<td>Y</td>
+</tr>
+</tbody></table>
+<h4 id="锁的算法"><a href="#锁的算法" class="headerlink" title="锁的算法"></a>锁的算法</h4><ul>
+<li>Record Lock：单行记录上上锁</li>
+<li>Gap Lock：间隙锁，锁定一个范围，但不包含记录本身</li>
+<li>Next-key Lock：Record Lock + Gap Lock，锁定一个范围，并锁定记录本身，目的是为了解决幻读现象</li>
+</ul>
+<h4 id="一致性非锁定读"><a href="#一致性非锁定读" class="headerlink" title="一致性非锁定读"></a>一致性非锁定读</h4><p>一致性非锁定读是值InnoDB存储引擎通过多版本控制（multi versioning）的方式来读取当前执行时间数据库中的数据。如果被读的数据行被加了排他锁，在读取这行数据的时候并不会等待锁释放，而是读取该行的一个快照数据。</p>
+<p>之所以称为非锁定读，因为不需要等待被访问行的X锁的释放。快照数据是指改行之前的数据版本，该实现通过<code>undo</code>段来完成。</p>
+<p>非锁定读的方式极大提高了数据库的并发性。在<code>InnoDB</code>存储引擎中，这是默认的读取方式。</p>
+<p>快照数据其实就是当前行数据的一个历史版本，每行记录可能有多个版本。这种技术成为行多版本技术。由此带来的并发控制，成为多版本并发控制（Multi Version Concurrency Control,MVCC）。</p>
+<p>在事务的隔离级别，<code>READ COMMITED</code>和<code>REPEATABLE READ</code>下，对快照数据的定义不同。在<code>READ COMMITTED</code>事务隔离级别下，对于快照数据，非一致性读总是读取被锁定行的最新一份快照数据。而在<code>REPEATABLE READ</code>事务隔离级别下，对于快照数据，非一致性读总是读取事务开始时的数据版本。</p>
+<p>也就是说在<code>READ COMMITTED</code>事务隔离级别下，非锁定读读取到的数据是最新的快照版本数据，也就是可以读到另一个事务已经提交了的快照数据。而在<code>REPEATABLE READ</code>下，只会读到事务开始前的数据。</p>
+<h4 id="一致性锁定读"><a href="#一致性锁定读" class="headerlink" title="一致性锁定读"></a>一致性锁定读</h4><p>在默认情况下，InnoDB存储引擎对数据采用的是一致性非锁定读。但是有些情况下为了保证数据逻辑的一致性，需要对SELECT的操作加锁。InnoDB存储引擎对于SELECT语句支持两种一致性的锁定读（locking read）操作：</p>
+<ol>
+<li>SELECT …… FOR UPDATE</li>
+<li>SELECT …… LOCK IN SHARE MODE</li>
+</ol>
+<p>其中，SELECT …… FOR UPDATE对读取的记录加一个X锁，其他事务不能对已锁定的行加任何锁。而SELECT …… LOCK IN SHARE MODE是对读取的记录加一个S锁。</p>
+<p>即使被读取的行被加了一致性锁定读，如果有另一个一致性非锁定读的操作来读取该行数据是不会阻塞的，读取的是该行的快照版本。</p>
+<p><code>SELECT …… FOR UPDATE</code>和<code>SELECT …… LOCK IN SHARE MODE</code>必须在一个事务中，当一个事务提交了，锁就释放了。因此在使用上述两个SELECT锁定语句时，必须开启事务。</p>
+<blockquote>
+<p>关于一致性非锁定读和一致性锁定读自己的理解：</p>
+<ul>
+<li>一致性非锁定读情况下，事务A进行了select操作，此时事务B可以对事务A select的行进行update操作，此时事务A再次进行select操作，读取到的结果和事务的隔离级别有关，如果是<code>repeatable read</code>级别，不论事务B有没有进行commit操作，事务A此时查询到的结果还是第一次的结果，如果是<code>read committed</code>级别，若事务B没有提交，此时查询到的结果还是第一次的结果，若事务B提交了，此时查询到的结果就会是事务B更新之后的结果。</li>
+<li>一致性锁定读情况下，事务B无法对事务A select的行进行update操作。</li>
+</ul>
+</blockquote>
+<h4 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h4><h5 id="repeatable-read"><a href="#repeatable-read" class="headerlink" title="repeatable-read"></a>repeatable-read</h5><blockquote>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>事务A<br>SET @@tx_isolation=’repeatable-read’</th>
+<th>事务B<br>SET @@tx_isolation=’repeatable-read’</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>begin;</td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td>select * from users where user_id=1;<br>user_id &nbsp;&nbsp;&nbsp;&nbsp;name <br>1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;李四</td>
+<td></td>
+</tr>
+<tr>
+<td>3</td>
+<td></td>
+<td>begin；</td>
+</tr>
+<tr>
+<td>4</td>
+<td></td>
+<td>update users set name=’张三’ where user_id=1;</td>
+</tr>
+<tr>
+<td>5</td>
+<td>select * from users where user_id=1;<br>user_id &nbsp;&nbsp;&nbsp;&nbsp;name <br>1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;李四</td>
+<td></td>
+</tr>
+<tr>
+<td>6</td>
+<td></td>
+<td>commit;</td>
+</tr>
+<tr>
+<td>7</td>
+<td>select * from users where user_id=1;<br>user_id &nbsp;&nbsp;&nbsp;&nbsp;name <br>1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;李四</td>
+<td></td>
+</tr>
+<tr>
+<td>8</td>
+<td>commit;</td>
+<td></td>
+</tr>
+<tr>
+<td>9</td>
+<td>select * from users where user_id=1;<br>user_id &nbsp;&nbsp;&nbsp;&nbsp;name <br>1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;张三</td>
+<td></td>
+</tr>
+</tbody></table>
+<h5 id="read-committed（幻读）"><a href="#read-committed（幻读）" class="headerlink" title="read-committed（幻读）"></a>read-committed（幻读）</h5><table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>事务A<br>SET @@tx_isolation=’read-committed’</th>
+<th>事务B<br>SET @@tx_isolation=’read-committed’</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>begin;</td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td>select * from users where user_id=1;<br>user_id &nbsp;&nbsp;&nbsp;&nbsp;name <br>1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;李四</td>
+<td></td>
+</tr>
+<tr>
+<td>3</td>
+<td></td>
+<td>begin；</td>
+</tr>
+<tr>
+<td>4</td>
+<td></td>
+<td>update users set name=’张三’ where user_id=1;</td>
+</tr>
+<tr>
+<td>5</td>
+<td>select * from users where user_id=1;<br>user_id &nbsp;&nbsp;&nbsp;&nbsp;name <br>1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;李四</td>
+<td></td>
+</tr>
+<tr>
+<td>6</td>
+<td></td>
+<td>commit;</td>
+</tr>
+<tr>
+<td>7</td>
+<td>select * from users where user_id=1;<br>user_id &nbsp;&nbsp;&nbsp;&nbsp;name <br>1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;张三</td>
+<td></td>
+</tr>
+<tr>
+<td>8</td>
+<td>commit;</td>
+<td></td>
+</tr>
+<tr>
+<td>9</td>
+<td>select * from users where user_id=1;<br>user_id &nbsp;&nbsp;&nbsp;&nbsp;name <br>1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;张三</td>
+<td></td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>在事务A同一个事务中，事务B已经修改了用户名为张三并commit了，但是在事务A中仍然读出来的是李四，这种情况称之为幻读</p>
+</blockquote>
+<h5 id="read-uncommitted（脏读）"><a href="#read-uncommitted（脏读）" class="headerlink" title="read-uncommitted（脏读）"></a>read-uncommitted（脏读）</h5><table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>事务A<br>SET @@tx_isolation=’read-committed’</th>
+<th>事务B<br>SET @@tx_isolation=’read-committed’</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>begin;</td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td>select * from users where user_id=1;<br>user_id &nbsp;&nbsp;&nbsp;&nbsp;name <br>1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;李四</td>
+<td></td>
+</tr>
+<tr>
+<td>3</td>
+<td></td>
+<td>begin；</td>
+</tr>
+<tr>
+<td>4</td>
+<td></td>
+<td>update users set name=’张三’ where user_id=1;</td>
+</tr>
+<tr>
+<td>5</td>
+<td>select * from users where user_id=1;<br>user_id &nbsp;&nbsp;&nbsp;&nbsp;name <br>1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;张三</td>
+<td></td>
+</tr>
+<tr>
+<td>6</td>
+<td></td>
+<td>commit;</td>
+</tr>
+<tr>
+<td>7</td>
+<td>select * from users where user_id=1;<br>user_id &nbsp;&nbsp;&nbsp;&nbsp;name <br>1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;张三</td>
+<td></td>
+</tr>
+<tr>
+<td>8</td>
+<td>commit;</td>
+<td></td>
+</tr>
+<tr>
+<td>9</td>
+<td>select * from users where user_id=1;<br>user_id &nbsp;&nbsp;&nbsp;&nbsp;name <br>1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;张三</td>
+<td></td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>在事务A同一个事务中，事务B已经修改了用户名为张三并commit了，但是在事务A中，并没有commit，在此事务中读出来的内容一定是一致的，但是此时仍然读出来的是李四，这种情况称之为脏读</p>
+</blockquote>
+<h3 id="外键锁"><a href="#外键锁" class="headerlink" title="外键锁"></a>外键锁</h3><p>对于外键值的插入和更新，首先需要查找父表中的记录，即SELECT父表。但是对于父表的SELECT操作，不是采用一致性非锁定读的方式，因为这样可能会发生数据不一致的问题。此时采用过的是SELECT …… LOCK IN SHARE MODE的方式，给父表的记录加一个S锁。如果此时对父表加一个X锁，则会被阻塞。</p>
+<h3 id="事务和锁最重要的三张表"><a href="#事务和锁最重要的三张表" class="headerlink" title="事务和锁最重要的三张表"></a>事务和锁最重要的三张表</h3><p>在information_schema下，有三张表记录了事务和锁的信息：</p>
+<ul>
+<li>INNODB_TRX</li>
+<li>INNODB_LOCKS</li>
+<li>INNODB_LOCK_WAITS</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2017\05\10\Mysql-Innodb特性\" rel="bookmark">Mysql Innodb特性</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>老白
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://www.baihuzi.com/2017/05/30/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%8B%E5%8A%A1/" title="数据库事务">https://www.baihuzi.com/2017/05/30/数据库事务/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Innodb/" rel="tag"><i class="fa fa-tag"></i> Innodb</a>
+              <a href="/tags/ACID/" rel="tag"><i class="fa fa-tag"></i> ACID</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2017/05/10/Mysql-Innodb%E7%89%B9%E6%80%A7/" rel="prev" title="Mysql Innodb特性">
+                  <i class="fa fa-chevron-left"></i> Mysql Innodb特性
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2017/07/04/%E5%89%8D%E7%AB%AF%E5%87%A0%E7%A7%8D%E5%B8%B8%E8%A7%81%E7%9A%84%E5%B8%83%E5%B1%80%E6%96%B9%E5%BC%8F/" rel="next" title="前端几种常见的布局方式">
+                  前端几种常见的布局方式 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+<script src="/js/comments.js"></script>
+</div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">鄂ICP备20006679号-1 </a>
+      <img src="/images/beian.png"><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=42010602004216" rel="noopener" target="_blank">鄂公网安备 42010602004216号 </a>
+  </div>
+
+<div class="copyright">
+  &copy; 2016 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">老白</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+      </div>
+    </footer>
+
+    
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js" integrity="sha256-EdPgYcPk/IIrw7FYeuJQexva49pVRZNmt3LculEr7zM=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+    
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script class="next-config" data-name="nprogress" type="application/json">{&quot;enable&quot;:true,&quot;spinner&quot;:false}</script>
+  <script src="/js/third-party/nprogress.js"></script>
+
+    
+
+
+
+
+
+  </div>
+</body>
+</html>

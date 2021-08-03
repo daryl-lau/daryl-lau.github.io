@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon-128x128.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css" integrity="sha256-no0c5ccDODBwp+9hSmV5VvPpKwHCpbVzXHexIkupM6U=" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js" integrity="sha256-a5YRB27CcBwBFcT5EF/f3E4vzIqyHrSR878nseNYw64=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;www.baihuzi.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Mist&quot;,&quot;version&quot;:&quot;8.4.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;left&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:true,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;manual&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:true,&quot;lazyload&quot;:true,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:true,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;},&quot;path&quot;:&quot;&#x2F;search.xml&quot;,&quot;localsearch&quot;:{&quot;enable&quot;:true,&quot;trigger&quot;:&quot;auto&quot;,&quot;top_n_per_article&quot;:1,&quot;unescape&quot;:false,&quot;preload&quot;:false}}</script>
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mysql体系结构">
+<meta property="og:url" content="https://www.baihuzi.com/2017/04/17/Mysql%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/index.html">
+<meta property="og:site_name" content="老白">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.baihuzi.com/images/mysql%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84.png">
+<meta property="og:image" content="https://www.baihuzi.com/images/sql%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F.png">
+<meta property="og:image" content="https://www.baihuzi.com/images/innodb%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E6%9E%B6%E6%9E%84.png">
+<meta property="og:image" content="https://www.baihuzi.com/images/%E7%89%A9%E7%90%86%E5%AD%98%E5%82%A8.png">
+<meta property="og:image" content="https://www.baihuzi.com/images/innodb%E5%86%85%E5%AD%98%E6%B1%A0.png">
+<meta property="article:published_time" content="2017-04-16T16:00:00.000Z">
+<meta property="article:modified_time" content="2017-04-16T16:00:00.000Z">
+<meta property="article:author" content="老白">
+<meta property="article:tag" content="Mysql">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.baihuzi.com/images/mysql%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84.png">
+
+
+<link rel="canonical" href="https://www.baihuzi.com/2017/04/17/Mysql%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;https:&#x2F;&#x2F;www.baihuzi.com&#x2F;2017&#x2F;04&#x2F;17&#x2F;Mysql%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84&#x2F;&quot;,&quot;path&quot;:&quot;2017&#x2F;04&#x2F;17&#x2F;Mysql体系结构&#x2F;&quot;,&quot;title&quot;:&quot;Mysql体系结构&quot;}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
+<title>Mysql体系结构 | 老白</title><script src="/js/config.js"></script>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="container">
+    <div class="headband"></div>
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">&nbsp;&nbsp;&nbsp;&nbsp;老白&nbsp;&nbsp;&nbsp;&nbsp;</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时间线</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#server%E5%B1%82"><span class="nav-text">server层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E5%B1%82"><span class="nav-text">存储引擎层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sql%E8%AF%AD%E5%8F%A5%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B"><span class="nav-text">sql语句执行过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#innodb%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E6%9E%B6%E6%9E%84"><span class="nav-text">innodb存储引擎架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%A9%E7%90%86%E5%AD%98%E5%82%A8"><span class="nav-text">物理存储</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%BB%E8%BE%91%E5%AD%98%E5%82%A8%E5%8D%95%E5%85%83"><span class="nav-text">逻辑存储单元</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#innodb%E5%86%85%E5%AD%98%E6%B1%A0%E7%BB%84%E6%88%90"><span class="nav-text">innodb内存池组成</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%93%E5%86%B2%E6%B1%A0"><span class="nav-text">缓冲池</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#LRU"><span class="nav-text">LRU</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%87%8D%E5%81%9A%E6%97%A5%E5%BF%97%E7%BC%93%E5%86%B2%E5%8C%BA"><span class="nav-text">重做日志缓冲区</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A2%9D%E5%A4%96%E7%BC%93%E5%AD%98%E6%B1%A0"><span class="nav-text">额外缓存池</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#innodb%E5%90%8E%E5%8F%B0%E7%BA%BF%E7%A8%8B"><span class="nav-text">innodb后台线程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Master-Thread"><span class="nav-text">Master Thread</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IO-Thread"><span class="nav-text">IO Thread</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Purge-Thread"><span class="nav-text">Purge Thread</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Page-cleaner-Thread"><span class="nav-text">Page cleaner Thread</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#innodb%E5%86%85%E5%AD%98%E5%88%B7%E6%96%B0%E6%9C%BA%E5%88%B6"><span class="nav-text">innodb内存刷新机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#redo-log"><span class="nav-text">redo log</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#bin-log"><span class="nav-text">bin log</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="老白"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">老白</p>
+  <div class="site-description" itemprop="description">走得很慢，但从未放弃。</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yourname" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://es6.ruanyifeng.com/" title="https:&#x2F;&#x2F;es6.ruanyifeng.com&#x2F;" rel="noopener" target="_blank">阮一峰ES6教程</a>
+        </li>
+    </ul>
+  </div>
+
+  <div class="links-of-recent-posts animated">
+    <div class="links-of-recent-posts-title">
+      <i class="fa fa-history fa-fw"></i>
+      最近文章
+    </div>
+    <ul class="links-of-recent-posts-list">
+        <li class="links-of-recent-posts-item">
+          <a href="/2021/08/03/Vue-%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%B8%B8%E5%B8%B8%E4%BB%A4%E4%BA%BA%E5%BF%BD%E8%A7%86%E7%9A%84%E9%87%8D%E8%A6%81%E7%9F%A5%E8%AF%86%E7%82%B9/" title="2021&#x2F;08&#x2F;03&#x2F;Vue-中一些常常令人忽视的重要知识点&#x2F;">Vue 中一些常常令人忽视的重要知识点</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2021/08/03/Vue-%E7%88%B6%E5%AD%90%E7%BB%84%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E9%92%A9%E5%AD%90%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/" title="2021&#x2F;08&#x2F;03&#x2F;Vue-父子组件生命周期钩子执行顺序&#x2F;">Vue 父子组件生命周期钩子执行顺序</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2021/07/29/koa-axios-jwt-%E5%AE%9E%E7%8E%B0token%E8%87%AA%E5%8A%A8%E7%BB%AD%E6%9C%9F/" title="2021&#x2F;07&#x2F;29&#x2F;koa-axios-jwt-实现token自动续期&#x2F;">koa + axios + jwt  实现token自动续期</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2021/07/28/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3token/" title="2021&#x2F;07&#x2F;28&#x2F;深入理解token&#x2F;">【转载】深入理解token</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2021/07/27/cookie-session-token%E8%AF%A6%E8%A7%A3/" title="2021&#x2F;07&#x2F;27&#x2F;cookie-session-token详解&#x2F;">cookie session token详解</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.baihuzi.com/2017/04/17/Mysql%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="老白">
+      <meta itemprop="description" content="走得很慢，但从未放弃。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="老白">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Mysql体系结构
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2017-04-17 00:00:00" itemprop="dateCreated datePublished" datetime="2017-04-17T00:00:00+08:00">2017-04-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Mysql/" itemprop="url" rel="index"><span itemprop="name">Mysql</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.4k</span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><img data-src="/images/mysql%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84.png"></p>
+<span id="more"></span>
+<h3 id="server层"><a href="#server层" class="headerlink" title="server层"></a>server层</h3><ol>
+<li>连接池组件</li>
+<li>管理服务和工具组件</li>
+<li>SQL借口组件</li>
+<li>查询分析器组件 解析sql语句，解析成树状结构</li>
+<li>优化器组件</li>
+<li>缓冲组件</li>
+</ol>
+<h3 id="存储引擎层"><a href="#存储引擎层" class="headerlink" title="存储引擎层"></a>存储引擎层</h3><ol start="7">
+<li>插件式存储引擎</li>
+<li>物理文件</li>
+</ol>
+<h3 id="sql语句执行过程"><a href="#sql语句执行过程" class="headerlink" title="sql语句执行过程"></a>sql语句执行过程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sql语句 --&gt; query cache --&gt; 解析器 --&gt; 处理器 --&gt; 优化器 --&gt; 执行计划 --&gt; 存储引擎 --&gt; 获取数据</span><br></pre></td></tr></table></figure>
+<p><img data-src="/images/sql%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F.png"></p>
+<h3 id="innodb存储引擎架构"><a href="#innodb存储引擎架构" class="headerlink" title="innodb存储引擎架构"></a>innodb存储引擎架构</h3><p><img data-src="/images/innodb%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E6%9E%B6%E6%9E%84.png"></p>
+<h3 id="物理存储"><a href="#物理存储" class="headerlink" title="物理存储"></a>物理存储</h3><p><img data-src="/images/%E7%89%A9%E7%90%86%E5%AD%98%E5%82%A8.png"></p>
+<h4 id="逻辑存储单元"><a href="#逻辑存储单元" class="headerlink" title="逻辑存储单元"></a>逻辑存储单元</h4><ul>
+<li>页 16k （oracle中为8k）</li>
+<li>页头：存储事务信息，锁信息，指针，checksum值</li>
+<li>页身：存储实际的行数据，一个页身最多存储7992行数据</li>
+<li>页尾：checksum值，页尾和页身的值必须一致</li>
+<li>区 64个连续的页组成 64*16k=1M</li>
+<li>段 一个大数据段由4个区组成 4M</li>
+<li>表空间</li>
+</ul>
+<p>innodb IO的最小单位是页，读取一行数据的时候，将该行数据的整个页读取到内存中国，以提高内存的命中率（内存读 /（内存读+磁盘读））</p>
+<h3 id="innodb内存池组成"><a href="#innodb内存池组成" class="headerlink" title="innodb内存池组成"></a>innodb内存池组成</h3><p><img data-src="/images/innodb%E5%86%85%E5%AD%98%E6%B1%A0.png"></p>
+<h4 id="缓冲池"><a href="#缓冲池" class="headerlink" title="缓冲池"></a>缓冲池</h4><ul>
+<li>数据页</li>
+<li>索引页</li>
+<li>插入缓冲</li>
+<li>自适应哈希索引</li>
+<li>锁信息</li>
+<li>数据字典</li>
+</ul>
+<p><code>innodb_buffer_pool_size</code> 定义缓冲池大小</p>
+<p><code>innodb_buffer_pool_instances</code> 定义缓冲池个数</p>
+<p><code>show engine innodb status;</code> 查看大小和个数</p>
+<h4 id="LRU"><a href="#LRU" class="headerlink" title="LRU"></a>LRU</h4><p>一般的数据库缓冲池通过LRU（latest recently used，最近最少使用）算法来进行管理，即最频繁使用的页在LRU列表的前端，最少使用的在LRU的尾端；</p>
+<p>innodb的缓冲池稍有不同，其在LRU中加入了<code>midpoint</code>位置，新读取的页，放在LRU列表的<code>minpoint</code>位置，<code>minpoint</code>之前的列表称为new列表，之后的称为old列表，可以理解new列表里面的页都是最为活跃的热点数据；</p>
+<p><code>innodb_old_blocks_pct</code>来控制<code>midpoint</code>的位置，值是百分比</p>
+<p><code>nnodb_old_blocks_time</code>用于表示页读到<code>midpoint</code>后，需要等待多久才会被加入到LRU列表的热端，这样做的好处是如果一读到<code>minpoint</code>就放到热端，可能会被其他查询给挤出LRU列表，这种查询一般是作为索引或数据的扫描工作，并不是热点数据，所以需要有个时间来进行控制。</p>
+<h4 id="重做日志缓冲区"><a href="#重做日志缓冲区" class="headerlink" title="重做日志缓冲区"></a>重做日志缓冲区</h4><p>innodb存储引擎先将重做日志放在这个缓冲区，然后按照一定频率将其刷新到重做日志文件，重做日主缓冲区一般不需要设置得非常大，因为一般每一秒都会有重做日志缓存刷新到日志文件，只需要保证每秒产生的事务量在这个缓冲区大小内即可。</p>
+<p><code>innodb_log_buffer_size</code>控制重做日志缓冲区大小，默认为8M；</p>
+<h4 id="额外缓存池"><a href="#额外缓存池" class="headerlink" title="额外缓存池"></a>额外缓存池</h4><p>在对一些数据结构本身进行内存的分配时，需要从额外的内存池中申请内存，当该区域不够的时候，会从缓冲区中进行申请。一般申请了很大的innodb缓冲池时，也应该考虑相应的增加这个值。</p>
+<h3 id="innodb后台线程"><a href="#innodb后台线程" class="headerlink" title="innodb后台线程"></a>innodb后台线程</h3><h4 id="Master-Thread"><a href="#Master-Thread" class="headerlink" title="Master Thread"></a>Master Thread</h4><p>核心线程，主要负责将缓冲池中的数据异步刷新到磁盘，保证数据的一致性，包括脏页的刷新、合并插入缓存、undo页的回收等；</p>
+<p>loop 主循环（繁忙）和 background loop 后台循环（空闲）切换操作</p>
+<h4 id="IO-Thread"><a href="#IO-Thread" class="headerlink" title="IO Thread"></a>IO Thread</h4><p>IO Thread用AIO（异步IO）来处理IO请求，这样极大的提高了数据库的性能。innodb中分别有4个IO Thread，分别是write thread（4个）、read thread（4个）、insert buffer thread（1个）、log thread（1个）；</p>
+<p><code>innodb_read_io_threads</code>、<code>innodb_write_io_threads</code>参数进行设置</p>
+<p><code>show variables like &#39;innodb_%_io_threads&#39;;</code></p>
+<h4 id="Purge-Thread"><a href="#Purge-Thread" class="headerlink" title="Purge Thread"></a>Purge Thread</h4><p>事务提交后，undo log可能不再需要，因此需要purge thread来回收已经分配使用并分配的undo页</p>
+<p><code>innod_purge_threads</code>来控制purge thread的个数；</p>
+<h4 id="Page-cleaner-Thread"><a href="#Page-cleaner-Thread" class="headerlink" title="Page cleaner Thread"></a>Page cleaner Thread</h4><p>将脏页的刷新操作放到单独的线程中来完成（innodb1.2x之前的版本，脏页刷新是由master thread来完成的），目的是减小原master thread的工作及对于用户查询线程的阻塞，进一步提高innodb的性能；</p>
+<h3 id="innodb内存刷新机制"><a href="#innodb内存刷新机制" class="headerlink" title="innodb内存刷新机制"></a>innodb内存刷新机制</h3><p>日志先行策略，先写日志，再写文件。</p>
+<h4 id="redo-log"><a href="#redo-log" class="headerlink" title="redo log"></a>redo log</h4><p>每个InnoDB存储引擎至少有1个redo log文件组，每个文件组下至少有2个redo log文件。为了得到更高的可靠性，可以设置多个mirrored log group，将不同的文件组放在不同的磁盘上。日志组中每个redo log文件的大小一致，并以循环方式使用。InnoDB存储引擎先写redo log文件1，当达到文件的最后是，会切换至文件2，当文件2也被写满时，会再切换到文件1中。</p>
+<p><code>innodb_log_file_size</code> 参数指定了redo log文件的大小；</p>
+<p><code>innodb_log_files_in_group</code> 参数指定了redo log文件组中redo log文件的数量，默认为2；</p>
+<p><code>innodb_mirrored_log_groups</code> 参数指定了日志镜像文件组的数量，默认为1，代表只有一个文件组，没有镜像；</p>
+<p><code>innodb_log_group_home_dir</code> 参数指定了日志文件组所在路径，默认在数据库路径下。</p>
+<p><code>innodb_flush_log_at_trx_commit</code> 参数决定redo log的刷新机制</p>
+<ul>
+<li>0：每隔1秒刷新一次</li>
+<li>1：实时刷新（默认）</li>
+<li>2：交由操作系统管理</li>
+</ul>
+<p>试想，当文件2写满了，切换到1的时候，覆盖1里面的内容，那之前的redo log不是没有了吗，这时候引入<code>checkpoint</code>概念，当发生日志文件切换的时候，产生checkpoint，将缓冲区里的脏数据刷回磁盘。这是其中一个脏页刷回磁盘的条件。还有一个是通过<code>innodb_max_dirty_pages_pct</code>参数（脏页占缓冲区的比率，默认75%，建议设置成20%-50%）来控制脏页的刷新。</p>
+<h4 id="bin-log"><a href="#bin-log" class="headerlink" title="bin log"></a>bin log</h4><p><code>sync_binlog</code>参数决定bin log刷新机制</p>
+<ul>
+<li>1：实时刷新（默认）</li>
+<li>0：交由操作系统管理</li>
+<li>(2，3，4……n)：n个事务刷新一次</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2017\04\18\MySQL备份-LOAD-DATA\" rel="bookmark">MySQL备份-LOAD DATA</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2018\04\10\MySQL通过二进制日志恢复数据\" rel="bookmark">MySQL通过二进制日志恢复数据</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2017\04\08\Mysql-5-7-安装\" rel="bookmark">Mysql-5.7 安装</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2017\04\14\Mysql主从复制-半同步主从复制\" rel="bookmark">Mysql主从复制-半同步主从复制</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2017\04\17\Mysql主从复制-基于GTID的主从复制\" rel="bookmark">Mysql主从复制-基于GTID的主从复制</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>老白
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://www.baihuzi.com/2017/04/17/Mysql%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/" title="Mysql体系结构">https://www.baihuzi.com/2017/04/17/Mysql体系结构/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Mysql/" rel="tag"><i class="fa fa-tag"></i> Mysql</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2017/04/17/Mysql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%B1%BB%E5%9E%8B/" rel="prev" title="Mysql存储引擎类型">
+                  <i class="fa fa-chevron-left"></i> Mysql存储引擎类型
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2017/04/17/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%9F%BA%E4%BA%8EGTID%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" rel="next" title="Mysql主从复制-基于GTID的主从复制">
+                  Mysql主从复制-基于GTID的主从复制 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+<script src="/js/comments.js"></script>
+</div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">鄂ICP备20006679号-1 </a>
+      <img src="/images/beian.png"><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=42010602004216" rel="noopener" target="_blank">鄂公网安备 42010602004216号 </a>
+  </div>
+
+<div class="copyright">
+  &copy; 2016 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">老白</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+      </div>
+    </footer>
+
+    
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js" integrity="sha256-EdPgYcPk/IIrw7FYeuJQexva49pVRZNmt3LculEr7zM=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+    
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script class="next-config" data-name="nprogress" type="application/json">{&quot;enable&quot;:true,&quot;spinner&quot;:false}</script>
+  <script src="/js/third-party/nprogress.js"></script>
+
+    
+
+
+
+
+
+  </div>
+</body>
+</html>

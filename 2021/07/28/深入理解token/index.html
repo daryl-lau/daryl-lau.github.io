@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon-128x128.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css" integrity="sha256-no0c5ccDODBwp+9hSmV5VvPpKwHCpbVzXHexIkupM6U=" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js" integrity="sha256-a5YRB27CcBwBFcT5EF/f3E4vzIqyHrSR878nseNYw64=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;www.baihuzi.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Mist&quot;,&quot;version&quot;:&quot;8.4.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;left&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:true,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;manual&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:true,&quot;lazyload&quot;:true,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:true,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;},&quot;path&quot;:&quot;&#x2F;search.xml&quot;,&quot;localsearch&quot;:{&quot;enable&quot;:true,&quot;trigger&quot;:&quot;auto&quot;,&quot;top_n_per_article&quot;:1,&quot;unescape&quot;:false,&quot;preload&quot;:false}}</script>
+<meta name="description" content="转载自深入理解token 摘要Token 是在服务端产生的。如果前端使用用户名&#x2F;密码向服务端请求认证，服务端认证成功，那么在服务端会返回 Token 给前端。前端可以在每次请求的时候带上 Token 证明自己的合法地位 不久前，我在在前后端分离实践中提到了基于 Token 的认证，现在我们稍稍深入一些。 通常情况下，我们在讨论某个技术的时候，都是从问题开始。那么第一个问题： 为什么要用 Token">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【转载】深入理解token">
+<meta property="og:url" content="https://www.baihuzi.com/2021/07/28/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3token/index.html">
+<meta property="og:site_name" content="老白">
+<meta property="og:description" content="转载自深入理解token 摘要Token 是在服务端产生的。如果前端使用用户名&#x2F;密码向服务端请求认证，服务端认证成功，那么在服务端会返回 Token 给前端。前端可以在每次请求的时候带上 Token 证明自己的合法地位 不久前，我在在前后端分离实践中提到了基于 Token 的认证，现在我们稍稍深入一些。 通常情况下，我们在讨论某个技术的时候，都是从问题开始。那么第一个问题： 为什么要用 Token">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.baihuzi.com/images/token.jpg">
+<meta property="og:image" content="https://www.baihuzi.com/images/token2.jpg">
+<meta property="og:image" content="https://www.baihuzi.com/images/token3.jpg">
+<meta property="og:image" content="https://www.baihuzi.com/images/token4.jpg">
+<meta property="og:image" content="https://www.baihuzi.com/images/token5.jpg">
+<meta property="article:published_time" content="2021-07-27T18:17:40.000Z">
+<meta property="article:modified_time" content="2021-07-27T18:17:40.000Z">
+<meta property="article:author" content="老白">
+<meta property="article:tag" content="token">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.baihuzi.com/images/token.jpg">
+
+
+<link rel="canonical" href="https://www.baihuzi.com/2021/07/28/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3token/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;https:&#x2F;&#x2F;www.baihuzi.com&#x2F;2021&#x2F;07&#x2F;28&#x2F;%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3token&#x2F;&quot;,&quot;path&quot;:&quot;2021&#x2F;07&#x2F;28&#x2F;深入理解token&#x2F;&quot;,&quot;title&quot;:&quot;【转载】深入理解token&quot;}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
+<title>【转载】深入理解token | 老白</title><script src="/js/config.js"></script>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="container">
+    <div class="headband"></div>
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">&nbsp;&nbsp;&nbsp;&nbsp;老白&nbsp;&nbsp;&nbsp;&nbsp;</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时间线</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%91%98%E8%A6%81"><span class="nav-text">摘要</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%94%A8-Token%EF%BC%9F"><span class="nav-text">为什么要用 Token？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%80%E8%A6%81%E8%AE%BE%E7%BD%AE%E6%9C%89%E6%95%88%E6%9C%9F%E5%90%97%EF%BC%9F"><span class="nav-text">需要设置有效期吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E5%BA%8F%E5%9B%BE%E8%A1%A8%E7%A4%BA"><span class="nav-text">时序图表示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A0%E7%8A%B6%E6%80%81-Token"><span class="nav-text">无状态 Token</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E7%A6%BB%E8%AE%A4%E8%AF%81%E6%9C%8D%E5%8A%A1"><span class="nav-text">分离认证服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E5%8F%97%E4%BF%A1%E7%9A%84%E4%B8%9A%E5%8A%A1%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-text">不受信的业务服务器</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="老白"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">老白</p>
+  <div class="site-description" itemprop="description">走得很慢，但从未放弃。</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yourname" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://es6.ruanyifeng.com/" title="https:&#x2F;&#x2F;es6.ruanyifeng.com&#x2F;" rel="noopener" target="_blank">阮一峰ES6教程</a>
+        </li>
+    </ul>
+  </div>
+
+  <div class="links-of-recent-posts animated">
+    <div class="links-of-recent-posts-title">
+      <i class="fa fa-history fa-fw"></i>
+      最近文章
+    </div>
+    <ul class="links-of-recent-posts-list">
+        <li class="links-of-recent-posts-item">
+          <a href="/2021/08/03/Vue-%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%B8%B8%E5%B8%B8%E4%BB%A4%E4%BA%BA%E5%BF%BD%E8%A7%86%E7%9A%84%E9%87%8D%E8%A6%81%E7%9F%A5%E8%AF%86%E7%82%B9/" title="2021&#x2F;08&#x2F;03&#x2F;Vue-中一些常常令人忽视的重要知识点&#x2F;">Vue 中一些常常令人忽视的重要知识点</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2021/08/03/Vue-%E7%88%B6%E5%AD%90%E7%BB%84%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E9%92%A9%E5%AD%90%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/" title="2021&#x2F;08&#x2F;03&#x2F;Vue-父子组件生命周期钩子执行顺序&#x2F;">Vue 父子组件生命周期钩子执行顺序</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2021/07/29/koa-axios-jwt-%E5%AE%9E%E7%8E%B0token%E8%87%AA%E5%8A%A8%E7%BB%AD%E6%9C%9F/" title="2021&#x2F;07&#x2F;29&#x2F;koa-axios-jwt-实现token自动续期&#x2F;">koa + axios + jwt  实现token自动续期</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2021/07/28/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3token/" title="2021&#x2F;07&#x2F;28&#x2F;深入理解token&#x2F;">【转载】深入理解token</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2021/07/27/cookie-session-token%E8%AF%A6%E8%A7%A3/" title="2021&#x2F;07&#x2F;27&#x2F;cookie-session-token详解&#x2F;">cookie session token详解</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.baihuzi.com/2021/07/28/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3token/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="老白">
+      <meta itemprop="description" content="走得很慢，但从未放弃。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="老白">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【转载】深入理解token
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-07-28 02:17:40" itemprop="dateCreated datePublished" datetime="2021-07-28T02:17:40+08:00">2021-07-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">前端</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.7k</span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>转载自<a target="_blank" rel="noopener" href="https://my.oschina.net/jamesfancy/blog/1613994">深入理解token</a></p>
+<h3 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h3><p><code>Token</code> 是在服务端产生的。如果前端使用<code>用户名/密码</code>向服务端请求认证，服务端认证成功，那么在服务端会返回 <code>Token</code> 给前端。前端可以在每次请求的时候带上 <code>Token</code> 证明自己的合法地位</p>
+<p>不久前，我在在前后端分离实践中提到了基于 <code>Token</code> 的认证，现在我们稍稍深入一些。</p>
+<p>通常情况下，我们在讨论某个技术的时候，都是从问题开始。那么第一个问题：</p>
+<h3 id="为什么要用-Token？"><a href="#为什么要用-Token？" class="headerlink" title="为什么要用 Token？"></a>为什么要用 Token？</h3><p>而要回答这个问题很简单——因为它能解决问题！</p>
+<p>可以解决哪些问题呢？</p>
+<ol>
+<li><code>Token</code> 完全由应用管理，所以它可以避开同源策略</li>
+<li><code>Token</code> 可以避免 <code>CSRF</code> 攻击(<a target="_blank" rel="noopener" href="http://dwz.cn/7joLzx">http://dwz.cn/7joLzx</a>)</li>
+<li><code>Token</code> 可以是无状态的，可以在多个服务间共享</li>
+</ol>
+<p><code>Token</code> 是在服务端产生的。如果前端使用<code>用户名/密码</code>向服务端请求认证，服务端认证成功，那么在服务端会返回 <code>Token</code> 给前端。前端可以在每次请求的时候带上 <code>Token</code> 证明自己的合法地位。如果这个 <code>Token</code> 在服务端持久化（比如存入数据库），那它就是一个永久的身份令牌。</p>
+<p>于是，又一个问题产生了：需要为 <code>Token</code> 设置有效期吗？</p>
+<span id="more"></span>
+<h3 id="需要设置有效期吗？"><a href="#需要设置有效期吗？" class="headerlink" title="需要设置有效期吗？"></a>需要设置有效期吗？</h3><p>对于这个问题，我们不妨先看两个例子。一个例子是登录密码，一般要求定期改变密码，以防止泄漏，所以密码是有有效期的；另一个例子是安全证书。<code>SSL</code> 安全证书都有有效期，目的是为了解决吊销的问题，对于这个问题的详细情况，来看看<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/20803288">知乎的回答</a>。所以无论是从安全的角度考虑，还是从吊销的角度考虑，<code>Token</code> 都需要设有效期。</p>
+<p>那么有效期多长合适呢？</p>
+<p>只能说，根据系统的安全需要，尽可能的短，但也不能短得离谱——想像一下手机的自动熄屏时间，如果设置为 10 秒钟无操作自动熄屏，再次点亮需要输入密码，会不会疯？如果你觉得不会，那就亲自试一试，设置成可以设置的最短时间，坚持一周就好（不排除有人适应这个时间，毕竟手机厂商也是有用户体验研究的）。</p>
+<p>然后新问题产生了，如果用户在正常操作的过程中，<code>Token</code> 过期失效了，要求用户重新登录……用户体验岂不是很糟糕？</p>
+<p>为了解决在操作过程不能让用户感到 <code>Token</code> 失效这个问题，有一种方案是在服务器端保存 <code>Token</code> 状态，用户每次操作都会自动刷新（推迟） <code>Token</code> 的过期时间（<code>Session</code> 就是采用这种策略来保持用户登录状态的）。然而仍然存在这样一个问题，在前后端分离、单页 App 这些情况下，每秒种可能发起很多次请求，每次都去刷新过期时间会产生非常大的代价。如果 <code>Token</code> 的过期时间被持久化到数据库或文件，代价就更大了。所以通常为了提升效率，减少消耗，会把 <code>Token</code> 的过期时保存在缓存或者内存中。</p>
+<p>还有另一种方案，使用 <code>Refresh Token</code>，它可以避免频繁的读写操作。这种方案中，服务端不需要刷新 <code>Token</code> 的过期时间，一旦 <code>Token</code> 过期，就反馈给前端，前端使用 <code>Refresh Token</code> 申请一个全新 <code>Token</code> 继续使用。这种方案中，服务端只需要在客户端请求更新 <code>Token</code> 的时候对 <code>Refresh Token</code> 的有效性进行一次检查，大大减少了更新有效期的操作，也就避免了频繁读写。当然 <code>Refresh Token</code> 也是有有效期的，但是这个有效期就可以长一点了，比如，以天为单位的时间。</p>
+<h3 id="时序图表示"><a href="#时序图表示" class="headerlink" title="时序图表示"></a>时序图表示</h3><p>使用 <code>Token</code> 和 <code>Refresh Token</code> 的时序图如下：</p>
+<p>1）登录<br><img data-src="/images/token.jpg"></p>
+<p>2）业务请求<br><img data-src="/images/token2.jpg"></p>
+<p>3）Token 过期，刷新 Token<br><img data-src="/images/token3.jpg"></p>
+<p>上面的时序图中并未提到 <code>Refresh Token</code> 过期怎么办。不过很显然，<code>Refresh Token</code> 既然已经过期，就该要求用户重新登录了。</p>
+<p>当然还可以把这个机制设计得更复杂一些，比如，<code>Refresh Token</code> 每次使用的时候，都更新它的过期时间，直到与它的创建时间相比，已经超过了非常长的一段时间（比如三个月），这等于是在相当长一段时间内允许 <code>Refresh Token</code> 自动续期。</p>
+<p>到目前为止，<code>Token</code> 都是有状态的，即在服务端需要保存并记录相关属性。那说好的无状态呢，怎么实现？</p>
+<h3 id="无状态-Token"><a href="#无状态-Token" class="headerlink" title="无状态 Token"></a>无状态 Token</h3><p>如果我们把所有状态信息都附加在 <code>Token</code> 上，服务器就可以不保存。但是服务端仍然需要认证 <code>Token</code> 有效。不过只要服务端能确认是自己签发的 <code>Token</code>，而且其信息未被改动过，那就可以认为 <code>Token</code> 有效——“签名”可以作此保证。平时常说的签名都存在一方签发，另一方验证的情况，所以要使用非对称加密算法。但是在这里，签发和验证都是同一方，所以对称加密算法就能达到要求，而对称算法比非对称算法要快得多（可达数十倍差距）。</p>
+<p>更进一步思考，对称加密算法除了加密，还带有还原加密内容的功能，而这一功能在对 <code>Token</code> 签名时并无必要——既然不需要解密，摘要（散列）算法就会更快。可以指定密码的散列算法，自然是 <code>HMAC</code>。</p>
+<p>上面说了这么多，还需要自己去实现吗？不用！<code>JWT</code> 已经定义了详细的规范，而且有各种语言的若干实现。</p>
+<p>不过在使用无状态 <code>Token</code> 的时候在服务端会有一些变化，服务端虽然不保存有效的 <code>Token</code> 了，却需要保存未到期却已注销的 <code>Token</code>。如果一个 <code>Token</code> 未到期就被用户主动注销，那么服务器需要保存这个被注销的 <code>Token</code>，以便下次收到使用这个仍在有效期内的 <code>Token</code> 时判其无效。有没有感到一点沮丧？</p>
+<p>在前端可控的情况下（比如前端和服务端在同一个项目组内），可以协商：前端一但注销成功，就丢掉本地保存（比如保存在内存、<code>LocalStorage</code> 等）的 <code>Token</code> 和 <code>Refresh Token</code>。基于这样的约定，服务器就可以假设收到的 <code>Token</code> 一定是没注销的（因为注销之后前端就不会再使用了）。</p>
+<p>如果前端不可控的情况，仍然可以进行上面的假设，但是这种情况下，需要尽量缩短 <code>Token</code> 的有效期，而且必须在用户主动注销的情况下让 <code>Refresh Token</code> 无效。这个操作存在一定的安全漏洞，因为用户会认为已经注销了，实际上在较短的一段时间内并没有注销。如果应用设计中，这点漏洞并不会造成什么损失，那采用这种策略就是可行的。</p>
+<p>在使用无状态 <code>Token</code> 的时候，有两点需要注意：</p>
+<ol>
+<li><code>Refresh Token</code> 有效时间较长，所以它应该在服务器端有状态，以增强安全性，确保用户注销时可控</li>
+<li>应该考虑使用二次认证来增强敏感操作的安全性</li>
+</ol>
+<p>到此，关于 <code>Token</code> 的话题似乎差不多了——然而并没有，上面说的只是认证服务和业务服务集成在一起的情况，如果是分离的情况呢？</p>
+<h3 id="分离认证服务"><a href="#分离认证服务" class="headerlink" title="分离认证服务"></a>分离认证服务</h3><p>当 <code>Token</code> 无状态之后，单点登录就变得容易了。前端拿到一个有效的 <code>Token</code>，它就可以在任何同一体系的服务上认证通过——只要它们使用同样的密钥和算法来认证 <code>Token</code> 的有效性。就样这样：<br><img data-src="/images/token4.jpg"></p>
+<p>当然，如果 <code>Token</code> 过期了，前端仍然需要去认证服务更新 <code>Token</code>：<br><img data-src="/images/token5.jpg"></p>
+<h3 id="不受信的业务服务器"><a href="#不受信的业务服务器" class="headerlink" title="不受信的业务服务器"></a>不受信的业务服务器</h3><p>遇到不受信的业务服务器时，很容易想到的办法是使用不同的密钥。认证服务器使用密钥1签发，业务服务器使用密钥2验证——这是典型非对称加密签名的应用场景。认证服务器自己使用私钥对 <code>Token</code> 签名，公开公钥。信任这个认证服务器的业务服务器保存公钥，用于验证签名。幸好，<code>JWT</code> 不仅可以使用 <code>HMAC</code> 签名，也可以使用 <code>RSA</code>（一种非对称加密算法）签名。</p>
+<p>不过，当业务服务器已经不受信任的时候，多个业务服务器之间使用相同的 <code>Token</code> 对用户来说是不安全的。因为任何一个服务器拿到 <code>Token</code> 都可以仿冒用户去另一个服务器处理业务……悲剧随时可能发生。</p>
+<p>为了防止这种情况发生，就需要在认证服务器产生 <code>Token</code> 的时候，把使用该 <code>Token</code> 的业务服务器的信息记录在 <code>Token</code> 中，这样当另一个业务服务器拿到这个 <code>Token</code> 的时候，发现它并不是自己应该验证的 <code>Token</code>，就可以直接拒绝。</p>
+<p>现在，认证服务器不信任业务服务器，业务服务器相互也不信任，但前端是信任这些服务器的——如果前端不信任，就不会拿 <code>Token</code> 去请求验证。那么为什么会信任？可能是因为这些是同一家公司或者同一个项目中提供的若干服务构成的服务体系。</p>
+<p>但是，前端信任不代表用户信任。如果 <code>Token</code> 不没有携带用户隐私（比如姓名），那么用户不会关心信任问题。但如果 <code>Token</code> 含有用户隐私的时候，用户得关心信任问题了。这时候认证服务就不得不再啰嗦一些，当用户请求 <code>Token</code> 的时候，问上一句，你真的要授权给某某某业务服务吗？而这个“某某某”，用户怎么知道它是不是真的“某某某”呢？用户当然不知道，甚至认证服务也不知道，因为公钥已经公开了，任何一个业务都可以声明自己是“某某某”。</p>
+<p>为了得到用户的信任，认证服务就不得不帮助用户来甄别业务服务。所以，认证服器决定不公开公钥，而是要求业务服务先申请注册并通过审核。只有通过审核的业务服务器才能得到认证服务为它创建的，仅供它使用的公钥。如果该业务服务泄漏公钥带来风险，由该业务服务自行承担。现在认证服务可以清楚的告诉用户，“某某某”服务是什么了。如果用户还是不够信任，认证服务甚至可以问，某某某业务服务需要请求  A、B、C 三项个人数据，其中 A 是必须的，不然它不工作，是否允许授权？如果你授权，我就把你授权的几项数据加密放在 <code>Token</code> 中……</p>
+<p>废话了这么多，有没有似曾相识……对了，这类似开放式 <code>API</code> 的认证过程。开发式 <code>API</code> 多采用 <code>OAuth</code> 认证，而关于 <code>OAuth</code> 的探讨资源非常丰富，这里就不深究了。</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\07\27\cookie-session-token详解\" rel="bookmark">cookie session token详解</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\07\29\koa-axios-jwt-实现token自动续期\" rel="bookmark">koa + axios + jwt  实现token自动续期</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>老白
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://www.baihuzi.com/2021/07/28/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3token/" title="【转载】深入理解token">https://www.baihuzi.com/2021/07/28/深入理解token/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/token/" rel="tag"><i class="fa fa-tag"></i> token</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/07/27/cookie-session-token%E8%AF%A6%E8%A7%A3/" rel="prev" title="cookie session token详解">
+                  <i class="fa fa-chevron-left"></i> cookie session token详解
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/07/29/koa-axios-jwt-%E5%AE%9E%E7%8E%B0token%E8%87%AA%E5%8A%A8%E7%BB%AD%E6%9C%9F/" rel="next" title="koa + axios + jwt  实现token自动续期">
+                  koa + axios + jwt  实现token自动续期 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+<script src="/js/comments.js"></script>
+</div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">鄂ICP备20006679号-1 </a>
+      <img src="/images/beian.png"><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=42010602004216" rel="noopener" target="_blank">鄂公网安备 42010602004216号 </a>
+  </div>
+
+<div class="copyright">
+  &copy; 2016 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">老白</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+      </div>
+    </footer>
+
+    
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js" integrity="sha256-EdPgYcPk/IIrw7FYeuJQexva49pVRZNmt3LculEr7zM=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+    
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script class="next-config" data-name="nprogress" type="application/json">{&quot;enable&quot;:true,&quot;spinner&quot;:false}</script>
+  <script src="/js/third-party/nprogress.js"></script>
+
+    
+
+
+
+
+
+  </div>
+</body>
+</html>
