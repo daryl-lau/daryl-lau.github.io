@@ -21,28 +21,28 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css" integrity="sha256-no0c5ccDODBwp+9hSmV5VvPpKwHCpbVzXHexIkupM6U=" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js" integrity="sha256-a5YRB27CcBwBFcT5EF/f3E4vzIqyHrSR878nseNYw64=" crossorigin="anonymous"></script>
 
-<script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;example.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Mist&quot;,&quot;version&quot;:&quot;8.4.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;left&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:true,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;manual&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:true,&quot;lazyload&quot;:true,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:true,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;},&quot;path&quot;:&quot;&#x2F;search.xml&quot;,&quot;localsearch&quot;:{&quot;enable&quot;:true,&quot;trigger&quot;:&quot;auto&quot;,&quot;top_n_per_article&quot;:1,&quot;unescape&quot;:false,&quot;preload&quot;:false}}</script>
+<script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;www.baihuzi.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Mist&quot;,&quot;version&quot;:&quot;8.4.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;left&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:true,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;manual&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:true,&quot;lazyload&quot;:true,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:true,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;},&quot;path&quot;:&quot;&#x2F;search.xml&quot;,&quot;localsearch&quot;:{&quot;enable&quot;:true,&quot;trigger&quot;:&quot;auto&quot;,&quot;top_n_per_article&quot;:1,&quot;unescape&quot;:false,&quot;preload&quot;:false}}</script>
 <meta name="description" content="Innodb特性插入缓存（insert buffer）对非聚集索引的插入或者update，purge等操作，并非每一次直接插入索引页，而是把若干对于同一页面的更新缓存起来合并为一次操作，随机IO –&gt; 顺序IO，避免随机IO带的性能消耗，提高写性能。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Mysql Innodb特性">
-<meta property="og:url" content="http://example.com/2017/05/10/Mysql-Innodb%E7%89%B9%E6%80%A7/index.html">
+<meta property="og:url" content="https://www.baihuzi.com/2017/05/10/Mysql-Innodb%E7%89%B9%E6%80%A7/index.html">
 <meta property="og:site_name" content="老白">
 <meta property="og:description" content="Innodb特性插入缓存（insert buffer）对非聚集索引的插入或者update，purge等操作，并非每一次直接插入索引页，而是把若干对于同一页面的更新缓存起来合并为一次操作，随机IO –&gt; 顺序IO，避免随机IO带的性能消耗，提高写性能。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/images/Innodb.png">
+<meta property="og:image" content="https://www.baihuzi.com/images/Innodb.png">
 <meta property="article:published_time" content="2017-05-09T16:00:00.000Z">
 <meta property="article:modified_time" content="2017-05-09T16:00:00.000Z">
 <meta property="article:author" content="老白">
 <meta property="article:tag" content="Innodb">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/images/Innodb.png">
+<meta name="twitter:image" content="https://www.baihuzi.com/images/Innodb.png">
 
 
-<link rel="canonical" href="http://example.com/2017/05/10/Mysql-Innodb%E7%89%B9%E6%80%A7/">
+<link rel="canonical" href="https://www.baihuzi.com/2017/05/10/Mysql-Innodb%E7%89%B9%E6%80%A7/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;2017&#x2F;05&#x2F;10&#x2F;Mysql-Innodb%E7%89%B9%E6%80%A7&#x2F;&quot;,&quot;path&quot;:&quot;2017&#x2F;05&#x2F;10&#x2F;Mysql-Innodb特性&#x2F;&quot;,&quot;title&quot;:&quot;Mysql Innodb特性&quot;}</script>
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;https:&#x2F;&#x2F;www.baihuzi.com&#x2F;2017&#x2F;05&#x2F;10&#x2F;Mysql-Innodb%E7%89%B9%E6%80%A7&#x2F;&quot;,&quot;path&quot;:&quot;2017&#x2F;05&#x2F;10&#x2F;Mysql-Innodb特性&#x2F;&quot;,&quot;title&quot;:&quot;Mysql Innodb特性&quot;}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
 <title>Mysql Innodb特性 | 老白</title><script src="/js/config.js"></script>
@@ -260,7 +260,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2017/05/10/Mysql-Innodb%E7%89%B9%E6%80%A7/">
+    <link itemprop="mainEntityOfPage" href="https://www.baihuzi.com/2017/05/10/Mysql-Innodb%E7%89%B9%E6%80%A7/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -380,7 +380,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="http://example.com/2017/05/10/Mysql-Innodb%E7%89%B9%E6%80%A7/" title="Mysql Innodb特性">http://example.com/2017/05/10/Mysql-Innodb特性/</a>
+      <a href="https://www.baihuzi.com/2017/05/10/Mysql-Innodb%E7%89%B9%E6%80%A7/" title="Mysql Innodb特性">https://www.baihuzi.com/2017/05/10/Mysql-Innodb特性/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
