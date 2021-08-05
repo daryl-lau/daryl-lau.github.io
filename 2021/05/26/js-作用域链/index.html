@@ -149,7 +149,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B1%80%E9%83%A8%E4%BD%9C%E7%94%A8%E5%9F%9F"><span class="nav-text">局部作用域</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A8%E5%B1%80%E4%BD%9C%E7%94%A8%E5%9F%9F"><span class="nav-text">全局作用域</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E5%B1%82%E5%87%BD%E6%95%B0%E5%B5%8C%E5%A5%97"><span class="nav-text">多层函数嵌套</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B1%80%E9%83%A8%E4%BD%9C%E7%94%A8%E5%9F%9F"><span class="nav-text">局部作用域</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%A8%E5%B1%80%E4%BD%9C%E7%94%A8%E5%9F%9F"><span class="nav-text">全局作用域</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%9A%E5%B1%82%E5%87%BD%E6%95%B0%E5%B5%8C%E5%A5%97"><span class="nav-text">多层函数嵌套</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -316,21 +316,21 @@
         <p>局部变量：在函数中通过var声明的变量。</p>
 <p>全局变量：在函数外通过var声明的变量。</p>
 <p>没有声明就使用的变量，默认为全局变量，不论这个变量在哪被使用。</p>
-<h3 id="局部作用域"><a href="#局部作用域" class="headerlink" title="局部作用域"></a>局部作用域</h3><p>在函数内部定义的变量，为局部变量，局部变量只能在该局部作用域中访问</p>
+<h1 id="局部作用域"><a href="#局部作用域" class="headerlink" title="局部作用域"></a>局部作用域</h1><p>在函数内部定义的变量，为局部变量，局部变量只能在该局部作用域中访问</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn1</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> username = <span class="string">&#x27;jerry&#x27;</span>;</span><br><span class="line">    <span class="built_in">console</span>.log(username);</span><br><span class="line">&#125;</span><br><span class="line">fn1()   <span class="comment">// jerry</span></span><br></pre></td></tr></table></figure>
 <span id="more"></span>
 
 <p>此时在全局访问username，则会报错</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(username);  <span class="comment">// 报错，username未定义</span></span><br></pre></td></tr></table></figure>
 
-<h3 id="全局作用域"><a href="#全局作用域" class="headerlink" title="全局作用域"></a>全局作用域</h3><p>函数内部和外部都可以访问该变量</p>
+<h1 id="全局作用域"><a href="#全局作用域" class="headerlink" title="全局作用域"></a>全局作用域</h1><p>函数内部和外部都可以访问该变量</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> age = <span class="number">12</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn2</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(age);</span><br><span class="line">&#125;</span><br><span class="line">fn2()     <span class="comment">// 12</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(age);  <span class="comment">// 12</span></span><br></pre></td></tr></table></figure>
 
 <p>如果在函数内部没有使用var定义变量，那么 gender = ‘male’;就是个赋值语句，会找到最近的定义的变量进行赋值（注意变量提升），如果都没找到，则为全局变量</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn3</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    gender = <span class="string">&#x27;male&#x27;</span>;</span><br><span class="line">    <span class="built_in">console</span>.log(gender);</span><br><span class="line">&#125;</span><br><span class="line">fn3();</span><br></pre></td></tr></table></figure>
 
 <p>如果上面的函数没有调用，那么在外面使用gender会报错，因为在 <code>fn3()</code> 被第一次调用之前， <code>gender</code>变量是不存在的。<code>fn3()</code> 被调用过之后，gender成为全局变量</p>
-<h3 id="多层函数嵌套"><a href="#多层函数嵌套" class="headerlink" title="多层函数嵌套"></a>多层函数嵌套</h3><p>如果内层函数没有使用var定义变量，则可以看做是赋值语句，会向上层依次找到该变量的定义语句，并赋值给它,如果向上找都没有没找到，则为全局变量</p>
+<h1 id="多层函数嵌套"><a href="#多层函数嵌套" class="headerlink" title="多层函数嵌套"></a>多层函数嵌套</h1><p>如果内层函数没有使用var定义变量，则可以看做是赋值语句，会向上层依次找到该变量的定义语句，并赋值给它,如果向上找都没有没找到，则为全局变量</p>
 <p>这里在<code>fn5</code>函数这个作用域中没有找到<code>num</code>，则向上查找，找到<code>fn4</code>作用域中的<code>num</code>，赋值为<code>100</code>，则下面的<code>fn4里在fn5调用后的num</code>是<code>100</code></p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> num = <span class="number">1</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn4</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> num = <span class="number">10</span></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;fn4里在fn5调用前的num &#x27;</span> + num);</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">fn5</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        num = <span class="number">100</span></span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;fn5里的num &#x27;</span> + num);</span><br><span class="line">    &#125;</span><br><span class="line">    fn5()</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;fn4里在fn5调用后的num &#x27;</span> + num);</span><br><span class="line">&#125;</span><br><span class="line">fn4()</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;全局的num &#x27;</span> + num);</span><br></pre></td></tr></table></figure>
 <p>输出结果:</p>
@@ -362,13 +362,13 @@
       <div class="popular-posts-title"><a href="\2021\06\11\js-ES6新增数据类型Set-Map-Symbol\" rel="bookmark">js ES6新增数据类型Set/Map/Symbol</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\06\08\js-this指向问题以及改变this指向的三种方法（call-apply-bind）\" rel="bookmark">js this指向问题以及改变this指向的三种方法（call/apply/bind）</a></div>
-    </li>
-    <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2021\06\11\js-for-in循环和for-of循环\" rel="bookmark">js for...in循环和for...of循环</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2021\07\07\js-事件循环（event-loop）、宏任务、微任务\" rel="bookmark">js 事件循环（event loop）、宏任务、微任务</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\06\08\js-this指向问题以及改变this指向的三种方法（call-apply-bind）\" rel="bookmark">js this指向问题以及改变this指向的三种方法（call/apply/bind）</a></div>
     </li>
   </ul>
 

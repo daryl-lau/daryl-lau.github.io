@@ -149,7 +149,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#var"><span class="nav-text">var</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#let"><span class="nav-text">let</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#const"><span class="nav-text">const</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A9%E5%B1%95"><span class="nav-text">扩展</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#var"><span class="nav-text">var</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#let"><span class="nav-text">let</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#const"><span class="nav-text">const</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%89%A9%E5%B1%95"><span class="nav-text">扩展</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -320,7 +320,7 @@
 <li><code>const</code> 和 <code>let</code> 一样，但是<code>const</code>不能像<code>var</code>、<code>let</code>那样使用<code>var a</code>、<code>let b</code>这样初始化，只能<code>const c = 1</code>这种同时申明并初始化</li>
 </ul>
 <span id="more"></span>
-<h3 id="var"><a href="#var" class="headerlink" title="var"></a>var</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">  <span class="keyword">var</span> x = <span class="number">1</span>;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="var"><a href="#var" class="headerlink" title="var"></a>var</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">  <span class="keyword">var</span> x = <span class="number">1</span>;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>输出结果：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">结果：undefined</span><br><span class="line">结果：1</span><br></pre></td></tr></table></figure>
 
@@ -329,14 +329,14 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">结果：undefined</span><br></pre></td></tr></table></figure>
 
 <p>从结果不难看出，<code>var</code>的声明被提升了，并初始化为了<code>undefined</code>，然后再将<code>1</code>赋值给<code>x</code></p>
-<h3 id="let"><a href="#let" class="headerlink" title="let"></a>let</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">  <span class="keyword">let</span> x = <span class="number">1</span>;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="let"><a href="#let" class="headerlink" title="let"></a>let</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">  <span class="keyword">let</span> x = <span class="number">1</span>;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>输出结果：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Uncaught ReferenceError: Cannot access &#x27;x&#x27; before initialization</span><br></pre></td></tr></table></figure>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">  <span class="keyword">let</span> x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>输出结果：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Uncaught ReferenceError: Cannot access &#x27;x&#x27; before initialization</span><br></pre></td></tr></table></figure>
 <p>从结果可以看出，<code>let</code>和<code>var</code>结果不一样，正是因为<code>let</code>仅仅提升了变量的声明，并不会提升初始化，所以这里在<code>let</code>之前访问<code>x</code>会报错，在初始化之前无法访问<code>x</code>,这里有一个官方叫法，叫暂存死区（<code>temporal dead zone</code>）</p>
-<h3 id="const"><a href="#const" class="headerlink" title="const"></a>const</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">  <span class="keyword">const</span> x = <span class="number">1</span>;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="const"><a href="#const" class="headerlink" title="const"></a>const</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">  <span class="keyword">const</span> x = <span class="number">1</span>;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;结果：&#x27;</span> + x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>输出结果：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Uncaught ReferenceError: Cannot access &#x27;x&#x27; before initialization</span><br></pre></td></tr></table></figure>
 
@@ -344,7 +344,7 @@
 <p>输出结果：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Uncaught SyntaxError: Missing initializer in const declaration</span><br></pre></td></tr></table></figure>
 <p>从结果可以看出，<code>const</code>和<code>let</code>都有暂存死区问题，但是报错信息不同，<code>const</code>在声明的同时必须赋值；</p>
-<h3 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h3><p>在浏览器环境中，<code>var</code>定义的<strong>全局变量</strong>都属于<code>window</code>对象，而let定义的<strong>全局变量</strong>，部署于<code>window</code>对象</p>
+<h1 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h1><p>在浏览器环境中，<code>var</code>定义的<strong>全局变量</strong>都属于<code>window</code>对象，而let定义的<strong>全局变量</strong>，部署于<code>window</code>对象</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> attr1 = <span class="string">&#x27;tom&#x27;</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">window</span>.attr1); <span class="comment">// tom</span></span><br></pre></td></tr></table></figure>
 
 <p>在浏览器环境中，let定义的全局变量，不属于window对象</p>
@@ -364,13 +364,13 @@
       <div class="popular-posts-title"><a href="\2021\06\11\js-ES6新增数据类型Set-Map-Symbol\" rel="bookmark">js ES6新增数据类型Set/Map/Symbol</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\06\08\js-this指向问题以及改变this指向的三种方法（call-apply-bind）\" rel="bookmark">js this指向问题以及改变this指向的三种方法（call/apply/bind）</a></div>
-    </li>
-    <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2021\06\11\js-for-in循环和for-of循环\" rel="bookmark">js for...in循环和for...of循环</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2021\07\07\js-事件循环（event-loop）、宏任务、微任务\" rel="bookmark">js 事件循环（event loop）、宏任务、微任务</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\06\08\js-this指向问题以及改变this指向的三种方法（call-apply-bind）\" rel="bookmark">js this指向问题以及改变this指向的三种方法（call/apply/bind）</a></div>
     </li>
   </ul>
 

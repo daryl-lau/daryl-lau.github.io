@@ -149,7 +149,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%87%E4%BB%BD%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95"><span class="nav-text">备份基本语法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%81%A2%E5%A4%8D%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95"><span class="nav-text">恢复基本语法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E9%80%89%E9%A1%B9"><span class="nav-text">常用选项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%87%E4%BB%BD%E9%80%89%E9%A1%B9-OPTIONS-%E8%AF%B4%E6%98%8E"><span class="nav-text">备份选项[OPTIONS]说明</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%87%E4%BB%BD%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95"><span class="nav-text">备份基本语法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%81%A2%E5%A4%8D%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95"><span class="nav-text">恢复基本语法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E9%80%89%E9%A1%B9"><span class="nav-text">常用选项</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%87%E4%BB%BD%E9%80%89%E9%A1%B9-OPTIONS-%E8%AF%B4%E6%98%8E"><span class="nav-text">备份选项[OPTIONS]说明</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -316,7 +316,7 @@
         <p>使用mysqldump对MySQL进行备份，备份少量数据可以使用这种方法，大量数据备份和恢复否会消耗大量的时间；</p>
 <p>mysqldump可以导出存储过程，触发器，事件，数据，但是不能导出视图，如果数据库中有视图，备份完成后还需要导出视图的定义，或者备份视图定义的frm文件，并在恢复时导入；</p>
 <span id="more"></span>
-<h3 id="备份基本语法"><a href="#备份基本语法" class="headerlink" title="备份基本语法"></a>备份基本语法</h3><ul>
+<h1 id="备份基本语法"><a href="#备份基本语法" class="headerlink" title="备份基本语法"></a>备份基本语法</h1><ul>
 <li><p>备份单个数据或单个数据中的指定表：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump [OPTIONS] database [tb1] [tb2]… &gt; TB_BACKFILE</span><br></pre></td></tr></table></figure></li>
 <li><p>备份多个数据库：</p>
@@ -326,7 +326,7 @@
 <li><p>例如一个标准的备份语句：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump --single-transaction -uroot -p -B -F -R database1 t1 &gt; t1_20180407.sql</span><br></pre></td></tr></table></figure></li>
 </ul>
-<h3 id="恢复基本语法"><a href="#恢复基本语法" class="headerlink" title="恢复基本语法"></a>恢复基本语法</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -uxxx -pxxx &lt; BACKFILE       ##注意是mysql 而不是mysqldump</span><br></pre></td></tr></table></figure>
+<h1 id="恢复基本语法"><a href="#恢复基本语法" class="headerlink" title="恢复基本语法"></a>恢复基本语法</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -uxxx -pxxx &lt; BACKFILE       ##注意是mysql 而不是mysqldump</span><br></pre></td></tr></table></figure>
 
 <p>或者连到mysql数据库里面，source BACKFILE</p>
 <p>恢复表时，需要指定表所在的数据库；</p>
@@ -336,7 +336,7 @@
 <p>该选项在导出数据之前提交一个BEGIN SQL语句，BEGIN 不会阻塞任何应用程序且能保证导出时数据库的一致性状态。它只适用于InnoDB存储引擎。本选项和<code>--lock-tables</code> 选项是互斥的，因为LOCK  TABLES 会使任何挂起的事务隐含提交。要想导出大表的话，应结合使用<code>--quick</code> 选项。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump  -uroot -p --host=localhost --all-databases --single-transaction</span><br></pre></td></tr></table></figure>
 
-<h3 id="常用选项"><a href="#常用选项" class="headerlink" title="常用选项"></a>常用选项</h3><ul>
+<h1 id="常用选项"><a href="#常用选项" class="headerlink" title="常用选项"></a>常用选项</h1><ul>
 <li>--default-character-set： 设置字符集</li>
 <li>--single-transaction：将导出设置成事务</li>
 <li>--no-data：导出的SQL脚本中，将只包含创建表的create 语句。</li>
@@ -345,7 +345,7 @@
 <li>--events：导出事件</li>
 <li>--triggers：导出触发器</li>
 </ul>
-<h3 id="备份选项-OPTIONS-说明"><a href="#备份选项-OPTIONS-说明" class="headerlink" title="备份选项[OPTIONS]说明"></a>备份选项[OPTIONS]说明</h3><ul>
+<h1 id="备份选项-OPTIONS-说明"><a href="#备份选项-OPTIONS-说明" class="headerlink" title="备份选项[OPTIONS]说明"></a>备份选项[OPTIONS]说明</h1><ul>
 <li><p>--all-databases  , -A<br>导出全部数据库。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump  -uroot -p --all-databases</span><br></pre></td></tr></table></figure></li>
 <li><p>--all-tablespaces  , -Y<br>导出全部表空间。</p>

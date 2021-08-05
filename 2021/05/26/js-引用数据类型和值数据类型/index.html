@@ -149,7 +149,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E8%B1%A1"><span class="nav-text">对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E7%BB%84"><span class="nav-text">数组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0"><span class="nav-text">函数</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AF%B9%E8%B1%A1"><span class="nav-text">对象</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E7%BB%84"><span class="nav-text">数组</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%87%BD%E6%95%B0"><span class="nav-text">函数</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -319,11 +319,11 @@
 <p>值数据类型存放在栈中，而引用数据类型存放在堆中，栈中存放的是对象的引用内存地址</p>
 <p>如果变量引用了同一块内存地址，修改其中一个变量的值，其他变量也会跟着修改</p>
 <span id="more"></span>
-<h3 id="对象"><a href="#对象" class="headerlink" title="对象"></a>对象</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> obj1 = obj2 = &#123; <span class="attr">name</span>: <span class="string">&#x27;jerry&#x27;</span>, <span class="attr">age</span>: <span class="number">2</span> &#125;;</span><br><span class="line">obj2[<span class="string">&#x27;age&#x27;</span>] = <span class="number">10</span>;</span><br><span class="line"><span class="built_in">console</span>.log(obj1, obj2); <span class="comment">// &#123;name: &quot;jerry&quot;, age: 10&#125; &#123;name: &quot;jerry&quot;, age: 10&#125;</span></span><br></pre></td></tr></table></figure>
+<h1 id="对象"><a href="#对象" class="headerlink" title="对象"></a>对象</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> obj1 = obj2 = &#123; <span class="attr">name</span>: <span class="string">&#x27;jerry&#x27;</span>, <span class="attr">age</span>: <span class="number">2</span> &#125;;</span><br><span class="line">obj2[<span class="string">&#x27;age&#x27;</span>] = <span class="number">10</span>;</span><br><span class="line"><span class="built_in">console</span>.log(obj1, obj2); <span class="comment">// &#123;name: &quot;jerry&quot;, age: 10&#125; &#123;name: &quot;jerry&quot;, age: 10&#125;</span></span><br></pre></td></tr></table></figure>
 
-<h3 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> arr1 = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="keyword">let</span> arr2 = arr1;</span><br><span class="line">arr2[<span class="number">0</span>] = <span class="number">999</span>;</span><br><span class="line"><span class="built_in">console</span>.log(arr1, arr2);  <span class="comment">// [999, 2, 3]  [999, 2, 3]</span></span><br></pre></td></tr></table></figure>
+<h1 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> arr1 = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="keyword">let</span> arr2 = arr1;</span><br><span class="line">arr2[<span class="number">0</span>] = <span class="number">999</span>;</span><br><span class="line"><span class="built_in">console</span>.log(arr1, arr2);  <span class="comment">// [999, 2, 3]  [999, 2, 3]</span></span><br></pre></td></tr></table></figure>
 
-<h3 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h3><p>函数在js中是一个对象，函数体是保存在函数对象的属性上的，可以使用valueOf修改函数体</p>
+<h1 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h1><p>函数在js中是一个对象，函数体是保存在函数对象的属性上的，可以使用valueOf修改函数体</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> f1 = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123; <span class="built_in">console</span>.log(<span class="string">&#x27;function&#x27;</span>); &#125;</span><br><span class="line"><span class="keyword">let</span> f2 = f1</span><br><span class="line">f2.valueOf = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123; <span class="keyword">return</span> <span class="string">&#x27;new funciton&#x27;</span> &#125;</span><br><span class="line"><span class="built_in">console</span>.log(f1.valueOf()); <span class="comment">// new funciton</span></span><br><span class="line"><span class="built_in">console</span>.log(f2.valueOf()); <span class="comment">// new funciton</span></span><br></pre></td></tr></table></figure>
 
 <p>栈内存中包括了变量的标识符和变量的值。</p>
@@ -345,13 +345,13 @@
       <div class="popular-posts-title"><a href="\2021\06\11\js-ES6新增数据类型Set-Map-Symbol\" rel="bookmark">js ES6新增数据类型Set/Map/Symbol</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\06\08\js-this指向问题以及改变this指向的三种方法（call-apply-bind）\" rel="bookmark">js this指向问题以及改变this指向的三种方法（call/apply/bind）</a></div>
-    </li>
-    <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2021\06\11\js-for-in循环和for-of循环\" rel="bookmark">js for...in循环和for...of循环</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2021\07\07\js-事件循环（event-loop）、宏任务、微任务\" rel="bookmark">js 事件循环（event loop）、宏任务、微任务</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\06\08\js-this指向问题以及改变this指向的三种方法（call-apply-bind）\" rel="bookmark">js this指向问题以及改变this指向的三种方法（call/apply/bind）</a></div>
     </li>
   </ul>
 

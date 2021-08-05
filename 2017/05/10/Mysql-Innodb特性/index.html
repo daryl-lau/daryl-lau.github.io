@@ -151,7 +151,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Innodb%E7%89%B9%E6%80%A7"><span class="nav-text">Innodb特性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%92%E5%85%A5%E7%BC%93%E5%AD%98%EF%BC%88insert-buffer%EF%BC%89"><span class="nav-text">插入缓存（insert buffer）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E6%AC%A1%E5%86%99-%EF%BC%88double-write%EF%BC%89"><span class="nav-text">二次写 （double write）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%87%AA%E9%80%82%E5%BA%94%E5%93%88%E5%B8%8C%E7%B4%A2%E5%BC%95%EF%BC%88adapter-hash-index%EF%BC%89"><span class="nav-text">自适应哈希索引（adapter hash index）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5IO%EF%BC%88async-IO%EF%BC%89"><span class="nav-text">异步IO（async IO）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%B7%E6%96%B0%E9%82%BB%E6%8E%A5%E9%A1%B5"><span class="nav-text">刷新邻接页</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Innodb%E7%89%B9%E6%80%A7"><span class="nav-text">Innodb特性</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8F%92%E5%85%A5%E7%BC%93%E5%AD%98%EF%BC%88insert-buffer%EF%BC%89"><span class="nav-text">插入缓存（insert buffer）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E6%AC%A1%E5%86%99-%EF%BC%88double-write%EF%BC%89"><span class="nav-text">二次写 （double write）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E9%80%82%E5%BA%94%E5%93%88%E5%B8%8C%E7%B4%A2%E5%BC%95%EF%BC%88adapter-hash-index%EF%BC%89"><span class="nav-text">自适应哈希索引（adapter hash index）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5IO%EF%BC%88async-IO%EF%BC%89"><span class="nav-text">异步IO（async IO）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%B7%E6%96%B0%E9%82%BB%E6%8E%A5%E9%A1%B5"><span class="nav-text">刷新邻接页</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -315,7 +315,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h3 id="Innodb特性"><a href="#Innodb特性" class="headerlink" title="Innodb特性"></a>Innodb特性</h3><h4 id="插入缓存（insert-buffer）"><a href="#插入缓存（insert-buffer）" class="headerlink" title="插入缓存（insert buffer）"></a>插入缓存（insert buffer）</h4><p>对非聚集索引的插入或者<code>update</code>，<code>purge</code>等操作，并非每一次直接插入索引页，而是把若干对于同一页面的更新缓存起来合并为一次操作，随机IO –&gt; 顺序IO，避免随机IO带的性能消耗，提高写性能。</p>
+        <h1 id="Innodb特性"><a href="#Innodb特性" class="headerlink" title="Innodb特性"></a>Innodb特性</h1><h2 id="插入缓存（insert-buffer）"><a href="#插入缓存（insert-buffer）" class="headerlink" title="插入缓存（insert buffer）"></a>插入缓存（insert buffer）</h2><p>对非聚集索引的插入或者<code>update</code>，<code>purge</code>等操作，并非每一次直接插入索引页，而是把若干对于同一页面的更新缓存起来合并为一次操作，随机IO –&gt; 顺序IO，避免随机IO带的性能消耗，提高写性能。</p>
 <span id="more"></span>
 <p>原理：</p>
 <p>先判断插入的非聚集索引页是否在缓冲池中,如果在，直接插入<br>如果不在，想放到插入缓冲区，欺骗数据库，这个非聚集的索引已经插入到叶子节点了<br>然后再以一定的频率执行插入缓冲和非聚集索引页子节点的合并操作</p>
@@ -327,7 +327,7 @@
 </blockquote>
 </li>
 </ul>
-<h4 id="二次写-（double-write）"><a href="#二次写-（double-write）" class="headerlink" title="二次写 （double write）"></a>二次写 （double write）</h4><p>带给innodb存储引擎数据的可靠性</p>
+<h2 id="二次写-（double-write）"><a href="#二次写-（double-write）" class="headerlink" title="二次写 （double write）"></a>二次写 （double write）</h2><p>带给innodb存储引擎数据的可靠性</p>
 <p>起因：</p>
 <p>当数据库宕机时，可能发生数据库写一个页面，而这个页只写了一部分，这就是所谓的部分写失效（partial page write），它会导致数据丢失，这时是无法通过重做日志恢复的，因为重做日志记录的是对页的物理修改，如果页本身已经损坏，重做日志也无能为力。</p>
 <p>恢复原理：</p>
@@ -345,15 +345,15 @@
 <li>待第2步完成后，再将两次写缓冲区写入数据文件</li>
 </ol>
 <p>这样就可以解决上文提到的部分写失效的问题，因为在磁盘共享表空间中已有数据页副本拷贝，如果数据库在页写入数据文件的过程中宕机，在实例恢复时，可以从共享表空间中找到该页副本，将其拷贝覆盖原有的数据页，再应用重做日志即可。</p>
-<h4 id="自适应哈希索引（adapter-hash-index）"><a href="#自适应哈希索引（adapter-hash-index）" class="headerlink" title="自适应哈希索引（adapter hash index）"></a>自适应哈希索引（adapter hash index）</h4><ul>
+<h2 id="自适应哈希索引（adapter-hash-index）"><a href="#自适应哈希索引（adapter-hash-index）" class="headerlink" title="自适应哈希索引（adapter hash index）"></a>自适应哈希索引（adapter hash index）</h2><ul>
 <li>innodb存储引擎会监控对表上索引的查找，如果观察到建立哈希索引可以带来速度上的提升，则建立哈希索引，所以称为自适应的。</li>
 <li>自适应哈希索引通过缓冲池的B+树构造而来，因为建立的速度很快，而且不需要将整个表都建立哈希索引，innodb会自动根据访问频率和模式来为某些页建立哈希索引。</li>
 <li>启用自适应哈希索引后，读写速度提高两倍，辅助索引的链接操作，性能提高五倍。</li>
 <li>数据库自动优化，不需要认为干预。</li>
 <li>可以通过 show engine innodb status\G来查看自适应哈西索引的使用情况。可以使用innodb_adaptive_hash_index来禁用和启用hash索引，默认开启。</li>
 </ul>
-<h4 id="异步IO（async-IO）"><a href="#异步IO（async-IO）" class="headerlink" title="异步IO（async IO）"></a>异步IO（async IO）</h4><p>为提高性能，采用异步IO来处理磁盘操作，好处是可以进行合并IO；</p>
-<h4 id="刷新邻接页"><a href="#刷新邻接页" class="headerlink" title="刷新邻接页"></a>刷新邻接页</h4><p>当刷新一个页的时候，innodb存储引擎会检测该页所在区的所有页，如果是脏页，就一起进行刷新。</p>
+<h2 id="异步IO（async-IO）"><a href="#异步IO（async-IO）" class="headerlink" title="异步IO（async IO）"></a>异步IO（async IO）</h2><p>为提高性能，采用异步IO来处理磁盘操作，好处是可以进行合并IO；</p>
+<h2 id="刷新邻接页"><a href="#刷新邻接页" class="headerlink" title="刷新邻接页"></a>刷新邻接页</h2><p>当刷新一个页的时候，innodb存储引擎会检测该页所在区的所有页，如果是脏页，就一起进行刷新。</p>
 <p>如果使用的是固态硬盘，关掉它可以有效的提高性能。</p>
 
     </div>

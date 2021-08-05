@@ -309,7 +309,7 @@
     
     <div class="post-body" itemprop="articleBody">
           <p>这篇文章主要是总结一下自己在使用和学习<code>Vue</code>的过程中容易忽视的重要知识点</p>
-<h3 id="inheritAttrs"><a href="#inheritAttrs" class="headerlink" title="inheritAttrs"></a>inheritAttrs</h3><p><code>inheritAttrs</code>的作用是组件根元素上是否继承来自父组件定义给该组件的属性，这里的属性不包括已经在子组件中使用<code>props</code>接收到的属性和<code>class</code>、<code>style</code>属性；这些属性可以使用<code>$attrs</code>获取到；</p>
+<h1 id="inheritAttrs"><a href="#inheritAttrs" class="headerlink" title="inheritAttrs"></a>inheritAttrs</h1><p><code>inheritAttrs</code>的作用是组件根元素上是否继承来自父组件定义给该组件的属性，这里的属性不包括已经在子组件中使用<code>props</code>接收到的属性和<code>class</code>、<code>style</code>属性；这些属性可以使用<code>$attrs</code>获取到；</p>
 <p>默认值是<code>true</code></p>
 <p>例如以下父子组件：</p>
 <div class="tabs" id="inheritattrs1"><ul class="nav-tabs"><li class="tab active"><a href="#inheritattrs1-1">父组件 ParentComp.vue</a></li><li class="tab"><a href="#inheritattrs1-2">子组件 ChildComp.vue</a></li></ul><div class="tab-content"><div class="tab-pane active" id="inheritattrs1-1"><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span>&gt;</span>ParentComp<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">child-comp</span> <span class="attr">aaa</span>=<span class="string">&quot;123&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript"><span class="keyword">import</span> ChildComp <span class="keyword">from</span> <span class="string">&#x27;./ChildComp.vue&#x27;</span></span></span><br><span class="line"><span class="javascript"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span></span><br><span class="line"><span class="javascript">  <span class="attr">components</span>: &#123;</span></span><br><span class="line"><span class="javascript">    ChildComp</span></span><br><span class="line"><span class="javascript">  &#125;,</span></span><br><span class="line"><span class="javascript">  <span class="attr">name</span>: <span class="string">&#x27;ParentComp&#x27;</span>,</span></span><br><span class="line"><span class="javascript">&#125;</span></span><br><span class="line"><span class="javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure></div><div class="tab-pane" id="inheritattrs1-2"><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span>&gt;</span>ChildComp<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span></span><br><span class="line"><span class="javascript">  <span class="attr">name</span>: <span class="string">&#x27;ChildComp&#x27;</span>,</span></span><br><span class="line"><span class="javascript">  <span class="comment">// inheritAttrs: false,</span></span></span><br><span class="line"><span class="javascript">  <span class="function"><span class="title">data</span>(<span class="params"></span>)</span> &#123;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">return</span> &#123;</span></span><br><span class="line"><span class="javascript">        <span class="attr">childData</span>: <span class="string">&#x27;child data&#x27;</span></span></span><br><span class="line"><span class="javascript">      &#125;</span></span><br><span class="line"><span class="javascript">  &#125;,</span></span><br><span class="line"><span class="javascript">&#125;</span></span><br><span class="line"><span class="javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure></div></div></div>
@@ -494,7 +494,7 @@
     <div class="post-body" itemprop="articleBody">
           <p><a href="https://www.baihuzi.com/2021/07/28/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3token/">深入理解token</a>这篇文章详细讲解了token的作用及优势，这篇文章我们通过jwt和koa来简单实现一个自动续期token。</p>
 <p>首先来看看JWT</p>
-<h3 id="Json-web-token-JWT"><a href="#Json-web-token-JWT" class="headerlink" title="Json web token (JWT)"></a>Json web token (JWT)</h3><p><code>Json web token (JWT)</code>, 是为了在网络应用环境间传递声明而执行的一种基于<code>JSON</code>的开放标准<code>(RFC 7519)</code>，该<code>token</code>被设计为紧凑且安全的，特别适用于分布式站点的单点登录（SSO）场景。<code>JWT</code>的声明一般被用来在身份提供者和服务提供者间传递被认证的用户身份信息，以便于从资源服务器获取资源，也可以增加一些额外的其它业务逻辑所必须的声明信息，该token也可直接被用于认证，也可被加密。</p>
+<h1 id="Json-web-token-JWT"><a href="#Json-web-token-JWT" class="headerlink" title="Json web token (JWT)"></a>Json web token (JWT)</h1><p><code>Json web token (JWT)</code>, 是为了在网络应用环境间传递声明而执行的一种基于<code>JSON</code>的开放标准<code>(RFC 7519)</code>，该<code>token</code>被设计为紧凑且安全的，特别适用于分布式站点的单点登录（SSO）场景。<code>JWT</code>的声明一般被用来在身份提供者和服务提供者间传递被认证的用户身份信息，以便于从资源服务器获取资源，也可以增加一些额外的其它业务逻辑所必须的声明信息，该token也可直接被用于认证，也可被加密。</p>
 <p>一个完整的<code>JWT</code>长这样</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJhaWh1emkiLCJhZG1pbiI6dHJ1ZSwiYWdlIjoxOCwiaWF0IjoxNjI3NTU4MjU3LCJleHAiOjE2Mjc1NTg4NTd9.FmiN7MoQm8uzGAFXXNve6z3r94JRVFGmCcKWVQyz2T9o-0ovhFRC1eQ6xgFX8AKFMSqMIBs8Yd_rDSXNFqBgQkxkBQEHqQlv4-BjhvxA3W1FpclUtqQfSQx9mWeWDN79RPOV7ayTZ-8e9hDJVqB3hoFZsWddHxens1IKbSEQylZrgEGNJVGbeN2sTNyHvXQoxUzft5E3k2odp5lnS-Fl0dwkrwsBEvQ81cNQio24d4VINBDCcF6nOBii6mEMA9VLBj4j1PDT2BEBgZlCbrvHbsuYCQUljvsHInkRrnySzc4DwiIxzrKEapr8raD--MHH0Iz78__hJrqCZTAxve-iaA</span><br></pre></td></tr></table></figure>
           <!--noindex-->
@@ -586,10 +586,10 @@
     
     <div class="post-body" itemprop="articleBody">
           <p>转载自<a target="_blank" rel="noopener" href="https://my.oschina.net/jamesfancy/blog/1613994">深入理解token</a></p>
-<h3 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h3><p><code>Token</code> 是在服务端产生的。如果前端使用<code>用户名/密码</code>向服务端请求认证，服务端认证成功，那么在服务端会返回 <code>Token</code> 给前端。前端可以在每次请求的时候带上 <code>Token</code> 证明自己的合法地位</p>
+<h1 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h1><p><code>Token</code> 是在服务端产生的。如果前端使用<code>用户名/密码</code>向服务端请求认证，服务端认证成功，那么在服务端会返回 <code>Token</code> 给前端。前端可以在每次请求的时候带上 <code>Token</code> 证明自己的合法地位</p>
 <p>不久前，我在在前后端分离实践中提到了基于 <code>Token</code> 的认证，现在我们稍稍深入一些。</p>
 <p>通常情况下，我们在讨论某个技术的时候，都是从问题开始。那么第一个问题：</p>
-<h3 id="为什么要用-Token？"><a href="#为什么要用-Token？" class="headerlink" title="为什么要用 Token？"></a>为什么要用 Token？</h3><p>而要回答这个问题很简单——因为它能解决问题！</p>
+<h1 id="为什么要用-Token？"><a href="#为什么要用-Token？" class="headerlink" title="为什么要用 Token？"></a>为什么要用 Token？</h1><p>而要回答这个问题很简单——因为它能解决问题！</p>
 <p>可以解决哪些问题呢？</p>
 <ol>
 <li><code>Token</code> 完全由应用管理，所以它可以避开同源策略</li>
@@ -686,8 +686,8 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p><code>cookie</code>、<code>session</code> 和 <code>token</code>是前端开发中很重要的概念，很多朋友并不真正了解这三者有什么区别，或者这三者到底是个什么的东西，面试的时候也只能模模糊糊的说一点，不能很清晰的讲明白，这里我们就这三个东西讨论下，彻底搞懂。</p>
-<h3 id="产生的背景"><a href="#产生的背景" class="headerlink" title="产生的背景"></a>产生的背景</h3><p>众所周知，<code>http</code>协议本身是一个无连接的协议，<code>web</code>早期只是用来浏览文档，不需要交互，每次<code>http</code>请求都是一个全新的请求，服务端并不关心到底是谁在访问，但是随着交互式<code>web</code>应用的发展，我们必须要识别客户端到底是谁，否则根本无法进行交互，比如商城应用，后端服务必须要知道是谁在买东西，每个客户端要区分开，这时候就需要客户端要和服务端能够进行数据的相互传递，有时还需要在不同的域名下实现数据共享，<code>cookie</code>就是用来解决这一问题的。</p>
+          <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p><code>cookie</code>、<code>session</code> 和 <code>token</code>是前端开发中很重要的概念，很多朋友并不真正了解这三者有什么区别，或者这三者到底是个什么的东西，面试的时候也只能模模糊糊的说一点，不能很清晰的讲明白，这里我们就这三个东西讨论下，彻底搞懂。</p>
+<h1 id="产生的背景"><a href="#产生的背景" class="headerlink" title="产生的背景"></a>产生的背景</h1><p>众所周知，<code>http</code>协议本身是一个无连接的协议，<code>web</code>早期只是用来浏览文档，不需要交互，每次<code>http</code>请求都是一个全新的请求，服务端并不关心到底是谁在访问，但是随着交互式<code>web</code>应用的发展，我们必须要识别客户端到底是谁，否则根本无法进行交互，比如商城应用，后端服务必须要知道是谁在买东西，每个客户端要区分开，这时候就需要客户端要和服务端能够进行数据的相互传递，有时还需要在不同的域名下实现数据共享，<code>cookie</code>就是用来解决这一问题的。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2021/07/27/cookie-session-token%E8%AF%A6%E8%A7%A3/#more" rel="contents">
@@ -867,7 +867,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>跨域是前端开发中常见的一个问题，其本身跟http协议没有关系，而是浏览器的一种安全机制，称之为同源策略；</p>
+          <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>跨域是前端开发中常见的一个问题，其本身跟http协议没有关系，而是浏览器的一种安全机制，称之为同源策略；</p>
 <p>同源策略指的是当前网站和需要访问的目标网站的<code>协议</code>、<code>域名</code>、<code>端口</code>都要相同，其中主要有一个不相同，就会产生跨域问题；</p>
 <table>
 <thead>
@@ -909,7 +909,7 @@
 <td>端口不同（8000/8080）</td>
 </tr>
 </tbody></table>
-<h3 id="跨域会造成的问题"><a href="#跨域会造成的问题" class="headerlink" title="跨域会造成的问题"></a>跨域会造成的问题</h3><p>跨域会造成很多问题，比如</p>
+<h1 id="跨域会造成的问题"><a href="#跨域会造成的问题" class="headerlink" title="跨域会造成的问题"></a>跨域会造成的问题</h1><p>跨域会造成很多问题，比如</p>
 <ul>
 <li>无法读取非同源网页的 <code>Cookie</code>、<code>LocalStorage</code> 和 <code>IndexedDB</code></li>
 <li>无法接触非同源网页的 <code>DOM</code></li>
@@ -1004,7 +1004,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>在前端工程化中，前端代码打包之后的生成的静态资源就要发布到静态服务器上，这时候就要做对这些静态资源做一些运维配置，其中，<code>gzip</code>和设置缓存是必不可少的。这两项是最直接影响到网站性能和用户体验的。</p>
+          <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>在前端工程化中，前端代码打包之后的生成的静态资源就要发布到静态服务器上，这时候就要做对这些静态资源做一些运维配置，其中，<code>gzip</code>和设置缓存是必不可少的。这两项是最直接影响到网站性能和用户体验的。</p>
 <p>浏览器缓存主要有以下几个优点：</p>
 <ul>
 <li>减少重复数据请求，避免通过网络再次加载资源，节省流量。</li>
@@ -1103,9 +1103,9 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>Google工程师<code>Jake Archibald</code>写了一篇关于事件循环以及宏任务微任务的文章，非常经典，本文的例子都来源于改文章，有兴趣的可以去浏览原文<a target="_blank" rel="noopener" href="https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/?utm_source=html5weekly">Tasks, microtasks, queues and schedules</a></p>
+          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>Google工程师<code>Jake Archibald</code>写了一篇关于事件循环以及宏任务微任务的文章，非常经典，本文的例子都来源于改文章，有兴趣的可以去浏览原文<a target="_blank" rel="noopener" href="https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/?utm_source=html5weekly">Tasks, microtasks, queues and schedules</a></p>
 <p>在该文中也提供了<code>Philip Roberts</code>在youtube上的一个关于事件循环的视频<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=8aGhZQkoFbQ">What the heck is the event loop anyway?</a>（需要梯子），视频里讲的非常好，有兴趣可以看下。</p>
-<h3 id="事件循环的基本概念"><a href="#事件循环的基本概念" class="headerlink" title="事件循环的基本概念"></a>事件循环的基本概念</h3><ul>
+<h1 id="事件循环的基本概念"><a href="#事件循环的基本概念" class="headerlink" title="事件循环的基本概念"></a>事件循环的基本概念</h1><ul>
 <li><code>JavaScript</code>是单线程的，同时只能执行一个代码片段。如果存在耗时的异步操作，则会被阻塞（<code>blocking</code>）.</li>
 <li><code>JavaScript</code>代码的执行过程中，除了依靠函数调用栈来搞定函数的执行顺序外，还依靠任务队列(<code>task queue</code>)来搞定另外一些代码的执行，例如<code>setTimeout</code>，<code>AJAX(XHR)</code>等，这些都是<code>Web API</code>，由浏览器提供，不存在于<code>V8引擎</code>内。</li>
 <li>任务队列又分为<code>macro-task</code>（宏任务）与<code>micro-task</code>（微任务），在最新标准中，它们被分别称为<code>task</code>与<code>jobs</code>。<strong>微任务在一次事件循环中，总是先于宏任务执行</strong></li>
@@ -1202,7 +1202,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h3 id="浏览器渲染原理"><a href="#浏览器渲染原理" class="headerlink" title="浏览器渲染原理"></a>浏览器渲染原理</h3><p>重排和重绘是浏览器运行过程中一个很重要的特性，页面的动画，结构变化都会涉及到重排与重绘，重排与重绘也是影响前端页面性能的一个很重要的因素，如果页面存在大量的重排与重绘，页面会显得非常“卡”，影响用户体验。</p>
+          <h1 id="浏览器渲染原理"><a href="#浏览器渲染原理" class="headerlink" title="浏览器渲染原理"></a>浏览器渲染原理</h1><p>重排和重绘是浏览器运行过程中一个很重要的特性，页面的动画，结构变化都会涉及到重排与重绘，重排与重绘也是影响前端页面性能的一个很重要的因素，如果页面存在大量的重排与重绘，页面会显得非常“卡”，影响用户体验。</p>
 <p>说道重排与重绘，首先要了解浏览器的渲染原理，浏览器渲染展示页面的过程，大致分为以下几步：</p>
 <ul>
 <li>解析<code>HTML</code>结构（<code>HTML Parser</code>），构建<code>DOM树</code>（<code>DOM Tree</code>）</li>

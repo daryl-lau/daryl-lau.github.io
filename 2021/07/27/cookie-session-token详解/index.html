@@ -154,7 +154,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%A7%E7%94%9F%E7%9A%84%E8%83%8C%E6%99%AF"><span class="nav-text">产生的背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cookie"><span class="nav-text">cookie</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#session"><span class="nav-text">session</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#token"><span class="nav-text">token</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-text">简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%A7%E7%94%9F%E7%9A%84%E8%83%8C%E6%99%AF"><span class="nav-text">产生的背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#cookie"><span class="nav-text">cookie</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#session"><span class="nav-text">session</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#token"><span class="nav-text">token</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -318,10 +318,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p><code>cookie</code>、<code>session</code> 和 <code>token</code>是前端开发中很重要的概念，很多朋友并不真正了解这三者有什么区别，或者这三者到底是个什么的东西，面试的时候也只能模模糊糊的说一点，不能很清晰的讲明白，这里我们就这三个东西讨论下，彻底搞懂。</p>
-<h3 id="产生的背景"><a href="#产生的背景" class="headerlink" title="产生的背景"></a>产生的背景</h3><p>众所周知，<code>http</code>协议本身是一个无连接的协议，<code>web</code>早期只是用来浏览文档，不需要交互，每次<code>http</code>请求都是一个全新的请求，服务端并不关心到底是谁在访问，但是随着交互式<code>web</code>应用的发展，我们必须要识别客户端到底是谁，否则根本无法进行交互，比如商城应用，后端服务必须要知道是谁在买东西，每个客户端要区分开，这时候就需要客户端要和服务端能够进行数据的相互传递，有时还需要在不同的域名下实现数据共享，<code>cookie</code>就是用来解决这一问题的。</p>
+        <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p><code>cookie</code>、<code>session</code> 和 <code>token</code>是前端开发中很重要的概念，很多朋友并不真正了解这三者有什么区别，或者这三者到底是个什么的东西，面试的时候也只能模模糊糊的说一点，不能很清晰的讲明白，这里我们就这三个东西讨论下，彻底搞懂。</p>
+<h1 id="产生的背景"><a href="#产生的背景" class="headerlink" title="产生的背景"></a>产生的背景</h1><p>众所周知，<code>http</code>协议本身是一个无连接的协议，<code>web</code>早期只是用来浏览文档，不需要交互，每次<code>http</code>请求都是一个全新的请求，服务端并不关心到底是谁在访问，但是随着交互式<code>web</code>应用的发展，我们必须要识别客户端到底是谁，否则根本无法进行交互，比如商城应用，后端服务必须要知道是谁在买东西，每个客户端要区分开，这时候就需要客户端要和服务端能够进行数据的相互传递，有时还需要在不同的域名下实现数据共享，<code>cookie</code>就是用来解决这一问题的。</p>
 <span id="more"></span>
-<h3 id="cookie"><a href="#cookie" class="headerlink" title="cookie"></a>cookie</h3><p><code>cookie</code>是一个真实存在的东西，保存在客户端浏览器中，当一个请求发起后，后端如果想要设置<code>cookie</code>，则在响应头中添加一个<code>Set-Cookie</code>字段，浏览器识别到此响应头，就把里面的数据存放到浏览器本地，当下次再次请求的时候，将该<code>cookie</code>放到请求头中，发送给后端，实现前后端的交互。<br><img data-src="/images/cookie.png"></p>
+<h1 id="cookie"><a href="#cookie" class="headerlink" title="cookie"></a>cookie</h1><p><code>cookie</code>是一个真实存在的东西，保存在客户端浏览器中，当一个请求发起后，后端如果想要设置<code>cookie</code>，则在响应头中添加一个<code>Set-Cookie</code>字段，浏览器识别到此响应头，就把里面的数据存放到浏览器本地，当下次再次请求的时候，将该<code>cookie</code>放到请求头中，发送给后端，实现前后端的交互。<br><img data-src="/images/cookie.png"></p>
 <p>cookie是有大小和数量限制的，根据浏览器的不同这个有所差异；</p>
 <p>Set-Cookie响应头类似于<code>Set-Cookie: username=daryl; path=/; expires=Thu, 26 Aug 2021 16:37:43 GMT; domain=localhost; samesite=none; secure; httponly</code></p>
 <p>这个值是后端设置的，可选的属性有以下几种</p>
@@ -357,9 +357,9 @@
 <p>是否覆盖以前的设置同名cookies（默认为false）</p>
 </li>
 </ul>
-<h3 id="session"><a href="#session" class="headerlink" title="session"></a>session</h3><p><code>session</code>实际上是一个概念，即会话；<code>session</code>的实现有很多方式，最常见的是基于<code>cookie</code>的方式，后端生成一个<code>session</code>，有一个唯一的<code>session id</code>，标识唯一性，然后把这个<code>session id</code>通过<code>cookie</code>发送给客户端，客户端保存起来，下次请求的时候再携带包含<code>session id</code>值的<code>cookie</code>发送给后端，后端拿到后再去通过<code>session id</code>值查找对应的<code>session</code>；所以<code>session</code>实际上是保存在后端的，而发送给客户端的只是一个<code>session id</code>。</p>
+<h1 id="session"><a href="#session" class="headerlink" title="session"></a>session</h1><p><code>session</code>实际上是一个概念，即会话；<code>session</code>的实现有很多方式，最常见的是基于<code>cookie</code>的方式，后端生成一个<code>session</code>，有一个唯一的<code>session id</code>，标识唯一性，然后把这个<code>session id</code>通过<code>cookie</code>发送给客户端，客户端保存起来，下次请求的时候再携带包含<code>session id</code>值的<code>cookie</code>发送给后端，后端拿到后再去通过<code>session id</code>值查找对应的<code>session</code>；所以<code>session</code>实际上是保存在后端的，而发送给客户端的只是一个<code>session id</code>。</p>
 <p><code>session</code>这种方式的弊端在于服务器必须要保存<code>session</code>，无论是保存在文件里还是数据库里，都是一个很大的开销，并且一旦用户量过于庞大，<code>session</code>也会非常庞大，做负载均衡的话如果请求负载到了不同的机器，会造成<code>session</code>失效。</p>
-<h3 id="token"><a href="#token" class="headerlink" title="token"></a>token</h3><p><code>token</code>这种方案现在已经被广泛应用了，相比于<code>cookie + session</code>的实现方式，<code>token</code>不需要保存在服务器上，而是将数据签名，然后发送给客户端（可以通过<code>cookie</code>也可以通过其他方式），下次请求的时候再校验<code>token</code>的合法性，如果合法，则响应成功，如果不合法，则响应失败，这种方式就是用计算资源来节省空间资源，好处是我们不需要关心<code>token</code>的存储，而只需要扩展机器增加算力即可。</p>
+<h1 id="token"><a href="#token" class="headerlink" title="token"></a>token</h1><p><code>token</code>这种方案现在已经被广泛应用了，相比于<code>cookie + session</code>的实现方式，<code>token</code>不需要保存在服务器上，而是将数据签名，然后发送给客户端（可以通过<code>cookie</code>也可以通过其他方式），下次请求的时候再校验<code>token</code>的合法性，如果合法，则响应成功，如果不合法，则响应失败，这种方式就是用计算资源来节省空间资源，好处是我们不需要关心<code>token</code>的存储，而只需要扩展机器增加算力即可。</p>
 <p>详细的token解决方案，可以阅读<a href="https://www.baihuzi.com/2021/07/28/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3token/">深入理解token</a></p>
 
     </div>

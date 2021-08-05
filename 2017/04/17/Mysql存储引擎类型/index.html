@@ -151,7 +151,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#innodb"><span class="nav-text">innodb</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#myisam"><span class="nav-text">myisam</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#memory"><span class="nav-text">memory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#archive"><span class="nav-text">archive</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-text">其他</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#innodb"><span class="nav-text">innodb</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#myisam"><span class="nav-text">myisam</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#memory"><span class="nav-text">memory</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#archive"><span class="nav-text">archive</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-text">其他</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -315,7 +315,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h3 id="innodb"><a href="#innodb" class="headerlink" title="innodb"></a>innodb</h3><ol>
+        <h1 id="innodb"><a href="#innodb" class="headerlink" title="innodb"></a>innodb</h1><ol>
 <li>支持事务，面向在线事务处理（OLTP）方面的应用，支持行锁（锁粒度），支持外键；</li>
 <li>通过多版本并发控制MVCC来获得高并发性，并且实现了sql标准的4种隔离级别（默认为<code>repeatable read</code>可重复读）；</li>
 <li>提供插入缓冲（insert buffer），二次写（double write），自适应哈斯索引（ahi），预读（read ahead）；</li>
@@ -324,7 +324,7 @@
 <ul>
 <li>.ibd innodb数据文件，索引也存在里面，既缓存数据，也缓存索引</li>
 <li>.frm 表结构文件<span id="more"></span>
-<h3 id="myisam"><a href="#myisam" class="headerlink" title="myisam"></a>myisam</h3></li>
+<h1 id="myisam"><a href="#myisam" class="headerlink" title="myisam"></a>myisam</h1></li>
 </ul>
 <ol>
 <li>不支持事务，表锁（锁粒度）、全文索引，对OLAP在线分析处理，操作速度快；</li>
@@ -337,17 +337,17 @@
 <li>myisam有个计数器，直接读取计数器的数据</li>
 <li>innodb需要全表扫描</li>
 </ul>
-<h3 id="memory"><a href="#memory" class="headerlink" title="memory"></a>memory</h3><ol>
+<h1 id="memory"><a href="#memory" class="headerlink" title="memory"></a>memory</h1><ol>
 <li>数据放在内存中，数据库重启或掉电，表中的数据将丢失</li>
 <li>只支持表锁，速度非常快，哈希索引，并发性能差</li>
 <li>不支持text和blob列类型，一般用于创建临时表</li>
 </ol>
-<h3 id="archive"><a href="#archive" class="headerlink" title="archive"></a>archive</h3><ol>
+<h1 id="archive"><a href="#archive" class="headerlink" title="archive"></a>archive</h1><ol>
 <li>只支持insert和select操作</li>
 <li>使用zlib算法将数据行（row）进行压缩后存储，压缩比可达1:10</li>
 <li>适合存储归档数据，如日志信息</li>
 </ol>
-<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><p>还有其他存储引擎，比如：</p>
+<h1 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h1><p>还有其他存储引擎，比如：</p>
 <p>Merge、CSV、Sphinx、infobright、Federated、NDB等</p>
 <p><img data-src="/images/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E6%AF%94%E8%BE%83.png"></p>
 

@@ -315,7 +315,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h3 id="MySQL主从复制概述"><a href="#MySQL主从复制概述" class="headerlink" title="MySQL主从复制概述"></a>MySQL主从复制概述</h3><p>复制是mysql数据库提供的一种高可用、高性能的解决方案，一般用来建立大型的应用；</p>
+          <h1 id="MySQL主从复制概述"><a href="#MySQL主从复制概述" class="headerlink" title="MySQL主从复制概述"></a>MySQL主从复制概述</h1><p>复制是mysql数据库提供的一种高可用、高性能的解决方案，一般用来建立大型的应用；</p>
 <p>mysql支持单向，双向，链式级联，异步复制,半同步制(mysql5.5版本之后)，复制过程中,一台服务器当主<code>master</code>，而一个或者多个服务器<code>slave</code>；</p>
 <p>复制可以是单向：<code>M --&gt; S</code>,也可以双向<code>M &lt;--&gt; M</code></p>
 <p>如设置了链式级联复制，那么从服务器本身除了充当<code>slave</code>之外，还是其下面从服务器的主服务器，结构如同<code>M --&gt; S1 --&gt; S2 --&gt; S3</code> 的复制形式</p>
@@ -407,7 +407,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h3 id="xtrabackup备份原理"><a href="#xtrabackup备份原理" class="headerlink" title="xtrabackup备份原理"></a>xtrabackup备份原理</h3><p>流程图</p>
+          <h1 id="xtrabackup备份原理"><a href="#xtrabackup备份原理" class="headerlink" title="xtrabackup备份原理"></a>xtrabackup备份原理</h1><p>流程图</p>
 <p><img src="/images/PXB-backup-procedure.png" alt="PXB-backup-procedure.png"></p>
           <!--noindex-->
             <div class="post-button">
@@ -497,7 +497,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h3 id="xtrabackup备份实操"><a href="#xtrabackup备份实操" class="headerlink" title="xtrabackup备份实操"></a>xtrabackup备份实操</h3><p>下载安装xtrabackup</p>
+          <h1 id="xtrabackup备份实操"><a href="#xtrabackup备份实操" class="headerlink" title="xtrabackup备份实操"></a>xtrabackup备份实操</h1><p>下载安装xtrabackup</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@lyucan ~]# wget https://www.percona.com/downloads/XtraBackup/Percona-XtraBackup-2.4.5/binary/tarball/percona-xtrabackup-2.4.5-Linux-x86_64.tar.gz</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# tar -xf percona-xtrabackup-2.4.5-Linux-x86_64.tar.gz</span><br><span class="line"></span><br><span class="line">[root@lyucan ~]# mv percona-xtrabackup-2.4.5-Linux-x86_64 percona-xtrabackup</span><br><span class="line"></span><br><span class="line">#无需编译，可直接使用</span><br></pre></td></tr></table></figure>
           <!--noindex-->
             <div class="post-button">
@@ -587,7 +587,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h3 id="安装前说明"><a href="#安装前说明" class="headerlink" title="安装前说明"></a>安装前说明</h3><p>如果机器上已经有了mysql或者MariaDB，先卸载再安装；</p>
+          <h1 id="安装前说明"><a href="#安装前说明" class="headerlink" title="安装前说明"></a>安装前说明</h1><p>如果机器上已经有了mysql或者MariaDB，先卸载再安装；</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@lyucan ~]# rpm -e mariadb-libs-5.5.41-2.el7_0.x86_64 --nodeps</span><br></pre></td></tr></table></figure>
           <!--noindex-->
             <div class="post-button">
