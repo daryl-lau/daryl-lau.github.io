@@ -299,7 +299,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>275</span>
+      <span>482</span>
     </span>
 
   
@@ -314,13 +314,16 @@
     <div class="post-body" itemprop="articleBody">
           <h1 id="三种hash策略"><a href="#三种hash策略" class="headerlink" title="三种hash策略"></a>三种hash策略</h1><ul>
 <li><p>hash</p>
-<p>hash是根据整个项目构建，只要项目里有文件更改，整个项目构建的hash值都会更改，并且全部文件都共用相同的hash值</p>
+<p><code>hash</code> 和每次 build有关，没有任何改变的情况下，每次编译出来的 <code>hash</code>都是一样的，但当你改变了任何一点东西，它的<code>hash</code>就会发生改变。</p>
+<p>简单理解，你改了任何东西，hash 就会和上次不一样了。</p>
 </li>
 <li><p>chunkhash</p>
-<p>chunkhash根据不同的入口文件(Entry)进行依赖文件解析、构建对应的代码块（chunk），生成对应的哈希值，某文件变化时只有该文件对应代码块（chunk）的hash会变化</p>
+<p><code>chunkhash</code>根据不同的入口文件(<code>Entry</code>)进行依赖文件解析、构建对应的代码块（<code>chunk</code>），生成对应的哈希值，某文件变化时只有该文件对应代码块（<code>chunk</code>）的<code>hash</code>会变化</p>
 </li>
 <li><p>contenthash</p>
-<p>每一个代码块（chunk）中的js和css输出文件都会独立生成一个hash，当某一个代码块（chunk）中的js源文件被修改时，只有该代码块（chunk）输出的js文件的hash会发生变化</p>
+<p>它的出现主要是为了解决，让<code>css</code>文件不受<code>js</code>文件的影响。比如<code>foo.css</code>被<code>foo.js</code>引用了，所以它们共用相同的<code>chunkhash</code>值。但这样子是有问题的，如果<code>foo.js</code>修改了代码，<code>css</code>文件就算内容没有任何改变，由于是该模块的 <code>hash</code> 发生了改变，其<code>css</code>文件的<code>hash</code>也会随之改变。</p>
+<p>这个时候我们就可以使用<code>contenthash</code>了，保证即使<code>css</code>文件所处的模块里有任何内容的改变，只要 <code>css</code> 文件内容不变，那么它的<code>hash</code>就不会发生变化。</p>
+<p><code>contenthash</code> 你可以简单理解为是 <code>moduleId + content</code> 所生成的 <code>hash</code>。</p>
 </li>
 </ul>
 
@@ -414,81 +417,14 @@
 <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line"> <span class="attr">&quot;browserslist&quot;</span>: [<span class="string">&quot;last 2 version&quot;</span>, <span class="string">&quot;&gt; 1%&quot;</span>, <span class="string">&quot;maintained node versions&quot;</span>, <span class="string">&quot;not</span></span><br><span class="line"><span class="string">ie &lt; 11&quot;</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>或者在项⽬的根⽬录下创建⼀个 <code>.browserslistrc</code> ⽂件：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 注释是这样写的，以#号开头</span><br><span class="line"># 每⾏⼀个浏览器集合描述</span><br><span class="line">last 2 version</span><br><span class="line">&gt; 1%</span><br><span class="line">maintained node versions</span><br><span class="line">not ie &lt; 11</span><br></pre></td></tr></table></figure>
-
-<h1 id="常⻅集合范围说明"><a href="#常⻅集合范围说明" class="headerlink" title="常⻅集合范围说明"></a>常⻅集合范围说明</h1><table>
-<thead>
-<tr>
-<th>范围</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>last 2 versions</code></td>
-<td><a target="_blank" rel="noopener" href="https://caniuse.com/">caniuse.com</a>⽹站跟踪的最新两个版本，假如 iOS 12 是最新版本，那么向后兼容两个版本就是 iOS 11 和 iOS 12</td>
-</tr>
-<tr>
-<td><code>&gt; 1%</code></td>
-<td>全球超过 1%⼈使⽤的浏览器，类似 <code>&gt; 5% in US</code> 则指代美国 5%以上⽤户</td>
-</tr>
-<tr>
-<td><code>cover 99.5%</code></td>
-<td>覆盖 99.5%主流浏览器</td>
-</tr>
-<tr>
-<td><code>chrome &gt; 50</code> 或 <code>ie 6-8</code></td>
-<td>指定某个浏览器版本范围</td>
-</tr>
-<tr>
-<td><code>unreleased versions</code></td>
-<td>所有浏览器的 beta 版本</td>
-</tr>
-<tr>
-<td><code>not ie &lt; 11</code></td>
-<td>排除 ie11 以下版本不兼容</td>
-</tr>
-<tr>
-<td><code>since 2013</code> 或 <code>last 2 years</code></td>
-<td>某时间范围发布的所有浏览器版本</td>
-</tr>
-<tr>
-<td><code>maintained node versions</code></td>
-<td>所有被 node 基⾦会维护的 node 版本</td>
-</tr>
-<tr>
-<td><code>current node</code></td>
-<td>当前环境的 node 版本</td>
-</tr>
-<tr>
-<td><code>dead</code></td>
-<td>通过 last 2 versions 筛选的浏览器中，全球使⽤率低于 0.5% 且官⽅声明不在维护或者事实上已经两年没有再更新的版本</td>
-</tr>
-<tr>
-<td><code>defaults</code></td>
-<td>默认配置， <code>&gt; 0.5%</code> <code>last 2 versions</code> <code>Firefox ESR</code> <code>not dead</code></td>
-</tr>
-</tbody></table>
-<h1 id="浏览器名称列表（⼤⼩写不敏感）"><a href="#浏览器名称列表（⼤⼩写不敏感）" class="headerlink" title="浏览器名称列表（⼤⼩写不敏感）"></a>浏览器名称列表（⼤⼩写不敏感）</h1><ul>
-<li>Android ：安卓 webview 浏览器；</li>
-<li>Baidu ： 百度浏览器；</li>
-<li>BlackBerry / bb ：⿊莓浏览器；</li>
-<li>Chrome ：chrome 浏览器；</li>
-<li>ChromeAndroid / and_chr ：chrome 安卓移动浏览器；</li>
-<li>Edge ：微软 Edge 浏览器；</li>
-<li>Electron ：Electron；</li>
-<li>Explorer / ie ：ie 浏览器；</li>
-<li>ExplorerMobile / ie_mob ：ie 移动浏览器；</li>
-<li>Firefox / ff ：⽕狐浏览器； * FirefoxAndroid / and_ff ：⽕狐安卓浏览器；</li>
-<li>iOS / ios_saf ：iOS Safari 浏览器；</li>
-<li>Node ：nodejs；</li>
-<li>Opera ：opera 浏览器；</li>
-<li>OperaMini / op_mini ：operaMini 浏览器；</li>
-<li>OperaMobile / op_mob ：opera 移动浏览器；</li>
-<li>QQAndroid / and_qq ：QQ 安卓浏览器；</li>
-<li>Samsung ：三星浏览器；</li>
-<li>Safari ：桌⾯版本 Safari；</li>
-<li>UCAndroid / and_uc ：UC 安卓浏览器</li>
-</ul>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/08/07/browserslist%E7%9A%84%E4%BD%9C%E7%94%A8/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
