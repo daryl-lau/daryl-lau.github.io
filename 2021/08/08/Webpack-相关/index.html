@@ -331,6 +331,8 @@
 <p><code>contenthash</code> 你可以简单理解为是 <code>moduleId + content</code> 所生成的 <code>hash</code>。</p>
 </li>
 </ul>
+<span id="more"></span>
+
 <h1 id="优化策略"><a href="#优化策略" class="headerlink" title="优化策略"></a>优化策略</h1><h2 id="优化loader查找范围"><a href="#优化loader查找范围" class="headerlink" title="优化loader查找范围"></a>优化loader查找范围</h2><p>在<code>loader</code>中结合<code>test</code> <code>include</code> <code>exclude</code>三个配置项来缩⼩loader的处理范围，推荐<code>include</code></p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ...</span></span><br><span class="line"><span class="attr">rules</span>: [</span><br><span class="line">    &#123; <span class="attr">test</span>: <span class="regexp">/\.js$/</span>, use: <span class="string">&#x27;babel-loader&#x27;</span>, <span class="attr">exclude</span>: <span class="string">&#x27;/node_modules/&#x27;</span> &#125;,</span><br><span class="line">]</span><br><span class="line"><span class="comment">// ...</span></span><br></pre></td></tr></table></figure>
 
