@@ -319,7 +319,7 @@
 <p>当组件初次挂载，会有以下几个动作</p>
 <ol>
 <li>执行<code>constructor</code>构造函数，如果组件内部没有使用到<code>state</code>或者不需要对事件处理函数绑定<code>this</code>，则这个构造函数可以不写</li>
-<li>执行 <code>static getDerivedStateFromProps</code>，这个方法接收两个参数，<code>nextprops</code>和<code>nextState</code>，可以获取到最新的属性和状态，在挂载阶段这两个值都是初始绑定的值，该方法有个返回值，它可以返回一个对象来更新 <code>state</code>，如果返回 <code>null</code>或什么都不返回，则不对<code>state</code>进行修改，否则会修改<code>state</code>（浅合并）</li>
+<li>执行 <code>static getDerivedStateFromProps</code>，这个方法接收两个参数，<code>nextprops</code>和<code>nextState</code>，可以获取到最新的属性和状态，在挂载阶段这两个值都是初始绑定的值，该方法有个返回值，它可以返回一个对象来更新 <code>state</code>，如果返回 <code>null</code>，则不对<code>state</code>进行修改，否则会修改<code>state</code>（浅合并）</li>
 <li>执行<code>render</code>，更新属性和状态</li>
 <li>渲染组件，更新<code>DOM</code></li>
 <li>执行<code>componentDidMount</code>，组件已经挂在，通常在这个方法里做数据请求操作，或者订阅事件等</li>
@@ -373,13 +373,13 @@
       <div class="popular-posts-title"><a href="\2021\08\11\React-React-memo\" rel="bookmark">React React.memo</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\08\10\React-render-props模式\" rel="bookmark">React render props模式</a></div>
-    </li>
-    <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2021\08\10\React-hooks知识点整理\" rel="bookmark">React hooks知识点整理</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2021\08\11\React-ref的使用\" rel="bookmark">React ref的使用</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\08\10\React-setState需要注意的地方\" rel="bookmark">React setState需要注意的地方</a></div>
     </li>
   </ul>
 
