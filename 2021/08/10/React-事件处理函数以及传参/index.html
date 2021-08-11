@@ -165,7 +165,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">55</span>
+          <span class="site-state-item-count">56</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -211,6 +211,9 @@
     </div>
     <ul class="links-of-recent-posts-list">
         <li class="links-of-recent-posts-item">
+          <a href="/2021/08/11/React-Protals/" title="2021&#x2F;08&#x2F;11&#x2F;React-Protals&#x2F;">React Protals</a>
+        </li>
+        <li class="links-of-recent-posts-item">
           <a href="/2021/08/11/React-ref%E7%9A%84%E4%BD%BF%E7%94%A8/" title="2021&#x2F;08&#x2F;11&#x2F;React-ref的使用&#x2F;">React ref的使用</a>
         </li>
         <li class="links-of-recent-posts-item">
@@ -221,9 +224,6 @@
         </li>
         <li class="links-of-recent-posts-item">
           <a href="/2021/08/10/React-%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E5%87%BD%E6%95%B0%E4%BB%A5%E5%8F%8A%E4%BC%A0%E5%8F%82/" title="2021&#x2F;08&#x2F;10&#x2F;React-事件处理函数以及传参&#x2F;">React 事件处理函数以及传参</a>
-        </li>
-        <li class="links-of-recent-posts-item">
-          <a href="/2021/08/10/React-render-props%E6%A8%A1%E5%BC%8F/" title="2021&#x2F;08&#x2F;10&#x2F;React-render-props模式&#x2F;">React render props模式</a>
         </li>
     </ul>
   </div>
@@ -300,7 +300,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>278</span>
+      <span>296</span>
     </span>
 
   
@@ -319,8 +319,12 @@
 <span id="more"></span>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Com1</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="title">constructor</span>(<span class="params">...props</span>)</span> &#123;</span><br><span class="line">    <span class="built_in">super</span>(...props)</span><br><span class="line">    <span class="built_in">this</span>.handler1 = <span class="built_in">this</span>.handler.bind(<span class="built_in">this</span>)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="title">handler1</span>(<span class="params">e</span>)</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(e)  <span class="comment">// Event</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="title">handler2</span>(<span class="params">e</span>)</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(e)  <span class="comment">// Event</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="title">handler3</span>(<span class="params">arg1, arg2, e</span>)</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(arg1)   <span class="comment">// 123</span></span><br><span class="line">    <span class="built_in">console</span>.log(arg2)   <span class="comment">// 456</span></span><br><span class="line">    <span class="built_in">console</span>.log(e)      <span class="comment">// Event</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  render () &#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;this.handler1&#125;</span>&gt;</span>点击<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;this.handler2.bind(this)&#125;</span>&gt;</span>点击<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;this.handler3.bind(this,</span> <span class="attr">123</span>, <span class="attr">456</span>)&#125;&gt;</span>点击<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> Com1</span><br></pre></td></tr></table></figure>
 
-<h1 id="箭头函数形式"><a href="#箭头函数形式" class="headerlink" title="箭头函数形式"></a>箭头函数形式</h1><p>箭头函数和普通函数不一样，不用特别处理this的指向问题，如果需要传参，则必须重新声明一个函数</p>
-<p>如果需要同时传参和事件对象，新声明的则需要手动传入事件对象</p>
+<h1 id="箭头函数形式"><a href="#箭头函数形式" class="headerlink" title="箭头函数形式"></a>箭头函数形式</h1><p>箭头函数和普通函数不一样，不用特别处理this的指向问题，</p>
+<ul>
+<li>如果不需要传参，则事件对象默认传入</li>
+<li>如果需要传参，则必须重新声明一个函数</li>
+<li>如果需要同时传参和事件对象，则新声明函数需要手动传入事件对象</li>
+</ul>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Com1</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="title">constructor</span>(<span class="params">...props</span>)</span> &#123;</span><br><span class="line">    <span class="built_in">super</span>(...props)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  handler1 = <span class="function">(<span class="params">e</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(e)  <span class="comment">// Event</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  handler2 = <span class="function">(<span class="params">arg1, arg2, e</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(arg1)  <span class="comment">// 123</span></span><br><span class="line">    <span class="built_in">console</span>.log(arg2)  <span class="comment">// 456</span></span><br><span class="line">    <span class="built_in">console</span>.log(e)  <span class="comment">// undefined</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="title">handler3</span>(<span class="params">e, arg1, arg2</span>)</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(e)      <span class="comment">// Event</span></span><br><span class="line">    <span class="built_in">console</span>.log(arg1)   <span class="comment">// 123</span></span><br><span class="line">    <span class="built_in">console</span>.log(arg2)   <span class="comment">// 456</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  render () &#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;this.handler1&#125;</span>&gt;</span>点击<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> this.handler2(123, 456)&#125;&gt;点击<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;(e)</span> =&gt;</span> this.handler3(e, 123, 456)&#125;&gt;点击<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> Com1</span><br></pre></td></tr></table></figure>
 
     </div>
@@ -332,19 +336,19 @@
   <div class="popular-posts-header">相关文章</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\08\10\React-hooks知识点整理\" rel="bookmark">React hooks知识点整理</a></div>
+      <div class="popular-posts-title"><a href="\2021\08\11\React-Protals\" rel="bookmark">React Protals</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\08\10\React-render-props模式\" rel="bookmark">React render props模式</a></div>
+      <div class="popular-posts-title"><a href="\2021\08\10\React-hooks知识点整理\" rel="bookmark">React hooks知识点整理</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2021\08\11\React-ref的使用\" rel="bookmark">React ref的使用</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\08\10\React-setState需要注意的地方\" rel="bookmark">React setState需要注意的地方</a></div>
+      <div class="popular-posts-title"><a href="\2021\08\10\React-render-props模式\" rel="bookmark">React render props模式</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\08\10\React-受控组件和非受控组件\" rel="bookmark">React 受控组件和非受控组件</a></div>
+      <div class="popular-posts-title"><a href="\2021\08\10\React-setState需要注意的地方\" rel="bookmark">React setState需要注意的地方</a></div>
     </li>
   </ul>
 
