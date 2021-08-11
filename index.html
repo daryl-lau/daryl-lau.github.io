@@ -295,7 +295,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>631</span>
+      <span>1.1k</span>
     </span>
 
   
@@ -309,7 +309,8 @@
     
     <div class="post-body" itemprop="articleBody">
           <p><code>ref</code>可以作用于普通元素，也可以作用于<code>class</code>组件上，<strong>不能作用于函数式组件</strong>，因为函数式组件没有<code>this</code>实例对象，在函数式组件中可以使用<code>useRef</code>和<code>useImperativeHandle</code></p>
-<p>父组件设置的ref还可以转发给子组件</p>
+<p>如果作用于组件上，可以直接访问组件的<code>state</code>，还可以调用组件的方法（自定义方法以及<code>setState</code>等内置方法）</p>
+<p>父组件设置的<code>ref</code>还可以转发给子组件，以获取子组件内部的元素或者组件</p>
 <h1 id="设置ref的3种方法"><a href="#设置ref的3种方法" class="headerlink" title="设置ref的3种方法"></a>设置ref的3种方法</h1><h2 id="设置为字符串（已废弃）"><a href="#设置为字符串（已废弃）" class="headerlink" title="设置为字符串（已废弃）"></a>设置为字符串（已废弃）</h2><figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;Child ref=<span class="string">&quot;child&quot;</span>&gt;&lt;/Child&gt;</span><br></pre></td></tr></table></figure>
           <!--noindex-->
             <div class="post-button">
