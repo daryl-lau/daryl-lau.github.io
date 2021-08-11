@@ -759,7 +759,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2</span>
+      <span>191</span>
     </span>
 
   
@@ -776,6 +776,15 @@
 
 <p>使用</p>
 <figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;Mouse render=&#123;<span class="function"><span class="params">mouse</span> =&gt;</span> <span class="xml"><span class="tag">&lt;<span class="name">h1</span>&gt;</span>rendre props-鼠标位置：&#123;mouse.x&#125;,&#123;mouse.y&#125;<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span>&#125;&gt;&lt;/Mouse&gt;</span><br></pre></td></tr></table></figure>
+
+<p>上面是一个简单的<code>render props</code>例子，注意，我们并不是只能使用<code>render</code>作为属性，随便叫什么属性都行，组件内部用法协商好就行</p>
+<p>除了在属性上给定函数，还可以直接在<code>children</code>中使用，例如</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;Mouse&gt;</span><br><span class="line">  &#123;<span class="function"><span class="params">mouse</span> =&gt;</span> <span class="xml"><span class="tag">&lt;<span class="name">h1</span>&gt;</span>rendre props-鼠标位置：&#123;mouse.x&#125;,&#123;mouse.y&#125;<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span>&#125;</span><br><span class="line">&lt;/Mouse&gt;</span><br></pre></td></tr></table></figure>
+<p>此时组件内部就需要使用<code>children</code>获取渲染函数</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">render () &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">this</span>.props.children(<span class="built_in">this</span>.state)</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>由于这一技术的特殊性，当你在设计一个类似的 <code>API</code> 时，你或许会要直接地在你的 <code>propTypes</code> 里声明 <code>children</code> 的类型应为一个函数。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Mouse.propTypes = &#123;</span><br><span class="line">  <span class="attr">children</span>: PropTypes.func.isRequired</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
       
     </div>
 
