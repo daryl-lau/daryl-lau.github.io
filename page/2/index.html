@@ -474,7 +474,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>3.6k</span>
+      <span>3.7k</span>
     </span>
 
   
@@ -487,7 +487,12 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="useState"><a href="#useState" class="headerlink" title="useState"></a>useState</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> [state, setState] = useState(initialState);</span><br></pre></td></tr></table></figure>
+          <h1 id="Hook-使用规则"><a href="#Hook-使用规则" class="headerlink" title="Hook 使用规则"></a>Hook 使用规则</h1><p><code>Hook</code> 就是 <code>JavaScript</code> 函数，但是使用它们会有两个额外的规则：</p>
+<ul>
+<li>只能在函数最外层调用 <code>Hook</code>。不要在循环、条件判断或者子函数中调用。</li>
+<li>只能在 <code>React</code> 的函数组件中调用 <code>Hook</code>。不要在其他 <code>JavaScript</code> 函数中调用，还可以在自定义<code>Hook</code>中调用其他<code>Hook</code></li>
+</ul>
+<h1 id="useState"><a href="#useState" class="headerlink" title="useState"></a>useState</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> [state, setState] = useState(initialState);</span><br></pre></td></tr></table></figure>
 <p>返回一个 <code>state</code>，以及更新 <code>state</code> 的函数。</p>
 <p>在初始渲染期间，返回的状态 (<code>state</code>) 与传入的第一个参数 (<code>initialState</code>) 值相同。</p>
 <p><code>setState</code> 函数用于更新 <code>state</code>。它接收一个新的 <code>state</code> 值并将组件的一次重新渲染加入队列。</p>
