@@ -161,7 +161,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">59</span>
+          <span class="site-state-item-count">61</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -174,7 +174,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-count">22</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -207,19 +207,19 @@
     </div>
     <ul class="links-of-recent-posts-list">
         <li class="links-of-recent-posts-item">
+          <a href="/2021/08/12/React-%E5%90%88%E6%88%90%E4%BA%8B%E4%BB%B6/" title="2021&#x2F;08&#x2F;12&#x2F;React-合成事件&#x2F;">React 合成事件</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2021/08/12/React-ReactDOM%E9%A1%B6%E5%B1%82API/" title="2021&#x2F;08&#x2F;12&#x2F;React-ReactDOM顶层API&#x2F;">React ReactDOM顶层API</a>
+        </li>
+        <li class="links-of-recent-posts-item">
           <a href="/2021/08/11/React-%E7%BB%84%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" title="2021&#x2F;08&#x2F;11&#x2F;React-组件生命周期&#x2F;">React 组件生命周期</a>
         </li>
         <li class="links-of-recent-posts-item">
-          <a href="/2021/08/11/React-%E8%BD%AC%E6%8D%A2%E5%85%83%E7%B4%A0%E7%9B%B8%E5%85%B3API/" title="2021&#x2F;08&#x2F;11&#x2F;React-转换元素相关API&#x2F;">React 转换元素相关API</a>
+          <a href="/2021/08/11/React-React%E9%A1%B6%E5%B1%82API/" title="2021&#x2F;08&#x2F;11&#x2F;React-React顶层API&#x2F;">React React顶层API</a>
         </li>
         <li class="links-of-recent-posts-item">
           <a href="/2021/08/11/React-React-memo/" title="2021&#x2F;08&#x2F;11&#x2F;React-React-memo&#x2F;">React React.memo</a>
-        </li>
-        <li class="links-of-recent-posts-item">
-          <a href="/2021/08/11/React-Protals/" title="2021&#x2F;08&#x2F;11&#x2F;React-Protals&#x2F;">React Protals</a>
-        </li>
-        <li class="links-of-recent-posts-item">
-          <a href="/2021/08/11/React-ref%E7%9A%84%E4%BD%BF%E7%94%A8/" title="2021&#x2F;08&#x2F;11&#x2F;React-ref的使用&#x2F;">React ref的使用</a>
         </li>
     </ul>
   </div>
@@ -244,6 +244,198 @@
 
 
       <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.baihuzi.com/2021/08/12/React-%E5%90%88%E6%88%90%E4%BA%8B%E4%BB%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="老白">
+      <meta itemprop="description" content="走得很慢，但从未放弃。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="老白">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/08/12/React-%E5%90%88%E6%88%90%E4%BA%8B%E4%BB%B6/" class="post-title-link" itemprop="url">React 合成事件</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-08-12 14:30:56" itemprop="dateCreated datePublished" datetime="2021-08-12T14:30:56+08:00">2021-08-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/React/" itemprop="url" rel="index"><span itemprop="name">React</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>889</span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="react合成事件"><a href="#react合成事件" class="headerlink" title="react合成事件"></a>react合成事件</h1><p>如果<code>DOM</code>上绑定了过多的事件处理函数，整个页面响应以及内存占用可能都会受到影响。<code>React</code>为了避免这类<code>DOM</code>事件滥用，同时屏蔽底层不同浏览器之间的事件系统差异，实现了一个中间层——<code>SyntheticEvent</code>。</p>
+<p>当用户在为<code>onClick</code>添加函数时，<code>React</code>并没有将<code>Click</code>事件绑定在对应的元素上面，而是在<code>document</code>处监听所有支持的事件，当事件发生并冒泡至<code>document</code>处时，<code>React</code>将事件内容封装交给中间层<code>SyntheticEvent</code>（负责所有事件合成）</p>
+<p>所有的react合成事件都存放在一个事件池里面，当调用的时候给合成事件的事件对象赋值，执行完之后把事件对象设置为null，放回事件池，而不用每次都创建一个新的合成事件</p>
+<p>当事件触发的时候，对使用统一的分发函数<code>ReactEventListener.dispatchEvent</code>将指定函数执行。</p>
+<h1 id="合成事件和原生事件的执行顺序是什么？可以混用吗？"><a href="#合成事件和原生事件的执行顺序是什么？可以混用吗？" class="headerlink" title="合成事件和原生事件的执行顺序是什么？可以混用吗？"></a>合成事件和原生事件的执行顺序是什么？可以混用吗？</h1><ol>
+<li><code>React</code>的所有事件都通过 <code>document</code>进行统一分发。当真实 <code>Dom</code>触发事件后冒泡到 <code>document</code>后才会对 <code>React</code>事件进行处理。</li>
+<li>原生的事件会先执行，然后执行 <code>React</code>合成事件，最后执行真正在 <code>document</code>上挂载的事件</li>
+<li><code>React</code>事件和原生事件最好不要混用。原生事件中如果执行了 <code>stopPropagation</code>方法，则会导致其他 <code>React</code>事件失效。因为所有元素的事件将无法冒泡到 <code>document</code>上，导致所有的 <code>React</code>事件都将无法被触发。
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/08/12/React-%E5%90%88%E6%88%90%E4%BA%8B%E4%BB%B6/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.baihuzi.com/2021/08/12/React-ReactDOM%E9%A1%B6%E5%B1%82API/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="老白">
+      <meta itemprop="description" content="走得很慢，但从未放弃。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="老白">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/08/12/React-ReactDOM%E9%A1%B6%E5%B1%82API/" class="post-title-link" itemprop="url">React ReactDOM顶层API</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-08-12 12:57:37" itemprop="dateCreated datePublished" datetime="2021-08-12T12:57:37+08:00">2021-08-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/React/" itemprop="url" rel="index"><span itemprop="name">React</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>777</span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="render"><a href="#render" class="headerlink" title="render()"></a>render()</h1><p>在提供的 <code>container</code> 里渲染一个 <code>React</code> 元素，并返回对该组件的引用（或者针对无状态组件返回 <code>null</code>）。</p>
+<p>如果 <code>React</code> 元素之前已经在 <code>container</code> 里渲染过，这将会对其执行更新操作，并仅会在必要时改变 <code>DOM</code> 以映射最新的 <code>React</code> 元素。</p>
+<p>如果提供了可选的回调函数，该回调将在组件被渲染或更新之后被执行。</p>
+<h1 id="hydrate"><a href="#hydrate" class="headerlink" title="hydrate()"></a>hydrate()</h1><p>与 <code>render()</code> 相同，但它用于在<code> ReactDOMServer</code> 渲染的容器中对 <code>HTML</code> 的内容进行 <code>hydrate</code> 操作。</p>
+<h1 id="unmountComponentAtNode"><a href="#unmountComponentAtNode" class="headerlink" title="unmountComponentAtNode()"></a>unmountComponentAtNode()</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ReactDOM.unmountComponentAtNode(container)</span><br></pre></td></tr></table></figure>
+<p>从 <code>DOM</code> 中卸载组件，会将其事件处理器（<code>event handlers</code>）和 <code>state</code> 一并清除。如果指定容器上没有对应已挂载的组件，这个函数什么也不会做。如果组件被移除将会返回 <code>true</code>，如果没有组件可被移除将会返回 <code>false</code>。</p>
+<p>只能销毁<code>ReactDOM.render(element, container)</code>调用生成的的容器节点，通过<code>react</code>产生的节点使用此方法回报错：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Warning: unmountComponentAtNode(): The node you&#x27;re attempting to unmount was rendered by React and is not a top-level container. Instead, have the parent component update its state and rerender in order to remove this component.</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/08/12/React-ReactDOM%E9%A1%B6%E5%B1%82API/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -295,7 +487,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.6k</span>
+      <span>1.7k</span>
     </span>
 
   
@@ -354,7 +546,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.baihuzi.com/2021/08/11/React-%E8%BD%AC%E6%8D%A2%E5%85%83%E7%B4%A0%E7%9B%B8%E5%85%B3API/">
+    <link itemprop="mainEntityOfPage" href="https://www.baihuzi.com/2021/08/11/React-React%E9%A1%B6%E5%B1%82API/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -367,7 +559,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/08/11/React-%E8%BD%AC%E6%8D%A2%E5%85%83%E7%B4%A0%E7%9B%B8%E5%85%B3API/" class="post-title-link" itemprop="url">React 转换元素相关API</a>
+          <a href="/2021/08/11/React-React%E9%A1%B6%E5%B1%82API/" class="post-title-link" itemprop="url">React React顶层API</a>
         </h2>
 
         <div class="post-meta-container">
@@ -396,7 +588,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.2k</span>
+      <span>2.3k</span>
     </span>
 
   
@@ -409,12 +601,21 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="React-Children"><a href="#React-Children" class="headerlink" title="React.Children"></a>React.Children</h1><p><code>React.Children</code> 提供了用于处理 <code>this.props.children</code> 不透明数据结构的实用方法。</p>
-<p>我们先来看看React.Children上有哪些东西</p>
+          <h1 id="组件"><a href="#组件" class="headerlink" title="组件"></a>组件</h1><h2 id="React-Component"><a href="#React-Component" class="headerlink" title="React.Component"></a>React.Component</h2><p><code>React.Component</code> 是使用 <code>ES6 classes</code> 方式定义 <code>React</code> 组件的基类：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Greeting</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="title">render</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">h1</span>&gt;</span>Hello, &#123;this.props.name&#125;<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="React-PureComponent"><a href="#React-PureComponent" class="headerlink" title="React.PureComponent"></a>React.PureComponent</h2><p><code>React.PureComponent</code> 与 <code>React.Component</code> 很相似。两者的区别在于 <code>React.Component</code> 并未实现 <code>shouldComponentUpdate()</code>，而 <code>React.PureComponent</code> 中以浅层对比 <code>prop</code> 和 <code>state</code> 的方式来实现了该函数。</p>
+<p>如果赋予<code> React</code> 组件相同的 <code>props</code> 和 <code>state</code>，<code>render()</code> 函数会渲染相同的内容，那么在某些情况下使用 <code>React.PureComponent</code> 可提高性能。</p>
+<p><code>React.PureComponent</code> 中的 <code>shouldComponentUpdate()</code> 仅作对象的浅层比较。如果对象中包含复杂的数据结构，则有可能因为无法检查深层的差别，产生错误的比对结果。仅在你的 <code>props</code> 和 <code>state</code> 较为简单时，才使用 <code>React.PureComponent</code>，或者在深层数据结构发生变化时调用 <code>forceUpdate()</code> 来确保组件被正确地更新。你也可以考虑使用 <code>immutable</code> 对象加速嵌套数据的比较。</p>
+<p>此外，<code>React.PureComponent</code> 中的 <code>shouldComponentUpdate()</code> 将跳过所有子组件树的 <code>prop</code> 更新。因此，请确保所有子组件也都是“纯”的组件。</p>
+<h2 id="React-memo"><a href="#React-memo" class="headerlink" title="React.memo"></a>React.memo</h2><p><a href="https://www.baihuzi.com/2021/08/11/React-React-memo/">React.memo</a></p>
+<h1 id="创建元素"><a href="#创建元素" class="headerlink" title="创建元素"></a>创建元素</h1><h2 id="React-createElement"><a href="#React-createElement" class="headerlink" title="React.createElement"></a>React.createElement</h2><p><code>JSX</code>实际上是<code>React.createElement</code>的语法糖，最终都会转换为<code>React.createElement</code>函数<br>参考<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/140962830">通过源码学习React.createElement</a></p>
+<h1 id="转换元素"><a href="#转换元素" class="headerlink" title="转换元素"></a>转换元素</h1><h2 id="React-Children"><a href="#React-Children" class="headerlink" title="React.Children"></a>React.Children</h2><p><code>React.Children</code> 提供了用于处理 <code>this.props.children</code> 不透明数据结构的实用方法。</p>
+<p>我们先来看看<code>children</code>上有哪些东西</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ReactChildren</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  render () &#123;</span><br><span class="line">    <span class="comment">// children还可以是一个函数，如果内部不调用，则会报错，所以内部需要使用this.props.children()来调用</span></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">this</span>.props.children, <span class="string">&#x27;ReactChildren&#x27;</span>);</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">        &#123; this.props.children &#125;</span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="class"><span class="keyword">class</span> <span class="title">Wrapper</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="title">constructor</span>(<span class="params">props</span>)</span> &#123;</span><br><span class="line">    <span class="built_in">super</span>(props)</span><br><span class="line">    <span class="built_in">this</span>.titleRef = React.createRef();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  handleClick = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;clicked!&#x27;</span>)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  render () &#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      <span class="xml"><span class="tag">&lt;<span class="name">ReactChildren</span>&gt;</span></span></span><br><span class="line"><span class="xml">        &#123;/* 在children里传入一个函数，内部需要进行调用，否则报错，同样可以进行传参，和render props一样，只不过是写在了children里面 */&#125;</span></span><br><span class="line"><span class="xml">        &#123;/* &#123;(msg) =&gt; &#123; return <span class="tag">&lt;<span class="name">h1</span>&gt;</span>&#123;msg&#125;<span class="tag">&lt;/<span class="name">h1</span>&gt;</span> &#125;&#125; */&#125;</span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">h1</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">ref</span>=<span class="string">&#123;this.titleRef&#125;</span>&gt;</span>Title<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">ul</span>&gt;</span></span></span><br><span class="line"><span class="xml">          <span class="tag">&lt;<span class="name">li</span> <span class="attr">key</span>=<span class="string">&quot;a&quot;</span>&gt;</span>aaa<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span></span><br><span class="line"><span class="xml">          <span class="tag">&lt;<span class="name">li</span> <span class="attr">key</span>=<span class="string">&quot;b&quot;</span>&gt;</span>bbb<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span></span><br><span class="line"><span class="xml">          <span class="tag">&lt;<span class="name">li</span> <span class="attr">key</span>=<span class="string">&quot;c&quot;</span>&gt;</span>ccc<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;this.handleClick&#125;</span>&gt;</span>按钮<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;/<span class="name">ReactChildren</span>&gt;</span></span></span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2021/08/11/React-%E8%BD%AC%E6%8D%A2%E5%85%83%E7%B4%A0%E7%9B%B8%E5%85%B3API/#more" rel="contents">
+              <a class="btn" href="/2021/08/11/React-React%E9%A1%B6%E5%B1%82API/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -992,187 +1193,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.baihuzi.com/2021/08/10/React-render-props%E6%A8%A1%E5%BC%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="老白">
-      <meta itemprop="description" content="走得很慢，但从未放弃。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="老白">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/08/10/React-render-props%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">React render props模式</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-08-10 11:05:10" itemprop="dateCreated datePublished" datetime="2021-08-10T11:05:10+08:00">2021-08-10</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/React/" itemprop="url" rel="index"><span itemprop="name">React</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>278</span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><code>render props</code>模式是封装组件的其中一种方式，由外部指定需要渲染的元素，组件内部把状态传递给它，外部声明一个函数式的<code>props</code>，函数参数接收内部状态，返回需要渲染的元素</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/08/10/React-render-props%E6%A8%A1%E5%BC%8F/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.baihuzi.com/2021/08/10/React-setState%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E7%9A%84%E5%9C%B0%E6%96%B9/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="老白">
-      <meta itemprop="description" content="走得很慢，但从未放弃。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="老白">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/08/10/React-setState%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E7%9A%84%E5%9C%B0%E6%96%B9/" class="post-title-link" itemprop="url">React setState需要注意的地方</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-08-10 10:00:47" itemprop="dateCreated datePublished" datetime="2021-08-10T10:00:47+08:00">2021-08-10</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/React/" itemprop="url" rel="index"><span itemprop="name">React</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>516</span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>函数内部多次调用<code>setState</code>，会将所有的<code>setState</code>操作进行合并，如果有修改到相同的属性，谁在最后执行谁，例如下面调用3次<code>setState</code>，<code>count</code>初始值是<code>0</code>，依次修改<code>count</code>的值，分别加1，加2，加3，最终<code>count</code>的值会被修改为3，而不是6</p>
-<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Counter</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="title">constructor</span>(<span class="params">props</span>)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>(props)</span><br><span class="line">        <span class="built_in">this</span>.state = &#123;</span><br><span class="line">            <span class="attr">count</span>: <span class="number">0</span>,</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    clickHandle = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.setState(&#123;</span><br><span class="line">            <span class="attr">count</span>: <span class="built_in">this</span>.state.count + <span class="number">1</span></span><br><span class="line">        &#125;)</span><br><span class="line">        <span class="built_in">this</span>.setState(&#123;</span><br><span class="line">            <span class="attr">count</span>: <span class="built_in">this</span>.state.count + <span class="number">2</span></span><br><span class="line">        &#125;)</span><br><span class="line">        <span class="built_in">this</span>.setState(&#123;</span><br><span class="line">            <span class="attr">count</span>: <span class="built_in">this</span>.state.count + <span class="number">3</span></span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    render () &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;render&#x27;</span>);</span><br><span class="line">        <span class="keyword">return</span> (</span><br><span class="line">            <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">h1</span> <span class="attr">id</span>=<span class="string">&quot;title&quot;</span>&gt;</span>计数器：&#123;this.state.count&#125;<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;this.clickHandle&#125;</span>&gt;</span>+1<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> Counter</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/08/10/React-setState%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E7%9A%84%E5%9C%B0%E6%96%B9/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 <script src="/js/comments.js"></script>
 </div>

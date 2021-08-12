@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon-128x128.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css" integrity="sha256-no0c5ccDODBwp+9hSmV5VvPpKwHCpbVzXHexIkupM6U=" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js" integrity="sha256-a5YRB27CcBwBFcT5EF/f3E4vzIqyHrSR878nseNYw64=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;www.baihuzi.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Mist&quot;,&quot;version&quot;:&quot;8.4.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;left&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:true,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;manual&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:true,&quot;lazyload&quot;:true,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:true,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;},&quot;path&quot;:&quot;&#x2F;search.xml&quot;,&quot;localsearch&quot;:{&quot;enable&quot;:true,&quot;trigger&quot;:&quot;auto&quot;,&quot;top_n_per_article&quot;:1,&quot;unescape&quot;:false,&quot;preload&quot;:false}}</script>
+<meta name="description" content="render()在提供的 container 里渲染一个 React 元素，并返回对该组件的引用（或者针对无状态组件返回 null）。 如果 React 元素之前已经在 container 里渲染过，这将会对其执行更新操作，并仅会在必要时改变 DOM 以映射最新的 React 元素。 如果提供了可选的回调函数，该回调将在组件被渲染或更新之后被执行。 hydrate()与 render() 相同，但">
+<meta property="og:type" content="article">
+<meta property="og:title" content="React ReactDOM顶层API">
+<meta property="og:url" content="https://www.baihuzi.com/2021/08/12/React-ReactDOM%E9%A1%B6%E5%B1%82API/index.html">
+<meta property="og:site_name" content="老白">
+<meta property="og:description" content="render()在提供的 container 里渲染一个 React 元素，并返回对该组件的引用（或者针对无状态组件返回 null）。 如果 React 元素之前已经在 container 里渲染过，这将会对其执行更新操作，并仅会在必要时改变 DOM 以映射最新的 React 元素。 如果提供了可选的回调函数，该回调将在组件被渲染或更新之后被执行。 hydrate()与 render() 相同，但">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.baihuzi.com/images/findNodeDom.png">
+<meta property="article:published_time" content="2021-08-12T04:57:37.000Z">
+<meta property="article:modified_time" content="2021-08-12T04:57:37.000Z">
+<meta property="article:author" content="老白">
+<meta property="article:tag" content="React">
+<meta property="article:tag" content="ReactDOM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.baihuzi.com/images/findNodeDom.png">
+
+
+<link rel="canonical" href="https://www.baihuzi.com/2021/08/12/React-ReactDOM%E9%A1%B6%E5%B1%82API/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;https:&#x2F;&#x2F;www.baihuzi.com&#x2F;2021&#x2F;08&#x2F;12&#x2F;React-ReactDOM%E9%A1%B6%E5%B1%82API&#x2F;&quot;,&quot;path&quot;:&quot;2021&#x2F;08&#x2F;12&#x2F;React-ReactDOM顶层API&#x2F;&quot;,&quot;title&quot;:&quot;React ReactDOM顶层API&quot;}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
+<title>React ReactDOM顶层API | 老白</title><script src="/js/config.js"></script>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="container">
+    <div class="headband"></div>
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">&nbsp;&nbsp;&nbsp;&nbsp;老白&nbsp;&nbsp;&nbsp;&nbsp;</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时间线</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#render"><span class="nav-text">render()</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#hydrate"><span class="nav-text">hydrate()</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#unmountComponentAtNode"><span class="nav-text">unmountComponentAtNode()</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#findDOMNode"><span class="nav-text">findDOMNode()</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#createPortal"><span class="nav-text">createPortal()</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="老白"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">老白</p>
+  <div class="site-description" itemprop="description">走得很慢，但从未放弃。</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">61</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yourname" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://es6.ruanyifeng.com/" title="https:&#x2F;&#x2F;es6.ruanyifeng.com&#x2F;" rel="noopener" target="_blank">阮一峰ES6教程</a>
+        </li>
+    </ul>
+  </div>
+
+  <div class="links-of-recent-posts animated">
+    <div class="links-of-recent-posts-title">
+      <i class="fa fa-history fa-fw"></i>
+      最近文章
+    </div>
+    <ul class="links-of-recent-posts-list">
+        <li class="links-of-recent-posts-item">
+          <a href="/2021/08/12/React-%E5%90%88%E6%88%90%E4%BA%8B%E4%BB%B6/" title="2021&#x2F;08&#x2F;12&#x2F;React-合成事件&#x2F;">React 合成事件</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2021/08/12/React-ReactDOM%E9%A1%B6%E5%B1%82API/" title="2021&#x2F;08&#x2F;12&#x2F;React-ReactDOM顶层API&#x2F;">React ReactDOM顶层API</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2021/08/11/React-%E7%BB%84%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" title="2021&#x2F;08&#x2F;11&#x2F;React-组件生命周期&#x2F;">React 组件生命周期</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2021/08/11/React-React%E9%A1%B6%E5%B1%82API/" title="2021&#x2F;08&#x2F;11&#x2F;React-React顶层API&#x2F;">React React顶层API</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2021/08/11/React-React-memo/" title="2021&#x2F;08&#x2F;11&#x2F;React-React-memo&#x2F;">React React.memo</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.baihuzi.com/2021/08/12/React-ReactDOM%E9%A1%B6%E5%B1%82API/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="老白">
+      <meta itemprop="description" content="走得很慢，但从未放弃。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="老白">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          React ReactDOM顶层API
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-08-12 12:57:37" itemprop="dateCreated datePublished" datetime="2021-08-12T12:57:37+08:00">2021-08-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/React/" itemprop="url" rel="index"><span itemprop="name">React</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>777</span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="render"><a href="#render" class="headerlink" title="render()"></a>render()</h1><p>在提供的 <code>container</code> 里渲染一个 <code>React</code> 元素，并返回对该组件的引用（或者针对无状态组件返回 <code>null</code>）。</p>
+<p>如果 <code>React</code> 元素之前已经在 <code>container</code> 里渲染过，这将会对其执行更新操作，并仅会在必要时改变 <code>DOM</code> 以映射最新的 <code>React</code> 元素。</p>
+<p>如果提供了可选的回调函数，该回调将在组件被渲染或更新之后被执行。</p>
+<h1 id="hydrate"><a href="#hydrate" class="headerlink" title="hydrate()"></a>hydrate()</h1><p>与 <code>render()</code> 相同，但它用于在<code> ReactDOMServer</code> 渲染的容器中对 <code>HTML</code> 的内容进行 <code>hydrate</code> 操作。</p>
+<h1 id="unmountComponentAtNode"><a href="#unmountComponentAtNode" class="headerlink" title="unmountComponentAtNode()"></a>unmountComponentAtNode()</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ReactDOM.unmountComponentAtNode(container)</span><br></pre></td></tr></table></figure>
+<p>从 <code>DOM</code> 中卸载组件，会将其事件处理器（<code>event handlers</code>）和 <code>state</code> 一并清除。如果指定容器上没有对应已挂载的组件，这个函数什么也不会做。如果组件被移除将会返回 <code>true</code>，如果没有组件可被移除将会返回 <code>false</code>。</p>
+<p>只能销毁<code>ReactDOM.render(element, container)</code>调用生成的的容器节点，通过<code>react</code>产生的节点使用此方法回报错：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Warning: unmountComponentAtNode(): The node you&#x27;re attempting to unmount was rendered by React and is not a top-level container. Instead, have the parent component update its state and rerender in order to remove this component.</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+
+<h1 id="findDOMNode"><a href="#findDOMNode" class="headerlink" title="findDOMNode()"></a>findDOMNode()</h1><p>当<code>ref</code>作用于组件时，只能拿到组件的实例，但是如何拿到组件的<code>DOM</code>呢？一种方法是通过<code>ref</code>转发，将<code>ref</code>转发到组件内部，绑定到具体<code>DOM</code>上<br>另一种方法就是通过<code>ReactDOM.findDOMNode()</code>API，通过组件实例去查找<code>DOM</code>，</p>
+<p>使用这个API是有条件的</p>
+<ul>
+<li><code>findDOMNode</code> 只在已挂载的组件上可用（即，已经放置在 <code>DOM</code> 中的组件）。如果你尝试调用未挂载的组件（例如在一个还未创建的组件上调用 <code>render()</code> 中的 <code>findDOMNode()</code>）将会引发异常。</li>
+<li><code>findDOMNode</code> 不能用于函数组件。</li>
+</ul>
+<p>大多数情况下，你可以绑定一个 <code>ref</code> 到 <code>DOM</code> 节点上，可以完全避免使用 <code>findDOMNode</code>。</p>
+<p><strong>严格模式下该方法已弃用。</strong></p>
+<p>示例代码</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span></span><br><span class="line"><span class="keyword">import</span> ReactDOM <span class="keyword">from</span> <span class="string">&#x27;react-dom&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Child</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="title">constructor</span>(<span class="params">props</span>)</span>&#123;</span><br><span class="line">        <span class="built_in">super</span>(props)</span><br><span class="line">        <span class="built_in">this</span>.state = &#123;</span><br><span class="line">            <span class="attr">count</span>: <span class="number">0</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="title">render</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">p</span>&gt;</span>Child<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">p</span>&gt;</span>&#123;this.state.count&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">input</span>&gt;</span><span class="tag">&lt;/<span class="name">input</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/&gt;</span></span></span><br><span class="line">    &#125;</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Parent</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="title">constructor</span>(<span class="params">...props</span>)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>(...props)</span><br><span class="line">        <span class="built_in">this</span>.childRef = React.createRef()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="title">componentDidMount</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="built_in">this</span>.childRef.current)</span><br><span class="line">        <span class="built_in">console</span>.log(ReactDOM.findDOMNode(<span class="built_in">this</span>.childRef.current))</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="title">render</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">p</span> &gt;</span>Parent<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">Child</span> <span class="attr">ref</span>=<span class="string">&#123;this.childRef&#125;</span>&gt;</span><span class="tag">&lt;/<span class="name">Child</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/&gt;</span></span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> Parent</span><br></pre></td></tr></table></figure>
+<p><img data-src="/images/findNodeDom.png"></p>
+<h1 id="createPortal"><a href="#createPortal" class="headerlink" title="createPortal()"></a>createPortal()</h1><p><a href="https://www.baihuzi.com/2021/08/11/React-Protals/">React Protals</a></p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\08\11\React-Protals\" rel="bookmark">React Protals</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\08\11\React-React-memo\" rel="bookmark">React React.memo</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\08\11\React-React顶层API\" rel="bookmark">React React顶层API</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\08\10\React-hooks知识点整理\" rel="bookmark">React hooks知识点整理</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\08\11\React-ref的使用\" rel="bookmark">React ref的使用</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>老白
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://www.baihuzi.com/2021/08/12/React-ReactDOM%E9%A1%B6%E5%B1%82API/" title="React ReactDOM顶层API">https://www.baihuzi.com/2021/08/12/React-ReactDOM顶层API/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/React/" rel="tag"><i class="fa fa-tag"></i> React</a>
+              <a href="/tags/ReactDOM/" rel="tag"><i class="fa fa-tag"></i> ReactDOM</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/08/11/React-%E7%BB%84%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" rel="prev" title="React 组件生命周期">
+                  <i class="fa fa-chevron-left"></i> React 组件生命周期
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/08/12/React-%E5%90%88%E6%88%90%E4%BA%8B%E4%BB%B6/" rel="next" title="React 合成事件">
+                  React 合成事件 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+<script src="/js/comments.js"></script>
+</div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">鄂ICP备20006679号-1 </a>
+      <img src="/images/beian.png"><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=42010602004216" rel="noopener" target="_blank">鄂公网安备 42010602004216号 </a>
+  </div>
+
+<div class="copyright">
+  &copy; 2016 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">老白</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+      </div>
+    </footer>
+
+    
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js" integrity="sha256-EdPgYcPk/IIrw7FYeuJQexva49pVRZNmt3LculEr7zM=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+    
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script class="next-config" data-name="nprogress" type="application/json">{&quot;enable&quot;:true,&quot;spinner&quot;:false}</script>
+  <script src="/js/third-party/nprogress.js"></script>
+
+    
+
+
+
+
+
+  </div>
+</body>
+</html>
