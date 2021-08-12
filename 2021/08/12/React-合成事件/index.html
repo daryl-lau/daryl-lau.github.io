@@ -33,7 +33,8 @@
 <meta property="og:image" content="https://www.baihuzi.com/images/SyntheticEvent1.gif">
 <meta property="og:image" content="https://www.baihuzi.com/images/SyntheticEvent2.gif">
 <meta property="og:image" content="https://www.baihuzi.com/images/SyntheticEvent3.gif">
-<meta property="og:image" content="https://www.baihuzi.com/images/SyntheticEvent4.png">
+<meta property="og:image" content="https://www.baihuzi.com/images/react_17_delegation.png">
+<meta property="og:image" content="https://www.baihuzi.com/images/SyntheticEvent3.png">
 <meta property="article:published_time" content="2021-08-12T06:30:56.000Z">
 <meta property="article:modified_time" content="2021-08-12T06:30:56.000Z">
 <meta property="article:author" content="老白">
@@ -306,7 +307,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>889</span>
+      <span>1k</span>
     </span>
 
   
@@ -339,7 +340,10 @@
 <p>如果原生事件中阻止冒泡了，则React事件不会触发</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ...</span></span><br><span class="line"><span class="function"><span class="title">componentDidMount</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.btnRef.current.addEventListener(<span class="string">&#x27;click&#x27;</span>, <span class="function">(<span class="params">e</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">&#x27;原生事件&#x27;</span>, e)</span><br><span class="line">      e.stopPropagation()</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="built_in">document</span>.addEventListener(<span class="string">&#x27;click&#x27;</span>, <span class="function">(<span class="params">e</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">&#x27;原生事件 document&#x27;</span>, e)</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
 <p><img data-src="/images/SyntheticEvent3.gif"></p>
-<p>在React 17 中移除了 “<code>event pooling</code>（事件池）”<br><img data-src="/images/SyntheticEvent4.png"></p>
+<p><code>React v17</code> 中，<code>React</code> 不会再将事件处理添加到 <code>document</code> 上，而是将事件处理添加到渲染 <code>React</code> 树的根 <code>DOM</code> 容器中：移除了 “<code>event pooling</code>（事件池）”</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> rootNode = <span class="built_in">document</span>.getElementById(<span class="string">&#x27;root&#x27;</span>);</span><br><span class="line">ReactDOM.render(<span class="xml"><span class="tag">&lt;<span class="name">App</span> /&gt;</span></span>, rootNode);</span><br></pre></td></tr></table></figure>
+<p>在 <code>React 16</code> 及之前版本中，<code>React</code> 会对大多数事件进行 <code>document.addEventListener()</code> 操作。React v17 开始会通过调用 <code>rootNode.addEventListener()</code> 来代替。<br><img data-src="/images/react_17_delegation.png"></p>
+<p><img data-src="/images/SyntheticEvent3.png"></p>
 
     </div>
 
@@ -359,10 +363,10 @@
       <div class="popular-posts-title"><a href="\2021\08\12\React-ReactDOM顶层API\" rel="bookmark">React ReactDOM顶层API</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\08\11\React-React顶层API\" rel="bookmark">React React顶层API</a></div>
+      <div class="popular-posts-title"><a href="\2021\08\10\React-hooks知识点整理\" rel="bookmark">React hooks知识点整理</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\08\10\React-hooks知识点整理\" rel="bookmark">React hooks知识点整理</a></div>
+      <div class="popular-posts-title"><a href="\2021\08\11\React-ref的使用\" rel="bookmark">React ref的使用</a></div>
     </li>
   </ul>
 
