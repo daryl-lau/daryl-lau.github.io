@@ -161,7 +161,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">61</span>
+          <span class="site-state-item-count">62</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -174,7 +174,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-count">24</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -207,6 +207,9 @@
     </div>
     <ul class="links-of-recent-posts-list">
         <li class="links-of-recent-posts-item">
+          <a href="/2021/08/13/Redux%E7%9A%84%E4%BD%BF%E7%94%A8/" title="2021&#x2F;08&#x2F;13&#x2F;Redux的使用&#x2F;">Redux的使用</a>
+        </li>
+        <li class="links-of-recent-posts-item">
           <a href="/2021/08/12/React-%E5%90%88%E6%88%90%E4%BA%8B%E4%BB%B6/" title="2021&#x2F;08&#x2F;12&#x2F;React-合成事件&#x2F;">React 合成事件</a>
         </li>
         <li class="links-of-recent-posts-item">
@@ -217,9 +220,6 @@
         </li>
         <li class="links-of-recent-posts-item">
           <a href="/2021/08/11/React-React%E9%A1%B6%E5%B1%82API/" title="2021&#x2F;08&#x2F;11&#x2F;React-React顶层API&#x2F;">React React顶层API</a>
-        </li>
-        <li class="links-of-recent-posts-item">
-          <a href="/2021/08/11/React-React-memo/" title="2021&#x2F;08&#x2F;11&#x2F;React-React-memo&#x2F;">React React.memo</a>
         </li>
     </ul>
   </div>
@@ -244,6 +244,97 @@
 
 
       <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.baihuzi.com/2021/08/10/React-%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E5%87%BD%E6%95%B0%E4%BB%A5%E5%8F%8A%E4%BC%A0%E5%8F%82/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="老白">
+      <meta itemprop="description" content="走得很慢，但从未放弃。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="老白">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/08/10/React-%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E5%87%BD%E6%95%B0%E4%BB%A5%E5%8F%8A%E4%BC%A0%E5%8F%82/" class="post-title-link" itemprop="url">React 事件处理函数以及传参</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-08-10 18:34:15" itemprop="dateCreated datePublished" datetime="2021-08-10T18:34:15+08:00">2021-08-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/React/" itemprop="url" rel="index"><span itemprop="name">React</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>296</span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>在React class组件中，给事件绑定处理函数需要注意一下this的指向，还有获取事件对象以及函数的传参，我们将分几种情况看看到底该怎么做</p>
+<h1 id="普通函数形式"><a href="#普通函数形式" class="headerlink" title="普通函数形式"></a>普通函数形式</h1><p>如果使用function函数声明一个事件处理函数，我们需要特别注意this的指向，在constructor中修改this的指向或者直接在绑定的时候修改，并且事件对象会默认追加到入参<strong>尾部</strong>。</p>
+<p>如果给处理函数传参了，事件对象是追加到所有入参的尾部的</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/08/10/React-%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E5%87%BD%E6%95%B0%E4%BB%A5%E5%8F%8A%E4%BC%A0%E5%8F%82/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1127,99 +1218,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2021/08/03/Vue-%E7%88%B6%E5%AD%90%E7%BB%84%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E9%92%A9%E5%AD%90%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.baihuzi.com/2021/07/29/koa-axios-jwt-%E5%AE%9E%E7%8E%B0token%E8%87%AA%E5%8A%A8%E7%BB%AD%E6%9C%9F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="老白">
-      <meta itemprop="description" content="走得很慢，但从未放弃。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="老白">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/29/koa-axios-jwt-%E5%AE%9E%E7%8E%B0token%E8%87%AA%E5%8A%A8%E7%BB%AD%E6%9C%9F/" class="post-title-link" itemprop="url">koa + axios + jwt  实现token自动续期</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-07-29 19:23:45" itemprop="dateCreated datePublished" datetime="2021-07-29T19:23:45+08:00">2021-07-29</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">前端</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>1.3k</span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><a href="https://www.baihuzi.com/2021/07/28/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3token/">深入理解token</a>这篇文章详细讲解了token的作用及优势，这篇文章我们通过jwt和koa来简单实现一个自动续期token。</p>
-<p>首先来看看JWT</p>
-<h1 id="Json-web-token-JWT"><a href="#Json-web-token-JWT" class="headerlink" title="Json web token (JWT)"></a>Json web token (JWT)</h1><p><code>Json web token (JWT)</code>, 是为了在网络应用环境间传递声明而执行的一种基于<code>JSON</code>的开放标准<code>(RFC 7519)</code>，该<code>token</code>被设计为紧凑且安全的，特别适用于分布式站点的单点登录（SSO）场景。<code>JWT</code>的声明一般被用来在身份提供者和服务提供者间传递被认证的用户身份信息，以便于从资源服务器获取资源，也可以增加一些额外的其它业务逻辑所必须的声明信息，该token也可直接被用于认证，也可被加密。</p>
-<p>一个完整的<code>JWT</code>长这样</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJhaWh1emkiLCJhZG1pbiI6dHJ1ZSwiYWdlIjoxOCwiaWF0IjoxNjI3NTU4MjU3LCJleHAiOjE2Mjc1NTg4NTd9.FmiN7MoQm8uzGAFXXNve6z3r94JRVFGmCcKWVQyz2T9o-0ovhFRC1eQ6xgFX8AKFMSqMIBs8Yd_rDSXNFqBgQkxkBQEHqQlv4-BjhvxA3W1FpclUtqQfSQx9mWeWDN79RPOV7ayTZ-8e9hDJVqB3hoFZsWddHxens1IKbSEQylZrgEGNJVGbeN2sTNyHvXQoxUzft5E3k2odp5lnS-Fl0dwkrwsBEvQ81cNQio24d4VINBDCcF6nOBii6mEMA9VLBj4j1PDT2BEBgZlCbrvHbsuYCQUljvsHInkRrnySzc4DwiIxzrKEapr8raD--MHH0Iz78__hJrqCZTAxve-iaA</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/07/29/koa-axios-jwt-%E5%AE%9E%E7%8E%B0token%E8%87%AA%E5%8A%A8%E7%BB%AD%E6%9C%9F/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>

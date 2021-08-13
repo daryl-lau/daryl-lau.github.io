@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon-128x128.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css" integrity="sha256-no0c5ccDODBwp+9hSmV5VvPpKwHCpbVzXHexIkupM6U=" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js" integrity="sha256-a5YRB27CcBwBFcT5EF/f3E4vzIqyHrSR878nseNYw64=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;www.baihuzi.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Mist&quot;,&quot;version&quot;:&quot;8.4.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;left&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:true,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;manual&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:true,&quot;lazyload&quot;:true,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:true,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;},&quot;path&quot;:&quot;&#x2F;search.xml&quot;,&quot;localsearch&quot;:{&quot;enable&quot;:true,&quot;trigger&quot;:&quot;auto&quot;,&quot;top_n_per_article&quot;:1,&quot;unescape&quot;:false,&quot;preload&quot;:false}}</script>
+<meta name="description" content="简介Redux 是一个使用叫做“action”的事件来管理和更新应用状态的模式和工具库 它以集中式Store（centralized store）的方式对整个应用中使用的状态进行集中管理，其规则确保状态只能以可预测的方式更新。 为什么要使用 Redux？Redux 帮你管理“全局”状态 - 哪些应用程序的许多部分都需要的状态。 Redux 提供的模式和工具使您更容易理解应用程序中的状态何时、何地、">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redux的使用">
+<meta property="og:url" content="https://www.baihuzi.com/2021/08/13/Redux%E7%9A%84%E4%BD%BF%E7%94%A8/index.html">
+<meta property="og:site_name" content="老白">
+<meta property="og:description" content="简介Redux 是一个使用叫做“action”的事件来管理和更新应用状态的模式和工具库 它以集中式Store（centralized store）的方式对整个应用中使用的状态进行集中管理，其规则确保状态只能以可预测的方式更新。 为什么要使用 Redux？Redux 帮你管理“全局”状态 - 哪些应用程序的许多部分都需要的状态。 Redux 提供的模式和工具使您更容易理解应用程序中的状态何时、何地、">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.baihuzi.com/images/redux1.png">
+<meta property="og:image" content="https://www.baihuzi.com/images/redux3.gif">
+<meta property="og:image" content="https://www.baihuzi.com/images/redux4.gif">
+<meta property="og:image" content="https://www.baihuzi.com/images/redux5.gif">
+<meta property="og:image" content="https://www.baihuzi.com/images/redux6.png">
+<meta property="og:image" content="https://www.baihuzi.com/images/redux7.png">
+<meta property="og:image" content="https://www.baihuzi.com/images/redux8.png">
+<meta property="og:image" content="https://www.baihuzi.com/images/redux9.png">
+<meta property="og:image" content="https://www.baihuzi.com/images/redux10.png">
+<meta property="article:published_time" content="2021-08-13T08:30:25.000Z">
+<meta property="article:modified_time" content="2021-08-13T08:30:25.000Z">
+<meta property="article:author" content="老白">
+<meta property="article:tag" content="React">
+<meta property="article:tag" content="Redux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.baihuzi.com/images/redux1.png">
+
+
+<link rel="canonical" href="https://www.baihuzi.com/2021/08/13/Redux%E7%9A%84%E4%BD%BF%E7%94%A8/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;https:&#x2F;&#x2F;www.baihuzi.com&#x2F;2021&#x2F;08&#x2F;13&#x2F;Redux%E7%9A%84%E4%BD%BF%E7%94%A8&#x2F;&quot;,&quot;path&quot;:&quot;2021&#x2F;08&#x2F;13&#x2F;Redux的使用&#x2F;&quot;,&quot;title&quot;:&quot;Redux的使用&quot;}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
+<title>Redux的使用 | 老白</title><script src="/js/config.js"></script>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="container">
+    <div class="headband"></div>
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">&nbsp;&nbsp;&nbsp;&nbsp;老白&nbsp;&nbsp;&nbsp;&nbsp;</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时间线</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-text">简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Redux%E4%BD%BF%E7%94%A8"><span class="nav-text">Redux使用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#store-getState"><span class="nav-text">store.getState()</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#store-dispatch"><span class="nav-text">store.dispatch</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#store-subscribe"><span class="nav-text">store.subscribe</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Redux-combineReducers"><span class="nav-text">Redux.combineReducers</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Redux-applyMiddleware"><span class="nav-text">Redux.applyMiddleware</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Redux-bindActionCreators"><span class="nav-text">Redux.bindActionCreators</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="老白"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">老白</p>
+  <div class="site-description" itemprop="description">走得很慢，但从未放弃。</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yourname" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://es6.ruanyifeng.com/" title="https:&#x2F;&#x2F;es6.ruanyifeng.com&#x2F;" rel="noopener" target="_blank">阮一峰ES6教程</a>
+        </li>
+    </ul>
+  </div>
+
+  <div class="links-of-recent-posts animated">
+    <div class="links-of-recent-posts-title">
+      <i class="fa fa-history fa-fw"></i>
+      最近文章
+    </div>
+    <ul class="links-of-recent-posts-list">
+        <li class="links-of-recent-posts-item">
+          <a href="/2021/08/13/Redux%E7%9A%84%E4%BD%BF%E7%94%A8/" title="2021&#x2F;08&#x2F;13&#x2F;Redux的使用&#x2F;">Redux的使用</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2021/08/12/React-%E5%90%88%E6%88%90%E4%BA%8B%E4%BB%B6/" title="2021&#x2F;08&#x2F;12&#x2F;React-合成事件&#x2F;">React 合成事件</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2021/08/12/React-ReactDOM%E9%A1%B6%E5%B1%82API/" title="2021&#x2F;08&#x2F;12&#x2F;React-ReactDOM顶层API&#x2F;">React ReactDOM顶层API</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2021/08/11/React-%E7%BB%84%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" title="2021&#x2F;08&#x2F;11&#x2F;React-组件生命周期&#x2F;">React 组件生命周期</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2021/08/11/React-React%E9%A1%B6%E5%B1%82API/" title="2021&#x2F;08&#x2F;11&#x2F;React-React顶层API&#x2F;">React React顶层API</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.baihuzi.com/2021/08/13/Redux%E7%9A%84%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="老白">
+      <meta itemprop="description" content="走得很慢，但从未放弃。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="老白">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Redux的使用
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-08-13 16:30:25" itemprop="dateCreated datePublished" datetime="2021-08-13T16:30:25+08:00">2021-08-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/React/" itemprop="url" rel="index"><span itemprop="name">React</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.2k</span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p><code>Redux</code> 是一个使用叫做“<code>action</code>”的事件来管理和更新应用状态的模式和工具库 它以集中式<code>Store</code>（<code>centralized store</code>）的方式对整个应用中使用的状态进行集中管理，其规则确保状态只能以可预测的方式更新。</p>
+<p>为什么要使用 <code>Redux</code>？<br><code>Redux</code> 帮你管理“全局”状态 - 哪些应用程序的许多部分都需要的状态。</p>
+<p><code>Redux</code> 提供的模式和工具使您更容易理解应用程序中的状态何时、何地、为什么以及如何更新，以及当这些更改发生时您的应用程序逻辑将如何表现。 <code>Redux</code> 指导您编写可预测和可测试的代码，这有助于让您确信您的应用程序将按预期工作。</p>
+<p>不像<code>Vuex</code>，<code>Redux</code>是一个独立的工具库，不仅可以在<code>React</code>中使用，还可以在其他框架中使用，甚至可以直接用<code>script</code>标签的形式在页面中直接使用</p>
+<span id="more"></span>
+<h1 id="Redux使用"><a href="#Redux使用" class="headerlink" title="Redux使用"></a>Redux使用</h1><p>我们就通过一个简单的计数器页面来了解<code>Redux</code>该怎么使用，我们先不在<code>react</code>项目中使用，先看看最原始的<code>redux</code>要怎么用。后面再看看怎么在<code>react</code>中使用。</p>
+<p>基础的<code>html</code>页面如下，需要引用<code>redux</code>的<code>umd</code>包，（使用<code>jquery</code>来方便我们操作<code>dom</code>）</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;zh-CN&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;viewport&quot;</span> <span class="attr">content</span>=<span class="string">&quot;width=device-width, initial-scale=1.0&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">title</span>&gt;</span>Document<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;https://cdn.bootcss.com/redux/4.0.0/redux.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;root&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span>&gt;</span><span class="tag">&lt;<span class="name">span</span> <span class="attr">id</span>=<span class="string">&quot;count&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">button</span>&gt;</span>+<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">button</span>&gt;</span>-<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>引用了<code>redux</code>，会在<code>Window</code>上挂载一个<code>Redux</code>全局对象，我们首先需要定义一个<code>reducer</code>，<code>reducer</code> 是一个函数，接收当前的 <code>state</code> 和一个 <code>action</code> 对象，必要时决定如何更新状态，并返回新状态。函数签名是：<code>(state, action) =&gt; newState</code>。 你可以将 <code>reducer</code> 视为一个事件监听器，它根据接收到的 <code>action</code>（事件）类型处理事件。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="built_in">document</span>).ready(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> reducer = <span class="function">(<span class="params">state = &#123;count : <span class="number">0</span>&#125;, action</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">switch</span> (action.type) &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="string">&#x27;INCREMENT&#x27;</span>:</span><br><span class="line">        <span class="keyword">return</span> &#123;...state, <span class="attr">count</span>: state.count + <span class="number">1</span>&#125;</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">      <span class="keyword">case</span> <span class="string">&#x27;DECREMENT&#x27;</span>:</span><br><span class="line">        <span class="keyword">return</span> &#123;...state, <span class="attr">count</span>: state.count - <span class="number">1</span>&#125;  </span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">      <span class="attr">default</span>:</span><br><span class="line">        <span class="keyword">return</span> state </span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p><code>action</code> 是一个具有 <code>type</code> 字段的普通 <code>JavaScript</code> 对象。你可以将 <code>action</code> 视为描述应用程序中发生了什么的事件。<code>type</code> 字段是一个字符串，给这个 <code>action</code> 一个描述性的名字，比如<code>&quot;todos/todoAdded&quot;</code>。我们通常把那个类型的字符串写成“域/事件名称”，其中第一部分是这个 <code>action</code> 所属的特征或类别，第二部分是发生的具体事情。</p>
+<p><code>action</code> 对象可以有其他字段，其中包含有关发生的事情的附加信息。按照惯例，我们将该信息放在名为 <code>payload</code> 的字段中。</p>
+<p>此时有了reducer，我们就可以使用全局的Redux创建一个store，</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="built_in">document</span>).ready(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> reducer = <span class="function">(<span class="params">state = &#123;count : <span class="number">0</span>&#125;, action</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">switch</span> (action.type) &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="string">&#x27;INCREMENT&#x27;</span>:</span><br><span class="line">        <span class="keyword">return</span> &#123;...state, <span class="attr">count</span>: state.count + <span class="number">1</span>&#125;</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">      <span class="keyword">case</span> <span class="string">&#x27;DECREMENT&#x27;</span>:</span><br><span class="line">        <span class="keyword">return</span> &#123;...state, <span class="attr">count</span>: state.count - <span class="number">1</span>&#125;  </span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">      <span class="attr">default</span>:</span><br><span class="line">        <span class="keyword">return</span> state </span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> store = Redux.createStore(reducer)</span><br><span class="line">  <span class="built_in">console</span>.log(store)</span><br><span class="line"></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>我们可以看看store上有哪些API<br><img data-src="/images/redux1.png"></p>
+<p>发现上面有<code>dispatch</code>、<code>getState</code>、<code>replaceReducer</code>、<code>subscribe</code>这四个<code>API</code>，下面我们都会用到。</p>
+<h1 id="store-getState"><a href="#store-getState" class="headerlink" title="store.getState()"></a>store.getState()</h1><p>通过上图可以发现，我们的页面<code>count</code>字段是没值的，那我们要怎么获取到<code>store</code>中的<code>state</code>呢？此时就可以使用<code>store.getState()</code>来获取<code>store</code>中的状态了，我们获取到<code>state</code>然后渲染到页面中</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="built_in">document</span>).ready(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> reducer = <span class="function">(<span class="params">state = &#123;count : <span class="number">0</span>&#125;, action</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">switch</span> (action.type) &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="string">&#x27;INCREMENT&#x27;</span>:</span><br><span class="line">        <span class="keyword">return</span> &#123;...state, <span class="attr">count</span>: state.count + <span class="number">1</span>&#125;</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">      <span class="keyword">case</span> <span class="string">&#x27;DECREMENT&#x27;</span>:</span><br><span class="line">        <span class="keyword">return</span> &#123;...state, <span class="attr">count</span>: state.count - <span class="number">1</span>&#125;  </span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">      <span class="attr">default</span>:</span><br><span class="line">        <span class="keyword">return</span> state </span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> store = Redux.createStore(reducer)</span><br><span class="line">  <span class="built_in">console</span>.log(store.getState()) <span class="comment">// &#123;count: 0&#125;</span></span><br><span class="line">  $(<span class="string">&#x27;#count&#x27;</span>).text(store.getState().count)</span><br><span class="line"></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h1 id="store-dispatch"><a href="#store-dispatch" class="headerlink" title="store.dispatch"></a>store.dispatch</h1><p>此时页面就已经有了<code>count</code>的值了，那怎么修改<code>state</code>呢？此时我们就可以使用<code>dispatch</code>来派发一个<code>action</code>，然后在<code>reducer</code>中根据<code>action</code>的<code>type</code>值，来判断需要怎么处理<code>state</code></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="built_in">document</span>).ready(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">  $(<span class="string">&#x27;button&#x27;</span>).eq(<span class="number">0</span>).click(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    store.dispatch(&#123;<span class="attr">type</span>: <span class="string">&#x27;INCREMENT&#x27;</span>&#125;)</span><br><span class="line">    <span class="built_in">console</span>.log(store.getState())</span><br><span class="line">  &#125;)</span><br><span class="line"></span><br><span class="line">  $(<span class="string">&#x27;button&#x27;</span>).eq(<span class="number">1</span>).click(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    store.dispatch(&#123;<span class="attr">type</span>: <span class="string">&#x27;DECREMENT&#x27;</span>&#125;)</span><br><span class="line">    <span class="built_in">console</span>.log(store.getState())</span><br><span class="line">  &#125;)</span><br><span class="line"></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>我们点击按钮<code>+</code>，通过<code>store</code> <code>dispatch</code> 一个<code>action</code> <code>&#123;type: &#39;INCREMENT&#39;&#125;</code>，然后<code>reducer</code>中就会按照<code>action</code>的<code>type</code>类型，去更新<code>state</code>，点击按钮<code>-</code>也是一样</p>
+<p>我们看看效果<br><img data-src="/images/redux3.gif"></p>
+<h1 id="store-subscribe"><a href="#store-subscribe" class="headerlink" title="store.subscribe"></a>store.subscribe</h1><p>此时<code>state</code>是确实被更新了，但是页面为什么没有改变呢？这是因为<code>state</code>确实是改变了，但是<code>redux</code>并没有告诉我<code>state</code>改变了啊，所以我们需要知道<code>state</code>变化了，再执行一些动作。此时就可以使用<code>store</code>的<code>subscribe</code>来订阅一个监听器，一旦<code>state</code>改变了，<code>redux</code>就去执行那个监听器，做相应的更改。</p>
+<p><code>subscribe</code>接收一个函数作为参数，我们将我们需要做的操作传进去，一旦<code>redux</code>检测到<code>state</code>发生了变化，就会去调用这个函数</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="built_in">document</span>).ready(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">  store.subscribe(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    $(<span class="string">&#x27;#count&#x27;</span>).text(store.getState().count)</span><br><span class="line">  &#125;)</span><br><span class="line"></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p><img data-src="/images/redux4.gif"></p>
+<p><code>subscribe</code>还接收一个返回值，用来取消订阅，这个返回值是一个方法，我们直接调用这个方法就可以取消订阅了，后续<code>state</code>的修改不会去触发监听器函数，但是<code>redux</code>内部<code>state</code>的状态还是会持续更新</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;zh-CN&quot;</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- ... --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;root&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span>&gt;</span><span class="tag">&lt;<span class="name">span</span> <span class="attr">id</span>=<span class="string">&quot;count&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">button</span>&gt;</span>+<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">button</span>&gt;</span>-<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">button</span>&gt;</span>取消订阅<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript">    </span></span><br><span class="line"><span class="javascript">    $(<span class="built_in">document</span>).ready(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript">      <span class="comment">// ...</span></span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript">      <span class="keyword">const</span> cancelSub = store.subscribe(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">        $(<span class="string">&#x27;#count&#x27;</span>).text(store.getState().count)</span></span><br><span class="line"><span class="javascript">      &#125;)</span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript">      $(<span class="string">&#x27;button&#x27;</span>).eq(<span class="number">2</span>).click(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">        cancelSub()</span></span><br><span class="line"><span class="javascript">      &#125;)</span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript">    &#125;)</span></span><br><span class="line"><span class="javascript">  </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><img data-src="/images/redux5.gif"></p>
+<p>最主要的几个<code>API</code>我们已经用到了，剩下的几个<code>api</code>我们分别来说说</p>
+<h1 id="Redux-combineReducers"><a href="#Redux-combineReducers" class="headerlink" title="Redux.combineReducers"></a>Redux.combineReducers</h1><p>由于不建议创建多个<code>store</code>，因此如果有多个<code>reducer</code>，需要利用这个<code>API</code>来组合<code>reducer</code>，</p>
+<p><code>combineReducers</code> 辅助函数的作用是，把一个由多个不同 <code>reducer</code> 函数作为 <code>value</code> 的 <code>object</code>，合并成一个最终的 <code>reducer</code> 函数，然后就可以对这个 <code>reducer</code> 调用 <code>createStore</code> 方法。</p>
+<p>合并后的 <code>reducer</code> 可以调用各个子 <code>reducer</code>，并把它们返回的结果合并成一个 <code>state</code> 对象。 由 <code>combineReducers()</code> 返回的 <code>state</code> 对象，会将传入的每个 <code>reducer</code> 返回的 <code>state</code> 按其传递给 <code>combineReducers()</code> 时对应的 <code>key</code> 进行命名。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> countReducer = <span class="function">(<span class="params">state = &#123;count : <span class="number">0</span>&#125;, action</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">switch</span> (action.type) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&#x27;INCREMENT&#x27;</span>:</span><br><span class="line">      <span class="keyword">return</span> &#123;...state, <span class="attr">count</span>: state.count + <span class="number">1</span>&#125;</span><br><span class="line">      <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">case</span> <span class="string">&#x27;DECREMENT&#x27;</span>:</span><br><span class="line">      <span class="keyword">return</span> &#123;...state, <span class="attr">count</span>: state.count - <span class="number">1</span>&#125;  </span><br><span class="line">      <span class="keyword">break</span></span><br><span class="line">    <span class="attr">default</span>:</span><br><span class="line">      <span class="keyword">return</span> state </span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> priceReducer = <span class="function">(<span class="params">state = &#123;price : <span class="number">10</span>&#125;, action</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">switch</span> (action.type) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&#x27;INCREMENT&#x27;</span>:</span><br><span class="line">      <span class="keyword">return</span> &#123;...state, <span class="attr">price</span>: state.price + <span class="number">1</span>&#125;</span><br><span class="line">      <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">case</span> <span class="string">&#x27;DECREMENT&#x27;</span>:</span><br><span class="line">      <span class="keyword">return</span> &#123;...state, <span class="attr">price</span>: state.price - <span class="number">1</span>&#125;  </span><br><span class="line">      <span class="keyword">break</span></span><br><span class="line">    <span class="attr">default</span>:</span><br><span class="line">      <span class="keyword">return</span> state </span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> combinedReducers = Redux.combineReducers(&#123;<span class="attr">countReducer</span>: countReducer, <span class="attr">priceReducer</span>: priceReducer&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> store = Redux.createStore(combinedReducers)</span><br><span class="line"><span class="built_in">console</span>.log(store.getState())</span><br></pre></td></tr></table></figure>
+<p><img data-src="/images/redux6.png"><br>可以看到我们组合了<code>countReducer</code>和<code>priceReducer</code>，最终会按照传入<code>combineReducers</code>对象的<code>key</code>进行命名区分，因此我们之前的代码需要改为</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="string">&#x27;#count&#x27;</span>).text(store.getState().countReducer.count)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> cancelSub = store.subscribe(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  $(<span class="string">&#x27;#count&#x27;</span>).text(store.getState().countReducer.count)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p><img data-src="/images/redux7.png"></p>
+<p>我们发现一个问题，为什么我派发了一个<code>action</code>，两个<code>state</code>都会发生变化？其实是因为我们的<code>action</code>都是<code>INCREMENT</code>，由于两个<code>reducer</code>中的<code>type</code>设置的是一样的，这样的话就会导致这个问题，一般为了解决这个问题，我们都是把那个类型的字符串写成“域/事件名称”，例如<code>COUNT/INCREMENT</code>，用于区分不同的<code>reducer</code>。</p>
+<p>再修改一下代码</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ...</span></span><br><span class="line"><span class="keyword">const</span> countReducer = <span class="function">(<span class="params">state = &#123;count : <span class="number">0</span>&#125;, action</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">switch</span> (action.type) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&#x27;COUNT/INCREMENT&#x27;</span>:</span><br><span class="line">      <span class="keyword">return</span> &#123;...state, <span class="attr">count</span>: state.count + <span class="number">1</span>&#125;</span><br><span class="line">      <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">case</span> <span class="string">&#x27;COUNT/DECREMENT&#x27;</span>:</span><br><span class="line">      <span class="keyword">return</span> &#123;...state, <span class="attr">count</span>: state.count - <span class="number">1</span>&#125;  </span><br><span class="line">      <span class="keyword">break</span></span><br><span class="line">    <span class="attr">default</span>:</span><br><span class="line">      <span class="keyword">return</span> state </span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> priceReducer = <span class="function">(<span class="params">state = &#123;price : <span class="number">10</span>&#125;, action</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">switch</span> (action.type) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&#x27;PRICE/INCREMENT&#x27;</span>:</span><br><span class="line">      <span class="keyword">return</span> &#123;...state, <span class="attr">price</span>: state.price + <span class="number">1</span>&#125;</span><br><span class="line">      <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">case</span> <span class="string">&#x27;PRICE/DECREMENT&#x27;</span>:</span><br><span class="line">      <span class="keyword">return</span> &#123;...state, <span class="attr">price</span>: state.price - <span class="number">1</span>&#125;  </span><br><span class="line">      <span class="keyword">break</span></span><br><span class="line">    <span class="attr">default</span>:</span><br><span class="line">      <span class="keyword">return</span> state </span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line">$(<span class="string">&#x27;button&#x27;</span>).eq(<span class="number">0</span>).click(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  store.dispatch(&#123;<span class="attr">type</span>: <span class="string">&#x27;COUNT/INCREMENT&#x27;</span>&#125;)</span><br><span class="line">  <span class="built_in">console</span>.log(store.getState())</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">$(<span class="string">&#x27;button&#x27;</span>).eq(<span class="number">1</span>).click(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  store.dispatch(&#123;<span class="attr">type</span>: <span class="string">&#x27;COUNT/INCREMENT&#x27;</span>&#125;)</span><br><span class="line">  <span class="built_in">console</span>.log(store.getState())</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>现在就正常了<br><img data-src="/images/redux8.png"></p>
+<h1 id="Redux-applyMiddleware"><a href="#Redux-applyMiddleware" class="headerlink" title="Redux.applyMiddleware"></a>Redux.applyMiddleware</h1><p>我们可以在Redux中使用各种插件，以增长我们的功能，比如我在每次修改state的时候，不用自己手动打印，而是自动打印，此时我们可以使用redux-logger插件</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;https://cdn.bootcdn.net/ajax/libs/redux-logger/4.0.0/redux-logger.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript">  <span class="comment">// ...</span></span></span><br><span class="line"><span class="javascript">  <span class="keyword">const</span> logger = reduxLogger.createLogger()</span></span><br><span class="line"><span class="javascript">  <span class="keyword">const</span> store = Redux.createStore(combinedReducers, Redux.applyMiddleware(logger))</span></span><br><span class="line"><span class="javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><img data-src="/images/redux9.png"></p>
+<h1 id="Redux-bindActionCreators"><a href="#Redux-bindActionCreators" class="headerlink" title="Redux.bindActionCreators"></a>Redux.bindActionCreators</h1><p>一般情况下你可以直接在 <code>Store</code> 实例上调用 <code>dispatch</code>。如果你在 <code>React</code> 中使用 <code>Redux</code>，<code>react-redux</code> 会提供 <code>dispatch</code> 函数让你直接调用它 。</p>
+<p>把一个 value 为不同 action creator 的对象，转成拥有同名 key 的对象。同时使用 dispatch 对每个 action creator 进行包装，以便可以直接调用它们。</p>
+<p>惟一会使用到 <code>bindActionCreators</code> 的场景是当你需要把 <code>action creator</code> 往下传到一个组件上，却不想让这个组件觉察到 <code>Redux</code> 的存在，而且不希望把 <code>dispatch</code> 或 <code>Redux store</code> 传给它。</p>
+<p>为方便起见，你也可以传入一个函数作为第一个参数，它会返回一个函数。</p>
+<p>上面的解释理解起来可能有些难以理解，下面我们用例子说明：</p>
+<p>什么是<code>action creator</code>，就是返回<code>action</code>的函数，例如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> incrementActionCreator = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> &#123; <span class="attr">type</span>: <span class="string">&#x27;COUNT/INCREMENT&#x27;</span> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>定义了如上<code>action creator</code>，然而我们派发<code>action</code>的时候仍然需要使用<code>store.dispatch</code>进行派发，例如<code>store.dispatch(incrementActionCreator())</code>，这样写未免有些累赘了，此时我们就可以使用<code>bindActionCreators</code>方法，将<code>action creator</code>和<code>store.diapatch</code>传进去，返回一个函数，可以直接派发 <code>action</code>，例如:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> incrementActionCreator = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> &#123; <span class="attr">type</span>: <span class="string">&#x27;COUNT/INCREMENT&#x27;</span> &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> increment = Redux.bindActionCreators(incrementActionCreator, store.diapatch)</span><br><span class="line"></span><br><span class="line">increment() <span class="comment">// 这里直接会派发action</span></span><br></pre></td></tr></table></figure>
+
+<p>同时，<code>Redux.bindActionCreators</code>的第一个参数还可以接受一个由<code>action creator</code>组成的对象，对象的<code>key</code>随便指定，此时会返回和<code>key</code>相同的一组对象，对象的值就是可以直接派发<code>action</code>的函数，例如:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> incrementActionCreator = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> &#123; <span class="attr">type</span>: <span class="string">&#x27;COUNT/INCREMENT&#x27;</span> &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> decrementActionCreator = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> &#123; <span class="attr">type</span>: <span class="string">&#x27;COUNT/DECREMENT&#x27;</span> &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> actions = Redux.bindActionCreators(&#123; <span class="attr">increment</span>: incrementActionCreator, <span class="attr">decrement</span>: decrementActionCreator &#125;, store.dispatch)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 此时使用这种方式直接派发</span></span><br><span class="line">actions.increment()</span><br><span class="line">actions.decrement()</span><br></pre></td></tr></table></figure>
+
+<p>我们将之前的例子改写成这种形式，注意下面使用了两种形式，可以更好地看出区别</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ...</span></span><br><span class="line"><span class="keyword">const</span> incrementActionCreator = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> &#123; <span class="attr">type</span>: <span class="string">&#x27;COUNT/INCREMENT&#x27;</span> &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> decrementActionCreator = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> &#123; <span class="attr">type</span>: <span class="string">&#x27;COUNT/DECREMENT&#x27;</span> &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> increment = Redux.bindActionCreators(incrementActionCreator, store.dispatch)</span><br><span class="line"><span class="keyword">let</span> actions = Redux.bindActionCreators(&#123; incrementActionCreator, decrementActionCreator &#125;, store.dispatch)</span><br><span class="line"></span><br><span class="line">$(<span class="string">&#x27;button&#x27;</span>).eq(<span class="number">0</span>).click(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  increment()</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">$(<span class="string">&#x27;button&#x27;</span>).eq(<span class="number">1</span>).click(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  actions.decrementActionCreator()</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p><img data-src="/images/redux10.png"></p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\08\11\React-React-memo\" rel="bookmark">React React.memo</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\08\12\React-ReactDOM顶层API\" rel="bookmark">React ReactDOM顶层API</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\08\11\React-Protals\" rel="bookmark">React Protals</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\08\11\React-React顶层API\" rel="bookmark">React React顶层API</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\08\11\React-ref的使用\" rel="bookmark">React ref的使用</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>老白
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://www.baihuzi.com/2021/08/13/Redux%E7%9A%84%E4%BD%BF%E7%94%A8/" title="Redux的使用">https://www.baihuzi.com/2021/08/13/Redux的使用/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/React/" rel="tag"><i class="fa fa-tag"></i> React</a>
+              <a href="/tags/Redux/" rel="tag"><i class="fa fa-tag"></i> Redux</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/08/12/React-%E5%90%88%E6%88%90%E4%BA%8B%E4%BB%B6/" rel="prev" title="React 合成事件">
+                  <i class="fa fa-chevron-left"></i> React 合成事件
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+<script src="/js/comments.js"></script>
+</div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">鄂ICP备20006679号-1 </a>
+      <img src="/images/beian.png"><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=42010602004216" rel="noopener" target="_blank">鄂公网安备 42010602004216号 </a>
+  </div>
+
+<div class="copyright">
+  &copy; 2016 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">老白</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+      </div>
+    </footer>
+
+    
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js" integrity="sha256-EdPgYcPk/IIrw7FYeuJQexva49pVRZNmt3LculEr7zM=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+    
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script class="next-config" data-name="nprogress" type="application/json">{&quot;enable&quot;:true,&quot;spinner&quot;:false}</script>
+  <script src="/js/third-party/nprogress.js"></script>
+
+    
+
+
+
+
+
+  </div>
+</body>
+</html>
