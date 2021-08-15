@@ -1425,7 +1425,7 @@
 </ul>
 <h2 id="effect创建器"><a href="#effect创建器" class="headerlink" title="effect创建器"></a>effect创建器</h2><ul>
 <li><p><code>take(pattern)</code></p>
-<p>在<code>watcher saga</code>中使用，用来拦截<code>action</code>，当<code>action</code>匹配到这个<code>take</code>的时候，在发起与 <code>pattern</code> 匹配的 <code>action</code> <code>之前，Generator</code> 将暂停。实际上就是上面辅助方法的底层实现，例如</p>
+<p>在<code>watcher saga</code>中使用，用来拦截<code>action</code>，当<code>action</code>匹配到这个<code>take</code>的时候，在发起与 <code>pattern</code> 匹配的 <code>action</code> <code>之前，Generator</code> 将暂停。实际上就是上面辅助方法的底层实现，例如：</p>
 <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">watchDecrementSaga</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">while</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">    <span class="keyword">yield</span> take(<span class="string">&#x27;decrement&#x27;</span>)</span><br><span class="line">    <span class="keyword">const</span> state = <span class="keyword">yield</span> select()</span><br><span class="line">    <span class="built_in">console</span>.log(state, <span class="string">&#x27;state&#x27;</span>)</span><br><span class="line">    <span class="keyword">yield</span> put(&#123;<span class="attr">type</span>: <span class="string">&#x27;DECREMENT&#x27;</span>&#125;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>此时用户派发一个<code>&#123;type: &#39;decrement&#39;, payload&#125;</code>的<code>action</code>，就会被上面的<code>take</code>拦截到，执行相应的代码，然后再去派发一个<code>action</code>，通知<code>reducer</code>修改<code>state</code>，如果没有<code>put</code>，则不会通知<code>reducer</code>修改<code>state</code>，注意需要使用<code>while true</code>一直监听，否则只有第一次派发<code>decrement</code>的action会被拦截，后面的都不会被拦截到。</p>
 </li>
@@ -1437,7 +1437,7 @@
 <li>如果它是一个字符串，那么将匹配 <code>action.type === pattern</code> 的 <code>action</code>。（例如，<code>take(INCREMENT_ASYNC)</code>）</li>
 <li>如果它是一个数组，那么数组中的每一项都适用于上述规则 —— 因此它是支持字符串与函数混用的。不过，最常见的用例还属纯字符串数组，其结果是用 <code>action.type</code> 与数组中的每一项相对比。（例如，<code>take([INCREMENT, DECREMENT]</code>) 将匹配 <code>INCREMENT</code> 或 <code>DECREMENT</code> 类型的 <code>action</code>）</li>
 </ol>
-<p>  有了这个规则，我们就可以进行更细粒度的控制拦截到的<code>action</code>，再去做相应的修改</p>
+<p>  有了这个规则，我们就可以进行更细粒度的控制拦截到的<code>action</code>，再去做相应的修改。</p>
 <ul>
 <li><p><code>call(fn, ...args)</code></p>
 <p>创建一个 <code>Effect</code> 描述信息，用来命令 <code>middleware</code> 以参数 <code>args</code> 调用函数 <code>fn</code> 。</p>
