@@ -22,13 +22,14 @@
   <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js" integrity="sha256-a5YRB27CcBwBFcT5EF/f3E4vzIqyHrSR878nseNYw64=" crossorigin="anonymous"></script>
 
 <script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;www.baihuzi.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Mist&quot;,&quot;version&quot;:&quot;8.4.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;left&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:true,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;manual&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:true,&quot;lazyload&quot;:true,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:true,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;},&quot;path&quot;:&quot;&#x2F;search.xml&quot;,&quot;localsearch&quot;:{&quot;enable&quot;:true,&quot;trigger&quot;:&quot;auto&quot;,&quot;top_n_per_article&quot;:1,&quot;unescape&quot;:false,&quot;preload&quot;:false}}</script>
-<meta name="description" content="在Redux中的action仅支持原始对象（plain object），处理有副作用的action，需要使用中间件。中间件可以在发出action，到reducer函数接受action之间，执行具有副作用的操作，例如网络请求，读取浏览器缓存等。 下面的示例基于源码()[] redux-thunkredux-thunk是redux的作者提供的一个处理副作用的方案，我们都知道，dispatch必须是接收">
+<meta name="description" content="在Redux中的action仅支持原始对象（plain object），处理有副作用的action，需要使用中间件。中间件可以在发出action，到reducer函数接受action之间，执行具有副作用的操作，例如网络请求，读取浏览器缓存等。 下面的示例基于【react-redux的使用】学习源码 redux-thunkredux-thunk是redux的作者提供的一个处理副作用的方案，我们都知道">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Redux 异步操作redux-thunk和redux-saga">
 <meta property="og:url" content="https://www.baihuzi.com/2021/08/14/Redux-%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9Credux-thunk%E5%92%8Credux-saga/index.html">
 <meta property="og:site_name" content="老白">
-<meta property="og:description" content="在Redux中的action仅支持原始对象（plain object），处理有副作用的action，需要使用中间件。中间件可以在发出action，到reducer函数接受action之间，执行具有副作用的操作，例如网络请求，读取浏览器缓存等。 下面的示例基于源码()[] redux-thunkredux-thunk是redux的作者提供的一个处理副作用的方案，我们都知道，dispatch必须是接收">
+<meta property="og:description" content="在Redux中的action仅支持原始对象（plain object），处理有副作用的action，需要使用中间件。中间件可以在发出action，到reducer函数接受action之间，执行具有副作用的操作，例如网络请求，读取浏览器缓存等。 下面的示例基于【react-redux的使用】学习源码 redux-thunkredux-thunk是redux的作者提供的一个处理副作用的方案，我们都知道">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.baihuzi.com/images/redux16">
 <meta property="article:published_time" content="2021-08-14T06:31:58.000Z">
 <meta property="article:modified_time" content="2021-08-14T06:31:58.000Z">
 <meta property="article:author" content="老白">
@@ -36,6 +37,7 @@
 <meta property="article:tag" content="react-thunk">
 <meta property="article:tag" content="react-sage">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.baihuzi.com/images/redux16">
 
 
 <link rel="canonical" href="https://www.baihuzi.com/2021/08/14/Redux-%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9Credux-thunk%E5%92%8Credux-saga/">
@@ -151,7 +153,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#redux-thunk"><span class="nav-text">redux-thunk</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-text">安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8redux-thunk"><span class="nav-text">应用redux-thunk</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8"><span class="nav-text">使用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#redux-saga"><span class="nav-text">redux-saga</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#redux-thunk"><span class="nav-text">redux-thunk</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-text">安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8redux-thunk%E4%B8%AD%E9%97%B4%E4%BB%B6"><span class="nav-text">应用redux-thunk中间件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8"><span class="nav-text">使用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#redux-saga"><span class="nav-text">redux-saga</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-1"><span class="nav-text">安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-1"><span class="nav-text">使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E4%B8%AD%E9%97%B4%E4%BB%B6"><span class="nav-text">应用中间件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#watcher-saga"><span class="nav-text">watcher saga</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#worker-saga"><span class="nav-text">worker saga</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BE%85%E5%8A%A9%E6%96%B9%E6%B3%95%EF%BC%88%E7%9B%91%E5%90%AC%E7%B1%BB%E5%9E%8B%EF%BC%89%EF%BC%9A"><span class="nav-text">辅助方法（监听类型）：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#effect%E5%88%9B%E5%BB%BA%E5%99%A8"><span class="nav-text">effect创建器</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -302,7 +304,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>335</span>
+      <span>3.5k</span>
     </span>
 
   
@@ -315,17 +317,101 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>在Redux中的action仅支持原始对象（plain object），处理有副作用的action，需要使用中间件。中间件可以在发出action，到reducer函数接受action之间，执行具有副作用的操作，例如网络请求，读取浏览器缓存等。</p>
-<p>下面的示例基于源码()[]</p>
-<h1 id="redux-thunk"><a href="#redux-thunk" class="headerlink" title="redux-thunk"></a>redux-thunk</h1><p>redux-thunk是redux的作者提供的一个处理副作用的方案，我们都知道，dispatch必须是接收一个原始对象的，在里面无法实现副作用逻辑，但是我们可以使用action creator函数，在内部处理副作用，然后返回一个action原始对象。</p>
+        <p>在<code>Redux</code>中的<code>action</code>仅支持原始对象（<code>plain object</code>），处理有副作用的<code>action</code>，需要使用中间件。中间件可以在发出<code>action</code>，到<code>reducer</code>函数接受<code>action</code>之间，执行具有副作用的操作，例如网络请求，读取浏览器缓存等。</p>
+<p>下面的示例基于<a href="https://www.baihuzi.com/2021/08/13/React-react-redux%E7%9A%84%E4%BD%BF%E7%94%A8/#%E7%94%A8%E4%BE%8B%E6%BA%90%E7%A0%81">【react-redux的使用】学习源码</a></p>
+<h1 id="redux-thunk"><a href="#redux-thunk" class="headerlink" title="redux-thunk"></a>redux-thunk</h1><p><code>redux-thunk</code>是<code>redux</code>的作者提供的一个处理副作用的方案，我们都知道，<code>dispatch</code>必须接收一个原始对象，在里面无法实现副作用逻辑，但是我们可以使用<code>action creator</code>函数，在内部处理副作用，然后返回一个<code>action</code>原始对象。</p>
+<span id="more"></span>
+
 <h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn add redux-thunk</span><br></pre></td></tr></table></figure>
 
-<h2 id="应用redux-thunk"><a href="#应用redux-thunk" class="headerlink" title="应用redux-thunk"></a>应用redux-thunk</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> thunk <span class="keyword">from</span> <span class="string">&#x27;redux-thunk&#x27;</span></span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line"><span class="keyword">let</span> store = createStore(reducers, applyMiddleware(thunk))</span><br></pre></td></tr></table></figure>
+<h2 id="应用redux-thunk中间件"><a href="#应用redux-thunk中间件" class="headerlink" title="应用redux-thunk中间件"></a>应用redux-thunk中间件</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> thunk <span class="keyword">from</span> <span class="string">&#x27;redux-thunk&#x27;</span></span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line"><span class="keyword">let</span> store = createStore(reducers, applyMiddleware(thunk))</span><br></pre></td></tr></table></figure>
 
-<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>此时我们不能直接派发action，而是先要创建一个action creator函数</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> </span></span><br></pre></td></tr></table></figure>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>此时我们不能直接派发<code>action</code>，而是先要创建一个函数，例如下面的<code>changeName</code>，函数签名<code>dispatch</code>和<code>getState</code>，都是<code>store</code>上的两个方法，然后可以在里面进行异步请求操作</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> ConnectedUser = connect(mapStateToProps, &#123;</span><br><span class="line">    <span class="function"><span class="title">ageIncrement</span>(<span class="params">payload</span>)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> &#123;<span class="attr">type</span>: <span class="string">&#x27;increment&#x27;</span>, payload&#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="function"><span class="title">ageDecrement</span>(<span class="params">payload</span>)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> &#123;<span class="attr">type</span>: <span class="string">&#x27;decrement&#x27;</span>, payload&#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="function"><span class="title">changeName</span>(<span class="params">payload</span>)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="function">(<span class="params">dispatch, getState</span>) =&gt;</span> &#123;</span><br><span class="line">           fetch(<span class="string">&#x27;https://jsonplaceholder.typicode.com/posts&#x27;</span>)</span><br><span class="line">            .then(<span class="function"><span class="params">res</span> =&gt;</span> res.json())</span><br><span class="line">            .then(<span class="function"><span class="params">data</span> =&gt;</span> dispatch(&#123;<span class="attr">type</span>: <span class="string">&#x27;changeName&#x27;</span>, payload&#125; ))</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)(User)</span><br></pre></td></tr></table></figure>
 
-<h1 id="redux-saga"><a href="#redux-saga" class="headerlink" title="redux-saga"></a>redux-saga</h1>
+
+<h1 id="redux-saga"><a href="#redux-saga" class="headerlink" title="redux-saga"></a>redux-saga</h1><p><code>redux-saga</code>是<code>redux</code>处理副作用的另一种方式，相较于<code>redux-thunk</code>，能更好的的组织代码，功能也更加丰富</p>
+<h2 id="安装-1"><a href="#安装-1" class="headerlink" title="安装"></a>安装</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn add redux-saga</span><br></pre></td></tr></table></figure>
+
+<h2 id="使用-1"><a href="#使用-1" class="headerlink" title="使用"></a>使用</h2><h2 id="应用中间件"><a href="#应用中间件" class="headerlink" title="应用中间件"></a>应用中间件</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> createSagaMidware <span class="keyword">from</span> <span class="string">&#x27;redux-saga&#x27;</span></span><br><span class="line"><span class="keyword">const</span> saga = createSagaMidware()</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> store = createStore(reducers, applyMiddleware(saga))</span><br></pre></td></tr></table></figure>
+
+<p><code>redux-saga</code>采用的方案更接近于<code>redux</code>的全局思想，使用方式和<code>thunk</code>有很大不同，<br><code>saga</code>需要一个全局监听器（<code>watcher saga</code>），用于监听组件发出的<code>action</code>，将监听到的<code>action</code>转发给对应的接收器（<code>worker saga</code>），再由接收器执行具体任务，副作用执行完后，再发出另一个<code>action</code>交由<code>reducer</code>修改<code>state</code>，所以这里必须注意：**<code>watcher saga</code>监听的<code>action</code>和对应<code>worker saga</code>中发出的<code>action</code>不能同名**，否则造成死循环</p>
+<h2 id="watcher-saga"><a href="#watcher-saga" class="headerlink" title="watcher saga"></a>watcher saga</h2><p>我们先定义一个<code>watcher saga</code></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; takeEvery &#125; <span class="keyword">from</span> <span class="string">&#x27;redux-saga/effects&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// watcher saga</span></span><br><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">watchIncrementSaga</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">yield</span> takeEvery(<span class="string">&#x27;increment&#x27;</span>, workIncrementSaga)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>watcher saga</code> 很简单，就是监听用户派发的<code>action</code>（只用于监听，具体操作交由<code>worker saga</code>），这里使用<code>takeEvery</code>辅助方法，表示每次派发都会被监听到，第一个参数就是用户派发<code>action</code>的类型，第二个参数就是指定交由哪个<code>worker saga</code>进行处理</p>
+<h2 id="worker-saga"><a href="#worker-saga" class="headerlink" title="worker saga"></a>worker saga</h2><p>因此我们需要再定义一个名为<code>workIncrementSaga</code>的<code>worker saga</code>，我们在里面执行副作用操作，然后使用<code>yield put(...)</code>派发<code>action</code>，让<code>reducer</code>去更新<code>state</code></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; call, put, takeEvery &#125; <span class="keyword">from</span> <span class="string">&#x27;redux-saga/effects&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// watcher saga</span></span><br><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">watchIncrementSaga</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">yield</span> takeEvery(<span class="string">&#x27;increment&#x27;</span>, workIncrementSaga)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// worker saga</span></span><br><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">workIncrementSaga</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">f</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> fetch(<span class="string">&#x27;https://jsonplaceholder.typicode.com/posts&#x27;</span>).then(<span class="function"><span class="params">res</span> =&gt;</span> res.json()).then(<span class="function"><span class="params">data</span> =&gt;</span> data)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">const</span> res = <span class="keyword">yield</span> call(f)</span><br><span class="line">  <span class="built_in">console</span>.log(res)</span><br><span class="line">  <span class="keyword">yield</span> put(&#123;<span class="attr">type</span>: <span class="string">&#x27;INCREMENT&#x27;</span>&#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>基本使用就是这样。</p>
+<p>上面的代码可能有些难以理解，为什么要用<code>generator</code>函数，<code>call</code>，<code>put</code>又是什么方法，下面我们来看看<code>redux-saga</code>里面一些非常重要的概念和API</p>
+<p>在 <code>redux-saga</code> 的世界里，<code>Sagas</code> 都用 <code>Generator</code> 函数实现。我们从 <code>Generator</code> 里 <code>yield</code> 纯 <code>JavaScript</code> 对象以表达 <code>Saga</code> 逻辑。 我们称呼那些对象为 <code>Effect</code>。<code>Effect</code> 是一个简单的对象，这个对象包含了一些给 <code>middleware</code> 解释执行的信息。 你可以把 <code>Effect</code> 看作是发送给 <code>middleware</code> 的指令以执行某些操作（调用某些异步函数，发起一个 <code>action</code> 到 <code>store</code>，等等）。你可以使用 <code>redux-saga/effects</code> 包里提供的函数来创建 <code>Effect</code>。</p>
+<h2 id="辅助方法（监听类型）："><a href="#辅助方法（监听类型）：" class="headerlink" title="辅助方法（监听类型）："></a>辅助方法（监听类型）：</h2><ul>
+<li><code>takeEvery</code>：     监听类型，同一时间允许多个处理函数同时进行，并发处理</li>
+<li><code>takeLatest</code>：    监听类型，同一时间只能有一个处理函数在执行，后面开启的任务会执行，前面的会取消执行</li>
+<li><code>takeLeading</code>：   如果当前有一个处理函数正在执行，那么后面开启的任务都不会被执行，直到该任务执行完毕</li>
+</ul>
+<h2 id="effect创建器"><a href="#effect创建器" class="headerlink" title="effect创建器"></a>effect创建器</h2><ul>
+<li><p><code>take(pattern)</code></p>
+<p>在<code>watcher saga</code>中使用，用来拦截<code>action</code>，当<code>action</code>匹配到这个<code>take</code>的时候，在发起与 <code>pattern</code> 匹配的 <code>action</code> <code>之前，Generator</code> 将暂停。实际上就是上面辅助方法的底层实现，例如</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">watchDecrementSaga</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">while</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">    <span class="keyword">yield</span> take(<span class="string">&#x27;decrement&#x27;</span>)</span><br><span class="line">    <span class="keyword">const</span> state = <span class="keyword">yield</span> select()</span><br><span class="line">    <span class="built_in">console</span>.log(state, <span class="string">&#x27;state&#x27;</span>)</span><br><span class="line">    <span class="keyword">yield</span> put(&#123;<span class="attr">type</span>: <span class="string">&#x27;DECREMENT&#x27;</span>&#125;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此时用户派发一个<code>&#123;type: &#39;decrement&#39;, payload&#125;</code>的<code>action</code>，就会被上面的<code>take</code>拦截到，执行相应的代码，然后再去派发一个<code>action</code>，通知<code>reducer</code>修改<code>state</code>，如果没有<code>put</code>，则不会通知<code>reducer</code>修改<code>state</code>，注意需要使用<code>while true</code>一直监听，否则只有第一次派发<code>decrement</code>的action会被拦截，后面的都不会被拦截到。</p>
+</li>
+</ul>
+<p> <code> pattern</code>就是匹配规则，基本有以下几种形式</p>
+<ol>
+<li>如果以空参数或 <code>*</code> 调用 <code>take</code>，那么将匹配所有发起的 <code>action</code>。（例如，<code>take()</code> 将匹配所有 <code>action</code>）</li>
+<li>如果它是一个函数，那么将匹配 <code>pattern(action)</code> 为 <code>true</code> 的 <code>action</code>。（例如，<code>take(action =&gt; action.entities)</code> 将匹配哪些 <code>entities</code> 字段为真的 <code>action</code>）</li>
+<li>如果它是一个字符串，那么将匹配 <code>action.type === pattern</code> 的 <code>action</code>。（例如，<code>take(INCREMENT_ASYNC)</code>）</li>
+<li>如果它是一个数组，那么数组中的每一项都适用于上述规则 —— 因此它是支持字符串与函数混用的。不过，最常见的用例还属纯字符串数组，其结果是用 <code>action.type</code> 与数组中的每一项相对比。（例如，<code>take([INCREMENT, DECREMENT]</code>) 将匹配 <code>INCREMENT</code> 或 <code>DECREMENT</code> 类型的 <code>action</code>）</li>
+</ol>
+<p>  有了这个规则，我们就可以进行更细粒度的控制拦截到的<code>action</code>，再去做相应的修改</p>
+<ul>
+<li><p><code>call(fn, ...args)</code></p>
+<p>创建一个 <code>Effect</code> 描述信息，用来命令 <code>middleware</code> 以参数 <code>args</code> 调用函数 <code>fn</code> 。</p>
+<ol>
+<li><code>fn</code>: <code>Function</code> - 一个 <code>Generator</code> 函数, 也可以是一个返回 <code>Promise</code> 或任意其它值的普通函数。</li>
+<li><code>args</code>: <code>Array&lt;any&gt;</code> - 传递给 fn 的参数数组。</li>
+</ol>
+</li>
+<li><p><code>put(action)</code></p>
+<p>创建一个 <code>Effect</code> 描述信息，用来命令 <code>middleware</code> 向 <code>Store</code> 发起一个 <code>action</code>。 这个 <code>effect</code> 是非阻塞型的，并且所有向下游抛出的错误（例如在 <code>reducer</code> 中），都不会冒泡回到 <code>saga</code> 当中。</p>
+</li>
+<li><p><code>fork(fn, ...args)</code></p>
+<p><code>fork</code>和<code>call</code>用法一样，唯一的区别就是<code>fork</code>是非阻塞的，而<code>call</code>是阻塞的</p>
+<p>创建一个 <code>Effect</code> 描述信息，用来命令 <code>middleware</code> 以 非阻塞调用 的形式执行 <code>fn</code>，返回一个 <code>Task</code> 对象。<code>Task</code>对象上有一些实用的方法及属性，比如取消某个网络请求什么的。</p>
+<ol>
+<li><code>fn</code>: <code>Function</code> - 一个 Generator 函数，或返回 Promise 的普通函数</li>
+<li><code>args</code>: <code>Array&lt;any&gt;</code> - 传递给 fn 的参数数组。</li>
+</ol>
+</li>
+<li><p><code>select(selector, ...args)</code></p>
+<p>创建一个 <code>Effect</code>，用来命令 <code>middleware</code> 在当前 <code>Store</code> 的 <code>state</code> 上调用指定的选择器（即返回 <code>selector(getState(), ...args)</code> 的结果）。</p>
+<p>获取当前<code>state</code>中的部分数据，第一个参数是一个函数，函数的参数是<code>state</code>，即当前状态，后面的参数依次传递给第一个函数，作为该函数的参数</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">selector</span> (<span class="params">state, index</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> state[index]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> state2 = <span class="keyword">yield</span> select(selector, <span class="number">0</span>)</span><br><span class="line"><span class="built_in">console</span>.log(state2, <span class="string">&#x27;select2&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p><code>select</code> 也可以不传任何参数，返回值就直接是当前的所有状态</p>
+</li>
+<li><p><code>cancel(task)</code></p>
+<p>创建一个 <code>Effect</code> 描述信息，用来命令 <code>middleware</code> 取消之前的一个分叉任务。</p>
+<ol>
+<li><code>task</code>: <code>Task</code> - 由之前 <code>fork</code> 指令返回的 <code>Task</code> 对象</li>
+</ol>
+<p><code>cancel</code> 是一个非阻塞的 <code>Effect</code>。也就是说，执行 <code>cancel</code> 的 <code>Saga</code> 会在发起取消动作后立即恢复执行。</p>
+<p>对于返回 Promise 结果的函数，你可以通过给 promise 附加一个 [CANCEL] 来插入自己的取消逻辑。</p>
+<p>举个使用cancel取消请求的例子，</p>
+<ol>
+<li>首先需要从<code>redux-saga</code>库里引入<code>CANCEL</code>（注意不是<code>redux-saga/effects</code>中的）</li>
+<li>然后在异步操作上面自定义一个取消异步操作的函数，需要根据不同的异步操作形式自定义不同的取消函数，下面的例子我们是用<code>fetch</code>进行网络请求的，因此要使用<code>fetch</code>对应的取消请求的方法，如果你用的<code>axios</code>，则需要使用<code>axios</code>取消请求的方法</li>
+<li>把这个取消函数绑定到异步请求上，如下<code>promise[CANCEL] = () =&gt; &#123; controller.abort() &#125;</code></li>
+<li>使用<code>fork</code>去执行异步操作（不会阻塞下面代码执行），返回这个异步操作的<code>task</code></li>
+<li>如果想要取消这个异步操作，则直接使用<code>redux-saga/effects</code>中的<code>cancel</code>方法取消这个<code>task</code><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; call, cancel, put, select, take, takeEvery, fork &#125; <span class="keyword">from</span> <span class="string">&#x27;redux-saga/effects&#x27;</span></span><br><span class="line"><span class="keyword">import</span> &#123;CANCEL&#125; <span class="keyword">from</span> <span class="string">&#x27;redux-saga&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">watchChangeName</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">yield</span> takeEvery(<span class="string">&#x27;changeName&#x27;</span>, workerChangeName)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">workerChangeName</span>(<span class="params">&#123; payload &#125;</span>) </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">f</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> controller = <span class="keyword">new</span> AbortController();</span><br><span class="line">    <span class="keyword">const</span> &#123; signal &#125; = controller;</span><br><span class="line">    <span class="keyword">const</span> promise = fetch(<span class="string">&#x27;https://jsonplaceholder.typicode.com/posts&#x27;</span>, &#123; signal &#125;).then(<span class="function"><span class="params">res</span> =&gt;</span> res.json()).then(<span class="function"><span class="params">data</span> =&gt;</span> <span class="built_in">console</span>.log(data))</span><br><span class="line">    promise[CANCEL] = <span class="function">() =&gt;</span> &#123; controller.abort() &#125;</span><br><span class="line">    <span class="built_in">console</span>.log(promise)</span><br><span class="line">    <span class="keyword">return</span> promise</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">const</span> fetchTask = <span class="keyword">yield</span> fork(f)</span><br><span class="line">  <span class="keyword">yield</span> cancel(fetchTask) <span class="comment">// 这里直接调用cancel取消请求</span></span><br><span class="line">  <span class="keyword">yield</span> put(&#123;<span class="attr">type</span>: <span class="string">&#x27;CHANGE_NAME&#x27;</span>, payload&#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<img data-src="/images/redux16"></li>
+</ol>
+</li>
+</ul>
+<p>上面就是我们常用到的一些方法，具体的其他一些用法，参考<a target="_blank" rel="noopener" href="https://redux-saga-in-chinese.js.org/">redux-saga官方文档</a></p>
+
     </div>
 
     
@@ -344,7 +430,7 @@
       <div class="popular-posts-title"><a href="\2021\08\12\React-ReactDOM顶层API\" rel="bookmark">React ReactDOM顶层API</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\08\11\React-ref的使用\" rel="bookmark">React ref的使用</a></div>
+      <div class="popular-posts-title"><a href="\2021\08\11\React-React顶层API\" rel="bookmark">React React顶层API</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2021\08\13\React-react-redux的使用\" rel="bookmark">React react-redux的使用</a></div>

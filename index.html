@@ -295,7 +295,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>335</span>
+      <span>3.5k</span>
     </span>
 
   
@@ -308,17 +308,17 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>在Redux中的action仅支持原始对象（plain object），处理有副作用的action，需要使用中间件。中间件可以在发出action，到reducer函数接受action之间，执行具有副作用的操作，例如网络请求，读取浏览器缓存等。</p>
-<p>下面的示例基于源码()[]</p>
-<h1 id="redux-thunk"><a href="#redux-thunk" class="headerlink" title="redux-thunk"></a>redux-thunk</h1><p>redux-thunk是redux的作者提供的一个处理副作用的方案，我们都知道，dispatch必须是接收一个原始对象的，在里面无法实现副作用逻辑，但是我们可以使用action creator函数，在内部处理副作用，然后返回一个action原始对象。</p>
-<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn add redux-thunk</span><br></pre></td></tr></table></figure>
-
-<h2 id="应用redux-thunk"><a href="#应用redux-thunk" class="headerlink" title="应用redux-thunk"></a>应用redux-thunk</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> thunk <span class="keyword">from</span> <span class="string">&#x27;redux-thunk&#x27;</span></span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line"><span class="keyword">let</span> store = createStore(reducers, applyMiddleware(thunk))</span><br></pre></td></tr></table></figure>
-
-<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>此时我们不能直接派发action，而是先要创建一个action creator函数</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> </span></span><br></pre></td></tr></table></figure>
-
-<h1 id="redux-saga"><a href="#redux-saga" class="headerlink" title="redux-saga"></a>redux-saga</h1>
+          <p>在<code>Redux</code>中的<code>action</code>仅支持原始对象（<code>plain object</code>），处理有副作用的<code>action</code>，需要使用中间件。中间件可以在发出<code>action</code>，到<code>reducer</code>函数接受<code>action</code>之间，执行具有副作用的操作，例如网络请求，读取浏览器缓存等。</p>
+<p>下面的示例基于<a href="https://www.baihuzi.com/2021/08/13/React-react-redux%E7%9A%84%E4%BD%BF%E7%94%A8/#%E7%94%A8%E4%BE%8B%E6%BA%90%E7%A0%81">【react-redux的使用】学习源码</a></p>
+<h1 id="redux-thunk"><a href="#redux-thunk" class="headerlink" title="redux-thunk"></a>redux-thunk</h1><p><code>redux-thunk</code>是<code>redux</code>的作者提供的一个处理副作用的方案，我们都知道，<code>dispatch</code>必须接收一个原始对象，在里面无法实现副作用逻辑，但是我们可以使用<code>action creator</code>函数，在内部处理副作用，然后返回一个<code>action</code>原始对象。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/08/14/Redux-%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9Credux-thunk%E5%92%8Credux-saga/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
