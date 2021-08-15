@@ -25,13 +25,13 @@
 <meta name="description" content="在Redux中的action仅支持原始对象（plain object），处理有副作用的action，需要使用中间件。中间件可以在发出action，到reducer函数接受action之间，执行具有副作用的操作，例如网络请求，读取浏览器缓存等。 下面的示例基于【react-redux的使用】学习源码 redux-thunkredux-thunk是redux的作者提供的一个处理副作用的方案，我们都知道">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Redux 异步操作redux-thunk和redux-saga">
-<meta property="og:url" content="https://www.baihuzi.com/2021/08/14/Redux-%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9Credux-thunk%E5%92%8Credux-saga/index.html">
+<meta property="og:url" content="https://www.baihuzi.com/2021/08/13/Redux-%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9Credux-thunk%E5%92%8Credux-saga/index.html">
 <meta property="og:site_name" content="老白">
 <meta property="og:description" content="在Redux中的action仅支持原始对象（plain object），处理有副作用的action，需要使用中间件。中间件可以在发出action，到reducer函数接受action之间，执行具有副作用的操作，例如网络请求，读取浏览器缓存等。 下面的示例基于【react-redux的使用】学习源码 redux-thunkredux-thunk是redux的作者提供的一个处理副作用的方案，我们都知道">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://www.baihuzi.com/images/redux16">
-<meta property="article:published_time" content="2021-08-14T06:31:58.000Z">
-<meta property="article:modified_time" content="2021-08-14T06:31:58.000Z">
+<meta property="article:published_time" content="2021-08-13T06:31:58.000Z">
+<meta property="article:modified_time" content="2021-08-13T06:31:58.000Z">
 <meta property="article:author" content="老白">
 <meta property="article:tag" content="React">
 <meta property="article:tag" content="react-thunk">
@@ -40,11 +40,11 @@
 <meta name="twitter:image" content="https://www.baihuzi.com/images/redux16">
 
 
-<link rel="canonical" href="https://www.baihuzi.com/2021/08/14/Redux-%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9Credux-thunk%E5%92%8Credux-saga/">
+<link rel="canonical" href="https://www.baihuzi.com/2021/08/13/Redux-%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9Credux-thunk%E5%92%8Credux-saga/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;https:&#x2F;&#x2F;www.baihuzi.com&#x2F;2021&#x2F;08&#x2F;14&#x2F;Redux-%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9Credux-thunk%E5%92%8Credux-saga&#x2F;&quot;,&quot;path&quot;:&quot;2021&#x2F;08&#x2F;14&#x2F;Redux-异步操作redux-thunk和redux-saga&#x2F;&quot;,&quot;title&quot;:&quot;Redux 异步操作redux-thunk和redux-saga&quot;}</script>
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;https:&#x2F;&#x2F;www.baihuzi.com&#x2F;2021&#x2F;08&#x2F;13&#x2F;Redux-%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9Credux-thunk%E5%92%8Credux-saga&#x2F;&quot;,&quot;path&quot;:&quot;2021&#x2F;08&#x2F;13&#x2F;Redux-异步操作redux-thunk和redux-saga&#x2F;&quot;,&quot;title&quot;:&quot;Redux 异步操作redux-thunk和redux-saga&quot;}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
 <title>Redux 异步操作redux-thunk和redux-saga | 老白</title><script src="/js/config.js"></script>
@@ -215,13 +215,13 @@
     </div>
     <ul class="links-of-recent-posts-list">
         <li class="links-of-recent-posts-item">
-          <a href="/2021/08/14/Redux-%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9Credux-thunk%E5%92%8Credux-saga/" title="2021&#x2F;08&#x2F;14&#x2F;Redux-异步操作redux-thunk和redux-saga&#x2F;">Redux 异步操作redux-thunk和redux-saga</a>
-        </li>
-        <li class="links-of-recent-posts-item">
           <a href="/2021/08/13/React-react-redux%E7%9A%84%E4%BD%BF%E7%94%A8/" title="2021&#x2F;08&#x2F;13&#x2F;React-react-redux的使用&#x2F;">React react-redux的使用</a>
         </li>
         <li class="links-of-recent-posts-item">
           <a href="/2021/08/13/Redux%E7%9A%84%E4%BD%BF%E7%94%A8/" title="2021&#x2F;08&#x2F;13&#x2F;Redux的使用&#x2F;">Redux的使用</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2021/08/13/Redux-%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9Credux-thunk%E5%92%8Credux-saga/" title="2021&#x2F;08&#x2F;13&#x2F;Redux-异步操作redux-thunk和redux-saga&#x2F;">Redux 异步操作redux-thunk和redux-saga</a>
         </li>
         <li class="links-of-recent-posts-item">
           <a href="/2021/08/12/React-%E5%90%88%E6%88%90%E4%BA%8B%E4%BB%B6/" title="2021&#x2F;08&#x2F;12&#x2F;React-合成事件&#x2F;">React 合成事件</a>
@@ -262,7 +262,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://www.baihuzi.com/2021/08/14/Redux-%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9Credux-thunk%E5%92%8Credux-saga/">
+    <link itemprop="mainEntityOfPage" href="https://www.baihuzi.com/2021/08/13/Redux-%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9Credux-thunk%E5%92%8Credux-saga/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -286,7 +286,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2021-08-14 14:31:58" itemprop="dateCreated datePublished" datetime="2021-08-14T14:31:58+08:00">2021-08-14</time>
+      <time title="创建时间：2021-08-13 14:31:58" itemprop="dateCreated datePublished" datetime="2021-08-13T14:31:58+08:00">2021-08-13</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -448,7 +448,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://www.baihuzi.com/2021/08/14/Redux-%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9Credux-thunk%E5%92%8Credux-saga/" title="Redux 异步操作redux-thunk和redux-saga">https://www.baihuzi.com/2021/08/14/Redux-异步操作redux-thunk和redux-saga/</a>
+      <a href="https://www.baihuzi.com/2021/08/13/Redux-%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9Credux-thunk%E5%92%8Credux-saga/" title="Redux 异步操作redux-thunk和redux-saga">https://www.baihuzi.com/2021/08/13/Redux-异步操作redux-thunk和redux-saga/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -466,11 +466,14 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2021/08/13/React-react-redux%E7%9A%84%E4%BD%BF%E7%94%A8/" rel="prev" title="React react-redux的使用">
-                  <i class="fa fa-chevron-left"></i> React react-redux的使用
+                <a href="/2021/08/12/React-%E5%90%88%E6%88%90%E4%BA%8B%E4%BB%B6/" rel="prev" title="React 合成事件">
+                  <i class="fa fa-chevron-left"></i> React 合成事件
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2021/08/13/Redux%E7%9A%84%E4%BD%BF%E7%94%A8/" rel="next" title="Redux的使用">
+                  Redux的使用 <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>
