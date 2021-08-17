@@ -161,20 +161,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">64</span>
+          <span class="site-state-item-count">65</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-count">7</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-count">28</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -207,6 +207,9 @@
     </div>
     <ul class="links-of-recent-posts-list">
         <li class="links-of-recent-posts-item">
+          <a href="/2021/08/17/Typescript-%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/" title="2021&#x2F;08&#x2F;17&#x2F;Typescript-基础语法&#x2F;">Typescript 基础语法</a>
+        </li>
+        <li class="links-of-recent-posts-item">
           <a href="/2021/08/14/Redux-%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9Credux-thunk%E5%92%8Credux-saga/" title="2021&#x2F;08&#x2F;14&#x2F;Redux-异步操作redux-thunk和redux-saga&#x2F;">Redux 异步操作redux-thunk和redux-saga</a>
         </li>
         <li class="links-of-recent-posts-item">
@@ -217,9 +220,6 @@
         </li>
         <li class="links-of-recent-posts-item">
           <a href="/2021/08/12/React-%E5%90%88%E6%88%90%E4%BA%8B%E4%BB%B6/" title="2021&#x2F;08&#x2F;12&#x2F;React-合成事件&#x2F;">React 合成事件</a>
-        </li>
-        <li class="links-of-recent-posts-item">
-          <a href="/2021/08/12/React-ReactDOM%E9%A1%B6%E5%B1%82API/" title="2021&#x2F;08&#x2F;12&#x2F;React-ReactDOM顶层API&#x2F;">React ReactDOM顶层API</a>
         </li>
     </ul>
   </div>
@@ -244,6 +244,115 @@
 
 
       <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.baihuzi.com/2021/08/17/Typescript-%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="老白">
+      <meta itemprop="description" content="走得很慢，但从未放弃。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="老白">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/08/17/Typescript-%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/" class="post-title-link" itemprop="url">Typescript 基础语法</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-08-17 20:09:16" itemprop="dateCreated datePublished" datetime="2021-08-17T20:09:16+08:00">2021-08-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Typescript/" itemprop="url" rel="index"><span itemprop="name">Typescript</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>422</span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>推荐阅读<a target="_blank" rel="noopener" href="https://www.tslang.cn/docs/handbook/basic-types.html">官方文档</a></p>
+<h1 id="基础类型"><a href="#基础类型" class="headerlink" title="基础类型"></a>基础类型</h1><h2 id="数字"><a href="#数字" class="headerlink" title="数字"></a>数字</h2><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> decLiteral: <span class="built_in">number</span> = <span class="number">6</span>;</span><br><span class="line"><span class="keyword">let</span> hexLiteral: <span class="built_in">number</span> = <span class="number">0xf00d</span>;</span><br><span class="line"><span class="keyword">let</span> binaryLiteral: <span class="built_in">number</span> = <span class="number">0b1010</span>;</span><br><span class="line"><span class="keyword">let</span> octalLiteral: <span class="built_in">number</span> = <span class="number">0o744</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h2><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> username: <span class="built_in">string</span> = <span class="string">`Gene`</span>;</span><br><span class="line"><span class="keyword">let</span> sentence: <span class="built_in">string</span> = <span class="string">`Hello, my name is <span class="subst">$&#123;username&#125;</span>`</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h2><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> list1: <span class="built_in">number</span>[] = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="keyword">let</span> list2: <span class="built_in">Array</span>&lt;<span class="built_in">number</span>&gt; = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br></pre></td></tr></table></figure>
+<h2 id="布尔值"><a href="#布尔值" class="headerlink" title="布尔值"></a>布尔值</h2><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> isDone: <span class="built_in">boolean</span> = <span class="literal">false</span>;</span><br></pre></td></tr></table></figure>
+<h2 id="null-undefine"><a href="#null-undefine" class="headerlink" title="null, undefine"></a>null, undefine</h2><p>这两个类型只能赋值给 <code>null</code> 或 <code>undefined</code><br>注意：在之前ts的版本中 <code>null</code> 或 <code>undefined</code> 是其他类型的子类型，可以赋值给其他类型，但是后面的版本修改了，只能是 <code>null</code> 或 <code>undefined</code>，更加安全</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> n: <span class="literal">null</span> = <span class="literal">null</span>;</span><br><span class="line"><span class="keyword">let</span> u: <span class="literal">undefined</span> = <span class="literal">undefined</span></span><br></pre></td></tr></table></figure>
+<h2 id="元组tuple【ts新增】"><a href="#元组tuple【ts新增】" class="headerlink" title="元组tuple【ts新增】"></a>元组tuple【ts新增】</h2><p><code>ts</code>新增，元组类型允许表示一个已知元素数量和类型的数组，各元素的类型不必相同</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> tuple: [<span class="built_in">string</span>, <span class="built_in">number</span>] = [<span class="string">&#x27;abc&#x27;</span>, <span class="number">10</span>]</span><br><span class="line"><span class="comment">// let tuple: [string, number] = [100, 10]  // 错的</span></span><br></pre></td></tr></table></figure>
+<h2 id="枚举enum【ts新增】"><a href="#枚举enum【ts新增】" class="headerlink" title="枚举enum【ts新增】"></a>枚举enum【ts新增】</h2><p><code>ts</code>新增，<code>enum</code>类型是对<code>JavaScript</code>标准数据类型的一个补充</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">enum</span> Gender &#123; male = <span class="number">0</span>, female = <span class="number">1</span>, unknow = -<span class="number">1</span> &#125;</span><br><span class="line"><span class="keyword">let</span> g: <span class="built_in">number</span> = Gender.male</span><br><span class="line"><span class="built_in">console</span>.log(g)  <span class="comment">// 0</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果没有指定默认值，则默认值为索引下标，默认从0开始，例如：</span></span><br><span class="line"><span class="built_in">enum</span> weekday &#123;sunday, monday&#125;</span><br><span class="line"><span class="keyword">let</span> d: <span class="built_in">number</span> = weekday.monday</span><br><span class="line"><span class="built_in">console</span>.log(d)  <span class="comment">// 1</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> day: weekday = weekday.sunday</span><br><span class="line"><span class="built_in">console</span>.log(day) <span class="comment">// 0</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 也可以通过索引来找到对应的值</span></span><br><span class="line"><span class="keyword">let</span> day1: <span class="built_in">string</span> = weekday[<span class="number">0</span>]</span><br><span class="line"><span class="built_in">console</span>.log(day1)   <span class="comment">// sunday </span></span><br></pre></td></tr></table></figure>
+<h2 id="字面量"><a href="#字面量" class="headerlink" title="字面量"></a>字面量</h2><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> num: <span class="number">1</span> | <span class="number">2</span> | <span class="number">3</span></span><br><span class="line">num = <span class="number">1</span></span><br><span class="line"><span class="comment">// num = 4   // error</span></span><br></pre></td></tr></table></figure>
+<h2 id="any"><a href="#any" class="headerlink" title="any"></a>any</h2><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> notSure: <span class="built_in">any</span> = <span class="number">4</span>;   <span class="comment">// noSure可以是任意js对象</span></span><br><span class="line"><span class="keyword">let</span> list3: <span class="built_in">any</span>[] = [<span class="number">1</span>, <span class="literal">true</span>, <span class="string">&quot;free&quot;</span>];  <span class="comment">// 由任意对象组成的数组</span></span><br><span class="line"><span class="keyword">let</span> list4: <span class="built_in">Array</span>&lt;<span class="built_in">any</span>&gt; = [<span class="number">1</span>, <span class="literal">true</span>, <span class="string">&quot;free&quot;</span>];  <span class="comment">// 由任意对象组成的数组</span></span><br></pre></td></tr></table></figure>
+<h2 id="void"><a href="#void" class="headerlink" title="void"></a>void</h2><p>没有任何类型，当函数没有返回值时，可以设置为<code>void</code></p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">warnUser</span>(<span class="params"></span>): <span class="title">void</span> </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&quot;This is my warning message&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="never"><a href="#never" class="headerlink" title="never"></a>never</h2><p>返回<code>never</code>的函数必须存在无法达到的终点</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">error</span>(<span class="params">message: <span class="built_in">string</span></span>): <span class="title">never</span> </span>&#123;</span><br><span class="line">  <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(message);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fail</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> error(<span class="string">&quot;Something failed&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">infiniteLoop</span>(<span class="params"></span>): <span class="title">never</span> </span>&#123;</span><br><span class="line">  <span class="keyword">while</span> (<span class="literal">true</span>) &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="类型断言"><a href="#类型断言" class="headerlink" title="类型断言"></a>类型断言</h1><p>能确定变量类型的话，就可以使用断言</p>
+<ul>
+<li>“尖括号”语法<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> someValue: <span class="built_in">any</span> = <span class="string">&#x27;some message&#x27;</span>;</span><br><span class="line"><span class="keyword">let</span> strLength: <span class="built_in">number</span> = (&lt;<span class="built_in">string</span>&gt;someValue).length;</span><br></pre></td></tr></table></figure></li>
+<li><code>as</code>语法<br><strong>在<code>TypeScript</code>里使用<code>JSX</code>时，只有 <code>as</code> 语法断言是被允许的，因为<code>&lt;&gt;</code>语法在<code>jsx</code>中会解析成为元素或组件</strong><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> someValue1: <span class="built_in">any</span> = <span class="string">&quot;this is a string&quot;</span>;</span><br><span class="line"><span class="keyword">let</span> strLength2: <span class="built_in">number</span> = (someValue <span class="keyword">as</span> <span class="built_in">string</span>).length;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h1 id="高级类型"><a href="#高级类型" class="headerlink" title="高级类型"></a>高级类型</h1><h2 id="交叉类型"><a href="#交叉类型" class="headerlink" title="交叉类型"></a>交叉类型</h2><p>交叉类型是将多个类型合并为一个类型</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="联合类型"><a href="#联合类型" class="headerlink" title="联合类型"></a>联合类型</h2><h2 id="映射类型"><a href="#映射类型" class="headerlink" title="映射类型"></a>映射类型</h2>
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1075,98 +1184,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2021/08/11/React-Protals/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.baihuzi.com/2021/08/11/React-ref%E7%9A%84%E4%BD%BF%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="老白">
-      <meta itemprop="description" content="走得很慢，但从未放弃。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="老白">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/08/11/React-ref%E7%9A%84%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">React ref的使用</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-08-11 00:51:00" itemprop="dateCreated datePublished" datetime="2021-08-11T00:51:00+08:00">2021-08-11</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/React/" itemprop="url" rel="index"><span itemprop="name">React</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>1.2k</span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><code>ref</code>可以作用于普通元素，也可以作用于<code>class</code>组件上，<strong>不能作用于函数式组件</strong>，因为函数式组件没有<code>this</code>实例对象，在函数式组件中可以使用<code>useRef</code>和<code>useImperativeHandle</code></p>
-<p>如果作用于组件上，可以直接访问组件的<code>state</code>，还可以调用组件的方法（自定义方法以及<code>setState</code>等内置方法）</p>
-<p>父组件设置的<code>ref</code>还可以转发给子组件，以获取子组件内部的元素或者组件</p>
-<h1 id="设置ref的3种方法"><a href="#设置ref的3种方法" class="headerlink" title="设置ref的3种方法"></a>设置ref的3种方法</h1><h2 id="设置为字符串（已废弃）"><a href="#设置为字符串（已废弃）" class="headerlink" title="设置为字符串（已废弃）"></a>设置为字符串（已废弃）</h2><figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;Child ref=<span class="string">&quot;child&quot;</span>&gt;&lt;/Child&gt;</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/08/11/React-ref%E7%9A%84%E4%BD%BF%E7%94%A8/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>

@@ -22,12 +22,12 @@
   <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js" integrity="sha256-a5YRB27CcBwBFcT5EF/f3E4vzIqyHrSR878nseNYw64=" crossorigin="anonymous"></script>
 
 <script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;www.baihuzi.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Mist&quot;,&quot;version&quot;:&quot;8.4.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;left&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:true,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;manual&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:true,&quot;lazyload&quot;:true,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:true,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;},&quot;path&quot;:&quot;&#x2F;search.xml&quot;,&quot;localsearch&quot;:{&quot;enable&quot;:true,&quot;trigger&quot;:&quot;auto&quot;,&quot;top_n_per_article&quot;:1,&quot;unescape&quot;:false,&quot;preload&quot;:false}}</script>
-<meta name="description" content="函数内部多次调用setState，会将所有的setState操作进行合并，如果有修改到相同的属性，谁在最后执行谁，例如下面调用3次setState，count初始值是0，依次修改count的值，分别加1，加2，加3，最终count的值会被修改为3，而不是6 12345678910111213141516171819202122232425262728293031323334import React">
+<meta name="description" content="在React中，如果setState用在React事件中或者React生命周期函数里面，会产生异步的现象，因为React的合成事件和生命周期钩子函数是在状态修改之前调用的，这就会产生“异步”现象，实际在代码里面并没有使用异步的方式去写。 但是如果用在原生事件或者setTimeout中，则是同步的。 setState 的批量更新优化也是建立在“异步”（合成事件、钩子函数）之上的，在原生事件和setT">
 <meta property="og:type" content="article">
 <meta property="og:title" content="React setState需要注意的地方">
 <meta property="og:url" content="https://www.baihuzi.com/2021/08/10/React-setState%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E7%9A%84%E5%9C%B0%E6%96%B9/index.html">
 <meta property="og:site_name" content="老白">
-<meta property="og:description" content="函数内部多次调用setState，会将所有的setState操作进行合并，如果有修改到相同的属性，谁在最后执行谁，例如下面调用3次setState，count初始值是0，依次修改count的值，分别加1，加2，加3，最终count的值会被修改为3，而不是6 12345678910111213141516171819202122232425262728293031323334import React">
+<meta property="og:description" content="在React中，如果setState用在React事件中或者React生命周期函数里面，会产生异步的现象，因为React的合成事件和生命周期钩子函数是在状态修改之前调用的，这就会产生“异步”现象，实际在代码里面并没有使用异步的方式去写。 但是如果用在原生事件或者setTimeout中，则是同步的。 setState 的批量更新优化也是建立在“异步”（合成事件、钩子函数）之上的，在原生事件和setT">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-08-10T02:00:47.000Z">
 <meta property="article:modified_time" content="2021-08-10T02:00:47.000Z">
@@ -164,20 +164,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">64</span>
+          <span class="site-state-item-count">65</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-count">7</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-count">28</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -210,6 +210,9 @@
     </div>
     <ul class="links-of-recent-posts-list">
         <li class="links-of-recent-posts-item">
+          <a href="/2021/08/17/Typescript-%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/" title="2021&#x2F;08&#x2F;17&#x2F;Typescript-基础语法&#x2F;">Typescript 基础语法</a>
+        </li>
+        <li class="links-of-recent-posts-item">
           <a href="/2021/08/14/Redux-%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9Credux-thunk%E5%92%8Credux-saga/" title="2021&#x2F;08&#x2F;14&#x2F;Redux-异步操作redux-thunk和redux-saga&#x2F;">Redux 异步操作redux-thunk和redux-saga</a>
         </li>
         <li class="links-of-recent-posts-item">
@@ -220,9 +223,6 @@
         </li>
         <li class="links-of-recent-posts-item">
           <a href="/2021/08/12/React-%E5%90%88%E6%88%90%E4%BA%8B%E4%BB%B6/" title="2021&#x2F;08&#x2F;12&#x2F;React-合成事件&#x2F;">React 合成事件</a>
-        </li>
-        <li class="links-of-recent-posts-item">
-          <a href="/2021/08/12/React-ReactDOM%E9%A1%B6%E5%B1%82API/" title="2021&#x2F;08&#x2F;12&#x2F;React-ReactDOM顶层API&#x2F;">React ReactDOM顶层API</a>
         </li>
     </ul>
   </div>
@@ -299,7 +299,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>516</span>
+      <span>823</span>
     </span>
 
   
@@ -312,7 +312,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>函数内部多次调用<code>setState</code>，会将所有的<code>setState</code>操作进行合并，如果有修改到相同的属性，谁在最后执行谁，例如下面调用3次<code>setState</code>，<code>count</code>初始值是<code>0</code>，依次修改<code>count</code>的值，分别加1，加2，加3，最终<code>count</code>的值会被修改为3，而不是6</p>
+        <p>在<code>React</code>中，如果<code>setState</code>用在<code>React</code>事件中或者<code>React</code>生命周期函数里面，会产生异步的现象，因为<code>React</code>的合成事件和生命周期钩子函数是在状态修改之前调用的，这就会产生“异步”现象，实际在代码里面并没有使用异步的方式去写。</p>
+<p>但是如果用在原生事件或者<code>setTimeout</code>中，则是同步的。</p>
+<p><code>setState</code> 的批量更新优化也是建立在“异步”（合成事件、钩子函数）之上的，在原生事件和<code>setTimeout</code> 中不会批量更新，在“异步”中如果对同一个值进行多次 <code>setState</code> ， <code>setState</code> 的批量更新策略会对其进行覆盖，取最后一次的执行，如果是同时 <code>setState</code> 多个不同的值，在更新时会对其进行合并批量更新</p>
+<p>例如：<br>函数内部多次调用<code>setState</code>，会将所有的<code>setState</code>操作进行合并，如果有修改到相同的属性，谁在最后执行谁，例如下面调用3次<code>setState</code>，<code>count</code>初始值是<code>0</code>，依次修改<code>count</code>的值，分别加1，加2，加3，最终<code>count</code>的值会被修改为3，而不是6</p>
 <figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Counter</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="title">constructor</span>(<span class="params">props</span>)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>(props)</span><br><span class="line">        <span class="built_in">this</span>.state = &#123;</span><br><span class="line">            <span class="attr">count</span>: <span class="number">0</span>,</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    clickHandle = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.setState(&#123;</span><br><span class="line">            <span class="attr">count</span>: <span class="built_in">this</span>.state.count + <span class="number">1</span></span><br><span class="line">        &#125;)</span><br><span class="line">        <span class="built_in">this</span>.setState(&#123;</span><br><span class="line">            <span class="attr">count</span>: <span class="built_in">this</span>.state.count + <span class="number">2</span></span><br><span class="line">        &#125;)</span><br><span class="line">        <span class="built_in">this</span>.setState(&#123;</span><br><span class="line">            <span class="attr">count</span>: <span class="built_in">this</span>.state.count + <span class="number">3</span></span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    render () &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;render&#x27;</span>);</span><br><span class="line">        <span class="keyword">return</span> (</span><br><span class="line">            <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">h1</span> <span class="attr">id</span>=<span class="string">&quot;title&quot;</span>&gt;</span>计数器：&#123;this.state.count&#125;<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;this.clickHandle&#125;</span>&gt;</span>+1<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> Counter</span><br></pre></td></tr></table></figure>
 <span id="more"></span>
 <p>如果我们想要结果为6，就是都执行的话，需要给<code>setState</code>传入一个函数，函数的入参分别是最新的<code>state</code>和最新的<code>props</code>，可以进行解构，得到自己想要的值，下面的<code>setState</code>执行了3次，每次都拿到了最新的<code>state</code>，因此<code>count</code>最终会被修改为6</p>
