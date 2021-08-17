@@ -161,7 +161,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">65</span>
+          <span class="site-state-item-count">66</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -207,6 +207,9 @@
     </div>
     <ul class="links-of-recent-posts-list">
         <li class="links-of-recent-posts-item">
+          <a href="/2021/08/17/Typescript-%E6%8E%A5%E5%8F%A3/" title="2021&#x2F;08&#x2F;17&#x2F;Typescript-接口&#x2F;">Typescript 接口</a>
+        </li>
+        <li class="links-of-recent-posts-item">
           <a href="/2021/08/17/Typescript-%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/" title="2021&#x2F;08&#x2F;17&#x2F;Typescript-基础语法&#x2F;">Typescript 基础语法</a>
         </li>
         <li class="links-of-recent-posts-item">
@@ -217,9 +220,6 @@
         </li>
         <li class="links-of-recent-posts-item">
           <a href="/2021/08/13/Redux%E7%9A%84%E4%BD%BF%E7%94%A8/" title="2021&#x2F;08&#x2F;13&#x2F;Redux的使用&#x2F;">Redux的使用</a>
-        </li>
-        <li class="links-of-recent-posts-item">
-          <a href="/2021/08/12/React-%E5%90%88%E6%88%90%E4%BA%8B%E4%BB%B6/" title="2021&#x2F;08&#x2F;12&#x2F;React-合成事件&#x2F;">React 合成事件</a>
         </li>
     </ul>
   </div>
@@ -244,6 +244,100 @@
 
 
       <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.baihuzi.com/2021/08/11/React-Protals/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="老白">
+      <meta itemprop="description" content="走得很慢，但从未放弃。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="老白">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/08/11/React-Protals/" class="post-title-link" itemprop="url">React Protals</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-08-11 14:03:46" itemprop="dateCreated datePublished" datetime="2021-08-11T14:03:46+08:00">2021-08-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/React/" itemprop="url" rel="index"><span itemprop="name">React</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>660</span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p><code>Portal</code> 提供了一种将子节点渲染到存在于父组件以外的 <code>DOM</code> 节点的优秀的方案。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ReactDOM.createPortal(child, container)</span><br></pre></td></tr></table></figure>
+<p>注意<code>createPortal</code>是<code>ReactDOM</code>的api，需要引入<code>react-dom</code>包</p>
+<p>第一个参数（<code>child</code>）是任何可渲染的 <code>React</code> 子元素，例如一个元素，字符串或 <code>fragment</code>。第二个参数（<code>container</code>）是一个 <code>DOM</code> 元素。</p>
+<p>通常来讲，当你从组件的 <code>render</code> 方法返回一个元素时，该元素将被挂载到 <code>DOM</code> 节点中离其最近的父节点：</p>
+<p>然而，有时候将子元素插入到 <code>DOM</code> 节点中的不同位置也是有好处的，一个 <code>portal</code> 的典型用例是当父组件有 <code>overflow: hidden</code> 或<code> z-index</code> 样式时，但你需要子组件能够在视觉上“跳出”其容器。例如，对话框、悬浮卡以及提示框：</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/08/11/React-Protals/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1075,104 +1169,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2021/08/08/Webpack-%E7%9B%B8%E5%85%B3/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.baihuzi.com/2021/08/07/browserslist%E7%9A%84%E4%BD%9C%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="老白">
-      <meta itemprop="description" content="走得很慢，但从未放弃。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="老白">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/08/07/browserslist%E7%9A%84%E4%BD%9C%E7%94%A8/" class="post-title-link" itemprop="url">browserslist的作用</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-08-07 22:29:00" itemprop="dateCreated datePublished" datetime="2021-08-07T22:29:00+08:00">2021-08-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">前端</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>1.3k</span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p><code>browserslist</code> 实际上就是声明了⼀段浏览器的集合，我们的⼯具可以根据这段集合描述，针对性的输出兼容性代码。</p>
-<p><code>browserslist</code>就是帮助我们来设置⽬标浏览器的⼯具。<code>browserslist</code> 被⼴泛的应⽤到 <code>Babel</code>、<code>postcsspreset-env``、autoprefixer</code> 等开发⼯具上。</p>
-<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p><code>browserslist</code> 的配置可以放在<code> package.json</code> 中，也可以单独放在配置⽂件 <code>.browserslistrc</code> 中。所有的⼯具都会主动查找 <code>browserslist</code> 的配置⽂件，根据 <code>browserslist</code> 配置找出对应的⽬标浏览器集合。</p>
-<p><code>browserslist</code> 的数据都是来⾃<a target="_blank" rel="noopener" href="https://browserl.ist/">Can I Use</a>，可惜⽹站关闭了，现在需要⼿动检测：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npx browserslist &quot;last 1 version, &gt;1%&quot;</span><br></pre></td></tr></table></figure>
-
-<p>在 <code>package.json</code> 中的配置是增加⼀个 <code>browserslist</code> 数组属性：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line"> <span class="attr">&quot;browserslist&quot;</span>: [<span class="string">&quot;last 2 version&quot;</span>, <span class="string">&quot;&gt; 1%&quot;</span>, <span class="string">&quot;maintained node versions&quot;</span>, <span class="string">&quot;not</span></span><br><span class="line"><span class="string">ie &lt; 11&quot;</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>或者在项⽬的根⽬录下创建⼀个 <code>.browserslistrc</code> ⽂件：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 注释是这样写的，以#号开头</span><br><span class="line"># 每⾏⼀个浏览器集合描述</span><br><span class="line">last 2 version</span><br><span class="line">&gt; 1%</span><br><span class="line">maintained node versions</span><br><span class="line">not ie &lt; 11</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/08/07/browserslist%E7%9A%84%E4%BD%9C%E7%94%A8/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
