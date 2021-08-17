@@ -4822,4 +4822,18 @@
         <tag>MHA</tag>
       </tags>
   </entry>
+  <entry>
+    <title>深入理解BFC</title>
+    <url>/2021/08/18/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3BFC/</url>
+    <content><![CDATA[<iframe src="https://demo.xiaohuochai.site/css/bfc/b1.html" width="[600]" height="[300]" frameborder="0" loading="lazy" allowfullscreen></iframe>
+<iframe src="https://demo.xiaohuochai.site/css/bfc/b2.html" width="[600]" height="[300]" frameborder="0" loading="lazy" allowfullscreen></iframe>
+<iframe src="https://demo.xiaohuochai.site/css/bfc/b3.html" width="[600]" height="[300]" frameborder="0" loading="lazy" allowfullscreen></iframe>]]></content>
+      <categories>
+        <category>CSS</category>
+      </categories>
+      <tags>
+        <tag>BFC</tag>
+        <tag>CSS</tag>
+      </tags>
+  </entry>
 </search>
