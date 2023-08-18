@@ -1,0 +1,2024 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Vuex 详解 | Daryl&#39;s blog</title>
+  <meta name="keywords" content=" Vue , Vuex ">
+  <meta name="description" content="Vuex 详解 | Daryl&#39;s blog">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="description" content="在Redux中的action仅支持原始对象（plain object），处理有副作用的action，需要使用中间件。中间件可以在发出action，到reducer函数接受action之间，执行具有副作用的操作，例如网络请求，读取浏览器缓存等。 下面的示例基于【react-redux的使用】学习源码 redux-thunkredux-thunk是redux的作者提供的一个处理副作用的方案，我们都知道">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redux 异步操作redux-thunk和redux-saga">
+<meta property="og:url" content="http://example.com/2021/08/14/Redux-%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9Credux-thunk%E5%92%8Credux-saga/index.html">
+<meta property="og:site_name" content="Daryl&#39;s blog">
+<meta property="og:description" content="在Redux中的action仅支持原始对象（plain object），处理有副作用的action，需要使用中间件。中间件可以在发出action，到reducer函数接受action之间，执行具有副作用的操作，例如网络请求，读取浏览器缓存等。 下面的示例基于【react-redux的使用】学习源码 redux-thunkredux-thunk是redux的作者提供的一个处理副作用的方案，我们都知道">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/redux16.gif">
+<meta property="article:published_time" content="2021-08-13T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-08-16T12:36:01.446Z">
+<meta property="article:author" content="Daryl">
+<meta property="article:tag" content="React">
+<meta property="article:tag" content="react-thunk">
+<meta property="article:tag" content="react-sage">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/redux16.gif">
+
+
+<link rel="icon" href="/img/avatar.jpg">
+
+<link href="/css/style.css?v=1.1.0" rel="stylesheet">
+
+<link href="/css/hl_theme/atom-dark.css?v=1.1.0" rel="stylesheet">
+
+<link href="//cdn.jsdelivr.net/npm/animate.css@4.1.0/animate.min.css" rel="stylesheet">
+
+<link href="//cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css" rel="stylesheet">
+<link href="//cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css" rel="stylesheet">
+
+<script src="//cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+<script src="/js/titleTip.js?v=1.1.0" ></script>
+
+<script src="//cdn.jsdelivr.net/npm/highlightjs@9.16.2/highlight.pack.min.js"></script>
+<script>
+    hljs.initHighlightingOnLoad();
+</script>
+
+<script src="//cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js"></script>
+
+
+
+<script src="//cdn.jsdelivr.net/npm/jquery.cookie@1.4.1/jquery.cookie.min.js" ></script>
+
+<script src="/js/iconfont.js?v=1.1.0" ></script>
+
+<script src="//cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<div style="display: none">
+  <input class="theme_disqus_on" value="false">
+  <input class="theme_preload_comment" value="">
+  <input class="theme_blog_path" value="">
+  <input id="theme_shortcut" value="true" />
+  <input id="theme_highlight_on" value="true" />
+  <input id="theme_code_copy" value="true" />
+</div>
+
+
+
+<body>
+<aside class="nav">
+    <div class="nav-left">
+        <a href="/"
+   class="avatar_target">
+    <img class="avatar"
+         src="/img/avatar.jpg"/>
+</a>
+<div class="author">
+    <span>Daryl</span>
+</div>
+
+<div class="icon">
+    
+</div>
+
+
+
+
+
+<ul>
+    <li>
+        <div class="all active" data-rel="全部文章">全部文章
+            
+                <small>(64)</small>
+            
+        </div>
+    </li>
+    
+        
+            <li>
+                <div data-rel="前端">前端
+                    <small>(9)</small>
+                    
+                </div>
+            </li>
+        
+    
+        
+            <li>
+                <div data-rel="HTML">HTML
+                    <small>(1)</small>
+                    
+                </div>
+            </li>
+        
+    
+        
+            <li>
+                <div data-rel="JavaScript">JavaScript
+                    <small>(18)</small>
+                    
+                </div>
+            </li>
+        
+    
+        
+            <li>
+                <div data-rel="Mysql">Mysql
+                    <small>(17)</small>
+                    
+                </div>
+            </li>
+        
+    
+        
+            <li>
+                <div data-rel="React">React
+                    <small>(16)</small>
+                    
+                </div>
+            </li>
+        
+    
+        
+            <li>
+                <div data-rel="Vue">Vue
+                    <small>(4)</small>
+                    
+                </div>
+            </li>
+        
+    
+</ul>
+<div class="left-bottom">
+    <div class="menus">
+        
+            
+            
+            
+    </div>
+    <div>
+        
+        
+    </div>
+</div>
+<input type="hidden" id="yelog_site_posts_number" value="64">
+
+<div style="display: none">
+    <span id="busuanzi_value_site_uv"></span>
+    <span id="busuanzi_value_site_pv"></span>
+</div>
+
+    </div>
+    <div class="nav-right">
+        <div class="friends-area">
+    <div class="friends-title">
+        友情链接
+        <i class="iconfont icon-left"></i>
+    </div>
+    <div class="friends-content">
+        <ul>
+            
+        </ul>
+    </div>
+</div>
+        <div class="title-list">
+    <div class="right-top">
+        <div id="default-panel">
+            <i class="iconfont icon-search" data-title="搜索 快捷键 i"></i>
+            <div class="right-title">全部文章</div>
+            <i class="iconfont icon-file-tree" data-title="切换到大纲视图 快捷键 w"></i>
+        </div>
+        <div id="search-panel">
+            <i class="iconfont icon-left" data-title="返回"></i>
+            <input id="local-search-input" autocomplete="off"/>
+            <label class="border-line" for="input"></label>
+            <i class="iconfont icon-case-sensitive" data-title="大小写敏感"></i>
+            <i class="iconfont icon-tag" data-title="标签"></i>
+        </div>
+        <div id="outline-panel" style="display: none">
+            <div class="right-title">目录</div>
+            <i class="iconfont icon-list" data-title="切换到文章列表"></i>
+        </div>
+    </div>
+
+    <div class="tags-list">
+    <input id="tag-search" />
+    <div class="tag-wrapper">
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>前端</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>ACID</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>cookie</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>ES6</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>GTID</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>HTML</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>Innodb</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>InnoDB</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>JavaScript</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>jwt</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>koa</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>MHA</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>Mysql</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>mysqldump</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>React</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>React Hooks</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>react redux</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>react-sage</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>react-thunk</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>ReactDOM</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>Redux</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>session</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>token</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>Vue</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>Vuex</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>Webpack</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>xtrabackup</a>
+            </li>
+        
+    </div>
+
+</div>
+
+    
+    <nav id="title-list-nav">
+        
+        
+        <a  class="全部文章 React "
+           href="/2021/08/14/Redux-%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9Credux-thunk%E5%92%8Credux-saga/"
+           data-tag="React,react-thunk,react-sage"
+           data-author="" >
+            <span class="post-title" title="Redux 异步操作redux-thunk和redux-saga">Redux 异步操作redux-thunk和redux-saga</span>
+            <span class="post-date" title="2021-08-14 00:00:00">2021/08/14</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2021/08/13/React-react-redux%E7%9A%84%E4%BD%BF%E7%94%A8/"
+           data-tag="React,react redux"
+           data-author="" >
+            <span class="post-title" title="React react-redux的使用">React react-redux的使用</span>
+            <span class="post-date" title="2021-08-13 23:17:09">2021/08/13</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2021/08/13/Redux%E7%9A%84%E4%BD%BF%E7%94%A8/"
+           data-tag="React,Redux"
+           data-author="" >
+            <span class="post-title" title="Redux的使用">Redux的使用</span>
+            <span class="post-date" title="2021-08-13 16:30:25">2021/08/13</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2021/08/12/React-%E5%90%88%E6%88%90%E4%BA%8B%E4%BB%B6/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React 合成事件">React 合成事件</span>
+            <span class="post-date" title="2021-08-12 14:30:56">2021/08/12</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2021/08/12/React-ReactDOM%E9%A1%B6%E5%B1%82API/"
+           data-tag="React,ReactDOM"
+           data-author="" >
+            <span class="post-title" title="React ReactDOM顶层API">React ReactDOM顶层API</span>
+            <span class="post-date" title="2021-08-12 12:57:37">2021/08/12</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2021/08/11/React-%E7%BB%84%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React 组件生命周期">React 组件生命周期</span>
+            <span class="post-date" title="2021-08-11 23:38:41">2021/08/11</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2021/08/11/React-React%E9%A1%B6%E5%B1%82API/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React React顶层API">React React顶层API</span>
+            <span class="post-date" title="2021-08-11 19:55:53">2021/08/11</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2021/08/11/React-React-memo/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React React.memo">React React.memo</span>
+            <span class="post-date" title="2021-08-11 18:22:48">2021/08/11</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2021/08/11/React-Protals/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React Protals">React Protals</span>
+            <span class="post-date" title="2021-08-11 14:03:46">2021/08/11</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2021/08/11/React-ref%E7%9A%84%E4%BD%BF%E7%94%A8/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React ref的使用">React ref的使用</span>
+            <span class="post-date" title="2021-08-11 00:51:00">2021/08/11</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2021/08/10/React-%E8%B7%A8%E5%B1%82%E7%BB%84%E4%BB%B6%E6%A0%91%E4%BC%A0%E5%80%BC-context%E4%B8%8A%E4%B8%8B%E6%96%87/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React 跨层组件树传值-context上下文">React 跨层组件树传值-context上下文</span>
+            <span class="post-date" title="2021-08-10 22:21:52">2021/08/10</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2021/08/10/React-%E5%8F%97%E6%8E%A7%E7%BB%84%E4%BB%B6%E5%92%8C%E9%9D%9E%E5%8F%97%E6%8E%A7%E7%BB%84%E4%BB%B6/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React 受控组件和非受控组件">React 受控组件和非受控组件</span>
+            <span class="post-date" title="2021-08-10 20:04:18">2021/08/10</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2021/08/10/React-%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E5%87%BD%E6%95%B0%E4%BB%A5%E5%8F%8A%E4%BC%A0%E5%8F%82/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React 事件处理函数以及传参">React 事件处理函数以及传参</span>
+            <span class="post-date" title="2021-08-10 18:34:15">2021/08/10</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2021/08/10/React-render-props%E6%A8%A1%E5%BC%8F/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React render props模式">React render props模式</span>
+            <span class="post-date" title="2021-08-10 11:05:10">2021/08/10</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2021/08/10/React-setState%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E7%9A%84%E5%9C%B0%E6%96%B9/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React setState需要注意的地方">React setState需要注意的地方</span>
+            <span class="post-date" title="2021-08-10 10:00:47">2021/08/10</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2021/08/10/React-hooks%E7%9F%A5%E8%AF%86%E7%82%B9%E6%95%B4%E7%90%86/"
+           data-tag="React,React Hooks"
+           data-author="" >
+            <span class="post-title" title="React hooks知识点整理">React hooks知识点整理</span>
+            <span class="post-date" title="2021-08-10 00:00:00">2021/08/10</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/08/09/js-%E5%87%BD%E6%95%B0%E6%9F%AF%E9%87%8C%E5%8C%96/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 函数柯里化">js 函数柯里化</span>
+            <span class="post-date" title="2021-08-09 21:10:23">2021/08/09</span>
+        </a>
+        
+        
+        <a  class="全部文章 前端 "
+           href="/2021/08/08/Webpack-%E7%9B%B8%E5%85%B3/"
+           data-tag="Webpack"
+           data-author="" >
+            <span class="post-title" title="Webpack 相关【持续更新...】">Webpack 相关【持续更新...】</span>
+            <span class="post-date" title="2021-08-08 01:30:03">2021/08/08</span>
+        </a>
+        
+        
+        <a  class="全部文章 前端 "
+           href="/2021/08/07/browserslist%E7%9A%84%E4%BD%9C%E7%94%A8/"
+           data-tag="前端"
+           data-author="" >
+            <span class="post-title" title="browserslist的作用">browserslist的作用</span>
+            <span class="post-date" title="2021-08-07 22:29:00">2021/08/07</span>
+        </a>
+        
+        
+        <a  class="全部文章 Vue "
+           href="/2021/08/06/Vuex-%E8%AF%A6%E8%A7%A3/"
+           data-tag="Vue,Vuex"
+           data-author="" >
+            <span class="post-title" title="Vuex 详解">Vuex 详解</span>
+            <span class="post-date" title="2021-08-06 11:36:40">2021/08/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 Vue "
+           href="/2021/08/03/Vue-%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%B8%B8%E5%B8%B8%E4%BB%A4%E4%BA%BA%E5%BF%BD%E8%A7%86%E7%9A%84%E9%87%8D%E8%A6%81%E7%9F%A5%E8%AF%86%E7%82%B9/"
+           data-tag="Vue"
+           data-author="" >
+            <span class="post-title" title="Vue 中一些常常令人忽视的重要知识点">Vue 中一些常常令人忽视的重要知识点</span>
+            <span class="post-date" title="2021-08-03 06:55:19">2021/08/03</span>
+        </a>
+        
+        
+        <a  class="全部文章 Vue "
+           href="/2021/08/03/Vue-%E7%88%B6%E5%AD%90%E7%BB%84%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E9%92%A9%E5%AD%90%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/"
+           data-tag="Vue"
+           data-author="" >
+            <span class="post-title" title="Vue 生命周期及父子组件生命周期钩子执行顺序">Vue 生命周期及父子组件生命周期钩子执行顺序</span>
+            <span class="post-date" title="2021-08-03 00:18:59">2021/08/03</span>
+        </a>
+        
+        
+        <a  class="全部文章 前端 "
+           href="/2021/07/29/koa-axios-jwt-%E5%AE%9E%E7%8E%B0token%E8%87%AA%E5%8A%A8%E7%BB%AD%E6%9C%9F/"
+           data-tag="token,jwt,koa"
+           data-author="" >
+            <span class="post-title" title="koa + axios + jwt  实现token自动续期">koa + axios + jwt  实现token自动续期</span>
+            <span class="post-date" title="2021-07-29 19:23:45">2021/07/29</span>
+        </a>
+        
+        
+        <a  class="全部文章 前端 "
+           href="/2021/07/28/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3token/"
+           data-tag="token"
+           data-author="" >
+            <span class="post-title" title="【转载】深入理解token">【转载】深入理解token</span>
+            <span class="post-date" title="2021-07-28 02:17:40">2021/07/28</span>
+        </a>
+        
+        
+        <a  class="全部文章 前端 "
+           href="/2021/07/27/cookie-session-token%E8%AF%A6%E8%A7%A3/"
+           data-tag="前端,cookie,session,token"
+           data-author="" >
+            <span class="post-title" title="cookie session token详解">cookie session token详解</span>
+            <span class="post-date" title="2021-07-27 01:58:03">2021/07/27</span>
+        </a>
+        
+        
+        <a  class="全部文章 前端 "
+           href="/2021/07/26/%E8%B7%A8%E5%9F%9F%E8%AE%BE%E7%BD%AEcookie/"
+           data-tag="cookie"
+           data-author="" >
+            <span class="post-title" title="跨域设置cookie">跨域设置cookie</span>
+            <span class="post-date" title="2021-07-26 22:18:36">2021/07/26</span>
+        </a>
+        
+        
+        <a  class="全部文章 前端 "
+           href="/2021/07/22/%E8%B7%A8%E5%9F%9F%E8%B5%84%E6%BA%90%E5%85%B1%E4%BA%AB-CORS/"
+           data-tag="前端"
+           data-author="" >
+            <span class="post-title" title="跨域资源共享(CORS)">跨域资源共享(CORS)</span>
+            <span class="post-date" title="2021-07-22 00:31:16">2021/07/22</span>
+        </a>
+        
+        
+        <a  class="全部文章 前端 "
+           href="/2021/07/09/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E5%BC%BA%E7%BC%93%E5%AD%98%E5%92%8C%E5%8D%8F%E5%95%86%E7%BC%93%E5%AD%98/"
+           data-tag="前端"
+           data-author="" >
+            <span class="post-title" title="浏览器的强缓存和协商缓存">浏览器的强缓存和协商缓存</span>
+            <span class="post-date" title="2021-07-09 02:07:51">2021/07/09</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/07/07/js-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%EF%BC%88event-loop%EF%BC%89%E3%80%81%E5%AE%8F%E4%BB%BB%E5%8A%A1%E3%80%81%E5%BE%AE%E4%BB%BB%E5%8A%A1/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 事件循环（event loop）、宏任务、微任务">js 事件循环（event loop）、宏任务、微任务</span>
+            <span class="post-date" title="2021-07-07 23:41:36">2021/07/07</span>
+        </a>
+        
+        
+        <a  class="全部文章 前端 "
+           href="/2021/07/05/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E9%87%8D%E6%8E%92%E4%B8%8E%E9%87%8D%E7%BB%98/"
+           data-tag="前端"
+           data-author="" >
+            <span class="post-title" title="浏览器的重排与重绘">浏览器的重排与重绘</span>
+            <span class="post-date" title="2021-07-05 22:55:13">2021/07/05</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/06/30/js-%E5%8E%9F%E5%9E%8B%E3%80%81%E5%8E%9F%E5%9E%8B%E9%93%BE%E3%80%81%E7%BB%A7%E6%89%BF/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 原型、原型链、继承">js 原型、原型链、继承</span>
+            <span class="post-date" title="2021-06-30 23:41:51">2021/06/30</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/06/11/js-ES6%E6%96%B0%E5%A2%9E%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8BSet-Map-Symbol/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js ES6新增数据类型Set/Map/Symbol">js ES6新增数据类型Set/Map/Symbol</span>
+            <span class="post-date" title="2021-06-11 01:22:41">2021/06/11</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/06/11/js-for-in%E5%BE%AA%E7%8E%AF%E5%92%8Cfor-of%E5%BE%AA%E7%8E%AF/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js for...in循环和for...of循环">js for...in循环和for...of循环</span>
+            <span class="post-date" title="2021-06-11 01:18:50">2021/06/11</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/06/11/js-%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E4%BB%A5%E5%8F%8A%E5%86%85%E7%BD%AE%E5%8F%82%E6%95%B0arguments/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 函数参数以及内置参数arguments">js 函数参数以及内置参数arguments</span>
+            <span class="post-date" title="2021-06-11 00:01:51">2021/06/11</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/06/11/js-%E9%98%B2%E6%8A%96%E5%92%8C%E8%8A%82%E6%B5%81/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 防抖和节流">js 防抖和节流</span>
+            <span class="post-date" title="2021-06-11 00:01:51">2021/06/11</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/06/08/js-this%E6%8C%87%E5%90%91%E9%97%AE%E9%A2%98%E4%BB%A5%E5%8F%8A%E6%94%B9%E5%8F%98this%E6%8C%87%E5%90%91%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%88call-apply-bind%EF%BC%89/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js this指向问题以及改变this指向的三种方法（call/apply/bind）">js this指向问题以及改变this指向的三种方法（call/apply/bind）</span>
+            <span class="post-date" title="2021-06-08 23:10:18">2021/06/08</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/06/03/bluebird-Promise%E5%BA%93/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="bluebird Promise库">bluebird Promise库</span>
+            <span class="post-date" title="2021-06-03 00:00:00">2021/06/03</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/05/31/js-Promise/"
+           data-tag="ES6"
+           data-author="" >
+            <span class="post-title" title="js Promise">js Promise</span>
+            <span class="post-date" title="2021-05-31 01:53:16">2021/05/31</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/05/30/js-async-await%E5%87%BD%E6%95%B0/"
+           data-tag="ES6"
+           data-author="" >
+            <span class="post-title" title="js async/await函数">js async/await函数</span>
+            <span class="post-date" title="2021-05-30 21:13:30">2021/05/30</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/05/29/js-generator%E5%87%BD%E6%95%B0/"
+           data-tag="ES6"
+           data-author="" >
+            <span class="post-title" title="js generator函数">js generator函数</span>
+            <span class="post-date" title="2021-05-29 19:29:15">2021/05/29</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/05/28/js-%E7%AE%AD%E5%A4%B4%E5%87%BD%E6%95%B0/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 箭头函数">js 箭头函数</span>
+            <span class="post-date" title="2021-05-28 00:36:57">2021/05/28</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/05/26/var%E3%80%81let%E3%80%81const%E5%A3%B0%E6%98%8E%E8%BF%87%E7%A8%8B/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="var、let、const声明过程">var、let、const声明过程</span>
+            <span class="post-date" title="2021-05-26 23:58:34">2021/05/26</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/05/26/js-%E4%BD%9C%E7%94%A8%E5%9F%9F%E9%93%BE/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 作用域链">js 作用域链</span>
+            <span class="post-date" title="2021-05-26 01:05:48">2021/05/26</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/05/26/js-%E5%BC%95%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%92%8C%E5%80%BC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 引用数据类型和值数据类型">js 引用数据类型和值数据类型</span>
+            <span class="post-date" title="2021-05-26 00:32:29">2021/05/26</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/05/25/js-%E4%BC%AA%E6%95%B0%E7%BB%84/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 伪数组">js 伪数组</span>
+            <span class="post-date" title="2021-05-25 23:15:18">2021/05/25</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/04/10/MySQL%E9%80%9A%E8%BF%87%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%97%A5%E5%BF%97%E6%81%A2%E5%A4%8D%E6%95%B0%E6%8D%AE/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="MySQL通过二进制日志恢复数据">MySQL通过二进制日志恢复数据</span>
+            <span class="post-date" title="2018-04-10 00:00:00">2018/04/10</span>
+        </a>
+        
+        
+        <a  class="全部文章 Vue JavaScript "
+           href="/2017/07/13/%E5%A6%82%E4%BD%95%E5%9C%A8vue%E4%B8%AD%E6%9B%BF%E6%8D%A2%E4%BD%BF%E7%94%A8%E9%BB%98%E8%AE%A4%E7%9A%84svg-loader/"
+           data-tag="Vue"
+           data-author="" >
+            <span class="post-title" title="如何在vue中替换使用默认的svg loader">如何在vue中替换使用默认的svg loader</span>
+            <span class="post-date" title="2017-07-13 00:00:00">2017/07/13</span>
+        </a>
+        
+        
+        <a  class="全部文章 HTML "
+           href="/2017/07/04/%E5%89%8D%E7%AB%AF%E5%87%A0%E7%A7%8D%E5%B8%B8%E8%A7%81%E7%9A%84%E5%B8%83%E5%B1%80%E6%96%B9%E5%BC%8F/"
+           data-tag="HTML"
+           data-author="" >
+            <span class="post-title" title="前端几种常见的布局方式">前端几种常见的布局方式</span>
+            <span class="post-date" title="2017-07-04 00:00:00">2017/07/04</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2017/05/30/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%8B%E5%8A%A1/"
+           data-tag="Innodb,ACID"
+           data-author="" >
+            <span class="post-title" title="数据库事务">数据库事务</span>
+            <span class="post-date" title="2017-05-30 00:00:00">2017/05/30</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2017/05/10/Mysql-Innodb%E7%89%B9%E6%80%A7/"
+           data-tag="Innodb"
+           data-author="" >
+            <span class="post-title" title="Mysql Innodb特性">Mysql Innodb特性</span>
+            <span class="post-date" title="2017-05-10 00:00:00">2017/05/10</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2017/04/18/MySQL%E5%A4%87%E4%BB%BD-mysqldump/"
+           data-tag="mysqldump"
+           data-author="" >
+            <span class="post-title" title="Mysql备份-mysqldump">Mysql备份-mysqldump</span>
+            <span class="post-date" title="2017-04-18 00:00:00">2017/04/18</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2017/04/18/MySQL%E5%A4%87%E4%BB%BD-LOAD-DATA/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="MySQL备份-LOAD DATA">MySQL备份-LOAD DATA</span>
+            <span class="post-date" title="2017-04-18 00:00:00">2017/04/18</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2017/04/18/Mysql-MHA%E9%AB%98%E5%8F%AF%E7%94%A8%E6%9E%B6%E6%9E%84%E5%8E%9F%E7%90%86%E5%8F%8A%E5%BA%94%E7%94%A8/"
+           data-tag="Mysql,MHA"
+           data-author="" >
+            <span class="post-title" title="Mysql MHA高可用架构原理及应用">Mysql MHA高可用架构原理及应用</span>
+            <span class="post-date" title="2017-04-18 00:00:00">2017/04/18</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2017/04/18/Mysql%E5%A4%87%E4%BB%BD/"
+           data-tag="mysqldump,xtrabackup"
+           data-author="" >
+            <span class="post-title" title="Mysql备份">Mysql备份</span>
+            <span class="post-date" title="2017-04-18 00:00:00">2017/04/18</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2017/04/17/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%9F%BA%E4%BA%8EGTID%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/"
+           data-tag="Mysql,GTID"
+           data-author="" >
+            <span class="post-title" title="Mysql主从复制-基于GTID的主从复制">Mysql主从复制-基于GTID的主从复制</span>
+            <span class="post-date" title="2017-04-17 00:00:00">2017/04/17</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2017/04/17/Mysql%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="Mysql体系结构">Mysql体系结构</span>
+            <span class="post-date" title="2017-04-17 00:00:00">2017/04/17</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2017/04/17/Mysql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%B1%BB%E5%9E%8B/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="Mysql存储引擎类型">Mysql存储引擎类型</span>
+            <span class="post-date" title="2017-04-17 00:00:00">2017/04/17</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2017/04/16/InnoDB-Redo-Flush%E5%8F%8A%E8%84%8F%E9%A1%B5%E5%88%B7%E6%96%B0%E6%9C%BA%E5%88%B6%E6%B7%B1%E5%85%A5%E5%88%86%E6%9E%90/"
+           data-tag="InnoDB"
+           data-author="" >
+            <span class="post-title" title="InnoDB Redo Flush及脏页刷新机制深入分析">InnoDB Redo Flush及脏页刷新机制深入分析</span>
+            <span class="post-date" title="2017-04-16 00:00:00">2017/04/16</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%8D%8A%E5%90%8C%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="Mysql主从复制-半同步主从复制">Mysql主从复制-半同步主从复制</span>
+            <span class="post-date" title="2017-04-14 00:00:00">2017/04/14</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2017/04/14/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%BC%82%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="Mysql主从复制-异步主从复制">Mysql主从复制-异步主从复制</span>
+            <span class="post-date" title="2017-04-14 00:00:00">2017/04/14</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2017/04/13/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%A6%82%E8%BF%B0/"
+           data-tag="Mysql,GTID"
+           data-author="" >
+            <span class="post-title" title="Mysql主从复制概述">Mysql主从复制概述</span>
+            <span class="post-date" title="2017-04-13 00:00:00">2017/04/13</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2017/04/12/xtrabackup%E5%A4%87%E4%BB%BD%E5%8E%9F%E7%90%86/"
+           data-tag="xtrabackup"
+           data-author="" >
+            <span class="post-title" title="xtrabackup备份原理">xtrabackup备份原理</span>
+            <span class="post-date" title="2017-04-12 00:00:00">2017/04/12</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2017/04/12/xtrabackup%E5%A4%87%E4%BB%BD%E5%AE%9E%E6%93%8D/"
+           data-tag="xtrabackup"
+           data-author="" >
+            <span class="post-title" title="xtrabackup备份实操">xtrabackup备份实操</span>
+            <span class="post-date" title="2017-04-12 00:00:00">2017/04/12</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2017/04/08/Mysql-5-7-%E5%AE%89%E8%A3%85/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="Mysql-5.7 安装">Mysql-5.7 安装</span>
+            <span class="post-date" title="2017-04-08 00:00:00">2017/04/08</span>
+        </a>
+        
+        <div id="no-item-tips">
+
+        </div>
+    </nav>
+    <div id="outline-list">
+    </div>
+</div>
+
+    </div>
+    <div class="hide-list">
+        <div class="semicircle" data-title="切换全屏 快捷键 s">
+            <div class="brackets first">︿</div>
+            <div class="brackets second">︿</div>
+        </div>
+    </div>
+</aside>
+<div id="post">
+    <div class="pjax">
+        <article id="post-Vuex-详解" class="article article-type-post" itemscope itemprop="blogPost">
+    
+        <h1 class="article-title">Vuex 详解</h1>
+    
+    <div class="article-meta">
+        
+        
+        
+        <span class="book">
+            <i class="iconfont icon-category"></i>
+            <span>分类</span>
+            
+            
+            <a  data-rel="Vue">Vue</a>
+            
+        </span>
+        
+        
+        <span class="tag">
+            <i class="iconfont icon-tag"></i>
+            <span>标签</span>
+            
+            <a class="color4">Vue</a>
+            
+            <a class="color5">Vuex</a>
+            
+        </span>
+        
+    </div>
+    <!-- <div class="article-meta">
+        
+            发布时间 : <time class="date" title='最后更新: 2023-08-16'>2021-08-06</time>
+        
+        <i class="iconfont icon-category"></i>
+        
+    </div> -->
+    <div class="article-meta">
+        
+        
+    </div>
+    
+    <div class="toc-ref">
+    
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-text">简介</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Vuex%E6%A0%B8%E5%BF%83%E5%86%85%E5%AE%B9"><span class="toc-text">Vuex核心内容</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Vuex%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-text">Vuex工作流程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%94%A8%E6%B3%95"><span class="toc-text">用法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85"><span class="toc-text">安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E7%BB%84%E7%BB%87"><span class="toc-text">代码组织</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#state-mapState"><span class="toc-text">state &amp; mapState</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#getters-mapGetters"><span class="toc-text">getters &amp; mapGetters</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#actions-mutations"><span class="toc-text">actions &amp; mutations</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#store-dispatch-mapActions"><span class="toc-text">$store.dispatch &amp; mapActions</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#store-commit-mapMutations"><span class="toc-text">$store.commit &amp; mapMutations</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#modules"><span class="toc-text">modules</span></a></li></ol></li></ol>
+    
+<style>
+    .left-col .switch-btn,
+    .left-col .switch-area {
+        display: none;
+    }
+    .toc-level-4 i,
+    .toc-level-4 ol {
+        display: none !important;
+    }
+</style>
+</div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>在大型的项目中，状态往往不只是父子之间传递，而是分布于各个组件中，我们通过属性传值的方式就会显得十分臃肿，并且在<code>Vue</code>中，兄弟组件之间传值并没有什么好的办法，往往通过事件总线订阅发布的方式，这种方式可行，但是我们把一些共享的状态抽离出来，统一的放在一个仓库中，哪个组件需要使用，就去仓库里拿，这种方式不是更好吗，这就是状态机的作用，在<code>React</code>中有<code>Redux</code>，<code>Mobx</code>等一些库，而在<code>Vue</code>中，官方推出的<code>Vuex</code>是最适合Vue的，<code>Vuex</code>中的状态是响应式的，完美的结合了<code>Vue</code>的优势；</p>
+<h1 id="Vuex核心内容"><a href="#Vuex核心内容" class="headerlink" title="Vuex核心内容"></a>Vuex核心内容</h1><p>在<code>Vuex</code>对象中，其实不止有<code>state</code>,还有用来操作<code>state</code>中数据的方法集，以及当我们需要对<code>state</code>中的数据需要加工的方法集等等成员。</p>
+<p>成员列表：</p>
+<ul>
+<li><code>state</code>     存放状态</li>
+<li><code>getters</code>   加工<code>state</code>成员给外界</li>
+<li><code>mutations</code> 同步<code>state</code>成员操作</li>
+<li><code>actions</code>   异步操作</li>
+<li><code>modules</code>   模块化状态管理</li>
+</ul>
+<h1 id="Vuex工作流程"><a href="#Vuex工作流程" class="headerlink" title="Vuex工作流程"></a>Vuex工作流程</h1><p>官网给出的流程图<br><img src="/images/vuex.png"></p>
+<p>首先，<code>Vue</code>组件如果调用某个<code>Vuex</code>的方法过程中需要向后端请求时或者说出现异步操作时，需要<code>dispatch</code> <code>Actions</code>的方法，以保证数据的同步。可以说，<code>action</code>的存在就是为了让<code>mutations</code>中的方法能在异步操作中起作用。</p>
+<p>如果没有异步操作，那么我们就可以直接在组件内提交状态中的Mutations中自己编写的方法来达成对<code>state</code>成员的操作。<strong>但是不建议这样做</strong>，我们希望总是由<code>action</code>去调用<code>mutations</code>修改<code>state</code></p>
+<p>不建议在组件中直接对<code>state</code>中的成员进行操作，这是因为直接修改(例如：<code>this.$store.state.name = &#39;hello&#39;</code>)的话不能被<code>VueDevtools</code>所监控到。同样，总是应该有<code>mustaions</code>去修改<code>state</code></p>
+<p>最后被修改后的<code>state</code>成员会被渲染到组件的当中去。</p>
+<p>这样就形成了一个单向闭环，这样的好处是可以明确的知道数据的流向，避免数据混乱；</p>
+<h1 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h1><h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><pre><code>npm install vuex --save
+或者
+yarn add vuex
+</code></pre>
+<h2 id="代码组织"><a href="#代码组织" class="headerlink" title="代码组织"></a>代码组织</h2><p>一般我们把全局状态单独放在一个文件夹中，然后把<code>store</code>导出，在<code>main.js</code>中使用这个<code>store</code>，<code>store</code>文件夹组织类似于<br><img src="/images/vuex2.png"></p>
+<p><code>store</code>的<code>index.js</code>文件类似于下面代码，由于<code>Vuex</code>实例化之前需要<code>Vue.use()</code>一下，因此需要先导入<code>vue</code></p>
+<p><code>store/index.js</code></p>
+<pre><code class="javascript">import Vue from &#39;vue&#39;
+import Vuex from &#39;vuex&#39;
+
+Vue.use(Vuex)
+
+import state from &#39;./state&#39;
+import mutations from &#39;./mutations&#39;
+import getters from &#39;./getters&#39;
+import actions from &#39;./actions&#39;
+
+// 单独模块
+import users from &#39;./modules/users&#39;
+
+export default new Vuex.Store(&#123;
+  state,
+  mutations,
+  actions,
+  getters,
+  modules: &#123;
+    users
+  &#125;
+&#125;)
+</code></pre>
+<p><code>main.js</code></p>
+<pre><code class="javascript">import Vue from &#39;vue&#39;
+import App from &#39;./App.vue&#39;
+import store from &#39;./store&#39;
+
+new Vue(&#123;
+  store,
+  render: h =&gt; h(App)
+&#125;).$mount(&#39;#app&#39;)
+</code></pre>
+<h2 id="state-mapState"><a href="#state-mapState" class="headerlink" title="state &amp; mapState"></a>state &amp; mapState</h2><p><code>state</code>的声明很简单，就是一个对象，里面存放的是响应式数据</p>
+<p><code>state.js</code></p>
+<pre><code class="javascript">export default &#123;
+    name: &#39;jerry&#39;,
+    age: 18
+&#125;
+</code></pre>
+<p>由于我们把<code>state</code>抽离出来了，因此直接导出对象就行了</p>
+<p>数据声明了，怎么使用呢？ 在组件中我们直接可以拿到<code>store</code>里的<code>state</code>，有以下几种方式</p>
+<ul>
+<li><p>直接在模板中使用</p>
+<pre><code class="html">    &lt;template&gt;
+      &lt;div&gt;
+        &#123;&#123; $store.state.name &#125;&#125;
+        &#123;&#123; $store.state.age &#125;&#125;
+      &lt;/div&gt;
+    &lt;/template&gt;
+</code></pre>
+</li>
+<li><p><code>computed</code>中指定</p>
+<p>当不使用<code>mapState</code>辅助函数的时候，直接定义计算属性，使用<code>this.$store.state</code>获取状态，如果很多状态，这样写代码十分冗余</p>
+<p>但是如果需要拿到状态和本地数据进行结合，这样写是很方便的，（无法使用过滤器，过滤器中无法访问实例this）</p>
+<pre><code class="html">&lt;template&gt;
+  &lt;div&gt;
+    &#123;&#123; name &#125;&#125;
+    &#123;&#123; age &#125;&#125;
+  &lt;/div&gt;
+&lt;/template&gt;
+&lt;script&gt;
+import &#123; mapState &#125; from &#39;vuex&#39;
+export default &#123;
+  // ...
+  computed: &#123;
+    name() &#123;
+      return this.$store.state.name
+    &#125;,
+    age() &#123;
+      return this.$store.state.age + this.localData
+    &#125;
+  &#125;
+&#125;
+&lt;/script&gt;
+</code></pre>
+</li>
+<li><p><code>mapState</code>辅助函数</p>
+<p><code>mapState</code>的第一个参数是命名空间，字符串，结合<code>modules</code>使用，可省略，第二个参数可以是一个数组或者对象</p>
+<pre><code class="html">&lt;template&gt;
+  &lt;div&gt;
+    &#123;&#123; name &#125;&#125;
+    &#123;&#123; age &#125;&#125;
+  &lt;/div&gt;
+&lt;/template&gt;
+&lt;script&gt;
+import &#123; mapState &#125; from &#39;vuex&#39;
+export default &#123;
+  // ...
+  computed: &#123;
+    ...mapState([&#39;name&#39;, &#39;age&#39;])
+  &#125;
+&#125;
+&lt;/script&gt;
+</code></pre>
+<p>如果传入对象，必须定义一个计算属性名称，不能使用ES6的<code>&#123;name, age&#125;</code>的省略写法，否则报错</p>
+<pre><code class="html">&lt;template&gt;
+  &lt;div&gt;
+    &#123;&#123; stateName &#125;&#125;
+    &#123;&#123; stateAge &#125;&#125;
+  &lt;/div&gt;
+&lt;/template&gt;
+&lt;script&gt;
+import &#123; mapState &#125; from &#39;vuex&#39;
+export default &#123;
+  // ...
+  computed: &#123;
+    ...mapState(&#123;
+      stateName: &#39;name&#39;,
+      stateAge: &#39;age&#39;
+    &#125;)
+  &#125;
+&#125;
+&lt;/script&gt;
+</code></pre>
+</li>
+</ul>
+<h2 id="getters-mapGetters"><a href="#getters-mapGetters" class="headerlink" title="getters &amp; mapGetters"></a>getters &amp; mapGetters</h2><p><code>getter</code>可认为是<code>state</code>的计算属性，将<code>state</code>作为第一个参数，可以拿到<code>state</code>里的数据，并且还可以接受第二个参数，就是<code>getters</code>，用来调用其他<code>getter</code></p>
+<p><code>getters.js</code></p>
+<pre><code class="javascript">export default &#123;
+    // getter将state作为第一个参数
+    ageWithSuffix(state) &#123;
+        return state.age + &#39;岁&#39;
+    &#125;,
+
+    // getter也可将getters作为第二个参数，用来调用其他getter
+    ageWithPrefix(state, getters) &#123;
+        return &#39;今年&#39; + getters.ageWithSuffix
+    &#125;
+&#125;
+</code></pre>
+<p>如何使用getters？</p>
+<ul>
+<li><p>模板里直接使用</p>
+<pre><code class="html">&lt;template&gt;
+  &lt;div&gt;
+    &#123;&#123; $store.getters.ageWithSuffix &#125;&#125;
+    &#123;&#123; $store.getters.ageWithPrefix &#125;&#125;
+  &lt;/div&gt;
+&lt;/template&gt;
+</code></pre>
+</li>
+<li><p><code>computed</code>里使用</p>
+<pre><code class="html">&lt;template&gt;
+  &lt;div&gt;
+    &#123;&#123; prefix &#125;&#125;
+  &lt;/div&gt;
+&lt;/template&gt;
+&lt;script&gt;
+export default &#123;
+  // ...
+  computed: &#123;
+    prefix()&#123;
+      return this.$store.getters.ageWithPrefix
+    &#125;
+  &#125;
+&#125;
+&lt;/script&gt;
+</code></pre>
+</li>
+<li><p><code>mapGetters</code>辅助函数<br>数组写法</p>
+<pre><code class="html">&lt;template&gt;
+  &lt;div&gt;
+    &#123;&#123; ageWithSuffix &#125;&#125;
+    &#123;&#123; ageWithPrefix &#125;&#125;
+  &lt;/div&gt;
+&lt;/template&gt;
+&lt;script&gt;
+import &#123; mapGetters &#125; from &#39;vuex&#39;
+export default &#123;
+  // ...
+  computed: &#123;
+    ...mapGetters([&#39;ageWithSuffix&#39;, &#39;ageWithPrefix&#39;]),
+  &#125;
+&#125;
+&lt;/script&gt;
+</code></pre>
+<p>对象写法</p>
+<pre><code class="html">&lt;template&gt;
+  &lt;div&gt;
+    &#123;&#123; suffix &#125;&#125;
+    &#123;&#123; prefix &#125;&#125;
+  &lt;/div&gt;
+&lt;/template&gt;
+&lt;script&gt;
+import &#123; mapGetters &#125; from &#39;vuex&#39;
+export default &#123;
+  // ...
+  computed: &#123;
+    ...mapGetters(&#123;
+       suffix: &#39;ageWithSuffix&#39;,
+       prefix: &#39;ageWithPrefix&#39;
+    &#125;)
+  &#125;
+&#125;
+&lt;/script&gt;
+</code></pre>
+</li>
+</ul>
+<p>上面是定义状态以及获取状态的方法，而修改状态需要<code>dispatch</code>一个<code>action</code>，然后再由<code>action</code>去<code>commit</code>一个<code>mutation</code>，实现状态修改</p>
+<p>所以<code>action</code>和<code>mutation</code>之间是强耦合的，我们为了去耦合，会引入一个<code>mutation-type.js</code>，这个也可以帮助我们快速找到相关代码的位置。</p>
+<p><code>mutation-type.js</code></p>
+<pre><code class="javascript">export const CHANGE_AGE = &#39;change_age&#39;
+export const CHANGE_NAME = &#39;change_name&#39;
+</code></pre>
+<p>然后我们定义<code>action</code>和<code>mutation</code>的时候，通过这个中间变量，进行关联；</p>
+<h2 id="actions-mutations"><a href="#actions-mutations" class="headerlink" title="actions &amp; mutations"></a>actions &amp; mutations</h2><ul>
+<li><p>actions<br><code>action</code>整体是一个对象，<code>key</code>是将来我们<code>dispatch``action</code>的<code>type</code>值，因此我们可以直接使用<code>mutation-types</code>导出的值，和<code>mutaion</code>保持一致。</p>
+<p><code>action</code> 函数第一个参数是一个与 <code>store</code> 实例具有相同方法和属性的<code>context</code> 对象，因此你可以调用 <code>context.commit</code> 提交一个 <code>mutation</code>，或者通过<code>context.state</code> 和 <code>context.getters</code> 来获取 <code>state</code> 和 <code>getters</code>，甚至可以通过<code>context.dispatch</code>派发另外一个<code>action</code>，可以通过解构来简化代码</p>
+<p><code>action</code>里是可以执行异步代码的，等异步执行完了再去<code>commit</code> <code>mutation</code>，此时才是同步修改<code>state</code></p>
+<p><code>actions.js</code></p>
+<pre><code class="javascript">import &#123; CHANGE_AGE, CHANGE_NAME &#125; from &#39;./mutation-types&#39;
+
+export default &#123;
+    // 第二个参数是payload，用于接收数据，通常为一个对象，用于接收多个数据，也可以直接接受单个参数
+    [CHANGE_NAME](&#123; commit &#125;, payload) &#123;
+        commit(CHANGE_NAME, payload)
+    &#125;,
+&#125;
+</code></pre>
+<p>  如果我们利用 <code>async / await</code>，我们可以如下组合 <code>action</code>，在<code>action</code>中调用另外一个<code>action</code></p>
+<pre><code class="javascript">// 假设 getData() 和 getOtherData() 返回的是 Promise
+async actionA(&#123; commit &#125;) &#123;
+  commit(&#39;gotData&#39;, await getData())
+&#125;,
+async actionB(&#123; dispatch, commit &#125;) &#123;
+  await dispatch(&#39;actionA&#39;) // 等待 actionA 完成
+  commit(&#39;gotOtherData&#39;, await getOtherData())
+&#125;
+</code></pre>
+</li>
+<li><p>mutations</p>
+<p><code>mutation</code>接收两个参数，一个是<code>state</code>，用于修改状态，一个是<code>payload</code>，用于接收<code>action</code>传参，<code>payload</code>大多数为一个对象，用以传递多个数据</p>
+<p><code>mutations.js</code></p>
+<pre><code class="javascript">import &#123; CHANGE_AGE, CHANGE_NAME &#125; from &#39;./mutation-types&#39;
+
+export default &#123;
+    // [CHANGE_AGE] 为es6语法，可以将表达式作为属性名
+    [CHANGE_AGE](state, payload) &#123;
+        console.log(payload);
+        state.age = payload.age
+    &#125;,
+
+    [CHANGE_NAME](state, payload) &#123;
+        state.name = payload.name
+    &#125;,
+&#125;
+</code></pre>
+</li>
+</ul>
+<h2 id="store-dispatch-mapActions"><a href="#store-dispatch-mapActions" class="headerlink" title="$store.dispatch &amp; mapActions"></a>$store.dispatch &amp; mapActions</h2><ul>
+<li><p>$store.dispatch</p>
+<p><code>$store.dispatch</code>可以直接派发一个<code>action</code>，<code>dispatch</code>接收一个对象作为参数，对象必须指定一个<code>type</code>属性，表示派发哪一个<code>action</code>，或者把<code>type</code>放在第一个参数上</p>
+<pre><code class="html">&lt;template&gt;
+  &lt;div&gt;
+    &lt;button @click=&quot;changeName&quot;&gt;修改名字&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+&lt;script&gt;
+import &#123; CHANGE_NAME &#125; from &#39;@/store/mutation-types&#39;
+export default &#123;
+  // ...
+  methods: &#123;
+    changeName() &#123;
+      this.$store.dispatch(&#123;
+        type: CHANGE_NAME,
+        name: &#39;tom&#39;
+      &#125;)
+
+      // 把type放在第一个参数上
+      this.$store.dispatch(CHANGE_NAME, &#123;
+        name: &#39;tom&#39;
+      &#125;)
+    &#125;
+  &#125;
+&#125;
+&lt;/script&gt;
+</code></pre>
+</li>
+<li><p>mapActions</p>
+<p><code>mapActions</code> 辅助函数将组件的 <code>methods</code> 映射为 <code>store.dispatch</code> 调用</p>
+<pre><code class="javascript">import &#123; mapActions &#125; from &#39;vuex&#39;
+
+export default &#123;
+  // ...
+  methods: &#123;
+    ...mapActions([
+      &#39;increment&#39;, // 将 `this.increment()` 映射为 `this.$store.dispatch(&#39;increment&#39;)`
+
+      // `mapActions` 也支持载荷：
+      &#39;incrementBy&#39; // 将 `this.incrementBy(amount)` 映射为 `this.$store.dispatch(&#39;incrementBy&#39;, amount)`
+    ]),
+    ...mapActions(&#123;
+      add: &#39;increment&#39; // 将 `this.add()` 映射为 `this.$store.dispatch(&#39;increment&#39;)`，相当于取了个别名
+    &#125;)
+  &#125;
+&#125;
+</code></pre>
+<p>引入<code>mutation-types</code>的例子：</p>
+<pre><code class="html">&lt;template&gt;
+  &lt;div&gt;
+    &lt;button @click=&quot;changeName&quot;&gt;修改名字&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+&lt;script&gt;
+import &#123; CHANGE_NAME &#125; from &#39;@/store/mutation-types&#39;
+import &#123; mapActions &#125; from &#39;vuex&#39;
+export default &#123;
+  // ...
+  methods: &#123;
+    ...mapActions([CHANGE_NAME]),
+    changeName() &#123;
+      this[CHANGE_NAME](&#123;name: &#39;tom&#39;&#125;)
+    &#125;
+  &#125;
+&#125;
+&lt;/script&gt;
+</code></pre>
+</li>
+</ul>
+<h2 id="store-commit-mapMutations"><a href="#store-commit-mapMutations" class="headerlink" title="$store.commit &amp; mapMutations"></a>$store.commit &amp; mapMutations</h2><ul>
+<li><p>$store.commit</p>
+<p>我们是可以直接跳过<code>action</code>直接提交一个<code>mutation</code>的，但是不建议这么做，即使你知道并没有异步操作</p>
+<p><code>$store.commit</code>可以直接提交一个<code>mutation</code>，<code>commit</code>接收一个对象作为参数，对象必须指定一个<code>type</code>属性，表示提交哪一个<code>mutation</code>，或者把<code>type</code>放在第一个参数上</p>
+<pre><code class="html">&lt;template&gt;
+  &lt;div&gt;
+    &lt;button @click=&quot;changeAge&quot;&gt;修改年龄&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+&lt;script&gt;
+import &#123; CHANGE_NAME, CHANGE_AGE &#125; from &#39;@/store/mutation-types&#39;
+export default &#123;
+  // ...
+  methods: &#123;
+    changeAge() &#123;
+      this.$store.commit(&#123;
+        type: CHANGE_AGE,
+        age: 20
+      &#125;)
+
+      // 把type放在第一个参数上
+      this.$store.commit(CHANGE_AGE, &#123;
+        age: 20
+      &#125;)
+    &#125;
+  &#125;
+&#125;
+&lt;/script&gt;
+</code></pre>
+</li>
+<li><p>mapMutations</p>
+<pre><code class="javascript">import &#123; mapMutations &#125; from &#39;vuex&#39;
+
+export default &#123;
+  // ...
+  methods: &#123;
+    ...mapMutations([
+      &#39;increment&#39;, // 将 `this.increment()` 映射为 `this.$store.commit(&#39;increment&#39;)`
+
+      // `mapMutations` 也支持载荷：
+      &#39;incrementBy&#39; // 将 `this.incrementBy(amount)` 映射为 `this.$store.commit(&#39;incrementBy&#39;, amount)`
+    ]),
+    ...mapMutations(&#123;
+      add: &#39;increment&#39; // 将 `this.add()` 映射为 `this.$store.commit(&#39;increment&#39;)`
+    &#125;)
+  &#125;
+&#125;
+</code></pre>
+<p>引入<code>mutation-types</code>的例子：</p>
+<pre><code class="html">&lt;template&gt;
+  &lt;div&gt;
+    &lt;button @click=&quot;changeAge&quot;&gt;修改年龄&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+&lt;script&gt;
+import &#123; CHANGE_AGE &#125; from &#39;@/store/mutation-types&#39;
+import &#123; mapMutations &#125; from &#39;vuex&#39;
+export default &#123;
+  // ...
+  methods: &#123;
+    ...mapMutations([CHANGE_AGE]),
+    changeAge() &#123;
+      this[CHANGE_AGE](&#123;age: 20&#125;)
+    &#125;
+  &#125;
+&#125;
+&lt;/script&gt;
+</code></pre>
+</li>
+</ul>
+<h2 id="modules"><a href="#modules" class="headerlink" title="modules"></a>modules</h2><p>在外面使用<code>state</code>时，通过 <code>&#123;&#123;$store.state.users.username&#125;&#125;</code> 获取，</p>
+<p>这里的<code>users</code>是根据<code>new Vuex.Store(&#123; modules: &#123; users: users &#125; &#125;)</code> 的<code>key</code>来指定的</p>
+<p>是否启用命名空间对模块内的<code>state</code>都没有影响，取值的方式都需要加上命名空间</p>
+<p>因此取值方式变成了</p>
+<pre><code class="html">&lt;template&gt;
+  &#123;&#123;$store.state.users.username&#125;&#125;
+  &lt;/template&gt;
+</code></pre>
+<p>或者</p>
+<pre><code class="javascript">...mapState(&#39;account&#39;, [&#39;user&#39;])
+</code></pre>
+<p>或者</p>
+<pre><code class="javascript">...mapState(&#123;
+  tomRole: state =&gt; state.users.role,
+  tomAge: state =&gt; state.users.age
+&#125;)
+</code></pre>
+<p>如果仅仅是区分了模块，而没有设置命名空间，那么<code>getters</code>、<code>actions</code>、<code>mutations</code>将会和根状态合并，外部直接获取，不需要加上命名空间</p>
+<p>如果设置命名空间为<code>true</code>，则在外面获取时需要加上命名空间，如下</p>
+<p>如果使用命名空间，那么使用<code>getters</code>、<code>actions</code>、<code>mutaions</code>都需要使用命名空间的写法，</p>
+<pre><code class="javascript">[this.]$store.getters[&#39;account/isAdmin&#39;]   或  ...mapGetters(&#39;account&#39;, [&#39;isAdmin&#39;])
+
+[this.]$store.dispatch(&#39;account/login&#39;)    或  ...mapActions(&#39;account&#39;, [&#39;login&#39;])
+
+[this.]$store.commit(&#39;account/login&#39;)      或  ...mapMutations(&#39;account&#39;, [&#39;login&#39;])
+</code></pre>
+<pre><code class="javascript">export default &#123;
+    namespaced: true,
+    // 可以注意到state是一个函数返回了对象，避免自己和其他state数据互相污染，实际上和Vue组件内的data是同样的问题
+    state() &#123;
+        return &#123;
+            username: &#39;Tom&#39;,
+            role: &#39;admin&#39;,
+            age: 20
+        &#125;
+    &#125;,
+    // 在这个模块的 getter 中，`getters` 被局部化了， 你可以使用 getter 的第四个参数来调用 `rootGetters`
+    // 如果你希望使用全局 state 和 getter，rootState 和 rootGetters 会作为第三和第四参数传入 getter，
+    // 也会通过 context 对象的属性传入 action。
+    getters: &#123;
+        role(state, getters, rootState, rootGetters) &#123;
+            return state.role
+        &#125;,
+        allAge(state, getters, rootState, rootGetters) &#123;
+            return state.age + rootState.age
+        &#125;
+    &#125;,
+    // 对于模块内部的 action，局部状态通过 context.state 暴露出来，根节点状态则为 context.rootState：
+    actions: &#123;
+        change_role(&#123; commit, rootState &#125;) &#123;
+            commit(&#39;m_change_role&#39;)
+        &#125;,
+
+        // 在这个模块中， dispatch 和 commit 也被局部化了，他们可以接受 `root` 属性以访问根 dispatch 或 commit
+        // 若需要在全局命名空间内分发 action 或提交 mutation，将 &#123; root: true &#125; 作为第三参数传给 dispatch 或 commit 即可。
+        someAction(&#123; dispatch, commit, getters, rootGetters &#125;) &#123;
+            getters.someGetter                                  // -&gt; &#39;users/someGetter&#39;
+            rootGetters.someGetter                              // -&gt; &#39;someGetter&#39;
+
+            dispatch(&#39;someOtherAction&#39;)                         // -&gt; &#39;users/someOtherAction&#39;
+            dispatch(&#39;someOtherAction&#39;, null, &#123; root: true &#125;)   // -&gt; &#39;someOtherAction&#39;
+
+            commit(&#39;someMutation&#39;)                              // -&gt; &#39;users/someMutation&#39;
+            commit(&#39;someMutation&#39;, null, &#123; root: true &#125;)        // -&gt; &#39;someMutation&#39;
+        &#125;,
+
+        // 若需要在带命名空间的模块注册全局 action，你可添加 root: true，并将这个 action 的定义放在函数 handler 中。例如：
+        globalAction: &#123;
+            root: true,
+            handler(namespacedContext, payload) &#123; &#125;
+        &#125;
+    &#125;,
+    mutations: &#123;
+        m_change_role(state, payload) &#123;
+            state.role = &#39;vip&#39;
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+
+      
+       <hr><span style="font-style: italic;color: gray;"> 转载请注明来源，欢迎对文章中的引用来源进行考证，欢迎指出任何有错误或不够清晰的表达。可以在下面评论区评论，也可以邮件至 289211569@qq.com </span>
+    </div>
+</article>
+
+
+
+
+
+    <div id="comments"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+
+<script type="text/javascript">
+    $.getScript('/js/gitalk.js', function () {
+        var gitalk = new Gitalk({
+            clientID: '5c7f4030e244f7c761df',
+            clientSecret: 'cb217d8ebb46e3ce61e53e411894873f6352a333',
+            repo: 'daryl-lau.github.io',
+            owner: 'daryl-lau',
+            admin: ['daryl-lau'],
+            id: decodeURI(location.pathname),
+            distractionFreeMode: 'true',
+            language: 'zh-CN',
+            perPage: parseInt('10',10)
+        })
+        gitalk.render('comments')
+    })
+</script>
+
+
+
+
+    
+
+
+
+
+    </div>
+    <div class="copyright">
+        <p class="footer-entry">
+    ©2016-2023 Daryl
+</p>
+<!-- <p class="footer-entry">Built with <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/yelog/hexo-theme-3-hexo" target="_blank">3-hexo</a> theme</p> -->
+
+    </div>
+    <div class="full-toc">
+        <button class="full"><span class="min "></span></button>
+<a class="" id="rocket"></a>
+    </div>
+</div>
+
+</body>
+<script src="/js/jquery.pjax.js?v=1.1.0" ></script>
+<script src="/js/script.js?v=1.1.0" ></script>
+<script>
+    var img_resize = 'photoSwipe';
+    function initArticle() {
+        /*渲染对应的表格样式*/
+        
+            $("#post .pjax table").addClass("green_title");
+        
+
+        /*渲染打赏样式*/
+        
+
+        /*高亮代码块行号*/
+        
+        $('pre code').each(function(){
+            var lines = $(this).text().trim().split('\n').length, widther='';
+            if (lines>99) {
+                widther = 'widther'
+            }
+            var $numbering = $('<ul/>').addClass('pre-numbering ' + widther).attr("unselectable","on");
+            $(this).addClass('has-numbering ' + widther)
+                    .parent()
+                    .append($numbering);
+            for(var i=1;i<=lines;i++){
+                $numbering.append($('<li/>').text(i));
+            }
+        });
+        
+
+        /*访问数量*/
+        
+
+        /*代码高亮，行号对齐*/
+        $('.pre-numbering').css('line-height',$('.has-numbering').css('line-height'));
+
+        
+
+        // PhotoSwipe
+        $('article').each(function(i){
+            $(this).find('img').each(function(){
+                if ($(this).closest('figure').hasClass('article-gallery-img')) {
+                    return;
+                }
+                var alt = this.alt;
+                $(this)
+                    .wrap('<figure class="article-gallery-img" itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject"></figure>')
+                    .wrap('<a href="' + this.src + '" title="' + alt + '"></a>');
+                $(this).after('<div class="img_alt"><span>' + (alt || '') + '</span></div>');
+            });
+        });
+
+        var pswpElement = document.querySelectorAll('.pswp')[0];
+        if (pswpElement) {
+            var gallerySelector = '.article-gallery, article';
+
+            var initPhotoSwipeFromDOM = function(gallerySelector) {
+
+                // parse slide data (url, title, size ...) from DOM elements
+                // (children of gallerySelector)
+                var parseThumbnailElements = function(el) {
+                    var thumbElements = $(el).find('figure.article-gallery-img').toArray(),
+                        numNodes = thumbElements.length,
+                        items = [],
+                        figureEl,
+                        linkEl,
+                        size,
+                        imgEl,
+                        item;
+
+                    for (var i = 0; i < numNodes; i++) {
+
+                        figureEl = thumbElements[i]; // <figure> element
+
+                        // include only element nodes
+                        if (figureEl.nodeType !== 1) {
+                            continue;
+                        }
+
+                        linkEl = figureEl.children[0]; // <a> element
+                        imgEl = linkEl.children[0]; // <img>
+
+                        size = linkEl.getAttribute('data-size');
+                        size = size && size.split('x');
+
+                        // create slide object
+                        item = {
+                            src: linkEl.getAttribute('href'),
+                            w: size && parseInt(size[0], 10) || imgEl.width,
+                            h: size && parseInt(size[1], 10) || imgEl.height
+                        };
+
+                        if (figureEl.children.length > 1) {
+                            // <figcaption> content
+                            item.title = figureEl.children[1].innerHTML;
+                        }
+
+                        if (linkEl.children.length > 0) {
+                            // <img> thumbnail element, retrieving thumbnail url
+                            item.msrc = linkEl.children[0].getAttribute('src');
+                        }
+
+                        item.el = figureEl; // save link to element for getThumbBoundsFn
+                        items.push(item);
+                    }
+
+                    return items;
+                };
+
+                // find nearest parent element
+                var closest = function closest(el, fn) {
+                    return el && (fn(el) ? el : closest(el.parentNode, fn));
+                };
+
+                // triggers when user clicks on thumbnail
+                var onThumbnailsClick = function(e) {
+                    e = e || window.event;
+
+                    var eTarget = e.target || e.srcElement;
+
+                    // find root element of slide
+                    var clickedListItem = closest(eTarget, function(el) {
+                        return (el.tagName && el.tagName.toUpperCase() === 'FIGURE');
+                    });
+
+                    if (!clickedListItem) {
+                        return;
+                    }
+
+                    if (e.preventDefault) {
+                        e.preventDefault();
+                    } else {
+                        e.returnValue = false;
+                    }
+
+                    // find index of clicked item by looping through all child nodes
+                    // alternatively, you may define index via data- attribute
+                    var clickedGallery = $(clickedListItem).closest(gallerySelector)[0],
+                        childNodes = $(clickedGallery).find('figure.article-gallery-img').toArray(),
+                        numChildNodes = childNodes.length,
+                        nodeIndex = 0,
+                        index;
+
+                    for (var i = 0; i < numChildNodes; i++) {
+                        if (childNodes[i].nodeType !== 1) {
+                            continue;
+                        }
+
+                        if (childNodes[i] === clickedListItem) {
+                            index = nodeIndex;
+                            break;
+                        }
+                        nodeIndex++;
+                    }
+
+
+
+                    if (index >= 0) {
+                        // open PhotoSwipe if valid index found
+                        openPhotoSwipe(index, clickedGallery);
+                    }
+                    return false;
+                };
+
+                // parse picture index and gallery index from URL (#&pid=1&gid=2)
+                var photoswipeParseHash = function() {
+                    var hash = window.location.hash.substring(1),
+                        params = {};
+
+                    if (hash.length < 5) {
+                        return params;
+                    }
+
+                    var vars = hash.split('&');
+                    for (var i = 0; i < vars.length; i++) {
+                        if (!vars[i]) {
+                            continue;
+                        }
+                        var pair = vars[i].split('=');
+                        if (pair.length < 2) {
+                            continue;
+                        }
+                        params[pair[0]] = pair[1];
+                    }
+
+                    if (params.gid) {
+                        params.gid = parseInt(params.gid, 10);
+                    }
+
+                    return params;
+                };
+
+                var openPhotoSwipe = function(index, galleryElement, disableAnimation, fromURL) {
+                    var pswpElement = document.querySelectorAll('.pswp')[0],
+                        gallery,
+                        options,
+                        items;
+
+                    items = parseThumbnailElements(galleryElement);
+
+                    // define options (if needed)
+                    options = {
+
+                        // define gallery index (for URL)
+                        galleryUID: galleryElement.getAttribute('data-pswp-uid'),
+
+                        getThumbBoundsFn: function(index) {
+                            // See Options -> getThumbBoundsFn section of documentation for more info
+                            var thumbnail = items[index].el.getElementsByTagName('img')[0], // find thumbnail
+                                pageYScroll = window.pageYOffset || document.documentElement.scrollTop,
+                                rect = thumbnail.getBoundingClientRect();
+
+                            return {
+                                x: rect.left,
+                                y: rect.top + pageYScroll,
+                                w: rect.width
+                            };
+                        }
+                    };
+
+                    // PhotoSwipe opened from URL
+                    if (fromURL) {
+                        if (options.galleryPIDs) {
+                            // parse real index when custom PIDs are used
+                            // http://photoswipe.com/documentation/faq.html#custom-pid-in-url
+                            for (var j = 0; j < items.length; j++) {
+                                if (items[j].pid == index) {
+                                    options.index = j;
+                                    break;
+                                }
+                            }
+                        } else {
+                            // in URL indexes start from 1
+                            options.index = parseInt(index, 10) - 1;
+                        }
+                    } else {
+                        options.index = parseInt(index, 10);
+                    }
+
+                    // exit if index not found
+                    if (isNaN(options.index)) {
+                        return;
+                    }
+
+                    if (disableAnimation) {
+                        options.showAnimationDuration = 0;
+                    }
+
+                    // Pass data to PhotoSwipe and initialize it
+                    gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, options);
+
+                    gallery.listen('imageLoadComplete', function(index, item) {
+                        var linkEl = item.el.children[0];
+                        var img = item.container.children[0];
+                        if (!linkEl.getAttribute('data-size')) {
+                            linkEl.setAttribute('data-size', img.naturalWidth + 'x' + img.naturalHeight);
+                            item.w = img.naturalWidth;
+                            item.h = img.naturalHeight;
+                            gallery.invalidateCurrItems();
+                            gallery.updateSize(true);
+                        }
+                    });
+
+                    gallery.init();
+                };
+
+                // loop through all gallery elements and bind events
+                var galleryElements = document.querySelectorAll(gallerySelector);
+
+                for (var i = 0, l = galleryElements.length; i < l; i++) {
+                    galleryElements[i].setAttribute('data-pswp-uid', i + 1);
+                    galleryElements[i].onclick = onThumbnailsClick;
+                }
+
+                // Parse URL and open gallery if it contains #&pid=3&gid=1
+                var hashData = photoswipeParseHash();
+                if (hashData.pid && hashData.gid) {
+                    openPhotoSwipe(hashData.pid, galleryElements[hashData.gid - 1], true, true);
+                }
+            };
+
+            // execute above function
+            initPhotoSwipeFromDOM(gallerySelector);
+        }
+        
+        
+    }
+
+    /*打赏页面隐藏与展示*/
+    
+
+</script>
+
+<!--加入行号的高亮代码块样式-->
+
+<style>
+    pre{
+        position: relative;
+        margin-bottom: 24px;
+        border-radius: 6px;
+        border: 1px solid #e2dede;
+        background: #FFF;
+        overflow: hidden;
+    }
+    code.has-numbering{
+        margin-left: 26px;
+    }
+    code.has-numbering.widther{
+        margin-left: 42px;
+    }
+    .pre-numbering{
+        height: 100%;
+        user-select: none;
+        margin: 0;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 20px;
+        padding: 1.1em 3px 1em 12px;
+        text-align: right;
+        color: #9da4b1;
+        background-color: #353941;
+    }
+    .pre-numbering>li {
+        padding-right: 4px;
+        list-style: none;
+        font-family: consolas, Menlo, monospace, 'PingFang SC', 'Microsoft YaHei';
+    }
+    .pre-numbering.widther {
+        width: 35px;
+    }
+</style>
+
+<!--自定义样式设置-->
+<style>
+    
+    
+    .nav {
+        width: 602px;
+    }
+    .nav.fullscreen {
+        margin-left: -602px;
+    }
+    .nav-left {
+        width: 180px;
+    }
+    
+    
+    @media screen and (max-width: 1468px) {
+        .nav {
+            width: 532px;
+        }
+        .nav.fullscreen {
+            margin-left: -532px;
+        }
+        .nav-left {
+            width: 140px;
+        }
+    }
+    
+    
+    @media screen and (max-width: 1024px) {
+        .nav {
+            width: 532px;
+            margin-left: -532px
+        }
+        .nav.fullscreen {
+            margin-left: 0;
+        }
+    }
+    
+    @media screen and (max-width: 426px) {
+        .nav {
+            width: 100%;
+        }
+        .nav-left {
+            width: 100%;
+        }
+    }
+    
+    
+    .nav-right .title-list nav a .post-title, .nav-right .title-list #local-search-result a .post-title {
+        color: #383636;
+    }
+    
+    
+    .nav-right .title-list nav a .post-date, .nav-right .title-list #local-search-result a .post-date {
+        color: #999;
+    }
+    
+    
+    .nav-right nav a.hover, #local-search-result a.hover{
+        background-color: #e2e0e0;
+    }
+    
+    
+
+    /*列表样式*/
+    
+
+    /* 背景图样式 */
+    
+    
+
+
+    /*引用块样式*/
+    
+
+    /*文章列表背景图*/
+    
+    .nav-right:before {
+        content: ' ';
+        display: block;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.3;
+        background: url("https://i.loli.net/2019/07/22/5d3521411f3f169375.png");
+        background-repeat: no-repeat;
+        background-position: 50% 0;
+        -ms-background-size: cover;
+        -o-background-size: cover;
+        -moz-background-size: cover;
+        -webkit-background-size: cover;
+        background-size: cover;
+    }
+    
+
+    
+</style>
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe.
+         It's a separate element, as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. PhotoSwipe keeps only 3 slides in DOM to save memory. -->
+        <!-- don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <!-- Preloader demo https://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+</html>
