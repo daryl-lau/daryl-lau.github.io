@@ -1,0 +1,2025 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>React hooks知识点整理 | Daryl&#39;s blog</title>
+  <meta name="keywords" content=" React , React Hooks ">
+  <meta name="description" content="React hooks知识点整理 | Daryl&#39;s blog">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="description" content="在Redux中的action仅支持原始对象（plain object），处理有副作用的action，需要使用中间件。中间件可以在发出action，到reducer函数接受action之间，执行具有副作用的操作，例如网络请求，读取浏览器缓存等。 下面的示例基于【react-redux的使用】学习源码 redux-thunkredux-thunk是redux的作者提供的一个处理副作用的方案，我们都知道">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redux 异步操作redux-thunk和redux-saga">
+<meta property="og:url" content="http://example.com/2021/08/14/React/Redux-%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9Credux-thunk%E5%92%8Credux-saga/index.html">
+<meta property="og:site_name" content="Daryl&#39;s blog">
+<meta property="og:description" content="在Redux中的action仅支持原始对象（plain object），处理有副作用的action，需要使用中间件。中间件可以在发出action，到reducer函数接受action之间，执行具有副作用的操作，例如网络请求，读取浏览器缓存等。 下面的示例基于【react-redux的使用】学习源码 redux-thunkredux-thunk是redux的作者提供的一个处理副作用的方案，我们都知道">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/redux16.gif">
+<meta property="article:published_time" content="2021-08-13T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-08-16T12:36:01.446Z">
+<meta property="article:author" content="Daryl">
+<meta property="article:tag" content="React">
+<meta property="article:tag" content="react-thunk">
+<meta property="article:tag" content="react-sage">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/redux16.gif">
+
+
+<link rel="icon" href="/img/avatar.jpg">
+
+<link href="/css/style.css?v=1.1.0" rel="stylesheet">
+
+<link href="/css/hl_theme/atom-dark.css?v=1.1.0" rel="stylesheet">
+
+<link href="//cdn.jsdelivr.net/npm/animate.css@4.1.0/animate.min.css" rel="stylesheet">
+
+<link href="//cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css" rel="stylesheet">
+<link href="//cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css" rel="stylesheet">
+
+<script src="//cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+<script src="/js/titleTip.js?v=1.1.0" ></script>
+
+<script src="//cdn.jsdelivr.net/npm/highlightjs@9.16.2/highlight.pack.min.js"></script>
+<script>
+    hljs.initHighlightingOnLoad();
+</script>
+
+<script src="//cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js"></script>
+
+
+
+<script src="//cdn.jsdelivr.net/npm/jquery.cookie@1.4.1/jquery.cookie.min.js" ></script>
+
+<script src="/js/iconfont.js?v=1.1.0" ></script>
+
+<script src="//cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<div style="display: none">
+  <input class="theme_disqus_on" value="false">
+  <input class="theme_preload_comment" value="">
+  <input class="theme_blog_path" value="">
+  <input id="theme_shortcut" value="true" />
+  <input id="theme_highlight_on" value="true" />
+  <input id="theme_code_copy" value="true" />
+</div>
+
+
+
+<body>
+<aside class="nav">
+    <div class="nav-left">
+        <a href="/"
+   class="avatar_target">
+    <img class="avatar"
+         src="/img/avatar.jpg"/>
+</a>
+<div class="author">
+    <span>Daryl</span>
+</div>
+
+<div class="icon">
+    
+</div>
+
+
+
+
+
+<ul>
+    <li>
+        <div class="all active" data-rel="全部文章">全部文章
+            
+                <small>(64)</small>
+            
+        </div>
+    </li>
+    
+        
+            <li>
+                <div data-rel="前端">前端
+                    <small>(10)</small>
+                    
+                </div>
+            </li>
+        
+    
+        
+            <li>
+                <div data-rel="JavaScript">JavaScript
+                    <small>(18)</small>
+                    
+                </div>
+            </li>
+        
+    
+        
+            <li>
+                <div data-rel="React">React
+                    <small>(16)</small>
+                    
+                </div>
+            </li>
+        
+    
+        
+            <li>
+                <div data-rel="Vue">Vue
+                    <small>(4)</small>
+                    
+                </div>
+            </li>
+        
+    
+        
+            <li>
+                <div data-rel="Mysql">Mysql
+                    <small>(17)</small>
+                    
+                </div>
+            </li>
+        
+    
+</ul>
+<div class="left-bottom">
+    <div class="menus">
+        
+            
+            
+            
+    </div>
+    <div>
+        
+        
+    </div>
+</div>
+<input type="hidden" id="yelog_site_posts_number" value="64">
+
+<div style="display: none">
+    <span id="busuanzi_value_site_uv"></span>
+    <span id="busuanzi_value_site_pv"></span>
+</div>
+
+    </div>
+    <div class="nav-right">
+        <div class="friends-area">
+    <div class="friends-title">
+        友情链接
+        <i class="iconfont icon-left"></i>
+    </div>
+    <div class="friends-content">
+        <ul>
+            
+        </ul>
+    </div>
+</div>
+        <div class="title-list">
+    <div class="right-top">
+        <div id="default-panel">
+            <i class="iconfont icon-search" data-title="搜索 快捷键 i"></i>
+            <div class="right-title">全部文章</div>
+            <i class="iconfont icon-file-tree" data-title="切换到大纲视图 快捷键 w"></i>
+        </div>
+        <div id="search-panel">
+            <i class="iconfont icon-left" data-title="返回"></i>
+            <input id="local-search-input" autocomplete="off"/>
+            <label class="border-line" for="input"></label>
+            <i class="iconfont icon-case-sensitive" data-title="大小写敏感"></i>
+            <i class="iconfont icon-tag" data-title="标签"></i>
+        </div>
+        <div id="outline-panel" style="display: none">
+            <div class="right-title">目录</div>
+            <i class="iconfont icon-list" data-title="切换到文章列表"></i>
+        </div>
+    </div>
+
+    <div class="tags-list">
+    <input id="tag-search" />
+    <div class="tag-wrapper">
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>跨域</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>ACID</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>browserslist</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>chrome</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>cookie</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>CORS</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>ES6</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>GTID</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>html</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>Innodb</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>InnoDB</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>JavaScript</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>jwt</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>koa</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>MHA</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>Mysql</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>mysqldump</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>React</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>React Hooks</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>react redux</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>react-sage</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>react-thunk</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>ReactDOM</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>Redux</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>session</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>token</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>Vue</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>Vuex</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>Webpack</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>xtrabackup</a>
+            </li>
+        
+    </div>
+
+</div>
+
+    
+    <nav id="title-list-nav">
+        
+        
+        <a  class="全部文章 React "
+           href="/2021/08/14/React/Redux-%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9Credux-thunk%E5%92%8Credux-saga/"
+           data-tag="React,react-thunk,react-sage"
+           data-author="" >
+            <span class="post-title" title="Redux 异步操作redux-thunk和redux-saga">Redux 异步操作redux-thunk和redux-saga</span>
+            <span class="post-date" title="2021-08-14 00:00:00">2021/08/14</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2021/08/13/React/React-react-redux%E7%9A%84%E4%BD%BF%E7%94%A8/"
+           data-tag="React,react redux"
+           data-author="" >
+            <span class="post-title" title="React react-redux的使用">React react-redux的使用</span>
+            <span class="post-date" title="2021-08-13 23:17:09">2021/08/13</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2021/08/13/React/Redux%E7%9A%84%E4%BD%BF%E7%94%A8/"
+           data-tag="React,Redux"
+           data-author="" >
+            <span class="post-title" title="Redux的使用">Redux的使用</span>
+            <span class="post-date" title="2021-08-13 16:30:25">2021/08/13</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2021/08/12/React/React-%E5%90%88%E6%88%90%E4%BA%8B%E4%BB%B6/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React 合成事件">React 合成事件</span>
+            <span class="post-date" title="2021-08-12 14:30:56">2021/08/12</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2021/08/12/React/React-ReactDOM%E9%A1%B6%E5%B1%82API/"
+           data-tag="React,ReactDOM"
+           data-author="" >
+            <span class="post-title" title="React ReactDOM顶层API">React ReactDOM顶层API</span>
+            <span class="post-date" title="2021-08-12 12:57:37">2021/08/12</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2021/08/11/React/React-%E7%BB%84%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React 组件生命周期">React 组件生命周期</span>
+            <span class="post-date" title="2021-08-11 23:38:41">2021/08/11</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2021/08/11/React/React-React%E9%A1%B6%E5%B1%82API/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React React顶层API">React React顶层API</span>
+            <span class="post-date" title="2021-08-11 19:55:53">2021/08/11</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2021/08/11/React/React-React-memo/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React React.memo">React React.memo</span>
+            <span class="post-date" title="2021-08-11 18:22:48">2021/08/11</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2021/08/11/React/React-Protals/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React Protals">React Protals</span>
+            <span class="post-date" title="2021-08-11 14:03:46">2021/08/11</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2021/08/11/React/React-ref%E7%9A%84%E4%BD%BF%E7%94%A8/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React ref的使用">React ref的使用</span>
+            <span class="post-date" title="2021-08-11 00:51:00">2021/08/11</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2021/08/10/React/React-%E8%B7%A8%E5%B1%82%E7%BB%84%E4%BB%B6%E6%A0%91%E4%BC%A0%E5%80%BC-context%E4%B8%8A%E4%B8%8B%E6%96%87/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React 跨层组件树传值-context上下文">React 跨层组件树传值-context上下文</span>
+            <span class="post-date" title="2021-08-10 22:21:52">2021/08/10</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2021/08/10/React/React-%E5%8F%97%E6%8E%A7%E7%BB%84%E4%BB%B6%E5%92%8C%E9%9D%9E%E5%8F%97%E6%8E%A7%E7%BB%84%E4%BB%B6/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React 受控组件和非受控组件">React 受控组件和非受控组件</span>
+            <span class="post-date" title="2021-08-10 20:04:18">2021/08/10</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2021/08/10/React/React-%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E5%87%BD%E6%95%B0%E4%BB%A5%E5%8F%8A%E4%BC%A0%E5%8F%82/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React 事件处理函数以及传参">React 事件处理函数以及传参</span>
+            <span class="post-date" title="2021-08-10 18:34:15">2021/08/10</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2021/08/10/React/React-render-props%E6%A8%A1%E5%BC%8F/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React render props模式">React render props模式</span>
+            <span class="post-date" title="2021-08-10 11:05:10">2021/08/10</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2021/08/10/React/React-setState%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E7%9A%84%E5%9C%B0%E6%96%B9/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React setState需要注意的地方">React setState需要注意的地方</span>
+            <span class="post-date" title="2021-08-10 10:00:47">2021/08/10</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2021/08/10/React/React-hooks%E7%9F%A5%E8%AF%86%E7%82%B9%E6%95%B4%E7%90%86/"
+           data-tag="React,React Hooks"
+           data-author="" >
+            <span class="post-title" title="React hooks知识点整理">React hooks知识点整理</span>
+            <span class="post-date" title="2021-08-10 00:00:00">2021/08/10</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/08/09/JavaScript/js-%E5%87%BD%E6%95%B0%E6%9F%AF%E9%87%8C%E5%8C%96/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 函数柯里化">js 函数柯里化</span>
+            <span class="post-date" title="2021-08-09 21:10:23">2021/08/09</span>
+        </a>
+        
+        
+        <a  class="全部文章 前端 "
+           href="/2021/08/08/%E5%89%8D%E7%AB%AF/Webpack-%E7%9B%B8%E5%85%B3/"
+           data-tag="Webpack"
+           data-author="" >
+            <span class="post-title" title="Webpack 相关【持续更新...】">Webpack 相关【持续更新...】</span>
+            <span class="post-date" title="2021-08-08 01:30:03">2021/08/08</span>
+        </a>
+        
+        
+        <a  class="全部文章 前端 "
+           href="/2021/08/07/%E5%89%8D%E7%AB%AF/browserslist%E7%9A%84%E4%BD%9C%E7%94%A8/"
+           data-tag="browserslist"
+           data-author="" >
+            <span class="post-title" title="browserslist的作用">browserslist的作用</span>
+            <span class="post-date" title="2021-08-07 22:29:00">2021/08/07</span>
+        </a>
+        
+        
+        <a  class="全部文章 Vue "
+           href="/2021/08/06/Vue/Vuex-%E8%AF%A6%E8%A7%A3/"
+           data-tag="Vue,Vuex"
+           data-author="" >
+            <span class="post-title" title="Vuex 详解">Vuex 详解</span>
+            <span class="post-date" title="2021-08-06 11:36:40">2021/08/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 Vue "
+           href="/2021/08/03/Vue/Vue-%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%B8%B8%E5%B8%B8%E4%BB%A4%E4%BA%BA%E5%BF%BD%E8%A7%86%E7%9A%84%E9%87%8D%E8%A6%81%E7%9F%A5%E8%AF%86%E7%82%B9/"
+           data-tag="Vue"
+           data-author="" >
+            <span class="post-title" title="Vue 中一些常常令人忽视的重要知识点">Vue 中一些常常令人忽视的重要知识点</span>
+            <span class="post-date" title="2021-08-03 06:55:19">2021/08/03</span>
+        </a>
+        
+        
+        <a  class="全部文章 Vue "
+           href="/2021/08/03/Vue/Vue-%E7%88%B6%E5%AD%90%E7%BB%84%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E9%92%A9%E5%AD%90%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/"
+           data-tag="Vue"
+           data-author="" >
+            <span class="post-title" title="Vue 生命周期及父子组件生命周期钩子执行顺序">Vue 生命周期及父子组件生命周期钩子执行顺序</span>
+            <span class="post-date" title="2021-08-03 00:18:59">2021/08/03</span>
+        </a>
+        
+        
+        <a  class="全部文章 前端 "
+           href="/2021/07/29/%E5%89%8D%E7%AB%AF/koa-axios-jwt-%E5%AE%9E%E7%8E%B0token%E8%87%AA%E5%8A%A8%E7%BB%AD%E6%9C%9F/"
+           data-tag="token,jwt,koa"
+           data-author="" >
+            <span class="post-title" title="koa + axios + jwt  实现token自动续期">koa + axios + jwt  实现token自动续期</span>
+            <span class="post-date" title="2021-07-29 19:23:45">2021/07/29</span>
+        </a>
+        
+        
+        <a  class="全部文章 前端 "
+           href="/2021/07/28/%E5%89%8D%E7%AB%AF/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3token/"
+           data-tag="token"
+           data-author="" >
+            <span class="post-title" title="【转载】深入理解token">【转载】深入理解token</span>
+            <span class="post-date" title="2021-07-28 02:17:40">2021/07/28</span>
+        </a>
+        
+        
+        <a  class="全部文章 前端 "
+           href="/2021/07/27/%E5%89%8D%E7%AB%AF/cookie-session-token%E8%AF%A6%E8%A7%A3/"
+           data-tag="cookie,session,token"
+           data-author="" >
+            <span class="post-title" title="cookie session token详解">cookie session token详解</span>
+            <span class="post-date" title="2021-07-27 01:58:03">2021/07/27</span>
+        </a>
+        
+        
+        <a  class="全部文章 前端 "
+           href="/2021/07/26/%E5%89%8D%E7%AB%AF/%E8%B7%A8%E5%9F%9F%E8%AE%BE%E7%BD%AEcookie/"
+           data-tag="cookie"
+           data-author="" >
+            <span class="post-title" title="跨域设置cookie">跨域设置cookie</span>
+            <span class="post-date" title="2021-07-26 22:18:36">2021/07/26</span>
+        </a>
+        
+        
+        <a  class="全部文章 前端 "
+           href="/2021/07/22/%E5%89%8D%E7%AB%AF/%E8%B7%A8%E5%9F%9F%E8%B5%84%E6%BA%90%E5%85%B1%E4%BA%AB-CORS/"
+           data-tag="CORS,跨域"
+           data-author="" >
+            <span class="post-title" title="跨域资源共享(CORS)">跨域资源共享(CORS)</span>
+            <span class="post-date" title="2021-07-22 00:31:16">2021/07/22</span>
+        </a>
+        
+        
+        <a  class="全部文章 前端 "
+           href="/2021/07/09/%E5%89%8D%E7%AB%AF/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E5%BC%BA%E7%BC%93%E5%AD%98%E5%92%8C%E5%8D%8F%E5%95%86%E7%BC%93%E5%AD%98/"
+           data-tag="chrome"
+           data-author="" >
+            <span class="post-title" title="浏览器的强缓存和协商缓存">浏览器的强缓存和协商缓存</span>
+            <span class="post-date" title="2021-07-09 02:07:51">2021/07/09</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/07/07/JavaScript/js-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%EF%BC%88event-loop%EF%BC%89%E3%80%81%E5%AE%8F%E4%BB%BB%E5%8A%A1%E3%80%81%E5%BE%AE%E4%BB%BB%E5%8A%A1/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 事件循环（event loop）、宏任务、微任务">js 事件循环（event loop）、宏任务、微任务</span>
+            <span class="post-date" title="2021-07-07 23:41:36">2021/07/07</span>
+        </a>
+        
+        
+        <a  class="全部文章 前端 "
+           href="/2021/07/05/%E5%89%8D%E7%AB%AF/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E9%87%8D%E6%8E%92%E4%B8%8E%E9%87%8D%E7%BB%98/"
+           data-tag="chrome"
+           data-author="" >
+            <span class="post-title" title="浏览器的重排与重绘">浏览器的重排与重绘</span>
+            <span class="post-date" title="2021-07-05 22:55:13">2021/07/05</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/06/30/JavaScript/js-%E5%8E%9F%E5%9E%8B%E3%80%81%E5%8E%9F%E5%9E%8B%E9%93%BE%E3%80%81%E7%BB%A7%E6%89%BF/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 原型、原型链、继承">js 原型、原型链、继承</span>
+            <span class="post-date" title="2021-06-30 23:41:51">2021/06/30</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/06/11/JavaScript/js-ES6%E6%96%B0%E5%A2%9E%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8BSet-Map-Symbol/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js ES6新增数据类型Set/Map/Symbol">js ES6新增数据类型Set/Map/Symbol</span>
+            <span class="post-date" title="2021-06-11 01:22:41">2021/06/11</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/06/11/JavaScript/js-for-in%E5%BE%AA%E7%8E%AF%E5%92%8Cfor-of%E5%BE%AA%E7%8E%AF/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js for...in循环和for...of循环">js for...in循环和for...of循环</span>
+            <span class="post-date" title="2021-06-11 01:18:50">2021/06/11</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/06/11/JavaScript/js-%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E4%BB%A5%E5%8F%8A%E5%86%85%E7%BD%AE%E5%8F%82%E6%95%B0arguments/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 函数参数以及内置参数arguments">js 函数参数以及内置参数arguments</span>
+            <span class="post-date" title="2021-06-11 00:01:51">2021/06/11</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/06/11/JavaScript/js-%E9%98%B2%E6%8A%96%E5%92%8C%E8%8A%82%E6%B5%81/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 防抖和节流">js 防抖和节流</span>
+            <span class="post-date" title="2021-06-11 00:01:51">2021/06/11</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/06/08/JavaScript/js-this%E6%8C%87%E5%90%91%E9%97%AE%E9%A2%98%E4%BB%A5%E5%8F%8A%E6%94%B9%E5%8F%98this%E6%8C%87%E5%90%91%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%88call-apply-bind%EF%BC%89/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js this指向问题以及改变this指向的三种方法（call/apply/bind）">js this指向问题以及改变this指向的三种方法（call/apply/bind）</span>
+            <span class="post-date" title="2021-06-08 23:10:18">2021/06/08</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/06/03/JavaScript/bluebird-Promise%E5%BA%93/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="bluebird Promise库">bluebird Promise库</span>
+            <span class="post-date" title="2021-06-03 00:00:00">2021/06/03</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/05/31/JavaScript/js-generator%E5%87%BD%E6%95%B0/"
+           data-tag="ES6"
+           data-author="" >
+            <span class="post-title" title="js generator函数">js generator函数</span>
+            <span class="post-date" title="2021-05-31 19:29:15">2021/05/31</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/05/31/JavaScript/js-Promise/"
+           data-tag="ES6"
+           data-author="" >
+            <span class="post-title" title="js Promise">js Promise</span>
+            <span class="post-date" title="2021-05-31 01:53:16">2021/05/31</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/05/30/JavaScript/js-async-await%E5%87%BD%E6%95%B0/"
+           data-tag="ES6"
+           data-author="" >
+            <span class="post-title" title="js async/await函数">js async/await函数</span>
+            <span class="post-date" title="2021-05-30 21:13:30">2021/05/30</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/05/28/JavaScript/js-%E7%AE%AD%E5%A4%B4%E5%87%BD%E6%95%B0/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 箭头函数">js 箭头函数</span>
+            <span class="post-date" title="2021-05-28 00:36:57">2021/05/28</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/05/26/JavaScript/var%E3%80%81let%E3%80%81const%E5%A3%B0%E6%98%8E%E8%BF%87%E7%A8%8B/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="var、let、const声明过程">var、let、const声明过程</span>
+            <span class="post-date" title="2021-05-26 23:58:34">2021/05/26</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/05/26/JavaScript/js-%E4%BD%9C%E7%94%A8%E5%9F%9F%E9%93%BE/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 作用域链">js 作用域链</span>
+            <span class="post-date" title="2021-05-26 01:05:48">2021/05/26</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/05/26/JavaScript/js-%E5%BC%95%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%92%8C%E5%80%BC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 引用数据类型和值数据类型">js 引用数据类型和值数据类型</span>
+            <span class="post-date" title="2021-05-26 00:32:29">2021/05/26</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2021/05/25/JavaScript/js-%E4%BC%AA%E6%95%B0%E7%BB%84/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 伪数组">js 伪数组</span>
+            <span class="post-date" title="2021-05-25 23:15:18">2021/05/25</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/04/10/Mysql/MySQL%E9%80%9A%E8%BF%87%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%97%A5%E5%BF%97%E6%81%A2%E5%A4%8D%E6%95%B0%E6%8D%AE/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="MySQL通过二进制日志恢复数据">MySQL通过二进制日志恢复数据</span>
+            <span class="post-date" title="2018-04-10 00:00:00">2018/04/10</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript Vue "
+           href="/2017/07/13/Vue/%E5%A6%82%E4%BD%95%E5%9C%A8vue%E4%B8%AD%E6%9B%BF%E6%8D%A2%E4%BD%BF%E7%94%A8%E9%BB%98%E8%AE%A4%E7%9A%84svg-loader/"
+           data-tag="Vue"
+           data-author="" >
+            <span class="post-title" title="如何在vue中替换使用默认的svg loader">如何在vue中替换使用默认的svg loader</span>
+            <span class="post-date" title="2017-07-13 00:00:00">2017/07/13</span>
+        </a>
+        
+        
+        <a  class="全部文章 前端 "
+           href="/2017/07/04/%E5%89%8D%E7%AB%AF/%E5%89%8D%E7%AB%AF%E5%87%A0%E7%A7%8D%E5%B8%B8%E8%A7%81%E7%9A%84%E5%B8%83%E5%B1%80%E6%96%B9%E5%BC%8F/"
+           data-tag="html"
+           data-author="" >
+            <span class="post-title" title="前端几种常见的布局方式">前端几种常见的布局方式</span>
+            <span class="post-date" title="2017-07-04 00:00:00">2017/07/04</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2017/05/30/Mysql/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%8B%E5%8A%A1/"
+           data-tag="Innodb,ACID"
+           data-author="" >
+            <span class="post-title" title="数据库事务">数据库事务</span>
+            <span class="post-date" title="2017-05-30 00:00:00">2017/05/30</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2017/05/10/Mysql/Mysql-Innodb%E7%89%B9%E6%80%A7/"
+           data-tag="Innodb"
+           data-author="" >
+            <span class="post-title" title="Mysql Innodb特性">Mysql Innodb特性</span>
+            <span class="post-date" title="2017-05-10 00:00:00">2017/05/10</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2017/04/18/Mysql/MySQL%E5%A4%87%E4%BB%BD-LOAD-DATA/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="MySQL备份-LOAD DATA">MySQL备份-LOAD DATA</span>
+            <span class="post-date" title="2017-04-18 00:00:00">2017/04/18</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2017/04/18/Mysql/MySQL%E5%A4%87%E4%BB%BD-mysqldump/"
+           data-tag="mysqldump"
+           data-author="" >
+            <span class="post-title" title="Mysql备份-mysqldump">Mysql备份-mysqldump</span>
+            <span class="post-date" title="2017-04-18 00:00:00">2017/04/18</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2017/04/18/Mysql/Mysql-MHA%E9%AB%98%E5%8F%AF%E7%94%A8%E6%9E%B6%E6%9E%84%E5%8E%9F%E7%90%86%E5%8F%8A%E5%BA%94%E7%94%A8/"
+           data-tag="Mysql,MHA"
+           data-author="" >
+            <span class="post-title" title="Mysql MHA高可用架构原理及应用">Mysql MHA高可用架构原理及应用</span>
+            <span class="post-date" title="2017-04-18 00:00:00">2017/04/18</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2017/04/18/Mysql/Mysql%E5%A4%87%E4%BB%BD/"
+           data-tag="mysqldump,xtrabackup"
+           data-author="" >
+            <span class="post-title" title="Mysql备份">Mysql备份</span>
+            <span class="post-date" title="2017-04-18 00:00:00">2017/04/18</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2017/04/17/Mysql/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%9F%BA%E4%BA%8EGTID%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/"
+           data-tag="Mysql,GTID"
+           data-author="" >
+            <span class="post-title" title="Mysql主从复制-基于GTID的主从复制">Mysql主从复制-基于GTID的主从复制</span>
+            <span class="post-date" title="2017-04-17 00:00:00">2017/04/17</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2017/04/17/Mysql/Mysql%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="Mysql体系结构">Mysql体系结构</span>
+            <span class="post-date" title="2017-04-17 00:00:00">2017/04/17</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2017/04/17/Mysql/Mysql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%B1%BB%E5%9E%8B/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="Mysql存储引擎类型">Mysql存储引擎类型</span>
+            <span class="post-date" title="2017-04-17 00:00:00">2017/04/17</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2017/04/16/Mysql/InnoDB-Redo-Flush%E5%8F%8A%E8%84%8F%E9%A1%B5%E5%88%B7%E6%96%B0%E6%9C%BA%E5%88%B6%E6%B7%B1%E5%85%A5%E5%88%86%E6%9E%90/"
+           data-tag="InnoDB"
+           data-author="" >
+            <span class="post-title" title="InnoDB Redo Flush及脏页刷新机制深入分析">InnoDB Redo Flush及脏页刷新机制深入分析</span>
+            <span class="post-date" title="2017-04-16 00:00:00">2017/04/16</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2017/04/14/Mysql/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%8D%8A%E5%90%8C%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="Mysql主从复制-半同步主从复制">Mysql主从复制-半同步主从复制</span>
+            <span class="post-date" title="2017-04-14 00:00:00">2017/04/14</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2017/04/14/Mysql/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%BC%82%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="Mysql主从复制-异步主从复制">Mysql主从复制-异步主从复制</span>
+            <span class="post-date" title="2017-04-14 00:00:00">2017/04/14</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2017/04/13/Mysql/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%A6%82%E8%BF%B0/"
+           data-tag="Mysql,GTID"
+           data-author="" >
+            <span class="post-title" title="Mysql主从复制概述">Mysql主从复制概述</span>
+            <span class="post-date" title="2017-04-13 00:00:00">2017/04/13</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2017/04/12/Mysql/xtrabackup%E5%A4%87%E4%BB%BD%E5%8E%9F%E7%90%86/"
+           data-tag="xtrabackup"
+           data-author="" >
+            <span class="post-title" title="xtrabackup备份原理">xtrabackup备份原理</span>
+            <span class="post-date" title="2017-04-12 00:00:00">2017/04/12</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2017/04/12/Mysql/xtrabackup%E5%A4%87%E4%BB%BD%E5%AE%9E%E6%93%8D/"
+           data-tag="xtrabackup"
+           data-author="" >
+            <span class="post-title" title="xtrabackup备份实操">xtrabackup备份实操</span>
+            <span class="post-date" title="2017-04-12 00:00:00">2017/04/12</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2017/04/08/Mysql/Mysql-5-7-%E5%AE%89%E8%A3%85/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="Mysql-5.7 安装">Mysql-5.7 安装</span>
+            <span class="post-date" title="2017-04-08 00:00:00">2017/04/08</span>
+        </a>
+        
+        <div id="no-item-tips">
+
+        </div>
+    </nav>
+    <div id="outline-list">
+    </div>
+</div>
+
+    </div>
+    <div class="hide-list">
+        <div class="semicircle" data-title="切换全屏 快捷键 s">
+            <div class="brackets first">︿</div>
+            <div class="brackets second">︿</div>
+        </div>
+    </div>
+</aside>
+<div id="post">
+    <div class="pjax">
+        <article id="post-React/React-hooks知识点整理" class="article article-type-post" itemscope itemprop="blogPost">
+    
+        <h1 class="article-title">React hooks知识点整理</h1>
+    
+    <div class="article-meta">
+        
+        
+        
+        <span class="book">
+            <i class="iconfont icon-category"></i>
+            <span>分类</span>
+            
+            
+            <a  data-rel="React">React</a>
+            
+        </span>
+        
+        
+        <span class="tag">
+            <i class="iconfont icon-tag"></i>
+            <span>标签</span>
+            
+            <a class="color1">React</a>
+            
+            <a class="color2">React Hooks</a>
+            
+        </span>
+        
+        
+        <span class="top-comment">
+            <a href="#comments">
+                评论: <span class="count-comment">
+                    <span class="spinner">
+                        <div class="cube1"></div>
+                        <div class="cube2"></div>
+                    </span>
+                </span>
+            </a>
+        </span>
+        
+    </div>
+    <!-- <div class="article-meta">
+        
+            发布时间 : <time class="date" title='最后更新: 2023-08-16'>2021-08-10</time>
+        
+        <i class="iconfont icon-category"></i>
+        
+    </div> -->
+    <div class="article-meta">
+        
+    </div>
+    
+    <div class="toc-ref">
+    
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Hook-%E4%BD%BF%E7%94%A8%E8%A7%84%E5%88%99"><span class="toc-text">Hook 使用规则</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#useState"><span class="toc-text">useState</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E5%BC%8F%E6%9B%B4%E6%96%B0"><span class="toc-text">函数式更新</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%83%B0%E6%80%A7%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">惰性初始化</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#useEffect"><span class="toc-text">useEffect</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#useContext"><span class="toc-text">useContext</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#useReducer"><span class="toc-text">useReducer</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#useCallback"><span class="toc-text">useCallback</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#useMemo"><span class="toc-text">useMemo</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#useRef"><span class="toc-text">useRef</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#useImperativeHandle"><span class="toc-text">useImperativeHandle</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#useLayoutEffect"><span class="toc-text">useLayoutEffect</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#useDebugValue"><span class="toc-text">useDebugValue</span></a></li></ol>
+    
+<style>
+    .left-col .switch-btn,
+    .left-col .switch-area {
+        display: none;
+    }
+    .toc-level-4 i,
+    .toc-level-4 ol {
+        display: none !important;
+    }
+</style>
+</div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Hook-使用规则"><a href="#Hook-使用规则" class="headerlink" title="Hook 使用规则"></a>Hook 使用规则</h1><p><code>Hook</code> 就是 <code>JavaScript</code> 函数，但是使用它们会有两个额外的规则：</p>
+<ul>
+<li>只能在函数最外层调用 <code>Hook</code>。不要在循环、条件判断或者子函数中调用。</li>
+<li>只能在 <code>React</code> 的函数组件中调用 <code>Hook</code>。不要在其他 <code>JavaScript</code> 函数中调用，还可以在自定义<code>Hook</code>中调用其他<code>Hook</code></li>
+</ul>
+<h1 id="useState"><a href="#useState" class="headerlink" title="useState"></a>useState</h1><pre><code class="javascript">const [state, setState] = useState(initialState);
+</code></pre>
+<p>返回一个 <code>state</code>，以及更新 <code>state</code> 的函数。</p>
+<p>在初始渲染期间，返回的状态 (<code>state</code>) 与传入的第一个参数 (<code>initialState</code>) 值相同。</p>
+<p><code>setState</code> 函数用于更新 <code>state</code>。它接收一个新的 <code>state</code> 值并将组件的一次重新渲染加入队列。</p>
+<p>在后续的重新渲染中，<code>useState</code> 返回的第一个值将始终是更新后最新的 <code>state</code>。</p>
+<p>在<code>class</code>中<code>state</code>只能作为对象，但在<code>useState</code> hook中不仅仅可以使用对象，还可以使用数组，数字，字符串等;</p>
+<pre><code class="javascript">export default function CountHooks () &#123;
+
+  const [count, setCount] = useState(0)
+
+  // setState会合并，取最后一次更新的值，因此调用这个函数，每次只会加1，而不是4
+  function changeCount () &#123;
+    setCount(count + 3)
+    setCount(count + 1)
+  &#125;
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;count: &#123;count&#125;&lt;/p&gt;
+      &lt;button onClick=&#123;() =&gt; &#123; setCount(count + 1) &#125;&#125;&gt;+1&lt;/button&gt;
+      &lt;button onClick=&#123;changeCount&#125;&gt;changeCount&lt;/button&gt;
+    &lt;/div&gt;
+  )
+&#125;
+</code></pre>
+<p>注意！和<code>class</code>组件的<code>setState</code>一样，会合并调用，谁在最后执行谁，因此上面代码中每次调用<code>changeCount</code>函数，每次<code>count</code>还是加1，不是加4也不是加3</p>
+<h2 id="函数式更新"><a href="#函数式更新" class="headerlink" title="函数式更新"></a>函数式更新</h2><p>如果新的 <code>state</code> 需要通过使用先前的 <code>state</code> 计算得出，那么可以将函数传递给 <code>setState</code>。该函数将接收先前的 <code>state</code>，并返回一个更新后的值。</p>
+<pre><code class="javascript">export default function CountHooks () &#123;
+
+  const [count, setCount] = useState(0)
+
+  function changeCount () &#123;
+    setCount(count =&gt; &#123;
+      return count + 1
+    &#125;)
+    setCount(count =&gt; &#123;
+      return count + 1
+    &#125;)
+  &#125;
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;count: &#123;count&#125;&lt;/p&gt;
+      &lt;button onClick=&#123;() =&gt; &#123; setCount(count =&gt; count + 1) &#125;&#125;&gt;+1&lt;/button&gt;
+      &lt;button onClick=&#123;changeCount&#125;&gt;+2&lt;/button&gt;
+      &lt;button onClick=&#123;() =&gt; setCount(0)&#125;&gt;reset&lt;/button&gt;
+    &lt;/div&gt;
+  )
+&#125;
+</code></pre>
+<h2 id="惰性初始化"><a href="#惰性初始化" class="headerlink" title="惰性初始化"></a>惰性初始化</h2><p>惰性初始化，<code>useState</code>中传入一个函数即可，这个函数只会在初始化的时候调用一次，后面组件重新渲染的时候并不会再次调用，提高性能</p>
+<p>如果下面不使用函数，而是直接<code>fib(40)</code>，这是函数的调用，这会在每次渲染的时候都执行一遍该函数，每当点击按钮一次，就会重新计算一次，此时页面会夯住。即使后续的重新渲染不会用到，但也会执行。</p>
+<pre><code class="javascript">import React, &#123; useState &#125; from &#39;react&#39;
+
+function fib (n) &#123;
+  if (n == 1 || n == 2) return 1
+  return fib(n - 1) + fib(n - 2)
+&#125;
+
+export default function Comp () &#123;
+  const [result] = useState(() =&gt; fib(40))
+  const [count, setCount] = useState(0)
+
+  function handleClick () &#123;
+    setCount(c =&gt; c + 1)
+  &#125;
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;&#123;result&#125;&lt;/p&gt;
+      &lt;p&gt;&#123;count&#125;&lt;/p&gt;
+      &lt;button onClick=&#123;handleClick&#125;&gt;+1&lt;/button&gt;
+    &lt;/div&gt;
+  )
+&#125;
+</code></pre>
+<p>如果<code>useState</code>初始值是一个对象或数组，<code>setState</code>并不会进行对象的合并，需要自己使用扩展语法进行扩展，如果下面的代码不对<code>count</code>进行扩展，则<code>label</code>属性会丢失</p>
+<pre><code class="javascript">export default function CountHooks () &#123;
+
+  const [count, setCount] = useState(&#123;sum: 0, label: &#39;个数&#39;&#125;)
+
+  function changeCount () &#123;
+    setCount(count =&gt; &#123;
+      return &#123;...count, sum: count.sum + 1&#125;
+    &#125;)
+  &#125;
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;&#123;count.label&#125;: &#123;count.sum&#125;&lt;/p&gt;
+      &lt;button onClick=&#123;changeCount&#125;&gt;+1&lt;/button&gt;
+    &lt;/div&gt;
+  )
+&#125;
+</code></pre>
+<h1 id="useEffect"><a href="#useEffect" class="headerlink" title="useEffect"></a>useEffect</h1><p><code>useEffect</code>的用法查看官网<a target="_blank" rel="noopener" href="https://zh-hans.reactjs.org/docs/hooks-reference.html#useeffect">React 官网-useEffect</a></p>
+<p>下面通过一个例子解释下其运行机制</p>
+<pre><code class="javascript">import React, &#123; useState, useEffect &#125; from &#39;react&#39;
+
+export default function TimerHooks () &#123;
+  console.log(&#39;function start run &#39; + Date.now())
+  const [date, setDate] = useState(new Date())
+
+  useEffect(() =&gt; &#123;
+    console.log(&#39;timer hooks 的effect执行了&#39;, date);
+    let timerId = setInterval(() =&gt; &#123;
+      setDate(new Date())
+    &#125;, 1000)
+  &#125;);
+
+  console.log(&#39;function end run &#39; + Date.now())
+  return (
+    &lt;div&gt;
+      &lt;p&gt;时间: &#123;date.toLocaleTimeString()&#125;&lt;/p&gt;
+    &lt;/div&gt;
+  )
+&#125;
+</code></pre>
+<ul>
+<li>组件初次挂载，会开启一个定时器，每隔1s更新一下当前时间</li>
+<li>我们什么也不做，此时副作用内部又更新了state，会导致组件更新，又开启定时器，无限循环，性能极差<br><img src="/images/hooks1.gif"></li>
+</ul>
+<p>此时我们给定一个清除副作用的函数</p>
+<pre><code class="javascript">useEffect(() =&gt; &#123;
+  console.log(&#39;timer hooks 的effect执行了&#39;, date);
+  let timerId = setInterval(() =&gt; &#123;
+    setDate(new Date())
+  &#125;, 1000)
+
+  return () =&gt; &#123;
+    console.log(&#39;取消副作用&#39;);
+    clearInterval(timerId)
+  &#125;
+&#125;);
+</code></pre>
+<ul>
+<li>组件初次挂载，会开启一个定时器，每隔1s更新一下当前时间</li>
+<li>组件更新前，先取消副作用，清除了定时器，然后再重新设置一个定时器</li>
+</ul>
+<p>这样做看似没什么问题，但是如果我们有其他状态也变化了呢，此时也会取消定时器，导致异常</p>
+<p>我们加一个按钮，修改一下count</p>
+<pre><code class="javascript">import React, &#123; useState, useEffect &#125; from &#39;react&#39;
+
+export default function TimerHooks () &#123;
+  console.log(&#39;function start run &#39; + Date.now())
+  const [date, setDate] = useState(new Date())
+  const [count, setCount] = useState(0)
+
+  useEffect(() =&gt; &#123;
+    console.log(&#39;timer hooks 的effect执行了&#39;, date);
+    let timerId = setInterval(() =&gt; &#123;
+      setDate(new Date())
+    &#125;, 1000)
+
+    return () =&gt; &#123;
+      console.log(&#39;取消副作用&#39;);
+      clearInterval(timerId)
+    &#125;
+  &#125;);
+
+  console.log(&#39;function end run &#39; + Date.now())
+  return (
+    &lt;div&gt;
+      &lt;p&gt;时间: &#123;date.toLocaleTimeString()&#125;&lt;/p&gt;
+      &lt;button onClick=&#123;() =&gt; &#123; setCount(count + 1) &#125;&#125;&gt;+1&lt;/button&gt;
+    &lt;/div&gt;
+  )
+&#125;
+</code></pre>
+<p>疯狂点击按钮，此时页面上的事件会停住，因为我们点击按钮，也会导致组件更新，此时先清除定时器，再设置，由于我们点得非常快，定时器一直在被清除，因此页面时间显示会卡住，观察下图时间显示<br><img src="/images/hooks2.gif"></p>
+<p>那此时要怎么做，这时我们可以给useEffect传入第二个参数，是一个依赖数组，我们直接传入一个空数组，此时这个effect只在挂载的时候执行一次，卸载的时候清除副作用，组件再怎么更新就与这个effect无关了</p>
+<pre><code class="javascript">  // ...
+  useEffect(() =&gt; &#123;
+    console.log(&#39;timer hooks 的effect执行了&#39;, date);
+    let timerId = setInterval(() =&gt; &#123;
+      setDate(new Date())
+    &#125;, 1000)
+
+    return () =&gt; &#123;
+      console.log(&#39;取消副作用&#39;);
+      clearInterval(timerId)
+    &#125;
+  &#125;, []); // 这里传入一个空数组
+</code></pre>
+<p>此时所有问题就都被解决了<br><img src="/images/hooks3.gif"></p>
+<h1 id="useContext"><a href="#useContext" class="headerlink" title="useContext"></a>useContext</h1><p><code>useContext</code>接收一个 <code>context</code> 对象（<code>React.createContext</code> 的返回值）并返回该 <code>context</code> 的当前值。当前的 <code>context</code> 值由上层组件中距离当前组件最近的 <code>&lt;MyContext.Provider&gt;</code> 的 <code>value</code> <code>prop</code> 决定。</p>
+<p>使用<code>useContext</code>只是让我们允许在函数组件中能接收到<code>context</code>的值，但仍然需要在上层组件中使用<code>Provider</code>来提供<code>value</code></p>
+<pre><code class="javascript">import React, &#123; useContext &#125; from &#39;react&#39;
+const myContext = React.createContext()
+const Provider = myContext.Provider
+
+export default function ContextHooks () &#123;
+  const store = &#123;
+    user: &#123;
+      name: &#39;jerry&#39;,
+      age: 18
+    &#125;
+  &#125;
+
+  return (
+    &lt;Provider value=&#123;store&#125;&gt;
+      &lt;Child&gt;&lt;/Child&gt;
+    &lt;/Provider&gt;
+  )
+&#125;
+
+const Child = props =&gt; &#123;
+  console.log(useContext(myContext));
+  const &#123; user &#125; = useContext(myContext)
+  return &lt;div&gt;
+    &lt;h1&gt;user: &#123;user.name&#125;&lt;/h1&gt;
+  &lt;/div&gt;
+&#125;
+</code></pre>
+<h1 id="useReducer"><a href="#useReducer" class="headerlink" title="useReducer"></a>useReducer</h1><p><code>useReducer</code>就像一个小型的<code>redux</code>，对于比较复杂的<code>state</code>，我们建议通过使用<code>useReducer</code>来声明状态，而不是<code>useState</code></p>
+<p>我们还可以把<code>dispatch</code>函数向子组件传递，用来修改父组件的状态，不用父组件内部再定义一个回调函数了。</p>
+<p><code>useReducer</code>和<code>useState</code>一样，不仅可以使用对象作为初始值，还可以使用数组，数字，字符串等，和<code>redux</code>的区别是，<code>redux</code>可以将初始状态通过默认参数直接传递给<code>state</code>，但是在<code>useReducer</code>中，初始状态只能通过<code>userReducer</code>的第二个参数传入</p>
+<p><code>useReducer</code>接收两个参数，第一个参数是<code>reducer</code>，第二个是初始值，返回最新的<code>state</code>，和<code>dispatch</code>派发<code>reducer</code>的函数</p>
+<pre><code class="javascript">import React, &#123; useReducer &#125; from &#39;react&#39;
+
+const initCount = &#123; count: 0 &#125;
+
+function reducer (state, action) &#123;
+  switch (action.type) &#123;
+    case &#39;decrement&#39;:
+      return &#123; count: state.count - 1 &#125;
+    case &#39;increment&#39;:
+      return &#123; count: state.count + 1 &#125;
+    default:
+      throw new Error(&#39;unknow action type&#39;);
+  &#125;
+&#125;
+
+function ReducerCounter (props) &#123;
+  const [state, dispatch] = useReducer(reducer, initCount)
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;&#123;state.count&#125;&lt;/h1&gt;
+      &lt;button onClick=&#123;() =&gt; &#123; dispatch(&#123; type: &#39;decrement&#39; &#125;) &#125;&#125;&gt;-1&lt;/button&gt;
+      &lt;button onClick=&#123;() =&gt; &#123; dispatch(&#123; type: &#39;increment&#39; &#125;) &#125;&#125;&gt;+1&lt;/button&gt;
+    &lt;/div&gt;
+  )
+&#125;
+
+export default ReducerCounter
+</code></pre>
+<p><code>useReducer</code>还可以接受第三个参数，就是初始化函数，这个初始化函数将<code>userReducer</code>的第二个初始值入参作为参数，返回一个新的<code>state</code></p>
+<pre><code class="javascript">import React, &#123; useReducer &#125; from &#39;react&#39;
+
+function init (initialCount) &#123;
+  return &#123; count: initialCount &#125;;
+&#125;
+
+function reducer (state, action) &#123;
+  switch (action.type) &#123;
+    case &#39;increment&#39;:
+      return &#123; count: state.count + 1 &#125;;
+    case &#39;decrement&#39;:
+      return &#123; count: state.count - 1 &#125;;
+    case &#39;reset&#39;:
+      return init(action.payload);
+    default:
+      throw new Error();
+  &#125;
+&#125;
+
+function Counter (&#123; initialCount &#125;) &#123;
+  // 这里的初始值是通过props传过来的
+  // 这里使用init初始化函数，作用是如果需要根据传过来的数据做处理，然后再设置状态，这样就可以把数据处理方法组件外面来执行
+  // reducer第三个参数就是初始化数据的函数，会自动把第二个参数的值传递给该函数，再由该函数返回初始的状态值，
+  // 这对于复杂的处理很方便，比如需要对传入的参数进行筛选或者改造，但对于简单的，直接使用第二个参数就行了
+  // 而对于有重置功能的组件来说，使用第三个参数也是非常方便的
+  const [state, dispatch] = useReducer(reducer, initialCount, init);
+  return (
+    &lt;&gt;
+      &lt;p&gt;Count: &#123;state.count&#125;&lt;/p&gt;
+      &lt;button
+        onClick=&#123;() =&gt; dispatch(&#123; type: &#39;reset&#39;, payload: initialCount &#125;)&#125;&gt;
+        Reset
+      &lt;/button&gt;
+      &lt;button onClick=&#123;() =&gt; dispatch(&#123; type: &#39;decrement&#39; &#125;)&#125;&gt;-&lt;/button&gt;
+      &lt;button onClick=&#123;() =&gt; dispatch(&#123; type: &#39;increment&#39; &#125;)&#125;&gt;+&lt;/button&gt;
+    &lt;/&gt;
+  );
+&#125;
+
+export default Counter
+</code></pre>
+<pre><code class="javascript">&lt;Counter initialCount=&#123;0&#125;&gt;&lt;/Counter&gt;
+</code></pre>
+<h1 id="useCallback"><a href="#useCallback" class="headerlink" title="useCallback"></a>useCallback</h1><p><code>useCallback</code> 第一个参数是函数，第二个参数是依赖状态的数组，返回值是函数，因此下面使用的时候要带上<code>()</code></p>
+<p>它将返回该回调函数的 <code>memoized</code> 版本，该回调函数仅在某个依赖项改变时才会更新。当你把回调函数传递给经过优化的并使用引用相等性去避免非必要渲染（例如 <code>shouldComponentUpdate</code>）的子组件时，它将非常有用。</p>
+<p>当组件更新的时候，返回的缓存函数依然会执行，只不过执行的函数是缓存起来的函数，因此值不会发生改变</p>
+<blockquote>
+<p>useCallback(fn, deps) 相当于 useMemo(() &#x3D;&gt; fn, deps)。但useMemo的实际用法不是这样，只是说useCallback可以使用useMemo的这种方式代替<br>useMemo缓存的是返回值，useCallback缓存的是回调函数 </p>
+</blockquote>
+<pre><code class="javascript">import React, &#123; useCallback, useState &#125; from &#39;react&#39;
+
+export default function HooksCallBack (props) &#123;
+  const [count, setCount] = useState(0)
+  const [price, setPrice] = useState(10)
+  const [any, setAny] = useState(1)
+
+  const getTotalCallback = useCallback(() =&gt; &#123;
+    console.log(&#39;函数执行了&#39;);
+    console.log(any);
+    return price * count
+
+    // 如果这里为空数组，那么count和price无论怎么改变，getTotalCallback函数都是缓存下来的函数，下面的总计调用永远都是那个函数，就不会更新
+    // 若只有一个，则只有该状态变化的时候，才会执行回调函数
+  &#125;, [count, price])
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;单价：&#123;price&#125;，数量：&#123;count&#125;，总计：&#123;getTotalCallback()&#125;&lt;/p&gt;
+      &lt;button onClick=&#123;() =&gt; &#123; setPrice(price + 1) &#125;&#125;&gt;单价+1&lt;/button&gt;
+      &lt;button onClick=&#123;() =&gt; &#123; setCount(count + 1) &#125;&#125;&gt;数量+1&lt;/button&gt;
+      &lt;button onClick=&#123;() =&gt; &#123; setAny(any + 1) &#125;&#125;&gt;测试+1&lt;/button&gt;
+    &lt;/div&gt;
+  )
+&#125;
+</code></pre>
+<p><img src="/images/hooks4.gif"><br>可以看到，每次点击函数都会执行，并且只有当【单价】和【数量】有变化的时候，函数才变了，因为我们多次点击测试按钮，每次返回的都是上一次的值，而当点击单价或数量后，这个值才是最新的值。</p>
+<h1 id="useMemo"><a href="#useMemo" class="headerlink" title="useMemo"></a>useMemo</h1><p><code>useMemo</code>和<code>useCallback</code>的用法类似，只不过<code>useMemo</code>缓存的是值，而<code>useCallback</code>缓存的是函数，<code>useMemo</code>返回的是缓存的具体值；</p>
+<p>我们依然可以使用上面相同的例子，转换成<code>useMemo</code></p>
+<pre><code class="javascript">import React, &#123; useState, useMemo &#125; from &#39;react&#39;
+
+export default function HooksCallBack (props) &#123;
+  const [count, setCount] = useState(0)
+  const [price, setPrice] = useState(10)
+  const [any, setAny] = useState(1)
+
+  // useMemo返回值即函数的返回值，下面使用的时候直接使用
+  const total = useMemo(() =&gt; &#123;
+    console.log(&#39;函数执行了&#39;);
+    console.log(any);
+    return price * count
+
+    // 当不在依赖状态数组里面的状态发生了变化，不会执行fn函数，返回的是上一次执行后的缓存的值
+  &#125;, [count, price])
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;单价：&#123;price&#125;，数量：&#123;count&#125;，总计：&#123;total&#125;&lt;/p&gt;
+      &lt;button onClick=&#123;() =&gt; &#123; setPrice(price + 1) &#125;&#125;&gt;单价+1&lt;/button&gt;
+      &lt;button onClick=&#123;() =&gt; &#123; setCount(count + 1) &#125;&#125;&gt;数量+1&lt;/button&gt;
+      &lt;button onClick=&#123;() =&gt; &#123; setAny(any + 1) &#125;&#125;&gt;测试+1&lt;/button&gt;
+    &lt;/div&gt;
+  )
+&#125;
+</code></pre>
+<p><img src="/images/hooks5.gif"></p>
+<h1 id="useRef"><a href="#useRef" class="headerlink" title="useRef"></a>useRef</h1><pre><code class="javascript">const refContainer = useRef(initialValue);
+</code></pre>
+<p><code>useRef</code> 返回一个<strong>可变的</strong> <code>ref</code> 对象，其 <code>.current</code> 属性被初始化为传入的参数（<code>initialValue</code>）。返回的 <code>ref</code> 对象在组件的整个生命周期内持续存在。</p>
+<p>普通用法和createRef一样，都是通过绑定ref属性来获取DOM元素或者组件实例，区别在于，在class组件中，我们在constructor中创建ref，而constructor仅在组件挂载的时候执行一次，更新阶段是不会执行的，因此在class组件中更新不会重新创建ref，在函数组件中，函数更新每次都会重新执行，因此createRef在函数组件中每次都会重新创建，导致每次都是得到的结果都是初始值，而useRef在函数组件中具有“缓存”的特点，多次执行函数并不会“重置”ref的值。</p>
+<p>我们通过下面的例子来看看两者的区别：</p>
+<pre><code class="javascript">export default const UseRefCreateRef = () =&gt; &#123;
+  const [count, setCount] = useState(0)
+
+  const varUseRef = useRef()
+  const varCreateRef = createRef()
+
+  console.log(varUseRef, varCreateRef);
+  // 从这里的打印值就可以看出来，每次打印，varUseRef返回的是同一个引用，而createRef每次都会创建一个新的引用
+
+  varUseRef.current = count
+  varCreateRef.current = count
+  return (
+    &lt;&gt;
+      &lt;p&gt;count: &#123;count&#125;&lt;/p&gt;
+      &lt;p&gt;varUseRef: &#123;varUseRef.current&#125;&lt;/p&gt;
+      &lt;p&gt;varCreateRef: &#123;varCreateRef.current&#125;&lt;/p&gt;
+      &lt;button onClick=&#123;() =&gt; setCount(count + 1)&#125;&gt;+1&lt;/button&gt;
+    &lt;/&gt;
+  )
+&#125;
+</code></pre>
+<p><img src="/images/hooks6.png"><br>解释下，每次更新<code>count</code>，都会使组件重新渲染，我们在函数组件里面重新设置<code>varUseRef</code>和<code>varCreateRef</code>的值，但是从结果可以看出来，<code>varCreateRef</code>每次都被重新创建了，而<code>varUseRef</code>每次都保持了相同的引用。</p>
+<p>有了这一特性，我们就可以把一些在组件全生命周期中需要保留的东西放在<code>useRef</code>上面，比如一个可修改的“全局变量”，又或是<code>debounce</code>时候定义的定时器也可以使用<code>useRef</code>保存。</p>
+<h1 id="useImperativeHandle"><a href="#useImperativeHandle" class="headerlink" title="useImperativeHandle"></a>useImperativeHandle</h1><p>我们在使用<code>forwardRef</code>进行转发时，接收到父组件的<code>ref</code>，然后直接将其绑定到子组件的<code>DOM</code>上，这样做并没有什么问题，但是这会带来一些问题，将子组件的<code>DOM</code>直接暴露给父组件，父组件的行为子组件并不可控，可能做一些破坏性的动作。此时我们可以仅暴露操作子组件DOM的方法，而不将整个DOM暴露给父组件，例如我只希望父组件可以操作子组件内部input元素的focus，就可以将其封装成一个函数，暴露给父组件。借助<code>useImperativeHandle</code>，我们就可以进行这种操作。</p>
+<pre><code class="javascript">useImperativeHandle(ref, createHandle, [deps])
+</code></pre>
+<ul>
+<li><code>ref</code>：父组件绑定的<code>ref</code></li>
+<li><code>createHandle</code>：一个函数，返回值是一个对象，这个对象将绑定到传过来的<code>ref</code>的<code>.current</code>属性上</li>
+<li><code>[deps]</code>：依赖列表，当监听的依赖发生变化，<code>useImperativeHandle</code> 才会重新将子组件的实例属性输出到父组件</li>
+</ul>
+<p><code>useImperativeHandle</code>应该总是配合<code>React.forwardRef</code>一起使用，</p>
+<p>例如以下代码：</p>
+<pre><code class="javascript">import React, &#123; useRef, useImperativeHandle &#125; from &#39;react&#39;
+
+function FancyInput (props, ref) &#123;
+  const inputRef = useRef();
+  const btnRef = useRef();
+
+  useImperativeHandle(ref, () =&gt; (&#123;
+    inputFocus: () =&gt; &#123;
+      inputRef.current.focus();
+    &#125;,
+    getBtnWidth: () =&gt; &#123;
+      return btnRef.current.offsetWidth;
+    &#125;
+  &#125;));
+  return (
+    &lt;&gt;
+      &lt;input ref=&#123;inputRef&#125;&gt;&lt;/input&gt;
+      &lt;button ref=&#123;btnRef&#125;&gt;按钮按钮按钮按钮按钮&lt;/button&gt;
+    &lt;/&gt;
+  )
+&#125;
+FancyInput = React.forwardRef(FancyInput);
+
+
+export default function HooksRef () &#123;
+  const fancyInputRef = useRef()
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;useRef&lt;/p&gt;
+      &lt;button onClick=&#123;() =&gt; fancyInputRef.current.inputFocus()&#125;&gt;聚焦&lt;/button&gt;
+      &lt;button onClick=&#123;() =&gt; alert(fancyInputRef.current.getBtnWidth())&#125;&gt;获取子组件按钮宽度&lt;/button&gt;
+      &lt;div&gt;
+        &lt;FancyInput ref=&#123;fancyInputRef&#125; /&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  )
+&#125;
+</code></pre>
+<p><img src="/images/hooks6.gif"></p>
+<h1 id="useLayoutEffect"><a href="#useLayoutEffect" class="headerlink" title="useLayoutEffect"></a>useLayoutEffect</h1><p>其函数签名与 <code>useEffect</code> 相同，但它会在所有的 <code>DOM</code> 变更之后同步调用 <code>effect</code>。可以使用它来读取 <code>DOM</code> 布局并同步触发重渲染。在浏览器执行绘制之前，<code>useLayoutEffect</code> 内部的更新计划将被同步刷新。</p>
+<p><code>useEffect</code>在浏览器渲染完成后执行，算是异步执行，这样就不会阻塞浏览器渲染，影响用户体验。应该尽可能使用标准的 <code>useEffect</code> 以避免阻塞视觉更新。</p>
+<pre><code class="javascript">import React, &#123; useLayoutEffect, useEffect &#125; from &#39;react&#39;
+
+const LayoutEffectComp = () =&gt; &#123;
+  const ref = React.createRef()
+
+  // 使用useLayoutEffect的时候，在副作用里面操作dom会在浏览器渲染前变化，不会看到页面有闪屏
+  useEffect(() =&gt; &#123;
+    ref.current.style.transform = &#39;translateX(100px)&#39;
+  &#125;)
+
+  return (
+    &lt;div style=&#123;&#123; width: 100, height: 100, backgroundColor: 'red' &#125;&#125; ref=&#123;ref&#125;&gt;&lt;/div&gt;
+  )
+&#125;
+
+export default LayoutEffectComp
+</code></pre>
+<p><img src="/images/hooks7.gif"></p>
+<p>将<code>useEffect</code>换成<code>useLayoutEffect</code>就不会有这种闪动了</p>
+<h1 id="useDebugValue"><a href="#useDebugValue" class="headerlink" title="useDebugValue"></a>useDebugValue</h1><pre><code class="javascript">useDebugValue(value)
+</code></pre>
+<p><code>useDebugValue</code> 可用于在 <code>React</code> 开发者工具中显示自定义 <code>hook</code> 的标签。</p>
+<p>例如一个简易的useDebounce</p>
+<pre><code class="javascript">import &#123; useRef, useDebugValue &#125; from &#39;react&#39;
+
+const useDebounce = (func, time) =&gt; &#123;
+  useDebugValue(&#39;someDebounceName&#39;)
+
+  let timer = useRef()
+  return function (...args) &#123;
+    if (timer.current) clearTimeout(timer.current)
+    timer.current = setTimeout(() =&gt; &#123;
+      func(...args)
+    &#125;, time)
+  &#125;
+&#125;
+
+export default useDebounce
+</code></pre>
+<p><img src="/images/hooks7.png"></p>
+
+      
+       <hr><span style="font-style: italic;color: gray;"> 转载请注明来源，欢迎对文章中的引用来源进行考证，欢迎指出任何有错误或不够清晰的表达。可以在下面评论区评论，也可以邮件至 289211569@qq.com </span>
+    </div>
+</article>
+
+
+
+
+
+    <div id="comments"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+
+<script type="text/javascript">
+    $.getScript('/js/gitalk.js', function () {
+        var gitalk = new Gitalk({
+            clientID: '5c7f4030e244f7c761df',
+            clientSecret: 'cb217d8ebb46e3ce61e53e411894873f6352a333',
+            repo: 'daryl-lau.github.io',
+            owner: 'daryl-lau',
+            admin: ['daryl-lau'],
+            id: decodeURI(location.pathname),
+            distractionFreeMode: 'true',
+            language: 'zh-CN',
+            perPage: parseInt('10',10)
+        })
+        gitalk.render('comments')
+    })
+</script>
+
+
+
+
+    
+
+
+
+
+    </div>
+    <div class="copyright">
+        <p class="footer-entry">
+    ©2016-2023 Daryl
+</p>
+<!-- <p class="footer-entry">Built with <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/yelog/hexo-theme-3-hexo" target="_blank">3-hexo</a> theme</p> -->
+
+    </div>
+    <div class="full-toc">
+        <button class="full"><span class="min "></span></button>
+<a class="" id="rocket"></a>
+    </div>
+</div>
+
+</body>
+<script src="/js/jquery.pjax.js?v=1.1.0" ></script>
+<script src="/js/script.js?v=1.1.0" ></script>
+<script>
+    var img_resize = 'photoSwipe';
+    function initArticle() {
+        /*渲染对应的表格样式*/
+        
+            $("#post .pjax table").addClass("green_title");
+        
+
+        /*渲染打赏样式*/
+        
+
+        /*高亮代码块行号*/
+        
+        $('pre code').each(function(){
+            var lines = $(this).text().trim().split('\n').length, widther='';
+            if (lines>99) {
+                widther = 'widther'
+            }
+            var $numbering = $('<ul/>').addClass('pre-numbering ' + widther).attr("unselectable","on");
+            $(this).addClass('has-numbering ' + widther)
+                    .parent()
+                    .append($numbering);
+            for(var i=1;i<=lines;i++){
+                $numbering.append($('<li/>').text(i));
+            }
+        });
+        
+
+        /*访问数量*/
+        
+
+        /*代码高亮，行号对齐*/
+        $('.pre-numbering').css('line-height',$('.has-numbering').css('line-height'));
+
+        
+
+        // PhotoSwipe
+        $('article').each(function(i){
+            $(this).find('img').each(function(){
+                if ($(this).closest('figure').hasClass('article-gallery-img')) {
+                    return;
+                }
+                var alt = this.alt;
+                $(this)
+                    .wrap('<figure class="article-gallery-img" itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject"></figure>')
+                    .wrap('<a href="' + this.src + '" title="' + alt + '"></a>');
+                $(this).after('<div class="img_alt"><span>' + (alt || '') + '</span></div>');
+            });
+        });
+
+        var pswpElement = document.querySelectorAll('.pswp')[0];
+        if (pswpElement) {
+            var gallerySelector = '.article-gallery, article';
+
+            var initPhotoSwipeFromDOM = function(gallerySelector) {
+
+                // parse slide data (url, title, size ...) from DOM elements
+                // (children of gallerySelector)
+                var parseThumbnailElements = function(el) {
+                    var thumbElements = $(el).find('figure.article-gallery-img').toArray(),
+                        numNodes = thumbElements.length,
+                        items = [],
+                        figureEl,
+                        linkEl,
+                        size,
+                        imgEl,
+                        item;
+
+                    for (var i = 0; i < numNodes; i++) {
+
+                        figureEl = thumbElements[i]; // <figure> element
+
+                        // include only element nodes
+                        if (figureEl.nodeType !== 1) {
+                            continue;
+                        }
+
+                        linkEl = figureEl.children[0]; // <a> element
+                        imgEl = linkEl.children[0]; // <img>
+
+                        size = linkEl.getAttribute('data-size');
+                        size = size && size.split('x');
+
+                        // create slide object
+                        item = {
+                            src: linkEl.getAttribute('href'),
+                            w: size && parseInt(size[0], 10) || imgEl.width,
+                            h: size && parseInt(size[1], 10) || imgEl.height
+                        };
+
+                        if (figureEl.children.length > 1) {
+                            // <figcaption> content
+                            item.title = figureEl.children[1].innerHTML;
+                        }
+
+                        if (linkEl.children.length > 0) {
+                            // <img> thumbnail element, retrieving thumbnail url
+                            item.msrc = linkEl.children[0].getAttribute('src');
+                        }
+
+                        item.el = figureEl; // save link to element for getThumbBoundsFn
+                        items.push(item);
+                    }
+
+                    return items;
+                };
+
+                // find nearest parent element
+                var closest = function closest(el, fn) {
+                    return el && (fn(el) ? el : closest(el.parentNode, fn));
+                };
+
+                // triggers when user clicks on thumbnail
+                var onThumbnailsClick = function(e) {
+                    e = e || window.event;
+
+                    var eTarget = e.target || e.srcElement;
+
+                    // find root element of slide
+                    var clickedListItem = closest(eTarget, function(el) {
+                        return (el.tagName && el.tagName.toUpperCase() === 'FIGURE');
+                    });
+
+                    if (!clickedListItem) {
+                        return;
+                    }
+
+                    if (e.preventDefault) {
+                        e.preventDefault();
+                    } else {
+                        e.returnValue = false;
+                    }
+
+                    // find index of clicked item by looping through all child nodes
+                    // alternatively, you may define index via data- attribute
+                    var clickedGallery = $(clickedListItem).closest(gallerySelector)[0],
+                        childNodes = $(clickedGallery).find('figure.article-gallery-img').toArray(),
+                        numChildNodes = childNodes.length,
+                        nodeIndex = 0,
+                        index;
+
+                    for (var i = 0; i < numChildNodes; i++) {
+                        if (childNodes[i].nodeType !== 1) {
+                            continue;
+                        }
+
+                        if (childNodes[i] === clickedListItem) {
+                            index = nodeIndex;
+                            break;
+                        }
+                        nodeIndex++;
+                    }
+
+
+
+                    if (index >= 0) {
+                        // open PhotoSwipe if valid index found
+                        openPhotoSwipe(index, clickedGallery);
+                    }
+                    return false;
+                };
+
+                // parse picture index and gallery index from URL (#&pid=1&gid=2)
+                var photoswipeParseHash = function() {
+                    var hash = window.location.hash.substring(1),
+                        params = {};
+
+                    if (hash.length < 5) {
+                        return params;
+                    }
+
+                    var vars = hash.split('&');
+                    for (var i = 0; i < vars.length; i++) {
+                        if (!vars[i]) {
+                            continue;
+                        }
+                        var pair = vars[i].split('=');
+                        if (pair.length < 2) {
+                            continue;
+                        }
+                        params[pair[0]] = pair[1];
+                    }
+
+                    if (params.gid) {
+                        params.gid = parseInt(params.gid, 10);
+                    }
+
+                    return params;
+                };
+
+                var openPhotoSwipe = function(index, galleryElement, disableAnimation, fromURL) {
+                    var pswpElement = document.querySelectorAll('.pswp')[0],
+                        gallery,
+                        options,
+                        items;
+
+                    items = parseThumbnailElements(galleryElement);
+
+                    // define options (if needed)
+                    options = {
+
+                        // define gallery index (for URL)
+                        galleryUID: galleryElement.getAttribute('data-pswp-uid'),
+
+                        getThumbBoundsFn: function(index) {
+                            // See Options -> getThumbBoundsFn section of documentation for more info
+                            var thumbnail = items[index].el.getElementsByTagName('img')[0], // find thumbnail
+                                pageYScroll = window.pageYOffset || document.documentElement.scrollTop,
+                                rect = thumbnail.getBoundingClientRect();
+
+                            return {
+                                x: rect.left,
+                                y: rect.top + pageYScroll,
+                                w: rect.width
+                            };
+                        }
+                    };
+
+                    // PhotoSwipe opened from URL
+                    if (fromURL) {
+                        if (options.galleryPIDs) {
+                            // parse real index when custom PIDs are used
+                            // http://photoswipe.com/documentation/faq.html#custom-pid-in-url
+                            for (var j = 0; j < items.length; j++) {
+                                if (items[j].pid == index) {
+                                    options.index = j;
+                                    break;
+                                }
+                            }
+                        } else {
+                            // in URL indexes start from 1
+                            options.index = parseInt(index, 10) - 1;
+                        }
+                    } else {
+                        options.index = parseInt(index, 10);
+                    }
+
+                    // exit if index not found
+                    if (isNaN(options.index)) {
+                        return;
+                    }
+
+                    if (disableAnimation) {
+                        options.showAnimationDuration = 0;
+                    }
+
+                    // Pass data to PhotoSwipe and initialize it
+                    gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, options);
+
+                    gallery.listen('imageLoadComplete', function(index, item) {
+                        var linkEl = item.el.children[0];
+                        var img = item.container.children[0];
+                        if (!linkEl.getAttribute('data-size')) {
+                            linkEl.setAttribute('data-size', img.naturalWidth + 'x' + img.naturalHeight);
+                            item.w = img.naturalWidth;
+                            item.h = img.naturalHeight;
+                            gallery.invalidateCurrItems();
+                            gallery.updateSize(true);
+                        }
+                    });
+
+                    gallery.init();
+                };
+
+                // loop through all gallery elements and bind events
+                var galleryElements = document.querySelectorAll(gallerySelector);
+
+                for (var i = 0, l = galleryElements.length; i < l; i++) {
+                    galleryElements[i].setAttribute('data-pswp-uid', i + 1);
+                    galleryElements[i].onclick = onThumbnailsClick;
+                }
+
+                // Parse URL and open gallery if it contains #&pid=3&gid=1
+                var hashData = photoswipeParseHash();
+                if (hashData.pid && hashData.gid) {
+                    openPhotoSwipe(hashData.pid, galleryElements[hashData.gid - 1], true, true);
+                }
+            };
+
+            // execute above function
+            initPhotoSwipeFromDOM(gallerySelector);
+        }
+        
+        
+    }
+
+    /*打赏页面隐藏与展示*/
+    
+
+</script>
+
+<!--加入行号的高亮代码块样式-->
+
+<style>
+    pre{
+        position: relative;
+        margin-bottom: 24px;
+        border-radius: 6px;
+        border: 1px solid #e2dede;
+        background: #FFF;
+        overflow: hidden;
+    }
+    code.has-numbering{
+        margin-left: 26px;
+    }
+    code.has-numbering.widther{
+        margin-left: 42px;
+    }
+    .pre-numbering{
+        height: 100%;
+        user-select: none;
+        margin: 0;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 20px;
+        padding: 1.1em 3px 1em 12px;
+        text-align: right;
+        color: #9da4b1;
+        background-color: #353941;
+    }
+    .pre-numbering>li {
+        padding-right: 4px;
+        list-style: none;
+        font-family: consolas, Menlo, monospace, 'PingFang SC', 'Microsoft YaHei';
+    }
+    .pre-numbering.widther {
+        width: 35px;
+    }
+</style>
+
+<!--自定义样式设置-->
+<style>
+    
+    
+    .nav {
+        width: 602px;
+    }
+    .nav.fullscreen {
+        margin-left: -602px;
+    }
+    .nav-left {
+        width: 180px;
+    }
+    
+    
+    @media screen and (max-width: 1468px) {
+        .nav {
+            width: 532px;
+        }
+        .nav.fullscreen {
+            margin-left: -532px;
+        }
+        .nav-left {
+            width: 140px;
+        }
+    }
+    
+    
+    @media screen and (max-width: 1024px) {
+        .nav {
+            width: 532px;
+            margin-left: -532px
+        }
+        .nav.fullscreen {
+            margin-left: 0;
+        }
+    }
+    
+    @media screen and (max-width: 426px) {
+        .nav {
+            width: 100%;
+        }
+        .nav-left {
+            width: 100%;
+        }
+    }
+    
+    
+    .nav-right .title-list nav a .post-title, .nav-right .title-list #local-search-result a .post-title {
+        color: #383636;
+    }
+    
+    
+    .nav-right .title-list nav a .post-date, .nav-right .title-list #local-search-result a .post-date {
+        color: #999;
+    }
+    
+    
+    .nav-right nav a.hover, #local-search-result a.hover{
+        background-color: #e2e0e0;
+    }
+    
+    
+
+    /*列表样式*/
+    
+
+    /* 背景图样式 */
+    
+    
+
+
+    /*引用块样式*/
+    
+
+    /*文章列表背景图*/
+    
+    .nav-right:before {
+        content: ' ';
+        display: block;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.3;
+        background: url("https://i.loli.net/2019/07/22/5d3521411f3f169375.png");
+        background-repeat: no-repeat;
+        background-position: 50% 0;
+        -ms-background-size: cover;
+        -o-background-size: cover;
+        -moz-background-size: cover;
+        -webkit-background-size: cover;
+        background-size: cover;
+    }
+    
+
+    
+</style>
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe.
+         It's a separate element, as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. PhotoSwipe keeps only 3 slides in DOM to save memory. -->
+        <!-- don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <!-- Preloader demo https://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+</html>
