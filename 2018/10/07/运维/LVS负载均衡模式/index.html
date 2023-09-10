@@ -1,0 +1,2714 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>LVS负载均衡模式 | Daryl&#39;s blog</title>
+  <meta name="keywords" content=" 运维 ">
+  <meta name="description" content="LVS负载均衡模式 | Daryl&#39;s blog">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="description" content="solidity-library库函数是一种特殊的合约，为了提升solidity代码的复用性和减少gas而存在。库合约一般都是一些好用的函数合集（库函数），由大神或者项目方创作，咱们站在巨人的肩膀上，会用就行了。 他和普通合约主要有以下几点不同：  不能存在状态变量 不能够继承或被继承 不能接收以太币 不可以被销毁  声明库使用library关键字声明库，一般都是独立到单独的文件中，下面简单的实现">
+<meta property="og:type" content="article">
+<meta property="og:title" content="solidity-library">
+<meta property="og:url" content="http://example.com/2023/07/08/%E5%8C%BA%E5%9D%97%E9%93%BE/solidity-library/index.html">
+<meta property="og:site_name" content="Daryl&#39;s blog">
+<meta property="og:description" content="solidity-library库函数是一种特殊的合约，为了提升solidity代码的复用性和减少gas而存在。库合约一般都是一些好用的函数合集（库函数），由大神或者项目方创作，咱们站在巨人的肩膀上，会用就行了。 他和普通合约主要有以下几点不同：  不能存在状态变量 不能够继承或被继承 不能接收以太币 不可以被销毁  声明库使用library关键字声明库，一般都是独立到单独的文件中，下面简单的实现">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://qncdn-open.baihuzi.com/image/69cc1434-c327-412b-b983-776362d6099f-image.png">
+<meta property="og:image" content="http://qncdn-open.baihuzi.com/image/477a4f5d-643b-4510-9c81-fa118c499ca2-image.png">
+<meta property="article:published_time" content="2023-07-07T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-09-10T03:58:57.896Z">
+<meta property="article:author" content="Daryl">
+<meta property="article:tag" content="区块链">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://qncdn-open.baihuzi.com/image/69cc1434-c327-412b-b983-776362d6099f-image.png">
+
+
+<link rel="icon" href="/img/avatar.jpg">
+
+<link href="/css/style.css?v=1.1.0" rel="stylesheet">
+
+<link href="/css/hl_theme/atom-dark.css?v=1.1.0" rel="stylesheet">
+
+<link href="//cdn.jsdelivr.net/npm/animate.css@4.1.0/animate.min.css" rel="stylesheet">
+
+<link href="//cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css" rel="stylesheet">
+<link href="//cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css" rel="stylesheet">
+
+<script src="//cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+<script src="/js/titleTip.js?v=1.1.0" ></script>
+
+<script src="//cdn.jsdelivr.net/npm/highlightjs@9.16.2/highlight.pack.min.js"></script>
+<script>
+    hljs.initHighlightingOnLoad();
+</script>
+
+<script src="//cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js"></script>
+
+
+
+<script src="//cdn.jsdelivr.net/npm/jquery.cookie@1.4.1/jquery.cookie.min.js" ></script>
+
+<script src="/js/iconfont.js?v=1.1.0" ></script>
+
+<script src="//cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<div style="display: none">
+  <input class="theme_disqus_on" value="false">
+  <input class="theme_preload_comment" value="">
+  <input class="theme_blog_path" value="">
+  <input id="theme_shortcut" value="true" />
+  <input id="theme_highlight_on" value="true" />
+  <input id="theme_code_copy" value="true" />
+</div>
+
+
+
+<body>
+<aside class="nav">
+    <div class="nav-left">
+        <a href="/"
+   class="avatar_target">
+    <img class="avatar"
+         src="/img/avatar.jpg"/>
+</a>
+<div class="author">
+    <span>Daryl</span>
+</div>
+
+<div class="icon">
+    
+</div>
+
+
+
+
+
+<ul>
+    <li>
+        <div class="all active" data-rel="全部文章">全部文章
+            
+                <small>(167)</small>
+            
+        </div>
+    </li>
+    
+        
+            <li>
+                <div data-rel="区块链">区块链
+                    <small>(12)</small>
+                    
+                </div>
+            </li>
+        
+    
+        
+            <li>
+                <div data-rel="前端">前端
+                    <small>(10)</small>
+                    
+                </div>
+            </li>
+        
+    
+        
+            <li>
+                <div data-rel="JavaScript">JavaScript
+                    <small>(22)</small>
+                    
+                </div>
+            </li>
+        
+    
+        
+            <li>
+                <div data-rel="React">React
+                    <small>(16)</small>
+                    
+                </div>
+            </li>
+        
+    
+        
+            <li>
+                <div data-rel="Vue">Vue
+                    <small>(4)</small>
+                    
+                </div>
+            </li>
+        
+    
+        
+            <li>
+                <div data-rel="Mysql">Mysql
+                    <small>(22)</small>
+                    
+                </div>
+            </li>
+        
+    
+        
+            <li>
+                <div data-rel="Golang">Golang
+                    <small>(6)</small>
+                    
+                </div>
+            </li>
+        
+    
+        
+            <li>
+                <div data-rel="Python">Python
+                    <small>(42)</small>
+                    
+                </div>
+            </li>
+        
+    
+        
+            <li>
+                <div data-rel="运维">运维
+                    <small>(9)</small>
+                    
+                </div>
+            </li>
+        
+    
+        
+            <li>
+                <div data-rel="Oracle">Oracle
+                    <small>(20)</small>
+                    
+                </div>
+            </li>
+        
+    
+        
+            <li>
+                <div data-rel="TypeScript">TypeScript
+                    <small>(5)</small>
+                    
+                </div>
+            </li>
+        
+    
+</ul>
+<div class="left-bottom">
+    <div class="menus">
+        
+            
+            
+            
+    </div>
+    <div>
+        
+        
+    </div>
+</div>
+<input type="hidden" id="yelog_site_posts_number" value="167">
+
+<div style="display: none">
+    <span id="busuanzi_value_site_uv"></span>
+    <span id="busuanzi_value_site_pv"></span>
+</div>
+
+    </div>
+    <div class="nav-right">
+        <div class="friends-area">
+    <div class="friends-title">
+        友情链接
+        <i class="iconfont icon-left"></i>
+    </div>
+    <div class="friends-content">
+        <ul>
+            
+        </ul>
+    </div>
+</div>
+        <div class="title-list">
+    <div class="right-top">
+        <div id="default-panel">
+            <i class="iconfont icon-search" data-title="搜索 快捷键 i"></i>
+            <div class="right-title">全部文章</div>
+            <i class="iconfont icon-file-tree" data-title="切换到大纲视图 快捷键 w"></i>
+        </div>
+        <div id="search-panel">
+            <i class="iconfont icon-left" data-title="返回"></i>
+            <input id="local-search-input" autocomplete="off"/>
+            <label class="border-line" for="input"></label>
+            <i class="iconfont icon-case-sensitive" data-title="大小写敏感"></i>
+            <i class="iconfont icon-tag" data-title="标签"></i>
+        </div>
+        <div id="outline-panel" style="display: none">
+            <div class="right-title">目录</div>
+            <i class="iconfont icon-list" data-title="切换到文章列表"></i>
+        </div>
+    </div>
+
+    <div class="tags-list">
+    <input id="tag-search" />
+    <div class="tag-wrapper">
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>跨域</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>区块链</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>运维</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>browserslist</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>chrome</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>cookie</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>CORS</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>Golang</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>GTID</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>html</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>JavaScript</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>jwt</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>koa</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>Mysql</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>Oracle</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>Python</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>React</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>session</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>token</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>TypeScript</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>Vue</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>Vuex</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>Webpack</a>
+            </li>
+        
+    </div>
+
+</div>
+
+    
+    <nav id="title-list-nav">
+        
+        
+        <a  class="全部文章 区块链 "
+           href="/2023/07/08/%E5%8C%BA%E5%9D%97%E9%93%BE/solidity-library/"
+           data-tag="区块链"
+           data-author="" >
+            <span class="post-title" title="solidity-library">solidity-library</span>
+            <span class="post-date" title="2023-07-08 00:00:00">2023/07/08</span>
+        </a>
+        
+        
+        <a  class="全部文章 区块链 "
+           href="/2023/07/08/%E5%8C%BA%E5%9D%97%E9%93%BE/solidity-%E6%8E%A5%E6%94%B6%E5%92%8C%E5%8F%91%E9%80%81eth/"
+           data-tag="区块链"
+           data-author="" >
+            <span class="post-title" title="solidity-接收和发送eth">solidity-接收和发送eth</span>
+            <span class="post-date" title="2023-07-08 00:00:00">2023/07/08</span>
+        </a>
+        
+        
+        <a  class="全部文章 区块链 "
+           href="/2023/07/08/%E5%8C%BA%E5%9D%97%E9%93%BE/solidity-%E8%B0%83%E7%94%A8%E5%B7%B2%E9%83%A8%E7%BD%B2%E5%90%88%E7%BA%A6/"
+           data-tag="区块链"
+           data-author="" >
+            <span class="post-title" title="solidity-调用已部署合约">solidity-调用已部署合约</span>
+            <span class="post-date" title="2023-07-08 00:00:00">2023/07/08</span>
+        </a>
+        
+        
+        <a  class="全部文章 区块链 "
+           href="/2023/07/07/%E5%8C%BA%E5%9D%97%E9%93%BE/solidity-%E5%BC%82%E5%B8%B8%20error%20require%20assert/"
+           data-tag="区块链"
+           data-author="" >
+            <span class="post-title" title="solidity-异常 error require assert">solidity-异常 error require assert</span>
+            <span class="post-date" title="2023-07-07 00:00:00">2023/07/07</span>
+        </a>
+        
+        
+        <a  class="全部文章 区块链 "
+           href="/2023/07/06/%E5%8C%BA%E5%9D%97%E9%93%BE/solidity-%E4%BA%8B%E4%BB%B6/"
+           data-tag="区块链"
+           data-author="" >
+            <span class="post-title" title="solidity-事件">solidity-事件</span>
+            <span class="post-date" title="2023-07-06 00:00:00">2023/07/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 区块链 "
+           href="/2023/07/05/%E5%8C%BA%E5%9D%97%E9%93%BE/sodility-call&delegatecall&%E4%BB%A3%E7%90%86%E5%90%88%E7%BA%A6/"
+           data-tag="区块链"
+           data-author="" >
+            <span class="post-title" title="sodility-call&amp;delegatecall&amp;代理合约">sodility-call&amp;delegatecall&amp;代理合约</span>
+            <span class="post-date" title="2023-07-05 00:00:00">2023/07/05</span>
+        </a>
+        
+        
+        <a  class="全部文章 区块链 "
+           href="/2023/07/05/%E5%8C%BA%E5%9D%97%E9%93%BE/solidity-%E7%94%A8abi%E8%B0%83%E7%94%A8%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E7%9A%84%E6%96%B9%E6%B3%95%E8%AF%A6%E8%A7%A3/"
+           data-tag="区块链"
+           data-author="" >
+            <span class="post-title" title="solidity-用abi调用智能合约的方法详解">solidity-用abi调用智能合约的方法详解</span>
+            <span class="post-date" title="2023-07-05 00:00:00">2023/07/05</span>
+        </a>
+        
+        
+        <a  class="全部文章 区块链 "
+           href="/2023/07/02/%E5%8C%BA%E5%9D%97%E9%93%BE/hardhat/"
+           data-tag="区块链"
+           data-author="" >
+            <span class="post-title" title="hardhat">hardhat</span>
+            <span class="post-date" title="2023-07-02 00:00:00">2023/07/02</span>
+        </a>
+        
+        
+        <a  class="全部文章 区块链 "
+           href="/2023/06/26/%E5%8C%BA%E5%9D%97%E9%93%BE/%E5%8A%A9%E8%AE%B0%E8%AF%8D%E3%80%81%E7%A7%81%E9%92%A5%E3%80%81%E5%85%AC%E9%92%A5%E3%80%81%E5%9C%B0%E5%9D%80/"
+           data-tag="区块链"
+           data-author="" >
+            <span class="post-title" title="助记词、私钥、公钥、地址">助记词、私钥、公钥、地址</span>
+            <span class="post-date" title="2023-06-26 00:00:00">2023/06/26</span>
+        </a>
+        
+        
+        <a  class="全部文章 区块链 "
+           href="/2023/06/25/%E5%8C%BA%E5%9D%97%E9%93%BE/solidity-ABI%E7%BC%96%E7%A0%81%E5%87%BD%E6%95%B0/"
+           data-tag="区块链"
+           data-author="" >
+            <span class="post-title" title="solidity-ABI编码函数">solidity-ABI编码函数</span>
+            <span class="post-date" title="2023-06-25 00:00:00">2023/06/25</span>
+        </a>
+        
+        
+        <a  class="全部文章 区块链 "
+           href="/2023/06/25/%E5%8C%BA%E5%9D%97%E9%93%BE/%E5%8C%BA%E5%9D%97%E9%93%BE%E6%8A%80%E6%9C%AF-%E7%AD%BE%E5%90%8D%E4%B8%8E%E9%AA%8C%E7%AD%BE/"
+           data-tag="区块链"
+           data-author="" >
+            <span class="post-title" title="区块链技术-签名与验签">区块链技术-签名与验签</span>
+            <span class="post-date" title="2023-06-25 00:00:00">2023/06/25</span>
+        </a>
+        
+        
+        <a  class="全部文章 区块链 "
+           href="/2023/06/17/%E5%8C%BA%E5%9D%97%E9%93%BE/sodility-call%E5%92%8Cdelegatecall/"
+           data-tag="区块链"
+           data-author="" >
+            <span class="post-title" title="sodility-call和delegatecall">sodility-call和delegatecall</span>
+            <span class="post-date" title="2023-06-17 00:00:00">2023/06/17</span>
+        </a>
+        
+        
+        <a  class="全部文章 Golang "
+           href="/2023/04/15/Golang/golang%E6%A0%87%E5%87%86%E5%8C%85sync/"
+           data-tag="Golang"
+           data-author="" >
+            <span class="post-title" title="golang标准包sync">golang标准包sync</span>
+            <span class="post-date" title="2023-04-15 00:00:00">2023/04/15</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/07/JavaScript/var%E3%80%81let%E3%80%81const%E5%A3%B0%E6%98%8E%E8%BF%87%E7%A8%8B/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="var、let、const声明过程">var、let、const声明过程</span>
+            <span class="post-date" title="2023-04-07 00:00:00">2023/04/07</span>
+        </a>
+        
+        
+        <a  class="全部文章 Golang "
+           href="/2023/04/07/Golang/golang%E6%95%B0%E7%BB%84%E5%88%87%E7%89%87%E7%9A%84%E5%AE%B9%E9%87%8F/"
+           data-tag="Golang"
+           data-author="" >
+            <span class="post-title" title="golang数组切片的容量">golang数组切片的容量</span>
+            <span class="post-date" title="2023-04-07 00:00:00">2023/04/07</span>
+        </a>
+        
+        
+        <a  class="全部文章 Golang "
+           href="/2023/04/07/Golang/golang%E7%B1%BB%E5%9E%8B%E5%88%AB%E5%90%8D%E4%B8%8E%E7%B1%BB%E5%9E%8B%E5%AE%9A%E4%B9%89/"
+           data-tag="Golang"
+           data-author="" >
+            <span class="post-title" title="golang类型别名与类型定义">golang类型别名与类型定义</span>
+            <span class="post-date" title="2023-04-07 00:00:00">2023/04/07</span>
+        </a>
+        
+        
+        <a  class="全部文章 Golang "
+           href="/2023/04/07/Golang/golang%E6%95%B4%E5%9E%8B%E8%AE%A1%E7%AE%97%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/"
+           data-tag="Golang"
+           data-author="" >
+            <span class="post-title" title="golang整型计算类型转换">golang整型计算类型转换</span>
+            <span class="post-date" title="2023-04-07 00:00:00">2023/04/07</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2023/04/07/React/Redux%E7%9A%84%E4%BD%BF%E7%94%A8/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="Redux的使用">Redux的使用</span>
+            <span class="post-date" title="2023-04-07 00:00:00">2023/04/07</span>
+        </a>
+        
+        
+        <a  class="全部文章 TypeScript "
+           href="/2023/04/07/TypeScript/Typescript%20%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/"
+           data-tag="TypeScript"
+           data-author="" >
+            <span class="post-title" title="Typescript 基础语法">Typescript 基础语法</span>
+            <span class="post-date" title="2023-04-07 00:00:00">2023/04/07</span>
+        </a>
+        
+        
+        <a  class="全部文章 TypeScript "
+           href="/2023/04/07/TypeScript/Typescript%20%E6%B3%9B%E5%9E%8B/"
+           data-tag="TypeScript"
+           data-author="" >
+            <span class="post-title" title="Typescript 泛型">Typescript 泛型</span>
+            <span class="post-date" title="2023-04-07 00:00:00">2023/04/07</span>
+        </a>
+        
+        
+        <a  class="全部文章 TypeScript "
+           href="/2023/04/07/TypeScript/Typescript%20%E7%B1%BB/"
+           data-tag="TypeScript"
+           data-author="" >
+            <span class="post-title" title="Typescript 类">Typescript 类</span>
+            <span class="post-date" title="2023-04-07 00:00:00">2023/04/07</span>
+        </a>
+        
+        
+        <a  class="全部文章 TypeScript "
+           href="/2023/04/07/TypeScript/Typescript%20%E6%8E%A5%E5%8F%A3/"
+           data-tag="TypeScript"
+           data-author="" >
+            <span class="post-title" title="Typescript 接口">Typescript 接口</span>
+            <span class="post-date" title="2023-04-07 00:00:00">2023/04/07</span>
+        </a>
+        
+        
+        <a  class="全部文章 TypeScript "
+           href="/2023/04/07/TypeScript/Typescript%20%E7%B1%BB%E5%9E%8B%E5%AE%88%E5%8D%AB/"
+           data-tag="TypeScript"
+           data-author="" >
+            <span class="post-title" title="Typescript 类型守卫">Typescript 类型守卫</span>
+            <span class="post-date" title="2023-04-07 00:00:00">2023/04/07</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/browserslist%E7%9A%84%E4%BD%9C%E7%94%A8/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="browserslist的作用">browserslist的作用</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/js%20ES6%E6%96%B0%E5%A2%9E%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8BSet%E3%80%81Map%E3%80%81Symbol/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js ES6新增数据类型Set、Map、Symbol">js ES6新增数据类型Set、Map、Symbol</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/js%20Promise/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js Promise">js Promise</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/cookie%20session%20token%E8%AF%A6%E8%A7%A3/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="cookie session token详解">cookie session token详解</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/js%20async%E3%80%81await%E5%87%BD%E6%95%B0/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js async、await函数">js async、await函数</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/js%20for...in%E5%BE%AA%E7%8E%AF%E5%92%8Cfor...of%E5%BE%AA%E7%8E%AF/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js for...in循环和for...of循环">js for...in循环和for...of循环</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/js%20generator%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js generator函数特性">js generator函数特性</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/js%20this%E6%8C%87%E5%90%91%E9%97%AE%E9%A2%98%E4%BB%A5%E5%8F%8A%E6%94%B9%E5%8F%98this%E6%8C%87%E5%90%91%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%88call%E3%80%81apply%E3%80%81bind%EF%BC%89/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js this指向问题以及改变this指向的三种方法（call、apply、bind）">js this指向问题以及改变this指向的三种方法（call、apply、bind）</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/js%20%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%EF%BC%88event%20loop%EF%BC%89%E3%80%81%E5%AE%8F%E4%BB%BB%E5%8A%A1%E3%80%81%E5%BE%AE%E4%BB%BB%E5%8A%A1/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 事件循环（event loop）、宏任务、微任务">js 事件循环（event loop）、宏任务、微任务</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/js%20%E4%BC%AA%E6%95%B0%E7%BB%84/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 伪数组">js 伪数组</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/js%20%E4%BD%9C%E7%94%A8%E5%9F%9F%E9%93%BE/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 作用域链">js 作用域链</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/js%20%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E4%BB%A5%E5%8F%8A%E5%86%85%E7%BD%AE%E5%8F%82%E6%95%B0arguments/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 函数参数以及内置参数arguments">js 函数参数以及内置参数arguments</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/js%20%E5%87%BD%E6%95%B0%E6%9F%AF%E9%87%8C%E5%8C%96/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 函数柯里化">js 函数柯里化</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/js%20%E5%BC%95%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%92%8C%E5%80%BC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 引用数据类型和值数据类型">js 引用数据类型和值数据类型</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/js%20%E5%8E%9F%E5%9E%8B%E3%80%81%E5%8E%9F%E5%9E%8B%E9%93%BE%E3%80%81%E7%BB%A7%E6%89%BF/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 原型、原型链、继承">js 原型、原型链、继承</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/js%20%E7%AE%AD%E5%A4%B4%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 箭头函数特性">js 箭头函数特性</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/js%20%E9%98%B2%E6%8A%96%E5%92%8C%E8%8A%82%E6%B5%81/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 防抖和节流">js 防抖和节流</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/koa%20+%20axios%20+%20jwt%20%20%E5%AE%9E%E7%8E%B0token%E8%87%AA%E5%8A%A8%E7%BB%AD%E6%9C%9F/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="koa + axios + jwt  实现token自动续期">koa + axios + jwt  实现token自动续期</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/%E6%95%B4%E7%90%86%E4%B8%80%E4%BA%9B%60Promise%60%E5%BA%93%60bluebird%60%E7%9A%84%E5%B8%B8%E7%94%A8api/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="整理一些`Promise`库`bluebird`的常用api">整理一些`Promise`库`bluebird`的常用api</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/%E3%80%90%E8%BD%AC%E8%BD%BD%E3%80%91%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3token/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="【转载】深入理解token">【转载】深入理解token</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2023/04/06/Mysql/MySQL%E5%A4%87%E4%BB%BD-LOAD%20DATA/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="MySQL备份-LOAD DATA">MySQL备份-LOAD DATA</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2023/04/06/React/React%20Protals/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React Protals">React Protals</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2023/04/06/React/%20React%20hooks%E7%9F%A5%E8%AF%86%E7%82%B9%E6%95%B4%E7%90%86/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React hooks知识点整理">React hooks知识点整理</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2023/04/06/React/React%20react-redux%E7%9A%84%E4%BD%BF%E7%94%A8/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React react-redux的使用">React react-redux的使用</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2023/04/06/React/React%20render%20props%E6%A8%A1%E5%BC%8F/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React render props模式">React render props模式</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2023/04/06/React/React%20ref%E7%9A%84%E4%BD%BF%E7%94%A8/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React ref的使用">React ref的使用</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2023/04/06/React/React%20setState%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E7%9A%84%E5%9C%B0%E6%96%B9/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React setState需要注意的地方">React setState需要注意的地方</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2023/04/06/React/React%20%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E5%87%BD%E6%95%B0%E4%BB%A5%E5%8F%8A%E4%BC%A0%E5%8F%82/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React 事件处理函数以及传参">React 事件处理函数以及传参</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2023/04/06/React/React%20%E5%90%88%E6%88%90%E4%BA%8B%E4%BB%B6/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React 合成事件">React 合成事件</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2023/04/06/React/React%20%E5%8F%97%E6%8E%A7%E7%BB%84%E4%BB%B6%E5%92%8C%E9%9D%9E%E5%8F%97%E6%8E%A7%E7%BB%84%E4%BB%B6/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React 受控组件和非受控组件">React 受控组件和非受控组件</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2023/04/06/React/React%20%E7%BB%84%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React 组件生命周期">React 组件生命周期</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2023/04/06/React/React%20%E8%B7%A8%E5%B1%82%E7%BB%84%E4%BB%B6%E6%A0%91%E4%BC%A0%E5%80%BC-context%E4%B8%8A%E4%B8%8B%E6%96%87/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React 跨层组件树传值-context上下文">React 跨层组件树传值-context上下文</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2023/04/06/React/React.memo/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React.memo">React.memo</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2023/04/06/React/ReactDOM%E9%A1%B6%E5%B1%82API/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="ReactDOM顶层API">ReactDOM顶层API</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2023/04/06/React/React%E9%A1%B6%E5%B1%82API/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React顶层API">React顶层API</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2023/04/06/React/Redux%20%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9Credux-thunk%E5%92%8Credux-saga/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="Redux 异步操作redux-thunk和redux-saga">Redux 异步操作redux-thunk和redux-saga</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 前端 "
+           href="/2021/08/08/%E5%89%8D%E7%AB%AF/Webpack-%E7%9B%B8%E5%85%B3/"
+           data-tag="Webpack"
+           data-author="" >
+            <span class="post-title" title="Webpack 相关【持续更新...】">Webpack 相关【持续更新...】</span>
+            <span class="post-date" title="2021-08-08 01:30:03">2021/08/08</span>
+        </a>
+        
+        
+        <a  class="全部文章 前端 "
+           href="/2021/08/07/%E5%89%8D%E7%AB%AF/browserslist%E7%9A%84%E4%BD%9C%E7%94%A8/"
+           data-tag="browserslist"
+           data-author="" >
+            <span class="post-title" title="browserslist的作用">browserslist的作用</span>
+            <span class="post-date" title="2021-08-07 22:29:00">2021/08/07</span>
+        </a>
+        
+        
+        <a  class="全部文章 Vue "
+           href="/2021/08/06/Vue/Vuex-%E8%AF%A6%E8%A7%A3/"
+           data-tag="Vue,Vuex"
+           data-author="" >
+            <span class="post-title" title="Vuex 详解">Vuex 详解</span>
+            <span class="post-date" title="2021-08-06 11:36:40">2021/08/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 Vue "
+           href="/2021/08/03/Vue/Vue-%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%B8%B8%E5%B8%B8%E4%BB%A4%E4%BA%BA%E5%BF%BD%E8%A7%86%E7%9A%84%E9%87%8D%E8%A6%81%E7%9F%A5%E8%AF%86%E7%82%B9/"
+           data-tag="Vue"
+           data-author="" >
+            <span class="post-title" title="Vue 中一些常常令人忽视的重要知识点">Vue 中一些常常令人忽视的重要知识点</span>
+            <span class="post-date" title="2021-08-03 06:55:19">2021/08/03</span>
+        </a>
+        
+        
+        <a  class="全部文章 Vue "
+           href="/2021/08/03/Vue/Vue-%E7%88%B6%E5%AD%90%E7%BB%84%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E9%92%A9%E5%AD%90%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/"
+           data-tag="Vue"
+           data-author="" >
+            <span class="post-title" title="Vue 生命周期及父子组件生命周期钩子执行顺序">Vue 生命周期及父子组件生命周期钩子执行顺序</span>
+            <span class="post-date" title="2021-08-03 00:18:59">2021/08/03</span>
+        </a>
+        
+        
+        <a  class="全部文章 前端 "
+           href="/2021/07/29/%E5%89%8D%E7%AB%AF/koa-axios-jwt-%E5%AE%9E%E7%8E%B0token%E8%87%AA%E5%8A%A8%E7%BB%AD%E6%9C%9F/"
+           data-tag="token,jwt,koa"
+           data-author="" >
+            <span class="post-title" title="koa + axios + jwt  实现token自动续期">koa + axios + jwt  实现token自动续期</span>
+            <span class="post-date" title="2021-07-29 19:23:45">2021/07/29</span>
+        </a>
+        
+        
+        <a  class="全部文章 前端 "
+           href="/2021/07/28/%E5%89%8D%E7%AB%AF/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3token/"
+           data-tag="token"
+           data-author="" >
+            <span class="post-title" title="【转载】深入理解token">【转载】深入理解token</span>
+            <span class="post-date" title="2021-07-28 02:17:40">2021/07/28</span>
+        </a>
+        
+        
+        <a  class="全部文章 前端 "
+           href="/2021/07/27/%E5%89%8D%E7%AB%AF/cookie-session-token%E8%AF%A6%E8%A7%A3/"
+           data-tag="cookie,session,token"
+           data-author="" >
+            <span class="post-title" title="cookie session token详解">cookie session token详解</span>
+            <span class="post-date" title="2021-07-27 01:58:03">2021/07/27</span>
+        </a>
+        
+        
+        <a  class="全部文章 前端 "
+           href="/2021/07/26/%E5%89%8D%E7%AB%AF/%E8%B7%A8%E5%9F%9F%E8%AE%BE%E7%BD%AEcookie/"
+           data-tag="cookie"
+           data-author="" >
+            <span class="post-title" title="跨域设置cookie">跨域设置cookie</span>
+            <span class="post-date" title="2021-07-26 22:18:36">2021/07/26</span>
+        </a>
+        
+        
+        <a  class="全部文章 前端 "
+           href="/2021/07/22/%E5%89%8D%E7%AB%AF/%E8%B7%A8%E5%9F%9F%E8%B5%84%E6%BA%90%E5%85%B1%E4%BA%AB-CORS/"
+           data-tag="CORS,跨域"
+           data-author="" >
+            <span class="post-title" title="跨域资源共享(CORS)">跨域资源共享(CORS)</span>
+            <span class="post-date" title="2021-07-22 00:31:16">2021/07/22</span>
+        </a>
+        
+        
+        <a  class="全部文章 前端 "
+           href="/2021/07/09/%E5%89%8D%E7%AB%AF/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E5%BC%BA%E7%BC%93%E5%AD%98%E5%92%8C%E5%8D%8F%E5%95%86%E7%BC%93%E5%AD%98/"
+           data-tag="chrome"
+           data-author="" >
+            <span class="post-title" title="浏览器的强缓存和协商缓存">浏览器的强缓存和协商缓存</span>
+            <span class="post-date" title="2021-07-09 02:07:51">2021/07/09</span>
+        </a>
+        
+        
+        <a  class="全部文章 前端 "
+           href="/2021/07/05/%E5%89%8D%E7%AB%AF/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E9%87%8D%E6%8E%92%E4%B8%8E%E9%87%8D%E7%BB%98/"
+           data-tag="chrome"
+           data-author="" >
+            <span class="post-title" title="浏览器的重排与重绘">浏览器的重排与重绘</span>
+            <span class="post-date" title="2021-07-05 22:55:13">2021/07/05</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/12/28/Mysql/MySQL%E9%80%9A%E8%BF%87%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%97%A5%E5%BF%97%E6%81%A2%E5%A4%8D%E6%95%B0%E6%8D%AE/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="MySQL通过二进制日志恢复数据">MySQL通过二进制日志恢复数据</span>
+            <span class="post-date" title="2018-12-28 00:00:00">2018/12/28</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/12/16/Oracle/RMAN%E5%86%97%E4%BD%99%E5%A4%87%E4%BB%BD%E5%92%8C%E5%B9%B6%E5%8F%91%E5%A4%87%E4%BB%BD/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="RMAN冗余备份和并发备份">RMAN冗余备份和并发备份</span>
+            <span class="post-date" title="2018-12-16 00:00:00">2018/12/16</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/11/23/Python/Python-%E5%85%B3%E9%94%AE%E5%AD%97%E5%92%8C%E6%A0%87%E8%AF%86%E7%AC%A6%E5%8F%8A%E5%91%BD%E5%90%8D%E8%A7%84%E8%8C%83/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-关键字和标识符及命名规范">Python-关键字和标识符及命名规范</span>
+            <span class="post-date" title="2018-11-23 00:00:00">2018/11/23</span>
+        </a>
+        
+        
+        <a  class="全部文章 运维 "
+           href="/2018/11/21/%E8%BF%90%E7%BB%B4/postfix+sasl%E8%BF%9B%E8%A1%8C%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%90%AD%E5%BB%BA/"
+           data-tag="运维"
+           data-author="" >
+            <span class="post-title" title="postfix+sasl进行邮件服务器的搭建">postfix+sasl进行邮件服务器的搭建</span>
+            <span class="post-date" title="2018-11-21 00:00:00">2018/11/21</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/11/08/Python/Python-super()%E5%87%BD%E6%95%B0/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-super()函数">Python-super()函数</span>
+            <span class="post-date" title="2018-11-08 00:00:00">2018/11/08</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/11/07/Oracle/Oracle%20redo%20log%E7%AE%A1%E7%90%86/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="Oracle redo log管理">Oracle redo log管理</span>
+            <span class="post-date" title="2018-11-07 00:00:00">2018/11/07</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/11/05/Oracle/oracle%E8%A1%A8%E7%A9%BA%E9%97%B4%E7%AE%A1%E7%90%86/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="oracle表空间管理">oracle表空间管理</span>
+            <span class="post-date" title="2018-11-05 00:00:00">2018/11/05</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/11/04/Python/Python-%E8%8E%B7%E5%8F%96%E5%AF%B9%E8%B1%A1%E4%BF%A1%E6%81%AFdir()%E3%80%81__dict__/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-获取对象信息dir()、__dict__">Python-获取对象信息dir()、__dict__</span>
+            <span class="post-date" title="2018-11-04 00:00:00">2018/11/04</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/11/02/Oracle/Oracle%E4%BF%AE%E6%94%B9%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%91%E5%90%AC%E7%9A%84%E7%AB%AF%E5%8F%A3%E5%8F%B7/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="Oracle修改数据库监听的端口号">Oracle修改数据库监听的端口号</span>
+            <span class="post-date" title="2018-11-02 00:00:00">2018/11/02</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/10/22/Mysql/MySQL%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%B1%BB%E5%9E%8B/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="MySQL存储引擎类型">MySQL存储引擎类型</span>
+            <span class="post-date" title="2018-10-22 00:00:00">2018/10/22</span>
+        </a>
+        
+        
+        <a  class="全部文章 运维 "
+           href="/2018/10/22/%E8%BF%90%E7%BB%B4/Nginx/"
+           data-tag="运维"
+           data-author="" >
+            <span class="post-title" title="Nginx">Nginx</span>
+            <span class="post-date" title="2018-10-22 00:00:00">2018/10/22</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/10/14/Oracle/oracle%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9B%9B%E7%A7%8D%E7%8A%B6%E6%80%81/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="oracle数据库四种状态">oracle数据库四种状态</span>
+            <span class="post-date" title="2018-10-14 00:00:00">2018/10/14</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/10/12/Mysql/GTID%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="GTID主从复制">GTID主从复制</span>
+            <span class="post-date" title="2018-10-12 00:00:00">2018/10/12</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/10/08/Python/Python-%E6%96%87%E4%BB%B6%E8%AF%BB%E5%86%99/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-文件读写">Python-文件读写</span>
+            <span class="post-date" title="2018-10-08 00:00:00">2018/10/08</span>
+        </a>
+        
+        
+        <a  class="全部文章 运维 "
+           href="/2018/10/07/%E8%BF%90%E7%BB%B4/LVS%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E6%A8%A1%E5%BC%8F/"
+           data-tag="运维"
+           data-author="" >
+            <span class="post-title" title="LVS负载均衡模式">LVS负载均衡模式</span>
+            <span class="post-date" title="2018-10-07 00:00:00">2018/10/07</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/10/06/Mysql/%E4%BD%BF%E7%94%A8sysbench%E8%BF%9B%E8%A1%8C%E5%8E%8B%E5%8A%9B%E6%B5%8B%E8%AF%95/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="使用sysbench进行压力测试">使用sysbench进行压力测试</span>
+            <span class="post-date" title="2018-10-06 00:00:00">2018/10/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 运维 "
+           href="/2018/10/06/%E8%BF%90%E7%BB%B4/%E9%98%B2%E7%81%AB%E5%A2%99iptables%E5%92%8Cfirewall-cmd/"
+           data-tag="运维"
+           data-author="" >
+            <span class="post-title" title="防火墙iptables和firewall-cmd">防火墙iptables和firewall-cmd</span>
+            <span class="post-date" title="2018-10-06 00:00:00">2018/10/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/09/19/Mysql/MySQL%E7%BB%9F%E8%AE%A1%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="MySQL统计信息收集">MySQL统计信息收集</span>
+            <span class="post-date" title="2018-09-19 00:00:00">2018/09/19</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/09/04/Python/Python-%E7%B1%BB%E5%AF%B9%E8%B1%A1%E7%89%B9%E6%AE%8A%E6%96%B9%E6%B3%95__call__()/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-类对象特殊方法__call__()">Python-类对象特殊方法__call__()</span>
+            <span class="post-date" title="2018-09-04 00:00:00">2018/09/04</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/09/01/Python/Python-%E7%B1%BB%E5%AF%B9%E8%B1%A1%E7%89%B9%E6%AE%8A%E6%96%B9%E6%B3%95%E2%80%94%E2%80%94__iter__()%E3%80%81__next__()/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-类对象特殊方法——__iter__()、__next__()">Python-类对象特殊方法——__iter__()、__next__()</span>
+            <span class="post-date" title="2018-09-01 00:00:00">2018/09/01</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/08/17/Oracle/ORACLE%E5%A4%87%E4%BB%BD%E6%81%A2%E5%A4%8D%E5%8F%8ARMAN%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="ORACLE备份恢复及RMAN工具的使用">ORACLE备份恢复及RMAN工具的使用</span>
+            <span class="post-date" title="2018-08-17 00:00:00">2018/08/17</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/08/14/Python/Python-%E7%B1%BB%E5%AF%B9%E8%B1%A1%E7%89%B9%E6%AE%8A%E6%96%B9%E6%B3%95__add__()%E3%80%81__radd__()/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-类对象特殊方法__add__()、__radd__()">Python-类对象特殊方法__add__()、__radd__()</span>
+            <span class="post-date" title="2018-08-14 00:00:00">2018/08/14</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/08/03/Python/Python-%E5%AE%9E%E4%BE%8B%E5%B1%9E%E6%80%A7%E5%92%8C%E7%B1%BB%E5%B1%9E%E6%80%A7/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-实例属性和类属性">Python-实例属性和类属性</span>
+            <span class="post-date" title="2018-08-03 00:00:00">2018/08/03</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/07/25/Oracle/%E9%9D%99%E9%BB%98%E5%AE%89%E8%A3%85oracle11g/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="静默安装oracle11g">静默安装oracle11g</span>
+            <span class="post-date" title="2018-07-25 00:00:00">2018/07/25</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/07/17/Python/Python-%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-对象的引用计数">Python-对象的引用计数</span>
+            <span class="post-date" title="2018-07-17 00:00:00">2018/07/17</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/07/15/Python/Python-%E8%8E%B7%E5%8F%96%E5%AF%B9%E8%B1%A1%E4%BF%A1%E6%81%AFtype()/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-获取对象信息type()">Python-获取对象信息type()</span>
+            <span class="post-date" title="2018-07-15 00:00:00">2018/07/15</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/07/13/Mysql/Mysql%E6%90%AD%E5%BB%BA%E5%BC%82%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="Mysql搭建异步主从复制">Mysql搭建异步主从复制</span>
+            <span class="post-date" title="2018-07-13 00:00:00">2018/07/13</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/07/12/Python/Python-%E5%87%BD%E6%95%B0%E5%8F%8A%E5%85%B6%E5%8F%82%E6%95%B0/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-函数及其参数">Python-函数及其参数</span>
+            <span class="post-date" title="2018-07-12 00:00:00">2018/07/12</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/07/12/Python/Python-%E9%9B%86%E5%90%88/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-集合">Python-集合</span>
+            <span class="post-date" title="2018-07-12 00:00:00">2018/07/12</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/07/10/Python/Python-%E7%94%9F%E6%88%90%E5%99%A8%E3%80%81%E8%BF%AD%E4%BB%A3%E5%99%A8/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-生成器、迭代器">Python-生成器、迭代器</span>
+            <span class="post-date" title="2018-07-10 00:00:00">2018/07/10</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/07/09/Mysql/Mysql-5.7%E5%AE%89%E8%A3%85/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="Mysql-5.7安装">Mysql-5.7安装</span>
+            <span class="post-date" title="2018-07-09 00:00:00">2018/07/09</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/06/26/Python/Python-%E5%AE%9E%E4%BE%8B%E6%96%B9%E6%B3%95%E3%80%81%E7%B1%BB%E6%96%B9%E6%B3%95%E5%92%8C%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-实例方法、类方法和静态方法">Python-实例方法、类方法和静态方法</span>
+            <span class="post-date" title="2018-06-26 00:00:00">2018/06/26</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/06/21/Oracle/Oracle%E5%BD%92%E6%A1%A3%E6%97%A5%E5%BF%97/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="Oracle归档日志">Oracle归档日志</span>
+            <span class="post-date" title="2018-06-21 00:00:00">2018/06/21</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/06/20/Mysql/Mysql%E5%8D%8A%E5%90%8C%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="Mysql半同步主从复制">Mysql半同步主从复制</span>
+            <span class="post-date" title="2018-06-20 00:00:00">2018/06/20</span>
+        </a>
+        
+        
+        <a  class="全部文章 运维 "
+           href="/2018/06/11/%E8%BF%90%E7%BB%B4/Redis%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F/"
+           data-tag="运维"
+           data-author="" >
+            <span class="post-title" title="Redis哨兵模式">Redis哨兵模式</span>
+            <span class="post-date" title="2018-06-11 00:00:00">2018/06/11</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/06/05/Python/Python-%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6%E2%80%9C__%E2%80%9D%E5%92%8C%E2%80%9C_%E2%80%9D/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-访问控制“__”和“_”">Python-访问控制“__”和“_”</span>
+            <span class="post-date" title="2018-06-05 00:00:00">2018/06/05</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/06/02/Oracle/RMAN%E6%81%A2%E5%A4%8D%E6%95%B0%E6%8D%AE%E6%96%87%E4%BB%B6%E5%92%8C%E8%A1%A8%E7%A9%BA%E9%97%B4/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="RMAN恢复数据文件和表空间">RMAN恢复数据文件和表空间</span>
+            <span class="post-date" title="2018-06-02 00:00:00">2018/06/02</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/06/01/Oracle/RMAN%E6%81%A2%E5%A4%8D%E6%8E%A7%E5%88%B6%E6%96%87%E4%BB%B6-%E6%8E%A7%E5%88%B6%E6%96%87%E4%BB%B6(controlfile)%E4%B8%A2%E5%A4%B1%E6%81%A2%E5%A4%8D/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="RMAN恢复控制文件-控制文件(controlfile)丢失恢复">RMAN恢复控制文件-控制文件(controlfile)丢失恢复</span>
+            <span class="post-date" title="2018-06-01 00:00:00">2018/06/01</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/06/01/Python/Python-%E8%BF%90%E7%AE%97%E7%AC%A6/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-运算符">Python-运算符</span>
+            <span class="post-date" title="2018-06-01 00:00:00">2018/06/01</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/05/27/Mysql/MHA%E9%AB%98%E5%8F%AF%E7%94%A8%E6%9E%B6%E6%9E%84%E5%8E%9F%E7%90%86%E5%8F%8A%E6%90%AD%E5%BB%BA/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="MHA高可用架构原理及搭建">MHA高可用架构原理及搭建</span>
+            <span class="post-date" title="2018-05-27 00:00:00">2018/05/27</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/05/22/Python/Python-%E5%B0%81%E8%A3%85%E3%80%81%E7%BB%A7%E6%89%BF%E5%92%8C%E5%A4%9A%E6%80%81/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-封装、继承和多态">Python-封装、继承和多态</span>
+            <span class="post-date" title="2018-05-22 00:00:00">2018/05/22</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/05/13/Mysql/Mysql%E4%BA%8B%E5%8A%A1/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="Mysql事务">Mysql事务</span>
+            <span class="post-date" title="2018-05-13 00:00:00">2018/05/13</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/05/12/Oracle/RMAN%E5%A4%87%E4%BB%BD%E9%9B%86%E7%AE%A1%E7%90%86/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="RMAN备份集管理">RMAN备份集管理</span>
+            <span class="post-date" title="2018-05-12 00:00:00">2018/05/12</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/05/12/Python/Python-%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-异常处理">Python-异常处理</span>
+            <span class="post-date" title="2018-05-12 00:00:00">2018/05/12</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/05/11/Mysql/xtrabackup%E5%A4%87%E4%BB%BD%E5%8E%9F%E7%90%86/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="xtrabackup备份原理">xtrabackup备份原理</span>
+            <span class="post-date" title="2018-05-11 00:00:00">2018/05/11</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/05/04/Python/Python-issubclass()%E3%80%81isinstance()/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-issubclass()、isinstance()">Python-issubclass()、isinstance()</span>
+            <span class="post-date" title="2018-05-04 00:00:00">2018/05/04</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/05/01/Python/Python-%E7%B1%BB%E5%AF%B9%E8%B1%A1%E7%9A%84%E7%89%B9%E6%AE%8A%E6%96%B9%E6%B3%95__del__()/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-类对象的特殊方法__del__()">Python-类对象的特殊方法__del__()</span>
+            <span class="post-date" title="2018-05-01 00:00:00">2018/05/01</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/04/28/Oracle/ASM%E5%AE%89%E8%A3%85%E5%9F%BA%E6%9C%AC%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="ASM安装基本环境配置">ASM安装基本环境配置</span>
+            <span class="post-date" title="2018-04-28 00:00:00">2018/04/28</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/04/27/Python/Python-MRO%EF%BC%88%E6%96%B9%E6%B3%95%E8%A7%A3%E6%9E%90%E9%A1%BA%E5%BA%8F%EF%BC%89/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-MRO（方法解析顺序）">Python-MRO（方法解析顺序）</span>
+            <span class="post-date" title="2018-04-27 00:00:00">2018/04/27</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/04/23/Mysql/MySQL%E5%A4%87%E4%BB%BD-mysqldump/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="MySQL备份-mysqldump">MySQL备份-mysqldump</span>
+            <span class="post-date" title="2018-04-23 00:00:00">2018/04/23</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/04/23/Python/Python-%E5%88%97%E8%A1%A8/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-列表">Python-列表</span>
+            <span class="post-date" title="2018-04-23 00:00:00">2018/04/23</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/04/23/Python/Python-%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-流程控制">Python-流程控制</span>
+            <span class="post-date" title="2018-04-23 00:00:00">2018/04/23</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/04/23/Python/Python-%E7%B1%BB%E5%AF%B9%E8%B1%A1%E7%89%B9%E6%AE%8A%E6%96%B9%E6%B3%95__getattr__()%E3%80%81__getitem__()%E3%80%81__setitem__()%E3%80%81__delitem__()/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-类对象特殊方法__getattr__()、__getitem__()、__setitem__()、__delitem__()">Python-类对象特殊方法__getattr__()、__getitem__()、__setitem__()、__delitem__()</span>
+            <span class="post-date" title="2018-04-23 00:00:00">2018/04/23</span>
+        </a>
+        
+        
+        <a  class="全部文章 运维 "
+           href="/2018/04/18/%E8%BF%90%E7%BB%B4/Nginx%E5%90%AF%E5%81%9C%E8%84%9A%E6%9C%AC/"
+           data-tag="运维"
+           data-author="" >
+            <span class="post-title" title="Nginx启停脚本">Nginx启停脚本</span>
+            <span class="post-date" title="2018-04-18 00:00:00">2018/04/18</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/04/17/Mysql/innodb%E7%89%B9%E6%80%A7/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="innodb特性">innodb特性</span>
+            <span class="post-date" title="2018-04-17 00:00:00">2018/04/17</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/04/17/Python/Python-%E4%B8%8A%E4%B8%8B%E6%96%87%E7%AE%A1%E7%90%86%E5%99%A8with%E8%AF%AD%E5%8F%A5/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-上下文管理器with语句">Python-上下文管理器with语句</span>
+            <span class="post-date" title="2018-04-17 00:00:00">2018/04/17</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/04/16/Oracle/%E5%90%AF%E5%8A%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E4%BE%8B%E4%B8%8Espfile%E7%9A%84%E5%85%B3%E7%B3%BB/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="启动数据库实例与spfile的关系">启动数据库实例与spfile的关系</span>
+            <span class="post-date" title="2018-04-16 00:00:00">2018/04/16</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/04/15/Python/Python-%E5%BA%8F%E5%88%97%E7%B1%BB%E5%9E%8B%EF%BC%8Crange()/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-序列类型，range()">Python-序列类型，range()</span>
+            <span class="post-date" title="2018-04-15 00:00:00">2018/04/15</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/04/15/Python/Python-%E7%B1%BB%E5%AF%B9%E8%B1%A1%E7%89%B9%E6%AE%8A%E6%96%B9%E6%B3%95__len__%E3%80%81len()/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-类对象特殊方法__len__、len()">Python-类对象特殊方法__len__、len()</span>
+            <span class="post-date" title="2018-04-15 00:00:00">2018/04/15</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/04/11/Oracle/Oracle%E6%95%B0%E6%8D%AE%E5%BA%93startup%E5%92%8Cshutdown%E6%96%B9%E5%BC%8F/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="Oracle数据库startup和shutdown方式">Oracle数据库startup和shutdown方式</span>
+            <span class="post-date" title="2018-04-11 00:00:00">2018/04/11</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/04/11/Python/Python-%E7%B1%BB%E5%AF%B9%E8%B1%A1%E7%89%B9%E6%AE%8A%E6%96%B9%E6%B3%95__str__()%E3%80%81__repr__()/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-类对象特殊方法__str__()、__repr__()">Python-类对象特殊方法__str__()、__repr__()</span>
+            <span class="post-date" title="2018-04-11 00:00:00">2018/04/11</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/04/06/Mysql/%E7%BA%A6%E6%9D%9F%E7%B1%BB%E5%9E%8B/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="约束类型">约束类型</span>
+            <span class="post-date" title="2018-04-06 00:00:00">2018/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/04/06/Python/Python-%E9%92%BB%E7%9F%B3%E7%BB%A7%E6%89%BF%E6%A0%91/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-钻石继承树">Python-钻石继承树</span>
+            <span class="post-date" title="2018-04-06 00:00:00">2018/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/04/02/Python/Pyhton-%E5%8F%8D%E5%B0%84/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Pyhton-反射">Pyhton-反射</span>
+            <span class="post-date" title="2018-04-02 00:00:00">2018/04/02</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/03/24/Oracle/oracle%E7%BD%91%E7%BB%9C%E4%B9%8Blistener.ora%E3%80%81tnsnames.ora%E3%80%81sqlnet.ora/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="oracle网络之listener.ora、tnsnames.ora、sqlnet.ora">oracle网络之listener.ora、tnsnames.ora、sqlnet.ora</span>
+            <span class="post-date" title="2018-03-24 00:00:00">2018/03/24</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/03/18/Mysql/MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E6%96%87%E4%BB%B6/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="MySQL数据库文件">MySQL数据库文件</span>
+            <span class="post-date" title="2018-03-18 00:00:00">2018/03/18</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/03/13/Python/Python-%E6%A8%A1%E5%9D%97%E7%9A%84%E7%89%B9%E6%AE%8A%E5%B1%9E%E6%80%A7__name__/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-模块的特殊属性__name__">Python-模块的特殊属性__name__</span>
+            <span class="post-date" title="2018-03-13 00:00:00">2018/03/13</span>
+        </a>
+        
+        
+        <a  class="全部文章 运维 "
+           href="/2018/03/05/%E8%BF%90%E7%BB%B4/postfix%E6%90%AD%E5%BB%BA%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8/"
+           data-tag="运维"
+           data-author="" >
+            <span class="post-title" title="postfix搭建邮件服务器">postfix搭建邮件服务器</span>
+            <span class="post-date" title="2018-03-05 00:00:00">2018/03/05</span>
+        </a>
+        
+        
+        <a  class="全部文章 Golang "
+           href="/2018/03/02/Golang/Golang%E5%9F%BA%E7%A1%80/"
+           data-tag="Golang"
+           data-author="" >
+            <span class="post-title" title="Golang基础">Golang基础</span>
+            <span class="post-date" title="2018-03-02 00:00:00">2018/03/02</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/03/01/Python/Python-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-数据类型">Python-数据类型</span>
+            <span class="post-date" title="2018-03-01 00:00:00">2018/03/01</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/02/27/Mysql/InnoDB%20Redo%20Flush%E5%8F%8A%E8%84%8F%E9%A1%B5%E5%88%B7%E6%96%B0%E6%9C%BA%E5%88%B6%E6%B7%B1%E5%85%A5%E5%88%86%E6%9E%90/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="InnoDB Redo Flush及脏页刷新机制深入分析">InnoDB Redo Flush及脏页刷新机制深入分析</span>
+            <span class="post-date" title="2018-02-27 00:00:00">2018/02/27</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/02/26/Mysql/Mysql%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="Mysql体系结构">Mysql体系结构</span>
+            <span class="post-date" title="2018-02-26 00:00:00">2018/02/26</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/02/26/Python/Python-%E7%B1%BB%E5%AF%B9%E8%B1%A1%E7%89%B9%E6%AE%8A%E5%B1%9E%E6%80%A7__slots__/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-类对象特殊属性__slots__">Python-类对象特殊属性__slots__</span>
+            <span class="post-date" title="2018-02-26 00:00:00">2018/02/26</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/02/24/Mysql/Mysql%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E9%80%89%E6%8B%A9/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="Mysql数据类型选择">Mysql数据类型选择</span>
+            <span class="post-date" title="2018-02-24 00:00:00">2018/02/24</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/02/24/Python/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="面向对象编程">面向对象编程</span>
+            <span class="post-date" title="2018-02-24 00:00:00">2018/02/24</span>
+        </a>
+        
+        
+        <a  class="全部文章 Golang "
+           href="/2018/02/20/Golang/%E6%95%B0%E7%BB%84%E5%88%87%E7%89%87/"
+           data-tag="Golang"
+           data-author="" >
+            <span class="post-title" title="数组切片">数组切片</span>
+            <span class="post-date" title="2018-02-20 00:00:00">2018/02/20</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/02/20/Python/Python-%E5%AD%97%E5%85%B8/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-字典">Python-字典</span>
+            <span class="post-date" title="2018-02-20 00:00:00">2018/02/20</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/02/19/Python/Python-%E6%9D%A1%E4%BB%B6%E8%A1%A8%E8%BE%BE%E5%BC%8F/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-条件表达式">Python-条件表达式</span>
+            <span class="post-date" title="2018-02-19 00:00:00">2018/02/19</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/02/19/Python/Python-%E6%A8%A1%E5%9D%97/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-模块">Python-模块</span>
+            <span class="post-date" title="2018-02-19 00:00:00">2018/02/19</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/02/17/Oracle/DBlink/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="DBlink">DBlink</span>
+            <span class="post-date" title="2018-02-17 00:00:00">2018/02/17</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/02/09/Python/Python%E7%94%9F%E6%88%90%E5%BC%8F%EF%BC%88%E5%88%97%E8%A1%A8%E7%94%9F%E6%88%90%E5%BC%8F%E3%80%81%E9%9B%86%E5%90%88%E7%94%9F%E6%88%90%E5%BC%8F%E3%80%81%E5%AD%97%E5%85%B8%E7%94%9F%E6%88%90%E5%BC%8F%EF%BC%89%E3%80%81%E7%94%9F%E6%88%90%E5%99%A8/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python生成式（列表生成式、集合生成式、字典生成式）、生成器">Python生成式（列表生成式、集合生成式、字典生成式）、生成器</span>
+            <span class="post-date" title="2018-02-09 00:00:00">2018/02/09</span>
+        </a>
+        
+        
+        <a  class="全部文章 运维 "
+           href="/2018/02/07/%E8%BF%90%E7%BB%B4/Redis%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3%20/"
+           data-tag="运维"
+           data-author="" >
+            <span class="post-title" title="Redis配置文件详解">Redis配置文件详解</span>
+            <span class="post-date" title="2018-02-07 00:00:00">2018/02/07</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/02/02/Python/Python-%E6%B5%85%E6%8B%B7%E8%B4%9D%E3%80%81%E6%B7%B1%E6%8B%B7%E8%B4%9D/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-浅拷贝、深拷贝">Python-浅拷贝、深拷贝</span>
+            <span class="post-date" title="2018-02-02 00:00:00">2018/02/02</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/01/22/Oracle/Oracle%E4%BF%AE%E6%94%B9%E9%BB%98%E8%AE%A4%E4%B8%B4%E6%97%B6%E8%A1%A8%E7%A9%BA%E9%97%B4/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="Oracle修改默认临时表空间">Oracle修改默认临时表空间</span>
+            <span class="post-date" title="2018-01-22 00:00:00">2018/01/22</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/01/20/Oracle/Oracle%20%E5%AF%86%E7%A0%81%E6%96%87%E4%BB%B6/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="Oracle 密码文件">Oracle 密码文件</span>
+            <span class="post-date" title="2018-01-20 00:00:00">2018/01/20</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/01/14/Mysql/MySQL%E7%B4%A2%E5%BC%95/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="MySQL索引">MySQL索引</span>
+            <span class="post-date" title="2018-01-14 00:00:00">2018/01/14</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/01/12/Python/Python%E5%9F%BA%E7%A1%80-%E5%AD%97%E7%AC%A6%E4%B8%B2/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python基础-字符串">Python基础-字符串</span>
+            <span class="post-date" title="2018-01-12 00:00:00">2018/01/12</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/01/10/Oracle/oracle%E7%A7%BB%E5%8A%A8%E6%95%B0%E6%8D%AE%E6%96%87%E4%BB%B6%E7%9A%84%E4%B8%A4%E7%A7%8D%E6%96%B9%E6%B3%95/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="oracle移动数据文件的两种方法">oracle移动数据文件的两种方法</span>
+            <span class="post-date" title="2018-01-10 00:00:00">2018/01/10</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/01/08/Oracle/Oracle%E5%8A%A8%E6%80%81%E6%B3%A8%E5%86%8C%E4%B8%8E%E9%9D%99%E6%80%81%E6%B3%A8%E5%86%8C/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="Oracle动态注册与静态注册">Oracle动态注册与静态注册</span>
+            <span class="post-date" title="2018-01-08 00:00:00">2018/01/08</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/01/06/Mysql/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%A6%82%E8%BF%B0/"
+           data-tag="Mysql,GTID"
+           data-author="" >
+            <span class="post-title" title="Mysql主从复制概述">Mysql主从复制概述</span>
+            <span class="post-date" title="2018-01-06 00:00:00">2018/01/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/01/04/Mysql/xtrabackup%E5%A4%87%E4%BB%BD%E5%AE%9E%E6%93%8D/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="xtrabackup备份实操">xtrabackup备份实操</span>
+            <span class="post-date" title="2018-01-04 00:00:00">2018/01/04</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/01/04/Python/Python-%E7%B1%BB%E5%AF%B9%E8%B1%A1%E7%89%B9%E6%AE%8A%E6%96%B9%E6%B3%95__new__()/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-类对象特殊方法__new__()">Python-类对象特殊方法__new__()</span>
+            <span class="post-date" title="2018-01-04 00:00:00">2018/01/04</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/01/03/Python/Python-%E5%85%83%E7%BB%84/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-元组">Python-元组</span>
+            <span class="post-date" title="2018-01-03 00:00:00">2018/01/03</span>
+        </a>
+        
+        
+        <a  class="全部文章 运维 "
+           href="/2018/01/02/%E8%BF%90%E7%BB%B4/SSH%E4%BA%92%E4%BF%A1/"
+           data-tag="运维"
+           data-author="" >
+            <span class="post-title" title="SSH互信">SSH互信</span>
+            <span class="post-date" title="2018-01-02 00:00:00">2018/01/02</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript Vue "
+           href="/2017/07/13/Vue/%E5%A6%82%E4%BD%95%E5%9C%A8vue%E4%B8%AD%E6%9B%BF%E6%8D%A2%E4%BD%BF%E7%94%A8%E9%BB%98%E8%AE%A4%E7%9A%84svg-loader/"
+           data-tag="Vue"
+           data-author="" >
+            <span class="post-title" title="如何在vue中替换使用默认的svg loader">如何在vue中替换使用默认的svg loader</span>
+            <span class="post-date" title="2017-07-13 00:00:00">2017/07/13</span>
+        </a>
+        
+        
+        <a  class="全部文章 前端 "
+           href="/2017/07/04/%E5%89%8D%E7%AB%AF/%E5%89%8D%E7%AB%AF%E5%87%A0%E7%A7%8D%E5%B8%B8%E8%A7%81%E7%9A%84%E5%B8%83%E5%B1%80%E6%96%B9%E5%BC%8F/"
+           data-tag="html"
+           data-author="" >
+            <span class="post-title" title="前端几种常见的布局方式">前端几种常见的布局方式</span>
+            <span class="post-date" title="2017-07-04 00:00:00">2017/07/04</span>
+        </a>
+        
+        <div id="no-item-tips">
+
+        </div>
+    </nav>
+    <div id="outline-list">
+    </div>
+</div>
+
+    </div>
+    <div class="hide-list">
+        <div class="semicircle" data-title="切换全屏 快捷键 s">
+            <div class="brackets first">︿</div>
+            <div class="brackets second">︿</div>
+        </div>
+    </div>
+</aside>
+<div id="post">
+    <div class="pjax">
+        <article id="post-运维/LVS负载均衡模式" class="article article-type-post" itemscope itemprop="blogPost">
+    
+        <h1 class="article-title">LVS负载均衡模式</h1>
+    
+    <div class="article-meta">
+        
+        
+        
+        <span class="book">
+            <i class="iconfont icon-category"></i>
+            <span>分类</span>
+            
+            
+            <a  data-rel="运维">运维</a>
+            
+        </span>
+        
+        
+        <span class="tag">
+            <i class="iconfont icon-tag"></i>
+            <span>标签</span>
+            
+            <a class="color3">运维</a>
+            
+        </span>
+        
+        
+        <span class="top-comment">
+            <a href="#comments">
+                评论: <span class="count-comment">
+                    <span class="spinner">
+                        <div class="cube1"></div>
+                        <div class="cube2"></div>
+                    </span>
+                </span>
+            </a>
+        </span>
+        
+    </div>
+    <!-- <div class="article-meta">
+        
+            发布时间 : <time class="date" title='最后更新: 2023-09-10'>2018-10-07</time>
+        
+        <i class="iconfont icon-category"></i>
+        
+    </div> -->
+    <div class="article-meta">
+        
+    </div>
+    
+    <div class="toc-ref">
+    
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#LVS%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="toc-text">LVS负载均衡</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%BC%8F"><span class="toc-text">模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95"><span class="toc-text">负载均衡调度算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95"><span class="toc-text">动态调度算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LVS-NAT"><span class="toc-text">LVS-NAT</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#LVS-NAT%E7%89%B9%E6%80%A7"><span class="toc-text">LVS-NAT特性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AELVS-NAT"><span class="toc-text">配置LVS-NAT</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE"><span class="toc-text">网络配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#lvs%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="toc-text">lvs的配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85ipvsadm%E5%A5%97%E4%BB%B6%EF%BC%9A"><span class="toc-text">安装ipvsadm套件：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%80%E5%90%AF%E8%BD%AC%E5%8F%91%E5%8A%9F%E8%83%BD%EF%BC%9A"><span class="toc-text">开启转发功能：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ipvsadm%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="toc-text">ipvsadm的配置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LVS-DR"><span class="toc-text">LVS-DR</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#LVS-DR%E7%89%B9%E6%80%A7"><span class="toc-text">LVS-DR特性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#lvs%E4%B8%AD%E5%86%85%E6%A0%B8%E5%8F%82%E6%95%B0%E4%BD%9C%E7%94%A8"><span class="toc-text">lvs中内核参数作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E7%8E%AF%E5%A2%83%EF%BC%9A"><span class="toc-text">实验环境：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Director%E4%B8%8A%E9%85%8D%E7%BD%AE%EF%BC%9A"><span class="toc-text">Director上配置：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RS%E4%B8%8A%E9%85%8D%E7%BD%AE%EF%BC%881%E5%92%8C2%E9%85%8D%E7%BD%AE%E7%9B%B8%E5%90%8C%EF%BC%89%EF%BC%9A"><span class="toc-text">RS上配置（1和2配置相同）：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E9%85%8D%E7%BD%AE%EF%BC%9A"><span class="toc-text">客户端配置：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95"><span class="toc-text">测试</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LVS-TUN"><span class="toc-text">LVS-TUN</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#LVS-TUN%E7%89%B9%E6%80%A7"><span class="toc-text">LVS-TUN特性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LVS%E6%8C%81%E4%B9%85%E8%BF%9E%E6%8E%A5"><span class="toc-text">LVS持久连接</span></a></li></ol></li></ol>
+    
+<style>
+    .left-col .switch-btn,
+    .left-col .switch-area {
+        display: none;
+    }
+    .toc-level-4 i,
+    .toc-level-4 ol {
+        display: none !important;
+    }
+</style>
+</div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="LVS负载均衡"><a href="#LVS负载均衡" class="headerlink" title="LVS负载均衡"></a>LVS负载均衡</h1><h2 id="模式"><a href="#模式" class="headerlink" title="模式"></a>模式</h2><p>LVS-DR模式 （直接路由模式）<br>LVS-NAT模式 （NAT）<br>LVS-TUN模式 （隧道模式）</p>
+<p><strong>硬件设备</strong><br>    F5，BIG IP<br>    Citrix，Netscaler<br>    A10<br><strong>软件</strong></p>
+<ul>
+<li>四层<br>  LVS</li>
+<li>七层<br>  nginx<br>      http，smtp，pop3，imap<br>  haproxy<br>      http，tcp（mysql，smtp）</li>
+</ul>
+<h2 id="负载均衡调度算法"><a href="#负载均衡调度算法" class="headerlink" title="负载均衡调度算法"></a>负载均衡调度算法</h2><p>静态调度算法</p>
+<ol>
+<li>轮循调度（Round Robin）（rr）</li>
+<li>加权轮循（Weight Round Robin）（wrr）</li>
+<li>目标地址散列（Destination Hashing）（DH）<br>根据请求的目标IP地址，作为散列键（hash key）从静态分配的散列表找出对应的服务器，若该服务器是可用的且未超载，将请求发送到该服务器，否则返回空。<br>当一个请求访问时将其丢给一台机器响应，当它下次再来请求时，将他丢给同一台机器进行响应</li>
+<li>源地址散列（Source Hashing）（SH）<br>根据请求的源IP地址，作为散列键（hash key）从静态分配的散列键表找出对应的服务器，若该服务器是可用的且未超载，将请求发送到该服务器，否则返回空。<br>当出口有多个时，根据源IP地址，出去是经过哪个接口，回来还是经过那个接口</li>
+</ol>
+<h2 id="动态调度算法"><a href="#动态调度算法" class="headerlink" title="动态调度算法"></a>动态调度算法</h2><ol>
+<li>最少连接（Least Connections）（LC）<br>根据活动连接和非活动连接计算开销，计算公式为：活动连接*256+非活动连接，哪个计算结果小，就将请求丢给哪个服务器</li>
+<li>加权最少连接（Weight Least Connections）（WLC）（最优秀的调度算法，系统默认也是这个）<br>在集群系统的服务器想能差异较大的情况下，调度器采用“加权最少连接”调度算法优化负载均衡性能，具有较高的服务器将承受较大比例的活动连接负载。调度器可以自动询问真实服务器的负载情况，并动态的调整其权值。<br>根据计算公式：（活动连接*256+非活动连接）&#x2F;权重，哪个计算结果小，就将请求丢给哪个服务器</li>
+<li>最短的期望延迟（Shortest Expected Delay）(SED)<br>在WLC的基础上做了一下微调，不考虑非活动连接数，只考虑活动连接。<br>计算公式为：（（活动连接+1）*256）&#x2F;权重</li>
+<li>最少队列调度（Never Queue ）（NQ）<br>无需队列，如果连接数等于0，就直接分配一个连接过去，不需要进行SED运算</li>
+<li>基于局部性的最少连接（Locality-Based Least Connections）（LBLC）<br>针对目标地址的负载均衡，目前主要用于cache集群系统。该算法根据请求的目标IP地址找到该目标IP地址最近使用的服务器，若该服务器是可用的且没有超载，将请求发送到该服务器，若服务器不存在，或者该服务器超载且有服务器处于一半的工作负载，则用“最少连接的”原则选出一个可用的服务器，将其发送到该服务器</li>
+<li>带复制的基于局部性最少连接（Locality-Based Least Connections with Replication）（LBLCR）<br>这个调度算法也是针对目标IP地址的负载均衡，目前主要用于cache聚群系统。它与LBLC算法打不通之处是它要维护从一个目标IP地址到一组服务器的映射，而LBLC算法维护从一个目标IP地址到一台服务器的映射。该算法根据请求的目标IP地址找出该目标IP地址对应的服务器组，按“最小连接”原则从服务器组中选出一台服务器，若服务器没有超载，将请求发送到该服务区；若服务器超载，则按“最小连接”原则从这个集群中选出一台服务器，将该服务器加入到服务器组中，将请求发送到该服务器。同时当该服务器组有一段时间没有被修改，将最忙的服务器从服务器组中删除，以降低复制程度。</li>
+</ol>
+<h2 id="LVS-NAT"><a href="#LVS-NAT" class="headerlink" title="LVS-NAT"></a>LVS-NAT</h2><p><img src="http://qncdn-open.baihuzi.com/image/ce476b36-bca9-4d06-9de0-eb71b90ce32c-Image.png" alt="ce476b36-bca9-4d06-9de0-eb71b90ce32c-Image.png" title="ce476b36-bca9-4d06-9de0-eb71b90ce32c-Image.png"></p>
+<h3 id="LVS-NAT特性"><a href="#LVS-NAT特性" class="headerlink" title="LVS-NAT特性"></a>LVS-NAT特性</h3><ul>
+<li>RS必须与DR在同一网络，仅用于与DR服务器通讯</li>
+<li>DR接受所有的数据包通讯（包括客户端Direcor、Dirctor和realserver直接的通讯）</li>
+<li>RealServer的默认网关必须要指向到Director</li>
+<li>Director支持端口映射，可以将客户端的请求映射到RealServer的另一端口</li>
+<li>能支持任意操作系统</li>
+<li>单一的Director是整个集群的瓶颈</li>
+</ul>
+<h3 id="配置LVS-NAT"><a href="#配置LVS-NAT" class="headerlink" title="配置LVS-NAT"></a>配置LVS-NAT</h3><p>实验环境，4台虚拟机CentOS7.0，一台DR调度器，两台后端Real Server，一台客户端。<br><strong>Director调度器：</strong></p>
+<pre><code class="bash">vip：10.10.10.1（对外的公网ip）
+内网ip：192.168.10.1（用于和后端RS通信）
+掩码：255.255.255.0
+</code></pre>
+<p><strong>RealServer1：</strong></p>
+<pre><code class="bash">ip：192.168.10.100
+gateway：192.168.10.1（网关一定要指向调度器的内网ip）
+掩码：255.255.255.0
+</code></pre>
+<p><strong>RealServer：</strong></p>
+<pre><code class="bash">ip：192.168.10.200
+gateway：192.168.10.1（网关一定要指向调度器的内网ip）
+掩码：255.255.255.0
+</code></pre>
+<p><strong>Client：</strong></p>
+<pre><code class="bash">ip：10.10.10.2
+掩码：255.255.255.0
+</code></pre>
+<h3 id="网络配置"><a href="#网络配置" class="headerlink" title="网络配置"></a>网络配置</h3><p><strong>Director：</strong></p>
+<pre><code class="bash">[root@Director ~]# cat /etc/sysconfig/network-scripts/ifcfg-eno16777736 
+TYPE=Ethernet
+BOOTPROTO=none
+NAME=eno16777736
+ONBOOT=yes
+IPADDR=192.168.10.1
+NETMASK=255.255.255.0
+HWADDR=00:0c:29:9a:a1:85
+</code></pre>
+<pre><code class="bash">[root@Director ~]# cat /etc/sysconfig/network-scripts/ifcfg-eno33554992 
+TYPE=Ethernet
+BOOTPROTO=none
+NAME=eno33554992
+ONBOOT=yes
+IPADDR=10.10.10.1
+NETMASK=255.255.255.0
+HWADDR=00:0c:29:9a:a1:8f
+</code></pre>
+<p><strong>RS1：</strong></p>
+<pre><code class="bash">[root@RealServer1 network-scripts]# cat /etc/sysconfig/network-scripts/ifcfg-eno16777736 
+TYPE=Ethernet
+BOOTPROTO=none
+NAME=eno16777736
+ONBOOT=yes
+IPADDR=192.168.10.100
+NETMASK=255.255.255.0
+GATEWAY=192.168.10.1
+HWADDR=00:0c:29:fb:45:31
+</code></pre>
+<p><strong>RS2：</strong></p>
+<pre><code class="bash">[root@RealServer2 network-scripts]# cat /etc/sysconfig/network-scripts/ifcfg-eno16777736 
+TYPE=Ethernet
+BOOTPROTO=none
+NAME=eno16777736
+ONBOOT=yes
+IPADDR=192.168.10.200
+NETMASK=255.255.255.0
+GATEWAY=192.168.10.1
+HWADDR=00:0c:29:35:4b:51
+</code></pre>
+<p><strong>Client：</strong></p>
+<pre><code class="bash">[root@Client network-scripts]# cat /etc/sysconfig/network-scripts/ifcfg-eno16777736 
+TYPE=Ethernet
+BOOTPROTO=none
+NAME=eno16777736
+ONBOOT=yes
+IPADDR=10.10.10.2
+NETMASK=255.255.255.0
+HWADDR=00:0c:29:fa:16:ed
+</code></pre>
+<h3 id="lvs的配置"><a href="#lvs的配置" class="headerlink" title="lvs的配置"></a>lvs的配置</h3><p>配置完网络后，进行lvs的配置，以下配置只在Director上操作。<br>ipvs已经集成在我们内核里面了，不需要重新编译内核，只需要安装管理套件即可。<br>如何查看我们内核是否支持ipvs呢，使用以下命令：</p>
+<pre><code class="bash">$ cat /boot/config-3.10.0-123.el7.x86_64 | grep -i ipvs
+# IPVS transport protocol load balancing support
+# IPVS scheduler
+# IPVS application helper
+</code></pre>
+<p>如果出现以上信息，即表示内核支持ipvs</p>
+<h3 id="安装ipvsadm套件："><a href="#安装ipvsadm套件：" class="headerlink" title="安装ipvsadm套件："></a>安装ipvsadm套件：</h3><pre><code class="bash">yum -y install ipvsadm
+</code></pre>
+<h3 id="开启转发功能："><a href="#开启转发功能：" class="headerlink" title="开启转发功能："></a>开启转发功能：</h3><pre><code class="bash">echo 1 &gt; /proc/sys/net/ipv4/ip_forward 
+</code></pre>
+<h3 id="ipvsadm的配置"><a href="#ipvsadm的配置" class="headerlink" title="ipvsadm的配置"></a>ipvsadm的配置</h3><pre><code class="bash">$ ipvsadm -A -t 10.10.10.1:80 -s wrr
+$ ipvsadm -a -t 10.10.10.1:80 -r 192.168.10.100 -m -w 1  （-m使用NAT模式，默认是-g的DR模式）
+$ ipvsadm -a -t 10.10.10.1:80 -r 192.168.10.200 -m -w 3
+</code></pre>
+<p>这里我们的调度算法使用加权轮循，ipvsadm的具体参数使用方法用–help自行查看</p>
+<p>随后在RS1和RS2上分别安装httpd服务，然后写一个index.html页面，为了区分两台RS的内容，我们RS1上写This is RealServer 1，RS2上我们写This is RealServer 2，随后可以进行测试了，为了排除防火墙的干扰，我们先把防火墙关掉再进行测试。iptables -F</p>
+<p>切换到Client进行请求，注意这里我们请求的地址应该是Director上的公网ip地址，不要搞错了</p>
+<pre><code class="bash">[root@Client ~]# curl http://10.10.10.1
+This is RealServer 2
+[root@Client ~]# curl http://10.10.10.1
+This is RealServer 2
+[root@Client ~]# curl http://10.10.10.1
+This is RealServer 2
+[root@Client ~]# curl http://10.10.10.1
+This is RealServer 1
+[root@Client ~]# curl http://10.10.10.1
+This is RealServer 2
+[root@Client ~]# curl http://10.10.10.1
+This is RealServer 2
+[root@Client ~]# curl http://10.10.10.1
+This is RealServer 2
+[root@Client ~]# curl http://10.10.10.1
+This is RealServer 1
+</code></pre>
+<p>可以看到，我们的请求丢给RS2三次，然后丢给RS1一次，再丢给RS2三次，lvs的调度基本上而没有出现问题。</p>
+<p>然后我们使用压力测试工具ab进行大量的请求模拟</p>
+<pre><code class="bash">ab -c 10 -n 10000 http://10.10.10.1/index.html
+</code></pre>
+<p>完成后切换到Director查看一下连接数，可以看到大致是1:3的比例。</p>
+<pre><code class="bash">[root@Director ~]# ipvsadm -L -n
+IP Virtual Server version 1.2.1 (size=4096)
+Prot LocalAddress:Port Scheduler Flags
+  -&gt; RemoteAddress:Port           Forward Weight ActiveConn InActConn
+TCP  10.10.10.1:80 wrr
+  -&gt; 192.168.10.100:80            Masq    1      0          2501      
+  -&gt; 192.168.10.200:80            Masq    3      0          7503     
+</code></pre>
+<h2 id="LVS-DR"><a href="#LVS-DR" class="headerlink" title="LVS-DR"></a>LVS-DR</h2><p><img src="http://qncdn-open.baihuzi.com/image/8a7a14ff-5d26-4be6-92e3-75df124b4c8f-Image.png" alt="8a7a14ff-5d26-4be6-92e3-75df124b4c8f-Image.png" title="8a7a14ff-5d26-4be6-92e3-75df124b4c8f-Image.png"></p>
+<h3 id="LVS-DR特性"><a href="#LVS-DR特性" class="headerlink" title="LVS-DR特性"></a>LVS-DR特性</h3><ul>
+<li>RealServer必须与Director在同一网络</li>
+<li>RealServer不需要是一个私有ip地址</li>
+<li>Director将接收进来的数据包，根据调度算法将数据包转发到后端的RealServer上</li>
+<li>RealServer不需要使用Director作为默认网关</li>
+<li>能支持更多操作系统</li>
+<li>相对于NAT模式来说，能支持更多的RealServer</li>
+</ul>
+<h3 id="lvs中内核参数作用"><a href="#lvs中内核参数作用" class="headerlink" title="lvs中内核参数作用"></a>lvs中内核参数作用</h3><p>在2.4.26及2.6.4以后的内核中，系统默认支持两个内核参数</p>
+<ul>
+<li><p>arp_announce：对网络接口上本地ip地址发出的ARP回应做出相应级别的限制<br>  0（默认）：在任意网络接口上的任何本地地址<br>  1：尽量避免不在该网络接口子网段的本地地址，当发起ARP请求的源地址是被设置应该经由路由达到此网络接口的时候很有用，此时会检查来访ip是否为所有接口上的子网段内ip之一，如果该来访ip不属于各个网络接口上的子网段内，那么将采用级别2的方式来进行处理。<br>  2：对查询目标使用最适当的本地地址，在此模式下将忽略这个ip数据包的源地址并尝试选择与能与该地址通信的本地地址。首要是选择所有的网络接口的子网中外出访问子网中包含该目标ip地址的本地地址。如果没有合适的地址被发现，将选择当前的发送网络接口或其他的有可能接收到该ARP回应的网络接口来进行发送。</p>
+</li>
+<li><p>arp_ignore：定义对目标地址为本地ip的ARP询问不同的应答模式<br>  0（默认）：回应任何网络接口上对任何本地ip地址的ARP查询请求<br>  1：只回答目标ip地址是来访网络接口本地地址的ARP查询请求<br>  2：只回答目标ip地址是来访网络接口本地地址的ARP查询请求，且来访ip必须在该网络接口的子网段内<br>  3：不回应该网络界面的ARP请求，而只对设置的唯一和链接地址做出回应addresses are<br>  4-7：保留未使用<br>  8：不回应所有（本地地址）的ARP查询请求</p>
+</li>
+</ul>
+<h3 id="实验环境："><a href="#实验环境：" class="headerlink" title="实验环境："></a>实验环境：</h3><p><strong>Director：</strong></p>
+<pre><code class="bash">192.168.10.1（eno16777736）
+192.168.10.250（eno16777736:1）（vip）
+</code></pre>
+<p><strong>RS1：</strong></p>
+<pre><code class="bash">192.168.10.100（eno16777736）
+192.168.10.250（lo:1）（vip）
+</code></pre>
+<p><strong>RS2：</strong></p>
+<pre><code class="bash">192.168.10.200（eno16777736）
+192.168.10.250（lo:1）（vip）
+</code></pre>
+<h3 id="Director上配置："><a href="#Director上配置：" class="headerlink" title="Director上配置："></a>Director上配置：</h3><pre><code class="bash">ifconfig eno16777736:1 $vip broadcast $vip netmask 255.255.255.255 up
+route add -host $vip dev eno16777736:1
+ipvsadm -C
+ipvsadm -A -t $vip:80 -s wlc
+ipvsadm -a -t $vip:80 -r 192.169.10.100 -g -w 1   （-g使用DR模式，也是默认的模式）
+ipvsadm -a -t $vip:80 -r 192.169.10.200 -g -w 2
+</code></pre>
+<h3 id="RS上配置（1和2配置相同）："><a href="#RS上配置（1和2配置相同）：" class="headerlink" title="RS上配置（1和2配置相同）："></a>RS上配置（1和2配置相同）：</h3><pre><code class="bash">echo 1 &gt; /proc/sys/net/ipv4/conf/lo/arp_ignore 
+echo 1 &gt; /proc/sys/net/ipv4/conf/all/arp_ignore
+echo 2 &gt; /proc/sys/net/ipv4/conf/lo/arp_announce
+echo 2 &gt; /proc/sys/net/ipv4/conf/all/arp_announce
+ifconfig lo:1 $vip broadcast $vip netmask 255.255.255.255 up
+route add -host $vip dev lo:1
+</code></pre>
+<p>上面绑定VIP的掩码是”255.255.255.255″，说明广播地址是其本身，那么他就不会将ARP发送到实际的自己该属于的广播域了，这样防止与LVS上VIP冲突，而导致IP冲突。</p>
+<h3 id="客户端配置："><a href="#客户端配置：" class="headerlink" title="客户端配置："></a>客户端配置：</h3><p>将ip设置为<code>192.168.10.*</code>，同一网段即可（注意不要冲突）。</p>
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><pre><code class="bash">[root@Client ~]# curl http://192.168.10.250
+This is RealServer 1
+[root@Client ~]# curl http://192.168.10.250
+This is RealServer 2
+[root@Client ~]# curl http://192.168.10.250
+This is RealServer 2
+[root@Client ~]# curl http://192.168.10.250
+This is RealServer 1
+[root@Client ~]# curl http://192.168.10.250
+This is RealServer 2
+[root@Client ~]# curl http://192.168.10.250
+This is RealServer 2
+[root@Client ~]# curl http://192.168.10.250
+</code></pre>
+<h2 id="LVS-TUN"><a href="#LVS-TUN" class="headerlink" title="LVS-TUN"></a>LVS-TUN</h2><h3 id="LVS-TUN特性"><a href="#LVS-TUN特性" class="headerlink" title="LVS-TUN特性"></a>LVS-TUN特性</h3><ul>
+<li>集群节点可以跨越互联网</li>
+<li>RIP必须是公网地址</li>
+<li>Director仅处理入站请求，响应报文直接由RS响应</li>
+<li>RS网关不能指向Director</li>
+<li>只有支持隧道功能的OS才能用于RS</li>
+<li>不支持端口映射</li>
+</ul>
+<h2 id="LVS持久连接"><a href="#LVS持久连接" class="headerlink" title="LVS持久连接"></a>LVS持久连接</h2><p>无论使用什么算法，LVS持久都能实现在一定时间内，将来自同一个客户端请求派发至此前选定的RS</p>
+<p>持久连接模板（内存缓冲区）：<br>每一个客户端，及分配给它的RS的映射关系；</p>
+<p>ipvsadm -A …-p timeout：<br>timeout：持久连接时长，默认300秒</p>
+<p>在基于SSL，需要用到持久连接；</p>
+
+      
+       <hr><span style="font-style: italic;color: gray;"> 转载请注明来源，欢迎对文章中的引用来源进行考证，欢迎指出任何有错误或不够清晰的表达。可以在下面评论区评论，也可以邮件至 289211569@qq.com </span>
+    </div>
+</article>
+
+
+
+
+
+    <div id="comments"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+
+<script type="text/javascript">
+    $.getScript('/js/gitalk.js', function () {
+        var gitalk = new Gitalk({
+            clientID: '5c7f4030e244f7c761df',
+            clientSecret: 'cb217d8ebb46e3ce61e53e411894873f6352a333',
+            repo: 'daryl-lau.github.io',
+            owner: 'daryl-lau',
+            admin: ['daryl-lau'],
+            id: decodeURI(location.pathname),
+            distractionFreeMode: 'true',
+            language: 'zh-CN',
+            perPage: parseInt('10',10)
+        })
+        gitalk.render('comments')
+    })
+</script>
+
+
+
+
+    
+
+
+
+
+    </div>
+    <div class="copyright">
+        <p class="footer-entry">
+    ©2016-2023 Daryl
+</p>
+<!-- <p class="footer-entry">Built with <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/yelog/hexo-theme-3-hexo" target="_blank">3-hexo</a> theme</p> -->
+
+    </div>
+    <div class="full-toc">
+        <button class="full"><span class="min "></span></button>
+<a class="" id="rocket"></a>
+    </div>
+</div>
+
+</body>
+<script src="/js/jquery.pjax.js?v=1.1.0" ></script>
+<script src="/js/script.js?v=1.1.0" ></script>
+<script>
+    var img_resize = 'photoSwipe';
+    function initArticle() {
+        /*渲染对应的表格样式*/
+        
+            $("#post .pjax table").addClass("green_title");
+        
+
+        /*渲染打赏样式*/
+        
+
+        /*高亮代码块行号*/
+        
+        $('pre code').each(function(){
+            var lines = $(this).text().trim().split('\n').length, widther='';
+            if (lines>99) {
+                widther = 'widther'
+            }
+            var $numbering = $('<ul/>').addClass('pre-numbering ' + widther).attr("unselectable","on");
+            $(this).addClass('has-numbering ' + widther)
+                    .parent()
+                    .append($numbering);
+            for(var i=1;i<=lines;i++){
+                $numbering.append($('<li/>').text(i));
+            }
+        });
+        
+
+        /*访问数量*/
+        
+
+        /*代码高亮，行号对齐*/
+        $('.pre-numbering').css('line-height',$('.has-numbering').css('line-height'));
+
+        
+
+        // PhotoSwipe
+        $('article').each(function(i){
+            $(this).find('img').each(function(){
+                if ($(this).closest('figure').hasClass('article-gallery-img')) {
+                    return;
+                }
+                var alt = this.alt;
+                $(this)
+                    .wrap('<figure class="article-gallery-img" itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject"></figure>')
+                    .wrap('<a href="' + this.src + '" title="' + alt + '"></a>');
+                $(this).after('<div class="img_alt"><span>' + (alt || '') + '</span></div>');
+            });
+        });
+
+        var pswpElement = document.querySelectorAll('.pswp')[0];
+        if (pswpElement) {
+            var gallerySelector = '.article-gallery, article';
+
+            var initPhotoSwipeFromDOM = function(gallerySelector) {
+
+                // parse slide data (url, title, size ...) from DOM elements
+                // (children of gallerySelector)
+                var parseThumbnailElements = function(el) {
+                    var thumbElements = $(el).find('figure.article-gallery-img').toArray(),
+                        numNodes = thumbElements.length,
+                        items = [],
+                        figureEl,
+                        linkEl,
+                        size,
+                        imgEl,
+                        item;
+
+                    for (var i = 0; i < numNodes; i++) {
+
+                        figureEl = thumbElements[i]; // <figure> element
+
+                        // include only element nodes
+                        if (figureEl.nodeType !== 1) {
+                            continue;
+                        }
+
+                        linkEl = figureEl.children[0]; // <a> element
+                        imgEl = linkEl.children[0]; // <img>
+
+                        size = linkEl.getAttribute('data-size');
+                        size = size && size.split('x');
+
+                        // create slide object
+                        item = {
+                            src: linkEl.getAttribute('href'),
+                            w: size && parseInt(size[0], 10) || imgEl.width,
+                            h: size && parseInt(size[1], 10) || imgEl.height
+                        };
+
+                        if (figureEl.children.length > 1) {
+                            // <figcaption> content
+                            item.title = figureEl.children[1].innerHTML;
+                        }
+
+                        if (linkEl.children.length > 0) {
+                            // <img> thumbnail element, retrieving thumbnail url
+                            item.msrc = linkEl.children[0].getAttribute('src');
+                        }
+
+                        item.el = figureEl; // save link to element for getThumbBoundsFn
+                        items.push(item);
+                    }
+
+                    return items;
+                };
+
+                // find nearest parent element
+                var closest = function closest(el, fn) {
+                    return el && (fn(el) ? el : closest(el.parentNode, fn));
+                };
+
+                // triggers when user clicks on thumbnail
+                var onThumbnailsClick = function(e) {
+                    e = e || window.event;
+
+                    var eTarget = e.target || e.srcElement;
+
+                    // find root element of slide
+                    var clickedListItem = closest(eTarget, function(el) {
+                        return (el.tagName && el.tagName.toUpperCase() === 'FIGURE');
+                    });
+
+                    if (!clickedListItem) {
+                        return;
+                    }
+
+                    if (e.preventDefault) {
+                        e.preventDefault();
+                    } else {
+                        e.returnValue = false;
+                    }
+
+                    // find index of clicked item by looping through all child nodes
+                    // alternatively, you may define index via data- attribute
+                    var clickedGallery = $(clickedListItem).closest(gallerySelector)[0],
+                        childNodes = $(clickedGallery).find('figure.article-gallery-img').toArray(),
+                        numChildNodes = childNodes.length,
+                        nodeIndex = 0,
+                        index;
+
+                    for (var i = 0; i < numChildNodes; i++) {
+                        if (childNodes[i].nodeType !== 1) {
+                            continue;
+                        }
+
+                        if (childNodes[i] === clickedListItem) {
+                            index = nodeIndex;
+                            break;
+                        }
+                        nodeIndex++;
+                    }
+
+
+
+                    if (index >= 0) {
+                        // open PhotoSwipe if valid index found
+                        openPhotoSwipe(index, clickedGallery);
+                    }
+                    return false;
+                };
+
+                // parse picture index and gallery index from URL (#&pid=1&gid=2)
+                var photoswipeParseHash = function() {
+                    var hash = window.location.hash.substring(1),
+                        params = {};
+
+                    if (hash.length < 5) {
+                        return params;
+                    }
+
+                    var vars = hash.split('&');
+                    for (var i = 0; i < vars.length; i++) {
+                        if (!vars[i]) {
+                            continue;
+                        }
+                        var pair = vars[i].split('=');
+                        if (pair.length < 2) {
+                            continue;
+                        }
+                        params[pair[0]] = pair[1];
+                    }
+
+                    if (params.gid) {
+                        params.gid = parseInt(params.gid, 10);
+                    }
+
+                    return params;
+                };
+
+                var openPhotoSwipe = function(index, galleryElement, disableAnimation, fromURL) {
+                    var pswpElement = document.querySelectorAll('.pswp')[0],
+                        gallery,
+                        options,
+                        items;
+
+                    items = parseThumbnailElements(galleryElement);
+
+                    // define options (if needed)
+                    options = {
+
+                        // define gallery index (for URL)
+                        galleryUID: galleryElement.getAttribute('data-pswp-uid'),
+
+                        getThumbBoundsFn: function(index) {
+                            // See Options -> getThumbBoundsFn section of documentation for more info
+                            var thumbnail = items[index].el.getElementsByTagName('img')[0], // find thumbnail
+                                pageYScroll = window.pageYOffset || document.documentElement.scrollTop,
+                                rect = thumbnail.getBoundingClientRect();
+
+                            return {
+                                x: rect.left,
+                                y: rect.top + pageYScroll,
+                                w: rect.width
+                            };
+                        }
+                    };
+
+                    // PhotoSwipe opened from URL
+                    if (fromURL) {
+                        if (options.galleryPIDs) {
+                            // parse real index when custom PIDs are used
+                            // http://photoswipe.com/documentation/faq.html#custom-pid-in-url
+                            for (var j = 0; j < items.length; j++) {
+                                if (items[j].pid == index) {
+                                    options.index = j;
+                                    break;
+                                }
+                            }
+                        } else {
+                            // in URL indexes start from 1
+                            options.index = parseInt(index, 10) - 1;
+                        }
+                    } else {
+                        options.index = parseInt(index, 10);
+                    }
+
+                    // exit if index not found
+                    if (isNaN(options.index)) {
+                        return;
+                    }
+
+                    if (disableAnimation) {
+                        options.showAnimationDuration = 0;
+                    }
+
+                    // Pass data to PhotoSwipe and initialize it
+                    gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, options);
+
+                    gallery.listen('imageLoadComplete', function(index, item) {
+                        var linkEl = item.el.children[0];
+                        var img = item.container.children[0];
+                        if (!linkEl.getAttribute('data-size')) {
+                            linkEl.setAttribute('data-size', img.naturalWidth + 'x' + img.naturalHeight);
+                            item.w = img.naturalWidth;
+                            item.h = img.naturalHeight;
+                            gallery.invalidateCurrItems();
+                            gallery.updateSize(true);
+                        }
+                    });
+
+                    gallery.init();
+                };
+
+                // loop through all gallery elements and bind events
+                var galleryElements = document.querySelectorAll(gallerySelector);
+
+                for (var i = 0, l = galleryElements.length; i < l; i++) {
+                    galleryElements[i].setAttribute('data-pswp-uid', i + 1);
+                    galleryElements[i].onclick = onThumbnailsClick;
+                }
+
+                // Parse URL and open gallery if it contains #&pid=3&gid=1
+                var hashData = photoswipeParseHash();
+                if (hashData.pid && hashData.gid) {
+                    openPhotoSwipe(hashData.pid, galleryElements[hashData.gid - 1], true, true);
+                }
+            };
+
+            // execute above function
+            initPhotoSwipeFromDOM(gallerySelector);
+        }
+        
+        
+    }
+
+    /*打赏页面隐藏与展示*/
+    
+
+</script>
+
+<!--加入行号的高亮代码块样式-->
+
+<style>
+    pre{
+        position: relative;
+        margin-bottom: 24px;
+        border-radius: 6px;
+        border: 1px solid #e2dede;
+        background: #FFF;
+        overflow: hidden;
+    }
+    code.has-numbering{
+        margin-left: 26px;
+    }
+    code.has-numbering.widther{
+        margin-left: 42px;
+    }
+    .pre-numbering{
+        height: 100%;
+        user-select: none;
+        margin: 0;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 20px;
+        padding: 1.1em 3px 1em 12px;
+        text-align: right;
+        color: #9da4b1;
+        background-color: #353941;
+    }
+    .pre-numbering>li {
+        padding-right: 4px;
+        list-style: none;
+        font-family: consolas, Menlo, monospace, 'PingFang SC', 'Microsoft YaHei';
+    }
+    .pre-numbering.widther {
+        width: 35px;
+    }
+</style>
+
+<!--自定义样式设置-->
+<style>
+    
+    
+    .nav {
+        width: 602px;
+    }
+    .nav.fullscreen {
+        margin-left: -602px;
+    }
+    .nav-left {
+        width: 180px;
+    }
+    
+    
+    @media screen and (max-width: 1468px) {
+        .nav {
+            width: 532px;
+        }
+        .nav.fullscreen {
+            margin-left: -532px;
+        }
+        .nav-left {
+            width: 140px;
+        }
+    }
+    
+    
+    @media screen and (max-width: 1024px) {
+        .nav {
+            width: 532px;
+            margin-left: -532px
+        }
+        .nav.fullscreen {
+            margin-left: 0;
+        }
+    }
+    
+    @media screen and (max-width: 426px) {
+        .nav {
+            width: 100%;
+        }
+        .nav-left {
+            width: 100%;
+        }
+    }
+    
+    
+    .nav-right .title-list nav a .post-title, .nav-right .title-list #local-search-result a .post-title {
+        color: #383636;
+    }
+    
+    
+    .nav-right .title-list nav a .post-date, .nav-right .title-list #local-search-result a .post-date {
+        color: #999;
+    }
+    
+    
+    .nav-right nav a.hover, #local-search-result a.hover{
+        background-color: #e2e0e0;
+    }
+    
+    
+
+    /*列表样式*/
+    
+
+    /* 背景图样式 */
+    
+    
+
+
+    /*引用块样式*/
+    
+
+    /*文章列表背景图*/
+    
+    .nav-right:before {
+        content: ' ';
+        display: block;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.3;
+        background: url("https://i.loli.net/2019/07/22/5d3521411f3f169375.png");
+        background-repeat: no-repeat;
+        background-position: 50% 0;
+        -ms-background-size: cover;
+        -o-background-size: cover;
+        -moz-background-size: cover;
+        -webkit-background-size: cover;
+        background-size: cover;
+    }
+    
+
+    
+</style>
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe.
+         It's a separate element, as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. PhotoSwipe keeps only 3 slides in DOM to save memory. -->
+        <!-- don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <!-- Preloader demo https://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+</html>

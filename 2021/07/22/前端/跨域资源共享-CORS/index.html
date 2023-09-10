@@ -6,22 +6,21 @@
   <meta name="keywords" content=" CORS , 跨域 ">
   <meta name="description" content="跨域资源共享(CORS) | Daryl&#39;s blog">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<meta name="description" content="在Redux中的action仅支持原始对象（plain object），处理有副作用的action，需要使用中间件。中间件可以在发出action，到reducer函数接受action之间，执行具有副作用的操作，例如网络请求，读取浏览器缓存等。 下面的示例基于【react-redux的使用】学习源码 redux-thunkredux-thunk是redux的作者提供的一个处理副作用的方案，我们都知道">
+<meta name="description" content="solidity-library库函数是一种特殊的合约，为了提升solidity代码的复用性和减少gas而存在。库合约一般都是一些好用的函数合集（库函数），由大神或者项目方创作，咱们站在巨人的肩膀上，会用就行了。 他和普通合约主要有以下几点不同：  不能存在状态变量 不能够继承或被继承 不能接收以太币 不可以被销毁  声明库使用library关键字声明库，一般都是独立到单独的文件中，下面简单的实现">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Redux 异步操作redux-thunk和redux-saga">
-<meta property="og:url" content="http://example.com/2021/08/14/React/Redux-%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9Credux-thunk%E5%92%8Credux-saga/index.html">
+<meta property="og:title" content="solidity-library">
+<meta property="og:url" content="http://example.com/2023/07/08/%E5%8C%BA%E5%9D%97%E9%93%BE/solidity-library/index.html">
 <meta property="og:site_name" content="Daryl&#39;s blog">
-<meta property="og:description" content="在Redux中的action仅支持原始对象（plain object），处理有副作用的action，需要使用中间件。中间件可以在发出action，到reducer函数接受action之间，执行具有副作用的操作，例如网络请求，读取浏览器缓存等。 下面的示例基于【react-redux的使用】学习源码 redux-thunkredux-thunk是redux的作者提供的一个处理副作用的方案，我们都知道">
+<meta property="og:description" content="solidity-library库函数是一种特殊的合约，为了提升solidity代码的复用性和减少gas而存在。库合约一般都是一些好用的函数合集（库函数），由大神或者项目方创作，咱们站在巨人的肩膀上，会用就行了。 他和普通合约主要有以下几点不同：  不能存在状态变量 不能够继承或被继承 不能接收以太币 不可以被销毁  声明库使用library关键字声明库，一般都是独立到单独的文件中，下面简单的实现">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/images/redux16.gif">
-<meta property="article:published_time" content="2021-08-13T16:00:00.000Z">
-<meta property="article:modified_time" content="2023-08-16T12:36:01.446Z">
+<meta property="og:image" content="http://qncdn-open.baihuzi.com/image/69cc1434-c327-412b-b983-776362d6099f-image.png">
+<meta property="og:image" content="http://qncdn-open.baihuzi.com/image/477a4f5d-643b-4510-9c81-fa118c499ca2-image.png">
+<meta property="article:published_time" content="2023-07-07T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-09-10T03:58:57.896Z">
 <meta property="article:author" content="Daryl">
-<meta property="article:tag" content="React">
-<meta property="article:tag" content="react-thunk">
-<meta property="article:tag" content="react-sage">
+<meta property="article:tag" content="区块链">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/images/redux16.gif">
+<meta name="twitter:image" content="http://qncdn-open.baihuzi.com/image/69cc1434-c327-412b-b983-776362d6099f-image.png">
 
 
 <link rel="icon" href="/img/avatar.jpg">
@@ -91,10 +90,19 @@
     <li>
         <div class="all active" data-rel="全部文章">全部文章
             
-                <small>(64)</small>
+                <small>(167)</small>
             
         </div>
     </li>
+    
+        
+            <li>
+                <div data-rel="区块链">区块链
+                    <small>(12)</small>
+                    
+                </div>
+            </li>
+        
     
         
             <li>
@@ -108,7 +116,7 @@
         
             <li>
                 <div data-rel="JavaScript">JavaScript
-                    <small>(18)</small>
+                    <small>(22)</small>
                     
                 </div>
             </li>
@@ -135,7 +143,52 @@
         
             <li>
                 <div data-rel="Mysql">Mysql
-                    <small>(17)</small>
+                    <small>(22)</small>
+                    
+                </div>
+            </li>
+        
+    
+        
+            <li>
+                <div data-rel="Golang">Golang
+                    <small>(6)</small>
+                    
+                </div>
+            </li>
+        
+    
+        
+            <li>
+                <div data-rel="Python">Python
+                    <small>(42)</small>
+                    
+                </div>
+            </li>
+        
+    
+        
+            <li>
+                <div data-rel="运维">运维
+                    <small>(9)</small>
+                    
+                </div>
+            </li>
+        
+    
+        
+            <li>
+                <div data-rel="Oracle">Oracle
+                    <small>(20)</small>
+                    
+                </div>
+            </li>
+        
+    
+        
+            <li>
+                <div data-rel="TypeScript">TypeScript
+                    <small>(5)</small>
                     
                 </div>
             </li>
@@ -154,7 +207,7 @@
         
     </div>
 </div>
-<input type="hidden" id="yelog_site_posts_number" value="64">
+<input type="hidden" id="yelog_site_posts_number" value="167">
 
 <div style="display: none">
     <span id="busuanzi_value_site_uv"></span>
@@ -203,7 +256,11 @@
             </li>
         
             <li class="article-tag-list-item">
-                <i class="iconfont icon-tag"></i><a>ACID</a>
+                <i class="iconfont icon-tag"></i><a>区块链</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>运维</a>
             </li>
         
             <li class="article-tag-list-item">
@@ -223,7 +280,7 @@
             </li>
         
             <li class="article-tag-list-item">
-                <i class="iconfont icon-tag"></i><a>ES6</a>
+                <i class="iconfont icon-tag"></i><a>Golang</a>
             </li>
         
             <li class="article-tag-list-item">
@@ -232,14 +289,6 @@
         
             <li class="article-tag-list-item">
                 <i class="iconfont icon-tag"></i><a>html</a>
-            </li>
-        
-            <li class="article-tag-list-item">
-                <i class="iconfont icon-tag"></i><a>Innodb</a>
-            </li>
-        
-            <li class="article-tag-list-item">
-                <i class="iconfont icon-tag"></i><a>InnoDB</a>
             </li>
         
             <li class="article-tag-list-item">
@@ -255,43 +304,19 @@
             </li>
         
             <li class="article-tag-list-item">
-                <i class="iconfont icon-tag"></i><a>MHA</a>
-            </li>
-        
-            <li class="article-tag-list-item">
                 <i class="iconfont icon-tag"></i><a>Mysql</a>
             </li>
         
             <li class="article-tag-list-item">
-                <i class="iconfont icon-tag"></i><a>mysqldump</a>
+                <i class="iconfont icon-tag"></i><a>Oracle</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>Python</a>
             </li>
         
             <li class="article-tag-list-item">
                 <i class="iconfont icon-tag"></i><a>React</a>
-            </li>
-        
-            <li class="article-tag-list-item">
-                <i class="iconfont icon-tag"></i><a>React Hooks</a>
-            </li>
-        
-            <li class="article-tag-list-item">
-                <i class="iconfont icon-tag"></i><a>react redux</a>
-            </li>
-        
-            <li class="article-tag-list-item">
-                <i class="iconfont icon-tag"></i><a>react-sage</a>
-            </li>
-        
-            <li class="article-tag-list-item">
-                <i class="iconfont icon-tag"></i><a>react-thunk</a>
-            </li>
-        
-            <li class="article-tag-list-item">
-                <i class="iconfont icon-tag"></i><a>ReactDOM</a>
-            </li>
-        
-            <li class="article-tag-list-item">
-                <i class="iconfont icon-tag"></i><a>Redux</a>
             </li>
         
             <li class="article-tag-list-item">
@@ -300,6 +325,10 @@
         
             <li class="article-tag-list-item">
                 <i class="iconfont icon-tag"></i><a>token</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>TypeScript</a>
             </li>
         
             <li class="article-tag-list-item">
@@ -314,10 +343,6 @@
                 <i class="iconfont icon-tag"></i><a>Webpack</a>
             </li>
         
-            <li class="article-tag-list-item">
-                <i class="iconfont icon-tag"></i><a>xtrabackup</a>
-            </li>
-        
     </div>
 
 </div>
@@ -326,156 +351,534 @@
     <nav id="title-list-nav">
         
         
-        <a  class="全部文章 React "
-           href="/2021/08/14/React/Redux-%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9Credux-thunk%E5%92%8Credux-saga/"
-           data-tag="React,react-thunk,react-sage"
+        <a  class="全部文章 区块链 "
+           href="/2023/07/08/%E5%8C%BA%E5%9D%97%E9%93%BE/solidity-library/"
+           data-tag="区块链"
            data-author="" >
-            <span class="post-title" title="Redux 异步操作redux-thunk和redux-saga">Redux 异步操作redux-thunk和redux-saga</span>
-            <span class="post-date" title="2021-08-14 00:00:00">2021/08/14</span>
+            <span class="post-title" title="solidity-library">solidity-library</span>
+            <span class="post-date" title="2023-07-08 00:00:00">2023/07/08</span>
         </a>
         
         
-        <a  class="全部文章 React "
-           href="/2021/08/13/React/React-react-redux%E7%9A%84%E4%BD%BF%E7%94%A8/"
-           data-tag="React,react redux"
+        <a  class="全部文章 区块链 "
+           href="/2023/07/08/%E5%8C%BA%E5%9D%97%E9%93%BE/solidity-%E6%8E%A5%E6%94%B6%E5%92%8C%E5%8F%91%E9%80%81eth/"
+           data-tag="区块链"
            data-author="" >
-            <span class="post-title" title="React react-redux的使用">React react-redux的使用</span>
-            <span class="post-date" title="2021-08-13 23:17:09">2021/08/13</span>
+            <span class="post-title" title="solidity-接收和发送eth">solidity-接收和发送eth</span>
+            <span class="post-date" title="2023-07-08 00:00:00">2023/07/08</span>
         </a>
         
         
-        <a  class="全部文章 React "
-           href="/2021/08/13/React/Redux%E7%9A%84%E4%BD%BF%E7%94%A8/"
-           data-tag="React,Redux"
+        <a  class="全部文章 区块链 "
+           href="/2023/07/08/%E5%8C%BA%E5%9D%97%E9%93%BE/solidity-%E8%B0%83%E7%94%A8%E5%B7%B2%E9%83%A8%E7%BD%B2%E5%90%88%E7%BA%A6/"
+           data-tag="区块链"
            data-author="" >
-            <span class="post-title" title="Redux的使用">Redux的使用</span>
-            <span class="post-date" title="2021-08-13 16:30:25">2021/08/13</span>
+            <span class="post-title" title="solidity-调用已部署合约">solidity-调用已部署合约</span>
+            <span class="post-date" title="2023-07-08 00:00:00">2023/07/08</span>
         </a>
         
         
-        <a  class="全部文章 React "
-           href="/2021/08/12/React/React-%E5%90%88%E6%88%90%E4%BA%8B%E4%BB%B6/"
-           data-tag="React"
+        <a  class="全部文章 区块链 "
+           href="/2023/07/07/%E5%8C%BA%E5%9D%97%E9%93%BE/solidity-%E5%BC%82%E5%B8%B8%20error%20require%20assert/"
+           data-tag="区块链"
            data-author="" >
-            <span class="post-title" title="React 合成事件">React 合成事件</span>
-            <span class="post-date" title="2021-08-12 14:30:56">2021/08/12</span>
+            <span class="post-title" title="solidity-异常 error require assert">solidity-异常 error require assert</span>
+            <span class="post-date" title="2023-07-07 00:00:00">2023/07/07</span>
         </a>
         
         
-        <a  class="全部文章 React "
-           href="/2021/08/12/React/React-ReactDOM%E9%A1%B6%E5%B1%82API/"
-           data-tag="React,ReactDOM"
+        <a  class="全部文章 区块链 "
+           href="/2023/07/06/%E5%8C%BA%E5%9D%97%E9%93%BE/solidity-%E4%BA%8B%E4%BB%B6/"
+           data-tag="区块链"
            data-author="" >
-            <span class="post-title" title="React ReactDOM顶层API">React ReactDOM顶层API</span>
-            <span class="post-date" title="2021-08-12 12:57:37">2021/08/12</span>
+            <span class="post-title" title="solidity-事件">solidity-事件</span>
+            <span class="post-date" title="2023-07-06 00:00:00">2023/07/06</span>
         </a>
         
         
-        <a  class="全部文章 React "
-           href="/2021/08/11/React/React-%E7%BB%84%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/"
-           data-tag="React"
+        <a  class="全部文章 区块链 "
+           href="/2023/07/05/%E5%8C%BA%E5%9D%97%E9%93%BE/sodility-call&delegatecall&%E4%BB%A3%E7%90%86%E5%90%88%E7%BA%A6/"
+           data-tag="区块链"
            data-author="" >
-            <span class="post-title" title="React 组件生命周期">React 组件生命周期</span>
-            <span class="post-date" title="2021-08-11 23:38:41">2021/08/11</span>
+            <span class="post-title" title="sodility-call&amp;delegatecall&amp;代理合约">sodility-call&amp;delegatecall&amp;代理合约</span>
+            <span class="post-date" title="2023-07-05 00:00:00">2023/07/05</span>
         </a>
         
         
-        <a  class="全部文章 React "
-           href="/2021/08/11/React/React-React%E9%A1%B6%E5%B1%82API/"
-           data-tag="React"
+        <a  class="全部文章 区块链 "
+           href="/2023/07/05/%E5%8C%BA%E5%9D%97%E9%93%BE/solidity-%E7%94%A8abi%E8%B0%83%E7%94%A8%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E7%9A%84%E6%96%B9%E6%B3%95%E8%AF%A6%E8%A7%A3/"
+           data-tag="区块链"
            data-author="" >
-            <span class="post-title" title="React React顶层API">React React顶层API</span>
-            <span class="post-date" title="2021-08-11 19:55:53">2021/08/11</span>
+            <span class="post-title" title="solidity-用abi调用智能合约的方法详解">solidity-用abi调用智能合约的方法详解</span>
+            <span class="post-date" title="2023-07-05 00:00:00">2023/07/05</span>
         </a>
         
         
-        <a  class="全部文章 React "
-           href="/2021/08/11/React/React-React-memo/"
-           data-tag="React"
+        <a  class="全部文章 区块链 "
+           href="/2023/07/02/%E5%8C%BA%E5%9D%97%E9%93%BE/hardhat/"
+           data-tag="区块链"
            data-author="" >
-            <span class="post-title" title="React React.memo">React React.memo</span>
-            <span class="post-date" title="2021-08-11 18:22:48">2021/08/11</span>
+            <span class="post-title" title="hardhat">hardhat</span>
+            <span class="post-date" title="2023-07-02 00:00:00">2023/07/02</span>
         </a>
         
         
-        <a  class="全部文章 React "
-           href="/2021/08/11/React/React-Protals/"
-           data-tag="React"
+        <a  class="全部文章 区块链 "
+           href="/2023/06/26/%E5%8C%BA%E5%9D%97%E9%93%BE/%E5%8A%A9%E8%AE%B0%E8%AF%8D%E3%80%81%E7%A7%81%E9%92%A5%E3%80%81%E5%85%AC%E9%92%A5%E3%80%81%E5%9C%B0%E5%9D%80/"
+           data-tag="区块链"
            data-author="" >
-            <span class="post-title" title="React Protals">React Protals</span>
-            <span class="post-date" title="2021-08-11 14:03:46">2021/08/11</span>
+            <span class="post-title" title="助记词、私钥、公钥、地址">助记词、私钥、公钥、地址</span>
+            <span class="post-date" title="2023-06-26 00:00:00">2023/06/26</span>
         </a>
         
         
-        <a  class="全部文章 React "
-           href="/2021/08/11/React/React-ref%E7%9A%84%E4%BD%BF%E7%94%A8/"
-           data-tag="React"
+        <a  class="全部文章 区块链 "
+           href="/2023/06/25/%E5%8C%BA%E5%9D%97%E9%93%BE/solidity-ABI%E7%BC%96%E7%A0%81%E5%87%BD%E6%95%B0/"
+           data-tag="区块链"
            data-author="" >
-            <span class="post-title" title="React ref的使用">React ref的使用</span>
-            <span class="post-date" title="2021-08-11 00:51:00">2021/08/11</span>
+            <span class="post-title" title="solidity-ABI编码函数">solidity-ABI编码函数</span>
+            <span class="post-date" title="2023-06-25 00:00:00">2023/06/25</span>
         </a>
         
         
-        <a  class="全部文章 React "
-           href="/2021/08/10/React/React-%E8%B7%A8%E5%B1%82%E7%BB%84%E4%BB%B6%E6%A0%91%E4%BC%A0%E5%80%BC-context%E4%B8%8A%E4%B8%8B%E6%96%87/"
-           data-tag="React"
+        <a  class="全部文章 区块链 "
+           href="/2023/06/25/%E5%8C%BA%E5%9D%97%E9%93%BE/%E5%8C%BA%E5%9D%97%E9%93%BE%E6%8A%80%E6%9C%AF-%E7%AD%BE%E5%90%8D%E4%B8%8E%E9%AA%8C%E7%AD%BE/"
+           data-tag="区块链"
            data-author="" >
-            <span class="post-title" title="React 跨层组件树传值-context上下文">React 跨层组件树传值-context上下文</span>
-            <span class="post-date" title="2021-08-10 22:21:52">2021/08/10</span>
+            <span class="post-title" title="区块链技术-签名与验签">区块链技术-签名与验签</span>
+            <span class="post-date" title="2023-06-25 00:00:00">2023/06/25</span>
         </a>
         
         
-        <a  class="全部文章 React "
-           href="/2021/08/10/React/React-%E5%8F%97%E6%8E%A7%E7%BB%84%E4%BB%B6%E5%92%8C%E9%9D%9E%E5%8F%97%E6%8E%A7%E7%BB%84%E4%BB%B6/"
-           data-tag="React"
+        <a  class="全部文章 区块链 "
+           href="/2023/06/17/%E5%8C%BA%E5%9D%97%E9%93%BE/sodility-call%E5%92%8Cdelegatecall/"
+           data-tag="区块链"
            data-author="" >
-            <span class="post-title" title="React 受控组件和非受控组件">React 受控组件和非受控组件</span>
-            <span class="post-date" title="2021-08-10 20:04:18">2021/08/10</span>
+            <span class="post-title" title="sodility-call和delegatecall">sodility-call和delegatecall</span>
+            <span class="post-date" title="2023-06-17 00:00:00">2023/06/17</span>
         </a>
         
         
-        <a  class="全部文章 React "
-           href="/2021/08/10/React/React-%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E5%87%BD%E6%95%B0%E4%BB%A5%E5%8F%8A%E4%BC%A0%E5%8F%82/"
-           data-tag="React"
+        <a  class="全部文章 Golang "
+           href="/2023/04/15/Golang/golang%E6%A0%87%E5%87%86%E5%8C%85sync/"
+           data-tag="Golang"
            data-author="" >
-            <span class="post-title" title="React 事件处理函数以及传参">React 事件处理函数以及传参</span>
-            <span class="post-date" title="2021-08-10 18:34:15">2021/08/10</span>
-        </a>
-        
-        
-        <a  class="全部文章 React "
-           href="/2021/08/10/React/React-render-props%E6%A8%A1%E5%BC%8F/"
-           data-tag="React"
-           data-author="" >
-            <span class="post-title" title="React render props模式">React render props模式</span>
-            <span class="post-date" title="2021-08-10 11:05:10">2021/08/10</span>
-        </a>
-        
-        
-        <a  class="全部文章 React "
-           href="/2021/08/10/React/React-setState%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E7%9A%84%E5%9C%B0%E6%96%B9/"
-           data-tag="React"
-           data-author="" >
-            <span class="post-title" title="React setState需要注意的地方">React setState需要注意的地方</span>
-            <span class="post-date" title="2021-08-10 10:00:47">2021/08/10</span>
-        </a>
-        
-        
-        <a  class="全部文章 React "
-           href="/2021/08/10/React/React-hooks%E7%9F%A5%E8%AF%86%E7%82%B9%E6%95%B4%E7%90%86/"
-           data-tag="React,React Hooks"
-           data-author="" >
-            <span class="post-title" title="React hooks知识点整理">React hooks知识点整理</span>
-            <span class="post-date" title="2021-08-10 00:00:00">2021/08/10</span>
+            <span class="post-title" title="golang标准包sync">golang标准包sync</span>
+            <span class="post-date" title="2023-04-15 00:00:00">2023/04/15</span>
         </a>
         
         
         <a  class="全部文章 JavaScript "
-           href="/2021/08/09/JavaScript/js-%E5%87%BD%E6%95%B0%E6%9F%AF%E9%87%8C%E5%8C%96/"
+           href="/2023/04/07/JavaScript/var%E3%80%81let%E3%80%81const%E5%A3%B0%E6%98%8E%E8%BF%87%E7%A8%8B/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="var、let、const声明过程">var、let、const声明过程</span>
+            <span class="post-date" title="2023-04-07 00:00:00">2023/04/07</span>
+        </a>
+        
+        
+        <a  class="全部文章 Golang "
+           href="/2023/04/07/Golang/golang%E6%95%B0%E7%BB%84%E5%88%87%E7%89%87%E7%9A%84%E5%AE%B9%E9%87%8F/"
+           data-tag="Golang"
+           data-author="" >
+            <span class="post-title" title="golang数组切片的容量">golang数组切片的容量</span>
+            <span class="post-date" title="2023-04-07 00:00:00">2023/04/07</span>
+        </a>
+        
+        
+        <a  class="全部文章 Golang "
+           href="/2023/04/07/Golang/golang%E7%B1%BB%E5%9E%8B%E5%88%AB%E5%90%8D%E4%B8%8E%E7%B1%BB%E5%9E%8B%E5%AE%9A%E4%B9%89/"
+           data-tag="Golang"
+           data-author="" >
+            <span class="post-title" title="golang类型别名与类型定义">golang类型别名与类型定义</span>
+            <span class="post-date" title="2023-04-07 00:00:00">2023/04/07</span>
+        </a>
+        
+        
+        <a  class="全部文章 Golang "
+           href="/2023/04/07/Golang/golang%E6%95%B4%E5%9E%8B%E8%AE%A1%E7%AE%97%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/"
+           data-tag="Golang"
+           data-author="" >
+            <span class="post-title" title="golang整型计算类型转换">golang整型计算类型转换</span>
+            <span class="post-date" title="2023-04-07 00:00:00">2023/04/07</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2023/04/07/React/Redux%E7%9A%84%E4%BD%BF%E7%94%A8/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="Redux的使用">Redux的使用</span>
+            <span class="post-date" title="2023-04-07 00:00:00">2023/04/07</span>
+        </a>
+        
+        
+        <a  class="全部文章 TypeScript "
+           href="/2023/04/07/TypeScript/Typescript%20%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/"
+           data-tag="TypeScript"
+           data-author="" >
+            <span class="post-title" title="Typescript 基础语法">Typescript 基础语法</span>
+            <span class="post-date" title="2023-04-07 00:00:00">2023/04/07</span>
+        </a>
+        
+        
+        <a  class="全部文章 TypeScript "
+           href="/2023/04/07/TypeScript/Typescript%20%E6%B3%9B%E5%9E%8B/"
+           data-tag="TypeScript"
+           data-author="" >
+            <span class="post-title" title="Typescript 泛型">Typescript 泛型</span>
+            <span class="post-date" title="2023-04-07 00:00:00">2023/04/07</span>
+        </a>
+        
+        
+        <a  class="全部文章 TypeScript "
+           href="/2023/04/07/TypeScript/Typescript%20%E7%B1%BB/"
+           data-tag="TypeScript"
+           data-author="" >
+            <span class="post-title" title="Typescript 类">Typescript 类</span>
+            <span class="post-date" title="2023-04-07 00:00:00">2023/04/07</span>
+        </a>
+        
+        
+        <a  class="全部文章 TypeScript "
+           href="/2023/04/07/TypeScript/Typescript%20%E6%8E%A5%E5%8F%A3/"
+           data-tag="TypeScript"
+           data-author="" >
+            <span class="post-title" title="Typescript 接口">Typescript 接口</span>
+            <span class="post-date" title="2023-04-07 00:00:00">2023/04/07</span>
+        </a>
+        
+        
+        <a  class="全部文章 TypeScript "
+           href="/2023/04/07/TypeScript/Typescript%20%E7%B1%BB%E5%9E%8B%E5%AE%88%E5%8D%AB/"
+           data-tag="TypeScript"
+           data-author="" >
+            <span class="post-title" title="Typescript 类型守卫">Typescript 类型守卫</span>
+            <span class="post-date" title="2023-04-07 00:00:00">2023/04/07</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/browserslist%E7%9A%84%E4%BD%9C%E7%94%A8/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="browserslist的作用">browserslist的作用</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/js%20ES6%E6%96%B0%E5%A2%9E%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8BSet%E3%80%81Map%E3%80%81Symbol/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js ES6新增数据类型Set、Map、Symbol">js ES6新增数据类型Set、Map、Symbol</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/js%20Promise/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js Promise">js Promise</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/cookie%20session%20token%E8%AF%A6%E8%A7%A3/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="cookie session token详解">cookie session token详解</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/js%20async%E3%80%81await%E5%87%BD%E6%95%B0/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js async、await函数">js async、await函数</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/js%20for...in%E5%BE%AA%E7%8E%AF%E5%92%8Cfor...of%E5%BE%AA%E7%8E%AF/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js for...in循环和for...of循环">js for...in循环和for...of循环</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/js%20generator%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js generator函数特性">js generator函数特性</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/js%20this%E6%8C%87%E5%90%91%E9%97%AE%E9%A2%98%E4%BB%A5%E5%8F%8A%E6%94%B9%E5%8F%98this%E6%8C%87%E5%90%91%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%88call%E3%80%81apply%E3%80%81bind%EF%BC%89/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js this指向问题以及改变this指向的三种方法（call、apply、bind）">js this指向问题以及改变this指向的三种方法（call、apply、bind）</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/js%20%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%EF%BC%88event%20loop%EF%BC%89%E3%80%81%E5%AE%8F%E4%BB%BB%E5%8A%A1%E3%80%81%E5%BE%AE%E4%BB%BB%E5%8A%A1/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 事件循环（event loop）、宏任务、微任务">js 事件循环（event loop）、宏任务、微任务</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/js%20%E4%BC%AA%E6%95%B0%E7%BB%84/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 伪数组">js 伪数组</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/js%20%E4%BD%9C%E7%94%A8%E5%9F%9F%E9%93%BE/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 作用域链">js 作用域链</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/js%20%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E4%BB%A5%E5%8F%8A%E5%86%85%E7%BD%AE%E5%8F%82%E6%95%B0arguments/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 函数参数以及内置参数arguments">js 函数参数以及内置参数arguments</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/js%20%E5%87%BD%E6%95%B0%E6%9F%AF%E9%87%8C%E5%8C%96/"
            data-tag="JavaScript"
            data-author="" >
             <span class="post-title" title="js 函数柯里化">js 函数柯里化</span>
-            <span class="post-date" title="2021-08-09 21:10:23">2021/08/09</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/js%20%E5%BC%95%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%92%8C%E5%80%BC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 引用数据类型和值数据类型">js 引用数据类型和值数据类型</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/js%20%E5%8E%9F%E5%9E%8B%E3%80%81%E5%8E%9F%E5%9E%8B%E9%93%BE%E3%80%81%E7%BB%A7%E6%89%BF/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 原型、原型链、继承">js 原型、原型链、继承</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/js%20%E7%AE%AD%E5%A4%B4%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 箭头函数特性">js 箭头函数特性</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/js%20%E9%98%B2%E6%8A%96%E5%92%8C%E8%8A%82%E6%B5%81/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="js 防抖和节流">js 防抖和节流</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/koa%20+%20axios%20+%20jwt%20%20%E5%AE%9E%E7%8E%B0token%E8%87%AA%E5%8A%A8%E7%BB%AD%E6%9C%9F/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="koa + axios + jwt  实现token自动续期">koa + axios + jwt  实现token自动续期</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/%E6%95%B4%E7%90%86%E4%B8%80%E4%BA%9B%60Promise%60%E5%BA%93%60bluebird%60%E7%9A%84%E5%B8%B8%E7%94%A8api/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="整理一些`Promise`库`bluebird`的常用api">整理一些`Promise`库`bluebird`的常用api</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 JavaScript "
+           href="/2023/04/06/JavaScript/%E3%80%90%E8%BD%AC%E8%BD%BD%E3%80%91%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3token/"
+           data-tag="JavaScript"
+           data-author="" >
+            <span class="post-title" title="【转载】深入理解token">【转载】深入理解token</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2023/04/06/Mysql/MySQL%E5%A4%87%E4%BB%BD-LOAD%20DATA/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="MySQL备份-LOAD DATA">MySQL备份-LOAD DATA</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2023/04/06/React/React%20Protals/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React Protals">React Protals</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2023/04/06/React/%20React%20hooks%E7%9F%A5%E8%AF%86%E7%82%B9%E6%95%B4%E7%90%86/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React hooks知识点整理">React hooks知识点整理</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2023/04/06/React/React%20react-redux%E7%9A%84%E4%BD%BF%E7%94%A8/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React react-redux的使用">React react-redux的使用</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2023/04/06/React/React%20render%20props%E6%A8%A1%E5%BC%8F/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React render props模式">React render props模式</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2023/04/06/React/React%20ref%E7%9A%84%E4%BD%BF%E7%94%A8/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React ref的使用">React ref的使用</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2023/04/06/React/React%20setState%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E7%9A%84%E5%9C%B0%E6%96%B9/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React setState需要注意的地方">React setState需要注意的地方</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2023/04/06/React/React%20%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E5%87%BD%E6%95%B0%E4%BB%A5%E5%8F%8A%E4%BC%A0%E5%8F%82/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React 事件处理函数以及传参">React 事件处理函数以及传参</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2023/04/06/React/React%20%E5%90%88%E6%88%90%E4%BA%8B%E4%BB%B6/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React 合成事件">React 合成事件</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2023/04/06/React/React%20%E5%8F%97%E6%8E%A7%E7%BB%84%E4%BB%B6%E5%92%8C%E9%9D%9E%E5%8F%97%E6%8E%A7%E7%BB%84%E4%BB%B6/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React 受控组件和非受控组件">React 受控组件和非受控组件</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2023/04/06/React/React%20%E7%BB%84%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React 组件生命周期">React 组件生命周期</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2023/04/06/React/React%20%E8%B7%A8%E5%B1%82%E7%BB%84%E4%BB%B6%E6%A0%91%E4%BC%A0%E5%80%BC-context%E4%B8%8A%E4%B8%8B%E6%96%87/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React 跨层组件树传值-context上下文">React 跨层组件树传值-context上下文</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2023/04/06/React/React.memo/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React.memo">React.memo</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2023/04/06/React/ReactDOM%E9%A1%B6%E5%B1%82API/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="ReactDOM顶层API">ReactDOM顶层API</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2023/04/06/React/React%E9%A1%B6%E5%B1%82API/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="React顶层API">React顶层API</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 React "
+           href="/2023/04/06/React/Redux%20%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9Credux-thunk%E5%92%8Credux-saga/"
+           data-tag="React"
+           data-author="" >
+            <span class="post-title" title="Redux 异步操作redux-thunk和redux-saga">Redux 异步操作redux-thunk和redux-saga</span>
+            <span class="post-date" title="2023-04-06 00:00:00">2023/04/06</span>
         </a>
         
         
@@ -578,15 +981,6 @@
         </a>
         
         
-        <a  class="全部文章 JavaScript "
-           href="/2021/07/07/JavaScript/js-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%EF%BC%88event-loop%EF%BC%89%E3%80%81%E5%AE%8F%E4%BB%BB%E5%8A%A1%E3%80%81%E5%BE%AE%E4%BB%BB%E5%8A%A1/"
-           data-tag="JavaScript"
-           data-author="" >
-            <span class="post-title" title="js 事件循环（event loop）、宏任务、微任务">js 事件循环（event loop）、宏任务、微任务</span>
-            <span class="post-date" title="2021-07-07 23:41:36">2021/07/07</span>
-        </a>
-        
-        
         <a  class="全部文章 前端 "
            href="/2021/07/05/%E5%89%8D%E7%AB%AF/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E9%87%8D%E6%8E%92%E4%B8%8E%E9%87%8D%E7%BB%98/"
            data-tag="chrome"
@@ -596,147 +990,849 @@
         </a>
         
         
-        <a  class="全部文章 JavaScript "
-           href="/2021/06/30/JavaScript/js-%E5%8E%9F%E5%9E%8B%E3%80%81%E5%8E%9F%E5%9E%8B%E9%93%BE%E3%80%81%E7%BB%A7%E6%89%BF/"
-           data-tag="JavaScript"
+        <a  class="全部文章 Mysql "
+           href="/2018/12/28/Mysql/MySQL%E9%80%9A%E8%BF%87%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%97%A5%E5%BF%97%E6%81%A2%E5%A4%8D%E6%95%B0%E6%8D%AE/"
+           data-tag="Mysql"
            data-author="" >
-            <span class="post-title" title="js 原型、原型链、继承">js 原型、原型链、继承</span>
-            <span class="post-date" title="2021-06-30 23:41:51">2021/06/30</span>
+            <span class="post-title" title="MySQL通过二进制日志恢复数据">MySQL通过二进制日志恢复数据</span>
+            <span class="post-date" title="2018-12-28 00:00:00">2018/12/28</span>
         </a>
         
         
-        <a  class="全部文章 JavaScript "
-           href="/2021/06/11/JavaScript/js-ES6%E6%96%B0%E5%A2%9E%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8BSet-Map-Symbol/"
-           data-tag="JavaScript"
+        <a  class="全部文章 Oracle "
+           href="/2018/12/16/Oracle/RMAN%E5%86%97%E4%BD%99%E5%A4%87%E4%BB%BD%E5%92%8C%E5%B9%B6%E5%8F%91%E5%A4%87%E4%BB%BD/"
+           data-tag="Oracle"
            data-author="" >
-            <span class="post-title" title="js ES6新增数据类型Set/Map/Symbol">js ES6新增数据类型Set/Map/Symbol</span>
-            <span class="post-date" title="2021-06-11 01:22:41">2021/06/11</span>
+            <span class="post-title" title="RMAN冗余备份和并发备份">RMAN冗余备份和并发备份</span>
+            <span class="post-date" title="2018-12-16 00:00:00">2018/12/16</span>
         </a>
         
         
-        <a  class="全部文章 JavaScript "
-           href="/2021/06/11/JavaScript/js-for-in%E5%BE%AA%E7%8E%AF%E5%92%8Cfor-of%E5%BE%AA%E7%8E%AF/"
-           data-tag="JavaScript"
+        <a  class="全部文章 Python "
+           href="/2018/11/23/Python/Python-%E5%85%B3%E9%94%AE%E5%AD%97%E5%92%8C%E6%A0%87%E8%AF%86%E7%AC%A6%E5%8F%8A%E5%91%BD%E5%90%8D%E8%A7%84%E8%8C%83/"
+           data-tag="Python"
            data-author="" >
-            <span class="post-title" title="js for...in循环和for...of循环">js for...in循环和for...of循环</span>
-            <span class="post-date" title="2021-06-11 01:18:50">2021/06/11</span>
+            <span class="post-title" title="Python-关键字和标识符及命名规范">Python-关键字和标识符及命名规范</span>
+            <span class="post-date" title="2018-11-23 00:00:00">2018/11/23</span>
         </a>
         
         
-        <a  class="全部文章 JavaScript "
-           href="/2021/06/11/JavaScript/js-%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E4%BB%A5%E5%8F%8A%E5%86%85%E7%BD%AE%E5%8F%82%E6%95%B0arguments/"
-           data-tag="JavaScript"
+        <a  class="全部文章 运维 "
+           href="/2018/11/21/%E8%BF%90%E7%BB%B4/postfix+sasl%E8%BF%9B%E8%A1%8C%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E6%90%AD%E5%BB%BA/"
+           data-tag="运维"
            data-author="" >
-            <span class="post-title" title="js 函数参数以及内置参数arguments">js 函数参数以及内置参数arguments</span>
-            <span class="post-date" title="2021-06-11 00:01:51">2021/06/11</span>
+            <span class="post-title" title="postfix+sasl进行邮件服务器的搭建">postfix+sasl进行邮件服务器的搭建</span>
+            <span class="post-date" title="2018-11-21 00:00:00">2018/11/21</span>
         </a>
         
         
-        <a  class="全部文章 JavaScript "
-           href="/2021/06/11/JavaScript/js-%E9%98%B2%E6%8A%96%E5%92%8C%E8%8A%82%E6%B5%81/"
-           data-tag="JavaScript"
+        <a  class="全部文章 Python "
+           href="/2018/11/08/Python/Python-super()%E5%87%BD%E6%95%B0/"
+           data-tag="Python"
            data-author="" >
-            <span class="post-title" title="js 防抖和节流">js 防抖和节流</span>
-            <span class="post-date" title="2021-06-11 00:01:51">2021/06/11</span>
+            <span class="post-title" title="Python-super()函数">Python-super()函数</span>
+            <span class="post-date" title="2018-11-08 00:00:00">2018/11/08</span>
         </a>
         
         
-        <a  class="全部文章 JavaScript "
-           href="/2021/06/08/JavaScript/js-this%E6%8C%87%E5%90%91%E9%97%AE%E9%A2%98%E4%BB%A5%E5%8F%8A%E6%94%B9%E5%8F%98this%E6%8C%87%E5%90%91%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%88call-apply-bind%EF%BC%89/"
-           data-tag="JavaScript"
+        <a  class="全部文章 Oracle "
+           href="/2018/11/07/Oracle/Oracle%20redo%20log%E7%AE%A1%E7%90%86/"
+           data-tag="Oracle"
            data-author="" >
-            <span class="post-title" title="js this指向问题以及改变this指向的三种方法（call/apply/bind）">js this指向问题以及改变this指向的三种方法（call/apply/bind）</span>
-            <span class="post-date" title="2021-06-08 23:10:18">2021/06/08</span>
+            <span class="post-title" title="Oracle redo log管理">Oracle redo log管理</span>
+            <span class="post-date" title="2018-11-07 00:00:00">2018/11/07</span>
         </a>
         
         
-        <a  class="全部文章 JavaScript "
-           href="/2021/06/03/JavaScript/bluebird-Promise%E5%BA%93/"
-           data-tag="JavaScript"
+        <a  class="全部文章 Oracle "
+           href="/2018/11/05/Oracle/oracle%E8%A1%A8%E7%A9%BA%E9%97%B4%E7%AE%A1%E7%90%86/"
+           data-tag="Oracle"
            data-author="" >
-            <span class="post-title" title="bluebird Promise库">bluebird Promise库</span>
-            <span class="post-date" title="2021-06-03 00:00:00">2021/06/03</span>
+            <span class="post-title" title="oracle表空间管理">oracle表空间管理</span>
+            <span class="post-date" title="2018-11-05 00:00:00">2018/11/05</span>
         </a>
         
         
-        <a  class="全部文章 JavaScript "
-           href="/2021/05/31/JavaScript/js-generator%E5%87%BD%E6%95%B0/"
-           data-tag="ES6"
+        <a  class="全部文章 Python "
+           href="/2018/11/04/Python/Python-%E8%8E%B7%E5%8F%96%E5%AF%B9%E8%B1%A1%E4%BF%A1%E6%81%AFdir()%E3%80%81__dict__/"
+           data-tag="Python"
            data-author="" >
-            <span class="post-title" title="js generator函数">js generator函数</span>
-            <span class="post-date" title="2021-05-31 19:29:15">2021/05/31</span>
+            <span class="post-title" title="Python-获取对象信息dir()、__dict__">Python-获取对象信息dir()、__dict__</span>
+            <span class="post-date" title="2018-11-04 00:00:00">2018/11/04</span>
         </a>
         
         
-        <a  class="全部文章 JavaScript "
-           href="/2021/05/31/JavaScript/js-Promise/"
-           data-tag="ES6"
+        <a  class="全部文章 Oracle "
+           href="/2018/11/02/Oracle/Oracle%E4%BF%AE%E6%94%B9%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%91%E5%90%AC%E7%9A%84%E7%AB%AF%E5%8F%A3%E5%8F%B7/"
+           data-tag="Oracle"
            data-author="" >
-            <span class="post-title" title="js Promise">js Promise</span>
-            <span class="post-date" title="2021-05-31 01:53:16">2021/05/31</span>
-        </a>
-        
-        
-        <a  class="全部文章 JavaScript "
-           href="/2021/05/30/JavaScript/js-async-await%E5%87%BD%E6%95%B0/"
-           data-tag="ES6"
-           data-author="" >
-            <span class="post-title" title="js async/await函数">js async/await函数</span>
-            <span class="post-date" title="2021-05-30 21:13:30">2021/05/30</span>
-        </a>
-        
-        
-        <a  class="全部文章 JavaScript "
-           href="/2021/05/28/JavaScript/js-%E7%AE%AD%E5%A4%B4%E5%87%BD%E6%95%B0/"
-           data-tag="JavaScript"
-           data-author="" >
-            <span class="post-title" title="js 箭头函数">js 箭头函数</span>
-            <span class="post-date" title="2021-05-28 00:36:57">2021/05/28</span>
-        </a>
-        
-        
-        <a  class="全部文章 JavaScript "
-           href="/2021/05/26/JavaScript/var%E3%80%81let%E3%80%81const%E5%A3%B0%E6%98%8E%E8%BF%87%E7%A8%8B/"
-           data-tag="JavaScript"
-           data-author="" >
-            <span class="post-title" title="var、let、const声明过程">var、let、const声明过程</span>
-            <span class="post-date" title="2021-05-26 23:58:34">2021/05/26</span>
-        </a>
-        
-        
-        <a  class="全部文章 JavaScript "
-           href="/2021/05/26/JavaScript/js-%E4%BD%9C%E7%94%A8%E5%9F%9F%E9%93%BE/"
-           data-tag="JavaScript"
-           data-author="" >
-            <span class="post-title" title="js 作用域链">js 作用域链</span>
-            <span class="post-date" title="2021-05-26 01:05:48">2021/05/26</span>
-        </a>
-        
-        
-        <a  class="全部文章 JavaScript "
-           href="/2021/05/26/JavaScript/js-%E5%BC%95%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%92%8C%E5%80%BC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/"
-           data-tag="JavaScript"
-           data-author="" >
-            <span class="post-title" title="js 引用数据类型和值数据类型">js 引用数据类型和值数据类型</span>
-            <span class="post-date" title="2021-05-26 00:32:29">2021/05/26</span>
-        </a>
-        
-        
-        <a  class="全部文章 JavaScript "
-           href="/2021/05/25/JavaScript/js-%E4%BC%AA%E6%95%B0%E7%BB%84/"
-           data-tag="JavaScript"
-           data-author="" >
-            <span class="post-title" title="js 伪数组">js 伪数组</span>
-            <span class="post-date" title="2021-05-25 23:15:18">2021/05/25</span>
+            <span class="post-title" title="Oracle修改数据库监听的端口号">Oracle修改数据库监听的端口号</span>
+            <span class="post-date" title="2018-11-02 00:00:00">2018/11/02</span>
         </a>
         
         
         <a  class="全部文章 Mysql "
-           href="/2018/04/10/Mysql/MySQL%E9%80%9A%E8%BF%87%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%97%A5%E5%BF%97%E6%81%A2%E5%A4%8D%E6%95%B0%E6%8D%AE/"
+           href="/2018/10/22/Mysql/MySQL%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%B1%BB%E5%9E%8B/"
            data-tag="Mysql"
            data-author="" >
-            <span class="post-title" title="MySQL通过二进制日志恢复数据">MySQL通过二进制日志恢复数据</span>
-            <span class="post-date" title="2018-04-10 00:00:00">2018/04/10</span>
+            <span class="post-title" title="MySQL存储引擎类型">MySQL存储引擎类型</span>
+            <span class="post-date" title="2018-10-22 00:00:00">2018/10/22</span>
+        </a>
+        
+        
+        <a  class="全部文章 运维 "
+           href="/2018/10/22/%E8%BF%90%E7%BB%B4/Nginx/"
+           data-tag="运维"
+           data-author="" >
+            <span class="post-title" title="Nginx">Nginx</span>
+            <span class="post-date" title="2018-10-22 00:00:00">2018/10/22</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/10/14/Oracle/oracle%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9B%9B%E7%A7%8D%E7%8A%B6%E6%80%81/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="oracle数据库四种状态">oracle数据库四种状态</span>
+            <span class="post-date" title="2018-10-14 00:00:00">2018/10/14</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/10/12/Mysql/GTID%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="GTID主从复制">GTID主从复制</span>
+            <span class="post-date" title="2018-10-12 00:00:00">2018/10/12</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/10/08/Python/Python-%E6%96%87%E4%BB%B6%E8%AF%BB%E5%86%99/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-文件读写">Python-文件读写</span>
+            <span class="post-date" title="2018-10-08 00:00:00">2018/10/08</span>
+        </a>
+        
+        
+        <a  class="全部文章 运维 "
+           href="/2018/10/07/%E8%BF%90%E7%BB%B4/LVS%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E6%A8%A1%E5%BC%8F/"
+           data-tag="运维"
+           data-author="" >
+            <span class="post-title" title="LVS负载均衡模式">LVS负载均衡模式</span>
+            <span class="post-date" title="2018-10-07 00:00:00">2018/10/07</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/10/06/Mysql/%E4%BD%BF%E7%94%A8sysbench%E8%BF%9B%E8%A1%8C%E5%8E%8B%E5%8A%9B%E6%B5%8B%E8%AF%95/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="使用sysbench进行压力测试">使用sysbench进行压力测试</span>
+            <span class="post-date" title="2018-10-06 00:00:00">2018/10/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 运维 "
+           href="/2018/10/06/%E8%BF%90%E7%BB%B4/%E9%98%B2%E7%81%AB%E5%A2%99iptables%E5%92%8Cfirewall-cmd/"
+           data-tag="运维"
+           data-author="" >
+            <span class="post-title" title="防火墙iptables和firewall-cmd">防火墙iptables和firewall-cmd</span>
+            <span class="post-date" title="2018-10-06 00:00:00">2018/10/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/09/19/Mysql/MySQL%E7%BB%9F%E8%AE%A1%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="MySQL统计信息收集">MySQL统计信息收集</span>
+            <span class="post-date" title="2018-09-19 00:00:00">2018/09/19</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/09/04/Python/Python-%E7%B1%BB%E5%AF%B9%E8%B1%A1%E7%89%B9%E6%AE%8A%E6%96%B9%E6%B3%95__call__()/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-类对象特殊方法__call__()">Python-类对象特殊方法__call__()</span>
+            <span class="post-date" title="2018-09-04 00:00:00">2018/09/04</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/09/01/Python/Python-%E7%B1%BB%E5%AF%B9%E8%B1%A1%E7%89%B9%E6%AE%8A%E6%96%B9%E6%B3%95%E2%80%94%E2%80%94__iter__()%E3%80%81__next__()/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-类对象特殊方法——__iter__()、__next__()">Python-类对象特殊方法——__iter__()、__next__()</span>
+            <span class="post-date" title="2018-09-01 00:00:00">2018/09/01</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/08/17/Oracle/ORACLE%E5%A4%87%E4%BB%BD%E6%81%A2%E5%A4%8D%E5%8F%8ARMAN%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="ORACLE备份恢复及RMAN工具的使用">ORACLE备份恢复及RMAN工具的使用</span>
+            <span class="post-date" title="2018-08-17 00:00:00">2018/08/17</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/08/14/Python/Python-%E7%B1%BB%E5%AF%B9%E8%B1%A1%E7%89%B9%E6%AE%8A%E6%96%B9%E6%B3%95__add__()%E3%80%81__radd__()/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-类对象特殊方法__add__()、__radd__()">Python-类对象特殊方法__add__()、__radd__()</span>
+            <span class="post-date" title="2018-08-14 00:00:00">2018/08/14</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/08/03/Python/Python-%E5%AE%9E%E4%BE%8B%E5%B1%9E%E6%80%A7%E5%92%8C%E7%B1%BB%E5%B1%9E%E6%80%A7/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-实例属性和类属性">Python-实例属性和类属性</span>
+            <span class="post-date" title="2018-08-03 00:00:00">2018/08/03</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/07/25/Oracle/%E9%9D%99%E9%BB%98%E5%AE%89%E8%A3%85oracle11g/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="静默安装oracle11g">静默安装oracle11g</span>
+            <span class="post-date" title="2018-07-25 00:00:00">2018/07/25</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/07/17/Python/Python-%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-对象的引用计数">Python-对象的引用计数</span>
+            <span class="post-date" title="2018-07-17 00:00:00">2018/07/17</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/07/15/Python/Python-%E8%8E%B7%E5%8F%96%E5%AF%B9%E8%B1%A1%E4%BF%A1%E6%81%AFtype()/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-获取对象信息type()">Python-获取对象信息type()</span>
+            <span class="post-date" title="2018-07-15 00:00:00">2018/07/15</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/07/13/Mysql/Mysql%E6%90%AD%E5%BB%BA%E5%BC%82%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="Mysql搭建异步主从复制">Mysql搭建异步主从复制</span>
+            <span class="post-date" title="2018-07-13 00:00:00">2018/07/13</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/07/12/Python/Python-%E5%87%BD%E6%95%B0%E5%8F%8A%E5%85%B6%E5%8F%82%E6%95%B0/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-函数及其参数">Python-函数及其参数</span>
+            <span class="post-date" title="2018-07-12 00:00:00">2018/07/12</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/07/12/Python/Python-%E9%9B%86%E5%90%88/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-集合">Python-集合</span>
+            <span class="post-date" title="2018-07-12 00:00:00">2018/07/12</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/07/10/Python/Python-%E7%94%9F%E6%88%90%E5%99%A8%E3%80%81%E8%BF%AD%E4%BB%A3%E5%99%A8/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-生成器、迭代器">Python-生成器、迭代器</span>
+            <span class="post-date" title="2018-07-10 00:00:00">2018/07/10</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/07/09/Mysql/Mysql-5.7%E5%AE%89%E8%A3%85/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="Mysql-5.7安装">Mysql-5.7安装</span>
+            <span class="post-date" title="2018-07-09 00:00:00">2018/07/09</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/06/26/Python/Python-%E5%AE%9E%E4%BE%8B%E6%96%B9%E6%B3%95%E3%80%81%E7%B1%BB%E6%96%B9%E6%B3%95%E5%92%8C%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-实例方法、类方法和静态方法">Python-实例方法、类方法和静态方法</span>
+            <span class="post-date" title="2018-06-26 00:00:00">2018/06/26</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/06/21/Oracle/Oracle%E5%BD%92%E6%A1%A3%E6%97%A5%E5%BF%97/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="Oracle归档日志">Oracle归档日志</span>
+            <span class="post-date" title="2018-06-21 00:00:00">2018/06/21</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/06/20/Mysql/Mysql%E5%8D%8A%E5%90%8C%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="Mysql半同步主从复制">Mysql半同步主从复制</span>
+            <span class="post-date" title="2018-06-20 00:00:00">2018/06/20</span>
+        </a>
+        
+        
+        <a  class="全部文章 运维 "
+           href="/2018/06/11/%E8%BF%90%E7%BB%B4/Redis%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F/"
+           data-tag="运维"
+           data-author="" >
+            <span class="post-title" title="Redis哨兵模式">Redis哨兵模式</span>
+            <span class="post-date" title="2018-06-11 00:00:00">2018/06/11</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/06/05/Python/Python-%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6%E2%80%9C__%E2%80%9D%E5%92%8C%E2%80%9C_%E2%80%9D/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-访问控制“__”和“_”">Python-访问控制“__”和“_”</span>
+            <span class="post-date" title="2018-06-05 00:00:00">2018/06/05</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/06/02/Oracle/RMAN%E6%81%A2%E5%A4%8D%E6%95%B0%E6%8D%AE%E6%96%87%E4%BB%B6%E5%92%8C%E8%A1%A8%E7%A9%BA%E9%97%B4/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="RMAN恢复数据文件和表空间">RMAN恢复数据文件和表空间</span>
+            <span class="post-date" title="2018-06-02 00:00:00">2018/06/02</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/06/01/Oracle/RMAN%E6%81%A2%E5%A4%8D%E6%8E%A7%E5%88%B6%E6%96%87%E4%BB%B6-%E6%8E%A7%E5%88%B6%E6%96%87%E4%BB%B6(controlfile)%E4%B8%A2%E5%A4%B1%E6%81%A2%E5%A4%8D/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="RMAN恢复控制文件-控制文件(controlfile)丢失恢复">RMAN恢复控制文件-控制文件(controlfile)丢失恢复</span>
+            <span class="post-date" title="2018-06-01 00:00:00">2018/06/01</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/06/01/Python/Python-%E8%BF%90%E7%AE%97%E7%AC%A6/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-运算符">Python-运算符</span>
+            <span class="post-date" title="2018-06-01 00:00:00">2018/06/01</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/05/27/Mysql/MHA%E9%AB%98%E5%8F%AF%E7%94%A8%E6%9E%B6%E6%9E%84%E5%8E%9F%E7%90%86%E5%8F%8A%E6%90%AD%E5%BB%BA/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="MHA高可用架构原理及搭建">MHA高可用架构原理及搭建</span>
+            <span class="post-date" title="2018-05-27 00:00:00">2018/05/27</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/05/22/Python/Python-%E5%B0%81%E8%A3%85%E3%80%81%E7%BB%A7%E6%89%BF%E5%92%8C%E5%A4%9A%E6%80%81/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-封装、继承和多态">Python-封装、继承和多态</span>
+            <span class="post-date" title="2018-05-22 00:00:00">2018/05/22</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/05/13/Mysql/Mysql%E4%BA%8B%E5%8A%A1/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="Mysql事务">Mysql事务</span>
+            <span class="post-date" title="2018-05-13 00:00:00">2018/05/13</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/05/12/Oracle/RMAN%E5%A4%87%E4%BB%BD%E9%9B%86%E7%AE%A1%E7%90%86/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="RMAN备份集管理">RMAN备份集管理</span>
+            <span class="post-date" title="2018-05-12 00:00:00">2018/05/12</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/05/12/Python/Python-%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-异常处理">Python-异常处理</span>
+            <span class="post-date" title="2018-05-12 00:00:00">2018/05/12</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/05/11/Mysql/xtrabackup%E5%A4%87%E4%BB%BD%E5%8E%9F%E7%90%86/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="xtrabackup备份原理">xtrabackup备份原理</span>
+            <span class="post-date" title="2018-05-11 00:00:00">2018/05/11</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/05/04/Python/Python-issubclass()%E3%80%81isinstance()/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-issubclass()、isinstance()">Python-issubclass()、isinstance()</span>
+            <span class="post-date" title="2018-05-04 00:00:00">2018/05/04</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/05/01/Python/Python-%E7%B1%BB%E5%AF%B9%E8%B1%A1%E7%9A%84%E7%89%B9%E6%AE%8A%E6%96%B9%E6%B3%95__del__()/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-类对象的特殊方法__del__()">Python-类对象的特殊方法__del__()</span>
+            <span class="post-date" title="2018-05-01 00:00:00">2018/05/01</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/04/28/Oracle/ASM%E5%AE%89%E8%A3%85%E5%9F%BA%E6%9C%AC%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="ASM安装基本环境配置">ASM安装基本环境配置</span>
+            <span class="post-date" title="2018-04-28 00:00:00">2018/04/28</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/04/27/Python/Python-MRO%EF%BC%88%E6%96%B9%E6%B3%95%E8%A7%A3%E6%9E%90%E9%A1%BA%E5%BA%8F%EF%BC%89/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-MRO（方法解析顺序）">Python-MRO（方法解析顺序）</span>
+            <span class="post-date" title="2018-04-27 00:00:00">2018/04/27</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/04/23/Mysql/MySQL%E5%A4%87%E4%BB%BD-mysqldump/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="MySQL备份-mysqldump">MySQL备份-mysqldump</span>
+            <span class="post-date" title="2018-04-23 00:00:00">2018/04/23</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/04/23/Python/Python-%E5%88%97%E8%A1%A8/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-列表">Python-列表</span>
+            <span class="post-date" title="2018-04-23 00:00:00">2018/04/23</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/04/23/Python/Python-%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-流程控制">Python-流程控制</span>
+            <span class="post-date" title="2018-04-23 00:00:00">2018/04/23</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/04/23/Python/Python-%E7%B1%BB%E5%AF%B9%E8%B1%A1%E7%89%B9%E6%AE%8A%E6%96%B9%E6%B3%95__getattr__()%E3%80%81__getitem__()%E3%80%81__setitem__()%E3%80%81__delitem__()/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-类对象特殊方法__getattr__()、__getitem__()、__setitem__()、__delitem__()">Python-类对象特殊方法__getattr__()、__getitem__()、__setitem__()、__delitem__()</span>
+            <span class="post-date" title="2018-04-23 00:00:00">2018/04/23</span>
+        </a>
+        
+        
+        <a  class="全部文章 运维 "
+           href="/2018/04/18/%E8%BF%90%E7%BB%B4/Nginx%E5%90%AF%E5%81%9C%E8%84%9A%E6%9C%AC/"
+           data-tag="运维"
+           data-author="" >
+            <span class="post-title" title="Nginx启停脚本">Nginx启停脚本</span>
+            <span class="post-date" title="2018-04-18 00:00:00">2018/04/18</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/04/17/Mysql/innodb%E7%89%B9%E6%80%A7/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="innodb特性">innodb特性</span>
+            <span class="post-date" title="2018-04-17 00:00:00">2018/04/17</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/04/17/Python/Python-%E4%B8%8A%E4%B8%8B%E6%96%87%E7%AE%A1%E7%90%86%E5%99%A8with%E8%AF%AD%E5%8F%A5/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-上下文管理器with语句">Python-上下文管理器with语句</span>
+            <span class="post-date" title="2018-04-17 00:00:00">2018/04/17</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/04/16/Oracle/%E5%90%AF%E5%8A%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E4%BE%8B%E4%B8%8Espfile%E7%9A%84%E5%85%B3%E7%B3%BB/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="启动数据库实例与spfile的关系">启动数据库实例与spfile的关系</span>
+            <span class="post-date" title="2018-04-16 00:00:00">2018/04/16</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/04/15/Python/Python-%E5%BA%8F%E5%88%97%E7%B1%BB%E5%9E%8B%EF%BC%8Crange()/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-序列类型，range()">Python-序列类型，range()</span>
+            <span class="post-date" title="2018-04-15 00:00:00">2018/04/15</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/04/15/Python/Python-%E7%B1%BB%E5%AF%B9%E8%B1%A1%E7%89%B9%E6%AE%8A%E6%96%B9%E6%B3%95__len__%E3%80%81len()/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-类对象特殊方法__len__、len()">Python-类对象特殊方法__len__、len()</span>
+            <span class="post-date" title="2018-04-15 00:00:00">2018/04/15</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/04/11/Oracle/Oracle%E6%95%B0%E6%8D%AE%E5%BA%93startup%E5%92%8Cshutdown%E6%96%B9%E5%BC%8F/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="Oracle数据库startup和shutdown方式">Oracle数据库startup和shutdown方式</span>
+            <span class="post-date" title="2018-04-11 00:00:00">2018/04/11</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/04/11/Python/Python-%E7%B1%BB%E5%AF%B9%E8%B1%A1%E7%89%B9%E6%AE%8A%E6%96%B9%E6%B3%95__str__()%E3%80%81__repr__()/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-类对象特殊方法__str__()、__repr__()">Python-类对象特殊方法__str__()、__repr__()</span>
+            <span class="post-date" title="2018-04-11 00:00:00">2018/04/11</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/04/06/Mysql/%E7%BA%A6%E6%9D%9F%E7%B1%BB%E5%9E%8B/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="约束类型">约束类型</span>
+            <span class="post-date" title="2018-04-06 00:00:00">2018/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/04/06/Python/Python-%E9%92%BB%E7%9F%B3%E7%BB%A7%E6%89%BF%E6%A0%91/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-钻石继承树">Python-钻石继承树</span>
+            <span class="post-date" title="2018-04-06 00:00:00">2018/04/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/04/02/Python/Pyhton-%E5%8F%8D%E5%B0%84/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Pyhton-反射">Pyhton-反射</span>
+            <span class="post-date" title="2018-04-02 00:00:00">2018/04/02</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/03/24/Oracle/oracle%E7%BD%91%E7%BB%9C%E4%B9%8Blistener.ora%E3%80%81tnsnames.ora%E3%80%81sqlnet.ora/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="oracle网络之listener.ora、tnsnames.ora、sqlnet.ora">oracle网络之listener.ora、tnsnames.ora、sqlnet.ora</span>
+            <span class="post-date" title="2018-03-24 00:00:00">2018/03/24</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/03/18/Mysql/MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E6%96%87%E4%BB%B6/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="MySQL数据库文件">MySQL数据库文件</span>
+            <span class="post-date" title="2018-03-18 00:00:00">2018/03/18</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/03/13/Python/Python-%E6%A8%A1%E5%9D%97%E7%9A%84%E7%89%B9%E6%AE%8A%E5%B1%9E%E6%80%A7__name__/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-模块的特殊属性__name__">Python-模块的特殊属性__name__</span>
+            <span class="post-date" title="2018-03-13 00:00:00">2018/03/13</span>
+        </a>
+        
+        
+        <a  class="全部文章 运维 "
+           href="/2018/03/05/%E8%BF%90%E7%BB%B4/postfix%E6%90%AD%E5%BB%BA%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8/"
+           data-tag="运维"
+           data-author="" >
+            <span class="post-title" title="postfix搭建邮件服务器">postfix搭建邮件服务器</span>
+            <span class="post-date" title="2018-03-05 00:00:00">2018/03/05</span>
+        </a>
+        
+        
+        <a  class="全部文章 Golang "
+           href="/2018/03/02/Golang/Golang%E5%9F%BA%E7%A1%80/"
+           data-tag="Golang"
+           data-author="" >
+            <span class="post-title" title="Golang基础">Golang基础</span>
+            <span class="post-date" title="2018-03-02 00:00:00">2018/03/02</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/03/01/Python/Python-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-数据类型">Python-数据类型</span>
+            <span class="post-date" title="2018-03-01 00:00:00">2018/03/01</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/02/27/Mysql/InnoDB%20Redo%20Flush%E5%8F%8A%E8%84%8F%E9%A1%B5%E5%88%B7%E6%96%B0%E6%9C%BA%E5%88%B6%E6%B7%B1%E5%85%A5%E5%88%86%E6%9E%90/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="InnoDB Redo Flush及脏页刷新机制深入分析">InnoDB Redo Flush及脏页刷新机制深入分析</span>
+            <span class="post-date" title="2018-02-27 00:00:00">2018/02/27</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/02/26/Mysql/Mysql%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="Mysql体系结构">Mysql体系结构</span>
+            <span class="post-date" title="2018-02-26 00:00:00">2018/02/26</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/02/26/Python/Python-%E7%B1%BB%E5%AF%B9%E8%B1%A1%E7%89%B9%E6%AE%8A%E5%B1%9E%E6%80%A7__slots__/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-类对象特殊属性__slots__">Python-类对象特殊属性__slots__</span>
+            <span class="post-date" title="2018-02-26 00:00:00">2018/02/26</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/02/24/Mysql/Mysql%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E9%80%89%E6%8B%A9/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="Mysql数据类型选择">Mysql数据类型选择</span>
+            <span class="post-date" title="2018-02-24 00:00:00">2018/02/24</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/02/24/Python/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="面向对象编程">面向对象编程</span>
+            <span class="post-date" title="2018-02-24 00:00:00">2018/02/24</span>
+        </a>
+        
+        
+        <a  class="全部文章 Golang "
+           href="/2018/02/20/Golang/%E6%95%B0%E7%BB%84%E5%88%87%E7%89%87/"
+           data-tag="Golang"
+           data-author="" >
+            <span class="post-title" title="数组切片">数组切片</span>
+            <span class="post-date" title="2018-02-20 00:00:00">2018/02/20</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/02/20/Python/Python-%E5%AD%97%E5%85%B8/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-字典">Python-字典</span>
+            <span class="post-date" title="2018-02-20 00:00:00">2018/02/20</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/02/19/Python/Python-%E6%9D%A1%E4%BB%B6%E8%A1%A8%E8%BE%BE%E5%BC%8F/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-条件表达式">Python-条件表达式</span>
+            <span class="post-date" title="2018-02-19 00:00:00">2018/02/19</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/02/19/Python/Python-%E6%A8%A1%E5%9D%97/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-模块">Python-模块</span>
+            <span class="post-date" title="2018-02-19 00:00:00">2018/02/19</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/02/17/Oracle/DBlink/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="DBlink">DBlink</span>
+            <span class="post-date" title="2018-02-17 00:00:00">2018/02/17</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/02/09/Python/Python%E7%94%9F%E6%88%90%E5%BC%8F%EF%BC%88%E5%88%97%E8%A1%A8%E7%94%9F%E6%88%90%E5%BC%8F%E3%80%81%E9%9B%86%E5%90%88%E7%94%9F%E6%88%90%E5%BC%8F%E3%80%81%E5%AD%97%E5%85%B8%E7%94%9F%E6%88%90%E5%BC%8F%EF%BC%89%E3%80%81%E7%94%9F%E6%88%90%E5%99%A8/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python生成式（列表生成式、集合生成式、字典生成式）、生成器">Python生成式（列表生成式、集合生成式、字典生成式）、生成器</span>
+            <span class="post-date" title="2018-02-09 00:00:00">2018/02/09</span>
+        </a>
+        
+        
+        <a  class="全部文章 运维 "
+           href="/2018/02/07/%E8%BF%90%E7%BB%B4/Redis%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3%20/"
+           data-tag="运维"
+           data-author="" >
+            <span class="post-title" title="Redis配置文件详解">Redis配置文件详解</span>
+            <span class="post-date" title="2018-02-07 00:00:00">2018/02/07</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/02/02/Python/Python-%E6%B5%85%E6%8B%B7%E8%B4%9D%E3%80%81%E6%B7%B1%E6%8B%B7%E8%B4%9D/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-浅拷贝、深拷贝">Python-浅拷贝、深拷贝</span>
+            <span class="post-date" title="2018-02-02 00:00:00">2018/02/02</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/01/22/Oracle/Oracle%E4%BF%AE%E6%94%B9%E9%BB%98%E8%AE%A4%E4%B8%B4%E6%97%B6%E8%A1%A8%E7%A9%BA%E9%97%B4/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="Oracle修改默认临时表空间">Oracle修改默认临时表空间</span>
+            <span class="post-date" title="2018-01-22 00:00:00">2018/01/22</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/01/20/Oracle/Oracle%20%E5%AF%86%E7%A0%81%E6%96%87%E4%BB%B6/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="Oracle 密码文件">Oracle 密码文件</span>
+            <span class="post-date" title="2018-01-20 00:00:00">2018/01/20</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/01/14/Mysql/MySQL%E7%B4%A2%E5%BC%95/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="MySQL索引">MySQL索引</span>
+            <span class="post-date" title="2018-01-14 00:00:00">2018/01/14</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/01/12/Python/Python%E5%9F%BA%E7%A1%80-%E5%AD%97%E7%AC%A6%E4%B8%B2/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python基础-字符串">Python基础-字符串</span>
+            <span class="post-date" title="2018-01-12 00:00:00">2018/01/12</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/01/10/Oracle/oracle%E7%A7%BB%E5%8A%A8%E6%95%B0%E6%8D%AE%E6%96%87%E4%BB%B6%E7%9A%84%E4%B8%A4%E7%A7%8D%E6%96%B9%E6%B3%95/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="oracle移动数据文件的两种方法">oracle移动数据文件的两种方法</span>
+            <span class="post-date" title="2018-01-10 00:00:00">2018/01/10</span>
+        </a>
+        
+        
+        <a  class="全部文章 Oracle "
+           href="/2018/01/08/Oracle/Oracle%E5%8A%A8%E6%80%81%E6%B3%A8%E5%86%8C%E4%B8%8E%E9%9D%99%E6%80%81%E6%B3%A8%E5%86%8C/"
+           data-tag="Oracle"
+           data-author="" >
+            <span class="post-title" title="Oracle动态注册与静态注册">Oracle动态注册与静态注册</span>
+            <span class="post-date" title="2018-01-08 00:00:00">2018/01/08</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/01/06/Mysql/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%A6%82%E8%BF%B0/"
+           data-tag="Mysql,GTID"
+           data-author="" >
+            <span class="post-title" title="Mysql主从复制概述">Mysql主从复制概述</span>
+            <span class="post-date" title="2018-01-06 00:00:00">2018/01/06</span>
+        </a>
+        
+        
+        <a  class="全部文章 Mysql "
+           href="/2018/01/04/Mysql/xtrabackup%E5%A4%87%E4%BB%BD%E5%AE%9E%E6%93%8D/"
+           data-tag="Mysql"
+           data-author="" >
+            <span class="post-title" title="xtrabackup备份实操">xtrabackup备份实操</span>
+            <span class="post-date" title="2018-01-04 00:00:00">2018/01/04</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/01/04/Python/Python-%E7%B1%BB%E5%AF%B9%E8%B1%A1%E7%89%B9%E6%AE%8A%E6%96%B9%E6%B3%95__new__()/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-类对象特殊方法__new__()">Python-类对象特殊方法__new__()</span>
+            <span class="post-date" title="2018-01-04 00:00:00">2018/01/04</span>
+        </a>
+        
+        
+        <a  class="全部文章 Python "
+           href="/2018/01/03/Python/Python-%E5%85%83%E7%BB%84/"
+           data-tag="Python"
+           data-author="" >
+            <span class="post-title" title="Python-元组">Python-元组</span>
+            <span class="post-date" title="2018-01-03 00:00:00">2018/01/03</span>
+        </a>
+        
+        
+        <a  class="全部文章 运维 "
+           href="/2018/01/02/%E8%BF%90%E7%BB%B4/SSH%E4%BA%92%E4%BF%A1/"
+           data-tag="运维"
+           data-author="" >
+            <span class="post-title" title="SSH互信">SSH互信</span>
+            <span class="post-date" title="2018-01-02 00:00:00">2018/01/02</span>
         </a>
         
         
@@ -755,150 +1851,6 @@
            data-author="" >
             <span class="post-title" title="前端几种常见的布局方式">前端几种常见的布局方式</span>
             <span class="post-date" title="2017-07-04 00:00:00">2017/07/04</span>
-        </a>
-        
-        
-        <a  class="全部文章 Mysql "
-           href="/2017/05/30/Mysql/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%8B%E5%8A%A1/"
-           data-tag="Innodb,ACID"
-           data-author="" >
-            <span class="post-title" title="数据库事务">数据库事务</span>
-            <span class="post-date" title="2017-05-30 00:00:00">2017/05/30</span>
-        </a>
-        
-        
-        <a  class="全部文章 Mysql "
-           href="/2017/05/10/Mysql/Mysql-Innodb%E7%89%B9%E6%80%A7/"
-           data-tag="Innodb"
-           data-author="" >
-            <span class="post-title" title="Mysql Innodb特性">Mysql Innodb特性</span>
-            <span class="post-date" title="2017-05-10 00:00:00">2017/05/10</span>
-        </a>
-        
-        
-        <a  class="全部文章 Mysql "
-           href="/2017/04/18/Mysql/MySQL%E5%A4%87%E4%BB%BD-LOAD-DATA/"
-           data-tag="Mysql"
-           data-author="" >
-            <span class="post-title" title="MySQL备份-LOAD DATA">MySQL备份-LOAD DATA</span>
-            <span class="post-date" title="2017-04-18 00:00:00">2017/04/18</span>
-        </a>
-        
-        
-        <a  class="全部文章 Mysql "
-           href="/2017/04/18/Mysql/MySQL%E5%A4%87%E4%BB%BD-mysqldump/"
-           data-tag="mysqldump"
-           data-author="" >
-            <span class="post-title" title="Mysql备份-mysqldump">Mysql备份-mysqldump</span>
-            <span class="post-date" title="2017-04-18 00:00:00">2017/04/18</span>
-        </a>
-        
-        
-        <a  class="全部文章 Mysql "
-           href="/2017/04/18/Mysql/Mysql-MHA%E9%AB%98%E5%8F%AF%E7%94%A8%E6%9E%B6%E6%9E%84%E5%8E%9F%E7%90%86%E5%8F%8A%E5%BA%94%E7%94%A8/"
-           data-tag="Mysql,MHA"
-           data-author="" >
-            <span class="post-title" title="Mysql MHA高可用架构原理及应用">Mysql MHA高可用架构原理及应用</span>
-            <span class="post-date" title="2017-04-18 00:00:00">2017/04/18</span>
-        </a>
-        
-        
-        <a  class="全部文章 Mysql "
-           href="/2017/04/18/Mysql/Mysql%E5%A4%87%E4%BB%BD/"
-           data-tag="mysqldump,xtrabackup"
-           data-author="" >
-            <span class="post-title" title="Mysql备份">Mysql备份</span>
-            <span class="post-date" title="2017-04-18 00:00:00">2017/04/18</span>
-        </a>
-        
-        
-        <a  class="全部文章 Mysql "
-           href="/2017/04/17/Mysql/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%9F%BA%E4%BA%8EGTID%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/"
-           data-tag="Mysql,GTID"
-           data-author="" >
-            <span class="post-title" title="Mysql主从复制-基于GTID的主从复制">Mysql主从复制-基于GTID的主从复制</span>
-            <span class="post-date" title="2017-04-17 00:00:00">2017/04/17</span>
-        </a>
-        
-        
-        <a  class="全部文章 Mysql "
-           href="/2017/04/17/Mysql/Mysql%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/"
-           data-tag="Mysql"
-           data-author="" >
-            <span class="post-title" title="Mysql体系结构">Mysql体系结构</span>
-            <span class="post-date" title="2017-04-17 00:00:00">2017/04/17</span>
-        </a>
-        
-        
-        <a  class="全部文章 Mysql "
-           href="/2017/04/17/Mysql/Mysql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%B1%BB%E5%9E%8B/"
-           data-tag="Mysql"
-           data-author="" >
-            <span class="post-title" title="Mysql存储引擎类型">Mysql存储引擎类型</span>
-            <span class="post-date" title="2017-04-17 00:00:00">2017/04/17</span>
-        </a>
-        
-        
-        <a  class="全部文章 Mysql "
-           href="/2017/04/16/Mysql/InnoDB-Redo-Flush%E5%8F%8A%E8%84%8F%E9%A1%B5%E5%88%B7%E6%96%B0%E6%9C%BA%E5%88%B6%E6%B7%B1%E5%85%A5%E5%88%86%E6%9E%90/"
-           data-tag="InnoDB"
-           data-author="" >
-            <span class="post-title" title="InnoDB Redo Flush及脏页刷新机制深入分析">InnoDB Redo Flush及脏页刷新机制深入分析</span>
-            <span class="post-date" title="2017-04-16 00:00:00">2017/04/16</span>
-        </a>
-        
-        
-        <a  class="全部文章 Mysql "
-           href="/2017/04/14/Mysql/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%8D%8A%E5%90%8C%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/"
-           data-tag="Mysql"
-           data-author="" >
-            <span class="post-title" title="Mysql主从复制-半同步主从复制">Mysql主从复制-半同步主从复制</span>
-            <span class="post-date" title="2017-04-14 00:00:00">2017/04/14</span>
-        </a>
-        
-        
-        <a  class="全部文章 Mysql "
-           href="/2017/04/14/Mysql/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E5%BC%82%E6%AD%A5%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/"
-           data-tag="Mysql"
-           data-author="" >
-            <span class="post-title" title="Mysql主从复制-异步主从复制">Mysql主从复制-异步主从复制</span>
-            <span class="post-date" title="2017-04-14 00:00:00">2017/04/14</span>
-        </a>
-        
-        
-        <a  class="全部文章 Mysql "
-           href="/2017/04/13/Mysql/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%A6%82%E8%BF%B0/"
-           data-tag="Mysql,GTID"
-           data-author="" >
-            <span class="post-title" title="Mysql主从复制概述">Mysql主从复制概述</span>
-            <span class="post-date" title="2017-04-13 00:00:00">2017/04/13</span>
-        </a>
-        
-        
-        <a  class="全部文章 Mysql "
-           href="/2017/04/12/Mysql/xtrabackup%E5%A4%87%E4%BB%BD%E5%8E%9F%E7%90%86/"
-           data-tag="xtrabackup"
-           data-author="" >
-            <span class="post-title" title="xtrabackup备份原理">xtrabackup备份原理</span>
-            <span class="post-date" title="2017-04-12 00:00:00">2017/04/12</span>
-        </a>
-        
-        
-        <a  class="全部文章 Mysql "
-           href="/2017/04/12/Mysql/xtrabackup%E5%A4%87%E4%BB%BD%E5%AE%9E%E6%93%8D/"
-           data-tag="xtrabackup"
-           data-author="" >
-            <span class="post-title" title="xtrabackup备份实操">xtrabackup备份实操</span>
-            <span class="post-date" title="2017-04-12 00:00:00">2017/04/12</span>
-        </a>
-        
-        
-        <a  class="全部文章 Mysql "
-           href="/2017/04/08/Mysql/Mysql-5-7-%E5%AE%89%E8%A3%85/"
-           data-tag="Mysql"
-           data-author="" >
-            <span class="post-title" title="Mysql-5.7 安装">Mysql-5.7 安装</span>
-            <span class="post-date" title="2017-04-08 00:00:00">2017/04/08</span>
         </a>
         
         <div id="no-item-tips">
@@ -962,7 +1914,7 @@
     </div>
     <!-- <div class="article-meta">
         
-            发布时间 : <time class="date" title='最后更新: 2023-08-18'>2021-07-22</time>
+            发布时间 : <time class="date" title='最后更新: 2023-09-10'>2021-07-22</time>
         
         <i class="iconfont icon-category"></i>
         
