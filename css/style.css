@@ -290,13 +290,6 @@
     opacity: 0;
   }
 }
-@font-face {
-  font-family: 'icomoon';
-  src: url("fonts/icomoon.eot?ul7tfk");
-  src: url("fonts/icomoon.eot?ul7tfk#iefix") format('embedded-opentype'), url("fonts/icomoon.ttf?ul7tfk") format('truetype'), url("fonts/icomoon.woff?ul7tfk") format('woff'), url("fonts/icomoon.svg?ul7tfk#icomoon") format('svg');
-  font-weight: normal;
-  font-style: normal;
-}
 .article .article-meta .date:before,
 .nav-right nav a:before,
 #local-search-result a:before,
@@ -311,7 +304,7 @@
 .full-toc #rocket:after,
 .nav-right .back-title-list:before {
   margin-right: 0.2em;
-  font-family: 'icomoon' !important;
+  font-family: 'iconfont' !important;
   speak: none;
   font-style: normal;
   font-weight: normal;
