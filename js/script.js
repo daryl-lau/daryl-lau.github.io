@@ -472,6 +472,7 @@ $(function () {
     container.on('scroll', function () {
         var _this = this
         var $rocket = $("#rocket");
+        console.log($rocket)
         if (container.scrollTop() >= 200 && $rocket.css("display") === "none") {
             $("#rocket").removeClass("launch").css("display", "block").css("opacity", "0.5");
         } else if (container.scrollTop() < 200 && $rocket.css("display") === "block") {
